@@ -23,7 +23,7 @@ export function useGetUser(uid) {
 
     useEffect(() => {
         if (uid) {
-            axios.get('http://localhost:8090/user/getUser', {  
+            axios.get('http://localhost:8090/user/getUser', {
                 params: {
                     uid: uid
                 }
