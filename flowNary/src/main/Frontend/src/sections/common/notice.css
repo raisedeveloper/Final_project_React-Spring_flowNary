@@ -1,0 +1,55 @@
+.styleBox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
+  border: none;
+  align-items: center;
+  padding: 3px;
+  margin-bottom: 55px;
+  background-color: white;
+}
+.styleBox2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
+  border: none;
+  margin-bottom: 55px;
+  background-color: white;
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.iconStyle {
+  margin-right: 1em;
+ color: #D8BFD8
+
+}
+
+.asideStyle {
+  display: flex;
+  justify-content: space-around;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  padding: 3px;
+  margin-bottom: 25px;
+  margin-left: 20px;
+  background: none;
+  font: inherit;
+  transition: 0.25s;
+}
+
+.aside_name{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
