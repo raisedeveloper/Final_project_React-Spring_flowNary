@@ -38,7 +38,7 @@ public class BoardController {
 	private final LikeService lSvc;
 	private final ReplyService rSvc;
 	private final Re_ReplyService ReReSvc;
-	private final NoticeController nC;
+//	private final NoticeController nC;
 	
 	@GetMapping("/getBoard")
 	public JSONObject getBoard(@RequestParam int bid,
@@ -253,7 +253,7 @@ public class BoardController {
 		int replyCount = board.getReplyCount();
 		bSvc.updateReplyCount(dto.getBid(), replyCount);
 		
-		nC.insertNotice(dto.getUid(), 2, dto.getBid(), board.getUid());
+//		nC.insertNotice(dto.getUid(), 2, dto.getBid(), board.getUid());
 	}
 	
 	@PostMapping("/Re_Reply")
