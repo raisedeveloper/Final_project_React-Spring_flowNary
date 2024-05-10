@@ -2,6 +2,9 @@ package com.example.flownary.entity;
 
 import java.time.LocalDateTime;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class Board {
 
 	int bid;
@@ -14,23 +17,14 @@ public class Board {
 	int replyCount;
 	String image;
 	String shareUrl;
-	int isDeleted;
 	String nickname;
 	String hashTag;
-	
-	public Board() {
-	}
+	int isDeleted;
 
-	
-
-	public Board(int uid, String title, String bContents, String image,String shareUrl, String hashTag, String nickname) {
+	public Board(int uid, String title, String bContents) {
 		this.uid = uid;
 		this.title = title;
 		this.bContents = bContents;
-		this.image = image;
-		this.shareUrl = shareUrl;
-		this.hashTag = hashTag;
-		this.nickname = nickname;
 	}
 
 	public Board(int uid, String title, String bContents, String nickname) {
@@ -40,13 +34,13 @@ public class Board {
 		this.nickname = nickname;
 	}
 
-//	public Board(int uid, String title, String bContents, String image, String shareUrl) {
-//		this.uid = uid;
-//		this.title = title;
-//		this.bContents = bContents;
-//		this.image = image;
-//		this.shareUrl = shareUrl;
-//	}
+	public Board(int uid, String title, String bContents, String image, String shareUrl) {
+		this.uid = uid;
+		this.title = title;
+		this.bContents = bContents;
+		this.image = image;
+		this.shareUrl = shareUrl;
+	}
 
 	public Board(int uid, String title, String bContents, String image, String shareUrl, String nickname) {
 		this.uid = uid;
@@ -224,6 +218,18 @@ public class Board {
 	}
 
 	public void setHashTag(String hashTag) {
+		this.hashTag = hashTag;
+	}
+
+	public Board(int uid, String title, String bContents, String image, String shareUrl, String nickname,
+			String hashTag) {
+		super();
+		this.uid = uid;
+		this.title = title;
+		this.bContents = bContents;
+		this.image = image;
+		this.shareUrl = shareUrl;
+		this.nickname = nickname;
 		this.hashTag = hashTag;
 	}
 }
