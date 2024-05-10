@@ -17,7 +17,7 @@ export async function handleSubmit(e, userInfo, auth, navigate, login) {
         if (!userInfo.password) { 
             Swal.fire({
                 icon: "warning",
-                text: "비밀번호를 입력해주세요.",  
+                text: "비밀번호를 입력해주세요.",
             });
             return;
         }
