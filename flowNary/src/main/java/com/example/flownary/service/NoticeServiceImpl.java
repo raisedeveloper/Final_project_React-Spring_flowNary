@@ -41,8 +41,8 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public void removeNotice(Notice notice) {
-		nDao.removeNotice(notice);
+	public void removeNotice(int nid) {
+		nDao.removeNotice(nid);
 	}
 
 	@Override

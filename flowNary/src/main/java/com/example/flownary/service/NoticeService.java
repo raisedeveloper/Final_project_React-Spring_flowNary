@@ -16,7 +16,7 @@ public interface NoticeService {
 	
 	void updateNotice(Notice notice);
 	
-	void removeNotice(Notice notice);
+	void removeNotice(int nid);
 	
 	void removeNoticeAll(int uid);
 }
