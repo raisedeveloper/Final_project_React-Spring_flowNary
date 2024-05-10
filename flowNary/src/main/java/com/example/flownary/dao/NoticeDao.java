@@ -25,14 +25,14 @@ public interface NoticeDao {
 			+ " order by regTime desc")
 	List<Notice> getNoticeListAll(int uid);
 	
-	@Insert("insert into notice values(default, #{uid}, #{type}, #{oid}, #{nContents}, default, default)")
+	@Insert("insert into notice values(default, #{uid}, #{suid}, #{type}, #{oid}, #{nContents}, default, default)")
 	void insertNotice(Notice notice);
 	
 	@Update("update notice set nContents=#{nContents} where nid=#{nid}")
 	void updateNotice(Notice notice);
 	
 	@Update("update notice set onOff=0 where nid=#{nid}")
-	void removeNotice(Notice notice);
+	void removeNotice(int nid);
 	
 	@Update("update notice set onOff=0 where uid=#{uid}")
 	void removeNoticeAll(int uid);
