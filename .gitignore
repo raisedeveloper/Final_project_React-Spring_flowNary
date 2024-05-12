@@ -27,3 +27,5 @@ yarn.lock
 .eslintrc.json
 
 commit.sh
+flowNary/src/main/material-dashboard-react-main/.eslintrc.json
+flowNary/src/main/material-dashboard-react-main/package.json
