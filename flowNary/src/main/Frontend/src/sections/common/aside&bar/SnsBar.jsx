@@ -13,7 +13,7 @@ import { initializeApp } from "firebase/app";
 
 // 스타일 부분 연결
 import '../notice.css';
-import { Search, SearchIconWrapper, StyledInputBase } from '../snsbarStyle.jsx';
+import { Search, StyledInputBase } from '../snsbarStyle.jsx';
 
 // 세션 연결
 import { GetWithExpiry } from "../../../api/LocalStorage.js";
