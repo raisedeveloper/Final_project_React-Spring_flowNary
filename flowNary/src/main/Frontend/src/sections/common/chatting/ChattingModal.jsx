@@ -15,7 +15,7 @@ export default function ChattingModal() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  return (
+  return ( 
     <>
       {/* Aside에 표시될 DM부분 표현 */}
       <button onClick={handleOpen} className='asideStyle'>
