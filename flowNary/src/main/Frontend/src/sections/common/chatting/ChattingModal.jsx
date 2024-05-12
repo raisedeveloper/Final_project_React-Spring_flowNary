@@ -7,7 +7,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import ClearIcon from '@mui/icons-material/Clear';
 import ForumIcon from '@mui/icons-material/Forum';
 
-// Components/css 연결 
+
 import '../notice.css';
 import Chat from './Chat';
 
