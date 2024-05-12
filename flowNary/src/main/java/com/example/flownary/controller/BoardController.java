@@ -62,8 +62,8 @@ public class BoardController {
 		hMap.put("isDeleted", board.getIsDeleted());
 		hMap.put("hashTag", board.getHashTag());
 		hMap.put("nickname", board.getNickname());
-//		hMap.put("liked", (liked == 1) ? true : false);
-		hMap.put("profile", user.getProfile());
+		hMap.put("liked", (liked == 1) ? true : false);
+		hMap.put("profile", (user != null) ? user.getProfile() : null);
 		JSONObject jBoard = new JSONObject(hMap);
 		
 		return jBoard;
@@ -225,14 +225,9 @@ public class BoardController {
 			}
 		}
 		
-		Board board = new Board();
-		board.setUid(dto.getUid());
-		board.setTitle(dto.getTitle());
-		board.setbContents(dto.getbContents());
-		board.setImage(dto.getImage());
-		board.setShareUrl(dto.getShareUrl());
-		board.setNickname(dto.getNickname());
-		board.setHashTag(dto.getHashTag());
+		Board board = new Board(dto.getUid(), dto.getTitle()
+				, dto.getbContents(), dto.getImage(), shareUrl
+				, dto.getNickname(), dto.getHashTag());
 		
 		bSvc.insertBoard(board);
 		return 0;
