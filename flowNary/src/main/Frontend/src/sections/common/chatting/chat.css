@@ -10,7 +10,7 @@
     max-width: 70%;
     /* 채팅 버블의 최대 너비 설정 */
     color: rgb(255, 255, 255);
-}
+} 
 
 .othermessage {
     background-color: rgb(191, 169, 219);
