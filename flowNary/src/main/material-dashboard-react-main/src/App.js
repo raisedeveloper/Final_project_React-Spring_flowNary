@@ -111,18 +111,19 @@ export default function App() {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      width="3.25rem"
-      height="3.25rem"
+      width="3rem"
+      height="3rem"
       bgColor="white"
       shadow="sm"
       borderRadius="50%"
       position="fixed"
-      right="2rem"
+      left="2rem"
       bottom="2rem"
       zIndex={99}
       color="dark"
       sx={{ cursor: "pointer" }}
       onClick={handleConfiguratorOpen}
+      
     >
       <Icon fontSize="small" color="inherit">
         settings
