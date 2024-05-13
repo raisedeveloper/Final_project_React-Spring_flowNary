@@ -1,6 +1,7 @@
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
 import Tables from "layouts/tables";
+import Album from "layouts/album";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
@@ -25,7 +26,7 @@ const routes = [
     key: "album",
     icon: <Icon fontSize="xx-large">collections</Icon>,
     route: "/album",
-    component: <Tables />,
+    component: <Album />,
   },
   {
     type: "collapse",
