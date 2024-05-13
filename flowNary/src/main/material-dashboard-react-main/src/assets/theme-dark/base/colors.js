@@ -22,7 +22,7 @@ Coded by www.creative-tim.com
 const colors = {
   background: {
     default: "#1a2035",
-    sidenav: "#1f283e",
+    sidenav: '#D8BFD8' ,
     card: "#202940",
   },
 
@@ -79,6 +79,11 @@ const colors = {
   light: {
     main: "#f0f2f566",
     focus: "#f0f2f566",
+  },
+
+  dark: {
+    main: "#344767",
+    focus: "#2c3c58",
   },
 
   dark: {
