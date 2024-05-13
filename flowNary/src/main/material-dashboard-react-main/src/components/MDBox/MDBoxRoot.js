@@ -39,6 +39,7 @@ export default styled(Box)(({ theme, ownerState }) => {
   };
 
   const validGradients = [
+    '#D8BFD8',
     "primary",
     "secondary",
     "info",
@@ -80,11 +81,11 @@ export default styled(Box)(({ theme, ownerState }) => {
   let backgroundValue = bgColor;
 
   if (variant === "gradient") {
-    backgroundValue = validGradients.find((el) => el === bgColor)
+    backgroundValue = validGradients.find((el) => el === bgColor) // 그라데이션 들어간 BOX 배경색
       ? linearGradient(gradients[bgColor].main, gradients[bgColor].state)
       : white.main;
   } else if (validColors.find((el) => el === bgColor)) {
-    backgroundValue = palette[bgColor] ? palette[bgColor].main : greyColors[bgColor];
+    backgroundValue = palette[bgColor] ? palette[bgColor].main : greyColors[bgColor]; // 전체적인 박스 기본 색
   } else {
     backgroundValue = bgColor;
   }
