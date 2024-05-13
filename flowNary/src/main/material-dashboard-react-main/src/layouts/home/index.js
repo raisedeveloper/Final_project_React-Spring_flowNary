@@ -28,84 +28,23 @@ import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
+import reportsBarChartData from "layouts/home/data/reportsBarChartData";
+import reportsLineChartData from "layouts/home/data/reportsLineChartData";
 
 // Dashboard components
-import Projects from "layouts/dashboard/components/Projects";
-import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import Projects from "layouts/home/components/Projects";
+import OrdersOverview from "layouts/home/components/OrdersOverview";
 import { Box, Card, Divider, Icon } from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
 
-function Dashboard() {
+function Home() {
   const { sales, tasks } = reportsLineChartData;
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
-                percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                icon="leaderboard"
-                title="Today's Users"
-                count="2,300"
-                percentage={{
-                  color: "success",
-                  amount: "+3%",
-                  label: "than last month",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
-                percentage={{
-                  color: "success",
-                  amount: "+1%",
-                  label: "than yesterday",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: "Just updated",
-                }}
-              />
-            </MDBox>
-          </Grid>
-        </Grid>
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={4}>
@@ -131,14 +70,14 @@ function Dashboard() {
                         }
                       }}
                     >
-                      사진
+                      Picture & User Profile
                     </MDBox>
                     <MDBox pt={3} pb={1} px={1}>
                       <MDTypography variant="h6" textTransform="capitalize">
-                        제목
+                        마침내!! 마지막 프로젝트!
                       </MDTypography>
                       <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                        설명
+                        이윤주, 안순현, 이병학, 윤영준, 곽주영, 정성한 끝까지 파이팅하자~~~!!!
                       </MDTypography>
                       <Divider />
                       <MDBox display="flex" alignItems="center">
@@ -146,7 +85,7 @@ function Dashboard() {
                           <Icon>schedule</Icon>
                         </MDTypography>
                         <MDTypography variant="button" color="text" fontWeight="light">
-                          시간
+                          10년 전, 1년 전, 한달 전, 1주 전, 1일 전, 1시간 전, 1분 전, 지금 막
                         </MDTypography>
                       </MDBox>
                     </MDBox>
@@ -194,4 +133,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Home;

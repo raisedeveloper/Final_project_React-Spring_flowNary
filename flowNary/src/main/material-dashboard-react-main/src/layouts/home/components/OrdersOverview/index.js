@@ -29,7 +29,10 @@ function OrdersOverview() {
     <Card sx={{ height: "100%" }}>
       <MDBox pt={3} px={3}>
         <MDTypography variant="h6" fontWeight="medium">
-          نظرة عامة على الطلبات
+          Chat 위젯 부분
+          <Card sx={{ height: "100%" }}>
+
+          </Card>
         </MDTypography>
         <MDBox mt={0} mb={2}>
           <MDTypography variant="button" color="text" fontWeight="regular">
@@ -40,7 +43,7 @@ function OrdersOverview() {
             <MDTypography variant="button" color="text" fontWeight="medium">
               24%
             </MDTypography>{" "}
-            هذا الشهر
+            this month
           </MDTypography>
         </MDBox>
       </MDBox>
@@ -48,32 +51,32 @@ function OrdersOverview() {
         <TimelineItem
           color="success"
           icon="notifications"
-          title="$2400, تغييرات في التصميم"
-          dateTime="22 ديسمبر 7:20 مساءً"
+          title="$2400, Design changes"
+          dateTime="22 DEC 7:20 PM"
         />
         <TimelineItem
           color="error"
           icon="inventory_2"
-          title="طلب جديد # 1832412"
-          dateTime="21 ديسمبر 11 م"
+          title="New order #1832412"
+          dateTime="21 DEC 11 PM"
         />
         <TimelineItem
           color="info"
           icon="shopping_cart"
-          title="مدفوعات الخادم لشهر أبريل"
-          dateTime="21 ديسمبر 9:34 مساءً"
+          title="Server payments for April"
+          dateTime="21 DEC 9:34 PM"
         />
         <TimelineItem
           color="warning"
           icon="payment"
-          title="تمت إضافة بطاقة جديدة للأمر رقم 4395133"
-          dateTime="20 ديسمبر 2:20 صباحًا"
+          title="New card added for order #4395133"
+          dateTime="20 DEC 2:20 AM"
         />
         <TimelineItem
           color="primary"
           icon="vpn_key"
-          title="فتح الحزم من أجل التطوير"
-          dateTime="18 ديسمبر ، 4:54 صباحًا"
+          title="New card added for order #4395133"
+          dateTime="18 DEC 4:54 AM"
           lastItem
         />
       </MDBox>
