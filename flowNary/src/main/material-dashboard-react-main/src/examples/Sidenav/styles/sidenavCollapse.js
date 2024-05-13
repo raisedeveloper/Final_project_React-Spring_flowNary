@@ -20,21 +20,20 @@ function collapseItem(theme, ownerState) {
   const { md } = boxShadows;
   const { borderRadius } = borders;
   const { pxToRem, rgba, linearGradient } = functions;
-
   return {
     background: active
-      ? linearGradient(gradients[sidenavColor].main, gradients[sidenavColor].state)
+      ? linearGradient('#EE81C0', '#9281CD') // side바 활성화 배경색
       : transparent.main,
     color:
       (transparentSidenav && !darkMode && !active) || (whiteSidenav && !active)
-        ? dark.main
-        : white.main,
+        ? 'blue'
+        : 'blue',
     display: "flex",
     alignItems: "center",
     width: "100%",
     padding: `${pxToRem(8)} ${pxToRem(10)}`,
     margin: `${pxToRem(1.5)} ${pxToRem(16)}`,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.xxl,
     cursor: "pointer",
     userSelect: "none",
     whiteSpace: "nowrap",
@@ -47,18 +46,7 @@ function collapseItem(theme, ownerState) {
     },
 
     "&:hover, &:focus": {
-      backgroundColor: () => {
-        let backgroundValue;
-
-        if (!active) {
-          backgroundValue =
-            transparentSidenav && !darkMode
-              ? grey[300]
-              : rgba(whiteSidenav ? grey[400] : white.main, 0.2);
-        }
-
-        return backgroundValue;
-      },
+      background: linearGradient('#EE81C0', '#9281CD')
     },
   };
 }
@@ -74,10 +62,7 @@ function collapseIconBox(theme, ownerState) {
   return {
     minWidth: pxToRem(32),
     minHeight: pxToRem(32),
-    color:
-      (transparentSidenav && !darkMode && !active) || (whiteSidenav && !active)
-        ? dark.main
-        : white.main,
+    color: '#2f154f',
     borderRadius: borderRadius.md,
     display: "grid",
     placeItems: "center",
@@ -92,15 +77,14 @@ function collapseIconBox(theme, ownerState) {
   };
 }
 
-const collapseIcon = ({ palette: { white, gradients } }, { active }) => ({
-  color: active ? white.main : gradients.dark.state,
+const collapseIcon = ({
+  color: '#D8BFD8'
 });
 
-function collapseText(theme, ownerState) {
-  const { typography, transitions, breakpoints, functions } = theme;
+function collapseText(theme, ownerState) { // side바 글자 색 부분 
+  const { transitions, breakpoints, functions } = theme;
   const { miniSidenav, transparentSidenav, active } = ownerState;
 
-  const { size, fontWeightRegular, fontWeightLight } = typography;
   const { pxToRem } = functions;
 
   return {
@@ -114,11 +98,12 @@ function collapseText(theme, ownerState) {
         easing: transitions.easing.easeInOut,
         duration: transitions.duration.standard,
       }),
+      color: '#2f154f',
     },
 
     "& span": {
-      fontWeight: active ? fontWeightRegular : fontWeightLight,
-      fontSize: size.sm,
+      fontWeight: 'bolder',
+      fontSize: 'large',
       lineHeight: 0,
     },
   };
