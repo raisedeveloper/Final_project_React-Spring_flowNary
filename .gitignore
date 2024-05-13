@@ -27,5 +27,7 @@ yarn.lock
 .eslintrc.json
 
 commit.sh
-flowNary/src/main/material-dashboard-react-main/.eslintrc.json
-flowNary/src/main/material-dashboard-react-main/package.json
+/flowNary/src/main/material-dashboard-material-ui-v4-main
+/flowNary/src/main/material-dashboard-material-ui-v4-main
+flowNary/src/main/material-dashboard-material-ui-v4-main/material-dashboard-material-ui-v4-main/src/assets/jss/material-dashboard-react/components/rtlHeaderLinksStyle.js
+flowNary/src/main/material-dashboard-material-ui-v4-main/material-dashboard-material-ui-v4-main/src/assets/jss/material-dashboard-react/components/snackbarContentStyle.js
