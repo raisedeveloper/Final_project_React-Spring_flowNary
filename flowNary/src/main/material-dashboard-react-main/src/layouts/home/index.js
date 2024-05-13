@@ -70,14 +70,14 @@ function Home() {
                         }
                       }}
                     >
-                      사진
+                      Picture & User Profile
                     </MDBox>
                     <MDBox pt={3} pb={1} px={1}>
                       <MDTypography variant="h6" textTransform="capitalize">
-                        제목
+                        마침내!! 마지막 프로젝트!
                       </MDTypography>
                       <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                        설명
+                        이윤주, 안순현, 이병학, 윤영준, 곽주영, 정성한 끝까지 파이팅하자~~~!!!
                       </MDTypography>
                       <Divider />
                       <MDBox display="flex" alignItems="center">
@@ -85,7 +85,7 @@ function Home() {
                           <Icon>schedule</Icon>
                         </MDTypography>
                         <MDTypography variant="button" color="text" fontWeight="light">
-                          시간
+                          10년 전, 1년 전, 한달 전, 1주 전, 1일 전, 1시간 전, 1분 전, 지금 막
                         </MDTypography>
                       </MDBox>
                     </MDBox>
