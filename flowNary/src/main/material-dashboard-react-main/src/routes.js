@@ -13,17 +13,17 @@ import Icon from "@mui/material/Icon";
 const routes = [
   {
     type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
-    icon: <Icon fontSize="xx-large">dashboard</Icon>,
+    name: "홈",
+    key: "home",
+    icon: <Icon fontSize="xx-large">roofing</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
   },
   {
     type: "collapse",
-    name: "Tables",
-    key: "tables",
-    icon: <Icon fontSize="xx-large">table_view</Icon>,
+    name: "앨범",
+    key: "album",
+    icon: <Icon fontSize="xx-large">collections</Icon>,
     route: "/tables",
     component: <Tables />,
   },
