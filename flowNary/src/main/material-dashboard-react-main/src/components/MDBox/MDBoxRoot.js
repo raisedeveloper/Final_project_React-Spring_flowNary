@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
+import { Height } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
 

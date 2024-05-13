@@ -34,6 +34,9 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import { Box, Card, Divider, Icon } from "@mui/material";
+import { Bar } from "react-chartjs-2";
+import MDTypography from "components/MDTypography";
 
 export default function Home() {
   const { sales, tasks } = reportsLineChartData;
@@ -42,17 +45,52 @@ export default function Home() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        <MDBox mt={4.5}>
+        <MDBox mt={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
+                <Card sx={{
+                  height: "100%",
+                  transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
+                  '&:hover': {
+                    boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
+                  }
+                }}>
+                  <MDBox padding="1rem">
+                    <MDBox
+                      variant="gradient"
+                      borderRadius="lg"
+                      py={2}
+                      pr={0.5}
+                      sx={{
+                        height: "12.5rem",
+                        transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
+                        '&:hover': {
+                          boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
+                        }
+                      }}
+                    >
+                      사진
+                    </MDBox>
+                    <MDBox pt={3} pb={1} px={1}>
+                      <MDTypography variant="h6" textTransform="capitalize">
+                        제목
+                      </MDTypography>
+                      <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                        설명
+                      </MDTypography>
+                      <Divider />
+                      <MDBox display="flex" alignItems="center">
+                        <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
+                          <Icon>schedule</Icon>
+                        </MDTypography>
+                        <MDTypography variant="button" color="text" fontWeight="light">
+                          시간
+                        </MDTypography>
+                      </MDBox>
+                    </MDBox>
+                  </MDBox>
+                </Card>
               </MDBox>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
@@ -72,17 +110,13 @@ export default function Home() {
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
-                />
+                <MDBox sx={{ backgroundColor: 'silver' }}>
+                  날씨 위젯 부분
+                </MDBox>
               </MDBox>
             </Grid>
           </Grid>
-        </MDBox>
+        </MDBox >
         <MDBox>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={8}>
@@ -93,8 +127,8 @@ export default function Home() {
             </Grid>
           </Grid>
         </MDBox>
-      </MDBox>
+      </MDBox >
       <Footer />
-    </DashboardLayout>
+    </DashboardLayout >
   );
 }
