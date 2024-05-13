@@ -28,17 +28,17 @@ import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
+import reportsBarChartData from "layouts/home/data/reportsBarChartData";
+import reportsLineChartData from "layouts/home/data/reportsLineChartData";
 
 // Dashboard components
-import Projects from "layouts/dashboard/components/Projects";
-import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import Projects from "layouts/home/components/Projects";
+import OrdersOverview from "layouts/home/components/OrdersOverview";
 import { Box, Card, Divider, Icon } from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
 
-function Dashboard() {
+function Home() {
   const { sales, tasks } = reportsLineChartData;
 
   return (
@@ -194,4 +194,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Home;

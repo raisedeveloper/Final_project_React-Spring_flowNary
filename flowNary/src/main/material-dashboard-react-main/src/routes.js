@@ -1,5 +1,5 @@
 // Material Dashboard 2 React layouts
-import Dashboard from "layouts/dashboard";
+import Home from "layouts/home";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
@@ -16,8 +16,8 @@ const routes = [
     name: "홈",
     key: "home",
     icon: <Icon fontSize="xx-large">roofing</Icon>,
-    route: "/dashboard",
-    component: <Dashboard />,
+    route: "/home",
+    component: <Home />,
   },
   {
     type: "collapse",
