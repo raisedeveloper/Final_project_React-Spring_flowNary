@@ -71,7 +71,7 @@ const routes = [
   {
     type: "collapse",
     name: "로그인",
-    key: "sign-in",
+    key: "sign",
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
@@ -79,7 +79,7 @@ const routes = [
   {
     type: "collapse",
     name: "회원가입",
-    key: "sign-up",
+    key: "sign",
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,

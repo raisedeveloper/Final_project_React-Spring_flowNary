@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useEffect } from "react";
 
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -51,6 +51,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
   const location = useLocation();
+  const confirmLocation = location.pathname.split('/')[1];
   const collapseName = location.pathname.replace("/", "");
 
   let textColor = "white";
@@ -62,6 +63,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+
+  console.log(location);
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -141,33 +144,38 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   });
 
   return (
-    <SidenavRoot
-      {...rest}
-      variant="permanent"
-      ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
-    >
-      <MDBox pt={3} pb={1} px={4} textAlign="center">
-        <MDBox
-          display={{ xs: "block", xl: "none" }}
-          position="absolute"
-          top={0}
-          right={0}
-          p={1.625}
-          onClick={closeSidenav}
-          sx={{ cursor: "pointer" }}
+    <>
+      {confirmLocation === "authentication" ? null :
+        <SidenavRoot
+          {...rest}
+          variant="permanent"
+          ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
         >
-          <MDTypography variant="h6" color="secondary">
-            <Icon sx={{ fontWeight: "bold" }}>close</Icon>
-          </MDTypography>
-        </MDBox>
-        <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
-        </MDBox>
-      </MDBox>
-      <Divider style={{opacity:1, border:2}}/>
-      <List>{renderRoutes}</List>
-    </SidenavRoot>
+          <MDBox pt={3} pb={1} px={4} textAlign="center">
+            <MDBox
+              display={{ xs: "block", xl: "none" }}
+              position="absolute"
+              top={0}
+              right={0}
+              p={1.625}
+              onClick={closeSidenav}
+              sx={{ cursor: "pointer" }}
+            >
+              <MDTypography variant="h6" color="secondary">
+                <Icon sx={{ fontWeight: "bold" }}>close</Icon>
+              </MDTypography>
+            </MDBox>
+            <MDBox component={NavLink} to="/" display="flex" alignItems="center">
+              {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
+            </MDBox>
+          </MDBox>
+          <Divider style={{ opacity: 1, border: 2 }} />
+          <List>{renderRoutes}</List>
+        </SidenavRoot>
+      }
+    </>
   );
+
 }
 
 // Setting default values for the props of Sidenav
