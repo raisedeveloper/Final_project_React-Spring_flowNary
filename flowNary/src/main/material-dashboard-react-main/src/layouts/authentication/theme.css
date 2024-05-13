@@ -1,0 +1,165 @@
+/* Base styles.css */
+.background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: 0.5s ease-in-out;
+}
+
+.cardMain {
+    text-align: center;
+    width: 83vw;
+    padding: 3%;
+    box-sizing: border-box;
+    height: auto;
+    border-radius: 10px;
+    background: transparent !important;
+    backdrop-filter: blur(15px) !important;
+}
+
+.loginBox {
+    animation: fadeIn 3s ease forwards;
+    padding: 35px;
+}
+
+.commonInputStyle {
+    text-align: center;
+    width: 40%;
+    height: 30px;
+    font-size: 15px;
+    border-radius: 15px;
+    margin: 0.65%;    
+    border: 1px solid whitesmoke;
+    opacity: 0.65;
+}
+
+.commonInputStyle:focus {
+    width: 45%;
+    transition: 0.5s;
+}
+
+/* 기본 버튼 */
+.fill {
+    width: 22%;
+    background: none;
+    border-radius: 35px;
+    border: 2px solid;
+    font: inherit;
+    font-size: 15px;
+    line-height: 1;
+    margin: 0.5em;
+    padding: 1em 2em;
+    transition: 0.25s;
+}
+
+.fill:hover,
+.fill:active .fill:focus {
+    box-shadow: inset 0 0 0 3em var(--hover);
+    width: 20%;
+    color: white;
+}
+
+
+/* 링크 버튼 */
+.custom-button {
+    width: 14.5%;
+    background: none;
+    border-radius: 35px;
+    border: 2px solid;
+    font: inherit;
+    line-height: 1;
+    padding: 1em 2em;
+    transition: 0.25s;
+    /* cursor: pointer; */
+    text-align: center; 
+    display: inline-block;    
+    text-decoration: none; 
+}
+
+/* 호버 및 포커스 상태 */
+.custom-button:hover,
+.custom-button:focus {
+    box-shadow: inset 0 0 0 3em var(--hover);
+    width: 12%;
+    color: white;
+}
+
+/* 다크테마 */
+.dark .custom-button {
+    --color: #ffffff;
+    --hover: rgb(46, 55, 76);
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.dark .custom-button:hover {
+    background-color: rgb(46, 55, 76);
+}
+
+/* 라이트테마 */
+.light .custom-button {
+    --color: #dca3e7;
+    --hover: rgb(28, 0, 53);
+    color: #dca3e7;
+    border-color: #dca3e7;
+}
+
+.light .custom-button:hover {
+    background-color: rgb(28, 0, 53);
+}
+
+
+
+/* 다크테마 */
+.dark .cardMain {
+    border: 2.5px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark .fill {
+    --color: #ffffff;
+    --hover: rgb(46, 55, 76);
+    color: white;
+}
+
+/* 라이트테마 */
+.light .cardMain {
+    border: 2.5px solid rgba(255, 255, 255, 0.4);
+}
+
+.light .fill {
+    --color: #dca3e7;
+    --hover: rgb(28, 0, 53);
+    color: #dca3e7;
+}
+
+/* 환영 메세지 효과 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.welcome-message {
+    opacity: 0;
+    animation: fadeIn 3s ease forwards;
+    margin-bottom: -3%;
+    font-size: 200%;
+    font-weight: bold;
+    text-align: center;
+    color: #dca3e7;
+}
+
+.dark .welcome-message {
+    opacity: 0;
+    animation: fadeIn 3s ease forwards;
+    margin-bottom: -3%;
+    font-size: 200%;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+}
