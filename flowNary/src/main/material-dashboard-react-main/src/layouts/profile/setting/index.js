@@ -18,10 +18,10 @@ import SettingPicture from "./components/SettingPicture.jsx";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDButton from "components/MDButton";
-import { GetWithExpiry, SetWithExpiry } from "../../api/LocalStorage.js";
-import { UploadImage } from "../../api/image.js";
-import { useGetUser } from "../../api/customHook.jsx";
-import { correct, wrong } from "../../api/alert.jsx";
+import { GetWithExpiry, SetWithExpiry } from "../../../api/LocalStorage.js";
+import { UploadImage } from "../../../api/image.js";
+import { useGetUser } from "../../../api/customHook.jsx";
+import { correct, wrong } from "../../../api/alert.jsx";
 
 // 생일 표현 
 import dayjs from 'dayjs';
