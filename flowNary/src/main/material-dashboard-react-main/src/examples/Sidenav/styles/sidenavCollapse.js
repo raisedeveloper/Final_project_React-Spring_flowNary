@@ -8,13 +8,14 @@ function collapseItem(theme, ownerState) {
   const { pxToRem, rgba, linearGradient } = functions;
 
   return {
-    background: active ? linearGradient('#EE81C0', '#dddae7') : transparent.main, // 사이드바 활성화 배경색
+    background: active ? linearGradient('#FFFFFF80', '#f5d6e605') : transparent.main,
+ // 사이드바 활성화 배경색
     color: active ? 'black' : 'inherit', // 기본 글자 색상
     display: "flex",
     alignItems: "center",
-    width: "100%",
-    padding: `${pxToRem(8)} ${pxToRem(10)}`,
-    margin: `${pxToRem(1.5)} ${pxToRem(16)}`,
+    width: "80%",
+    padding: `${pxToRem(10)} ${pxToRem(10)}`,
+    margin: `${pxToRem(5)} ${pxToRem(35)}`,
     borderRadius: borderRadius.xxl,
     cursor: "pointer",
     userSelect: "none",
@@ -27,7 +28,7 @@ function collapseItem(theme, ownerState) {
       }),
     },
     "&:hover, &:focus": {
-      backgroundColor: !active ? (transparentSidenav && !darkMode ? grey[300] : rgba(whiteSidenav ? grey[400] : white.main, 0.8)) : undefined,
+      backgroundColor: !active ? (transparentSidenav && !darkMode ? grey[300] : rgba(whiteSidenav ? grey[400] : white.main, 0.2)) : undefined,
     },
     // 액티브 상태에서 아이콘 박스와 텍스트 스타일 변경
     "& .collapse-icon-box, & .collapse-text": active ? {
