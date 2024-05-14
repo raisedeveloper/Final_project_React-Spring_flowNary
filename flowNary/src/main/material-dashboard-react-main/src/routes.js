@@ -97,20 +97,20 @@ const routes = [
   {
     type: "collapse",
     name: "로그아웃",
-    key: "sign-up",
+    key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
     route: "/home",
-    component: <SignUp />,
+    component: <Home />,
   },
 
-  // {
-  //   type: "collapse",
-  //   name: "회원가입",
-  //   key: "sign-up",
-  //   icon: <Icon fontSize="xx-large">assignment</Icon>,
-  //   route: "/authentication/sign-up",
-  //   component: <SignUp />,
-  // },
+  {
+    type: "collapse",
+    name: "회원가입",
+    key: "sign-up",
+    icon: <Icon fontSize="xx-large">assignment</Icon>,
+    route: "/authentication/sign-up",
+    component: <SignUp />,
+  },
 ];
 
 export default routes;

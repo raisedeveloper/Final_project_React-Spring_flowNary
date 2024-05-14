@@ -75,7 +75,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
     let returnValue;
-
+    console.log(location.pathname.split('/')[1]);
     if (type === "collapse") {
       returnValue = href ? (
         <Link
@@ -131,36 +131,40 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   });
 
   return (
-    <SidenavRoot
-      {...rest}
-      variant="permanent"
-      ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
-    >
-      <MDBox pt={1} pb={1} px={5} textAlign="center">
-        <MDBox
-          display={{ xs: "block", xl: "none" }}
-          position="absolute"
-          top={0}
-          right={0}
-          p={1.625}
-          onClick={closeSidenav}
-          sx={{ cursor: "pointer" }}
+    <>
+      {location.pathname.split('/')[1] !== 'authentication' &&
+        <SidenavRoot
+          {...rest}
+          variant="permanent"
+          ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
         >
-          <MDTypography variant="h6" color="secondary">
-            <Icon sx={{ fontWeight: "bold" }}>close</Icon>
-          </MDTypography>
-        </MDBox>
-        <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
-        </MDBox>
-        <Card>
-          <div>프로필 영역</div>
-        </Card>
-      </MDBox>
-      <Divider style={{ opacity: 1, border: 2 }} />
-      <List>{renderRoutes}</List>
-    </SidenavRoot>
+          <MDBox pt={1} pb={1} px={5} textAlign="center">
+            <MDBox
+              display={{ xs: "block", xl: "none" }}
+              position="absolute"
+              top={0}
+              right={0}
+              p={1.625}
+              onClick={closeSidenav}
+              sx={{ cursor: "pointer" }}
+            >
+              <MDTypography variant="h6" color="secondary">
+                <Icon sx={{ fontWeight: "bold" }}>close</Icon>
+              </MDTypography>
+            </MDBox>
+            <MDBox component={NavLink} to="/" display="flex" alignItems="center">
+              {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
+            </MDBox>
+            <Card>
+              <div>프로필 영역</div>
+            </Card>
+          </MDBox>
+          <Divider style={{ opacity: 1, border: 2 }} />
+          <List>{renderRoutes}</List>
+        </SidenavRoot>
+        }
 
+    </>
   );
 
 }
