@@ -103,7 +103,7 @@ function collapseText(theme, ownerState) { // side바 글자 색 부분
 
     "& span": {
       fontWeight: 'bolder',
-      fontSize: 'large',
+      fontSize: 'small',
       lineHeight: 0,
     },
   };

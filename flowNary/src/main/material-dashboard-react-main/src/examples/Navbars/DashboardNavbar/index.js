@@ -104,9 +104,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem icon={<Icon>email</Icon>} title="Check new messages" />
-      <NotificationItem icon={<Icon>podcasts</Icon>} title="Manage Podcast sessions" />
-      <NotificationItem icon={<Icon>shopping_cart</Icon>} title="Payment successfully completed" />
+      <NotificationItem icon={<Icon>send_outlined</Icon>} title="새로운 메시지가 있습니다" />
+      <NotificationItem icon={<Icon>reply_all</Icon>} title="새로운 댓글이 있습니다" />
+      <NotificationItem icon={<Icon>playlist_add_check</Icon>} title="오늘의 할 일이 있습니다" />
+      <NotificationItem icon={<Icon>event_available</Icon>} title="오늘의 일정이 있습니다" />
+      <NotificationItem icon={<Icon>favorite</Icon>} title="User가 좋아요를 눌렀습니다" />
+      <NotificationItem icon={<Icon>warning</Icon>} title="보안상의 문제가 있습니다" />
+      <NotificationItem icon={<Icon>diversity_1</Icon>} title="새로운 패밀리를 찾아보세요" />
+      <NotificationItem icon={<Icon>history_edu</Icon>} title="패밀리User의 새로운 게시물이 있습니다" />
     </Menu>
   );
 
