@@ -93,14 +93,6 @@ const routes = [
     route: "/authentication/sign-up",
     component: <SignUp />,
   },
-  {
-    type: "collapse",
-    name: "설정",
-    key: "setting",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,
-    route: "/setting",
-    component: <SignUp />,
-  },
 ];
 
 export default routes;
