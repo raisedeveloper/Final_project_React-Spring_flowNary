@@ -24,7 +24,7 @@ export function useGetUser(uid) {
     useEffect(() => {
         if (uid) {
             axios.get('http://localhost:8090/user/getUser', {
-                params: { 
+                params: {
                     uid: uid
                 }
             }).then(res => {

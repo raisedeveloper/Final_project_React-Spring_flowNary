@@ -1,9 +1,10 @@
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
-import Tables from "layouts/tables";
+import Settings from "layouts/profile/setting";
 import Album from "layouts/album";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
+import Mypage from "layouts/mypage";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
@@ -11,6 +12,7 @@ import SignUp from "layouts/authentication/sign-up";
 // @mui icons
 import Icon from "@mui/material/Icon";
 
+// aside 항목이름
 const routes = [
   {
     type: "collapse",
@@ -39,17 +41,17 @@ const routes = [
   {
     type: "collapse",
     name: "마이페이지",
-    key: "myPage",
-    icon: <Icon fontSize="xx-large">contact_page</Icon>,
-    route: "/myPage",
-    component: <Profile />,
+    key: "mypage",
+    icon: <Icon variant="outlined" fontSize="xx-large">contact_page</Icon>,
+    route: "/mypage",
+    component: <Mypage />,
   },
   {
     type: "collapse",
     name: "f_패밀리",
-    key: "follow",
+    key: "friends",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
-    route: "/follow",
+    route: "/friends",
     component: <Profile />,
   },
   {
@@ -65,16 +67,24 @@ const routes = [
     name: "특별한 날",
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
-    route: "/profile",
+    route: "/chalendar",
     component: <Profile />,
   },
   {
     type: "collapse",
     name: "할 일",
     key: "to-do",
-    icon: <Icon fontSize="xx-large">playlist_add_check</Icon>,
-    route: "/profile",
+    icon: <Icon fontSize="xx-large">person</Icon>,
+    route: "/to-do",
     component: <Profile />,
+  },
+  {
+    type: "collapse",
+    name: "설정",
+    key: "profile/settings",
+    icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
+    route: "/profile/settings",
+    component: <Settings />,
   },
   {
     type: "collapse",
@@ -92,6 +102,15 @@ const routes = [
     route: "/home",
     component: <SignUp />,
   },
+
+  // {
+  //   type: "collapse",
+  //   name: "회원가입",
+  //   key: "sign-up",
+  //   icon: <Icon fontSize="xx-large">assignment</Icon>,
+  //   route: "/authentication/sign-up",
+  //   component: <SignUp />,
+  // },
 ];
 
 export default routes;
