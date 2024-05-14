@@ -11,6 +11,7 @@ import SignUp from "layouts/authentication/sign-up";
 // @mui icons
 import Icon from "@mui/material/Icon";
 
+// aside 항목이름
 const routes = [
   {
     type: "collapse",

@@ -1,17 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
 
 // @mui material components
 import Drawer from "@mui/material/Drawer";
@@ -36,9 +23,10 @@ export default styled(Drawer)(({ theme, ownerState }) => {
     backgroundValue = white.main;
   }
 
-  // styles for the sidenav when miniSidenav={false}
+    
+  // 사이드바 색상
   const drawerOpenStyles = () => ({
-    backgroundColor: '#D8BFD8',
+    backgroundColor: 'rgba(250, 224, 250, 0.5)',         
     transform: "translateX(0)",
     transition: transitions.create("transform", {
       easing: transitions.easing.sharp,
