@@ -5,7 +5,7 @@ import { styled } from "@mui/system";
 
 // 배경 스타일 설정
 const Background = styled(Box)({
-  background: "url('https://via.placeholder.com/400x200')", // 배경 이미지 URL
+  background: "url('/images/flowLight.png')", // 배경 이미지 URL
   backgroundSize: "cover",
   backgroundPosition: "center",
   height: "150px",
@@ -31,7 +31,7 @@ function ProfileCard({ profile }) {
         </Typography>
 
         {/* 팔로워 기타 등등 */}
-        <Grid container spacing={2} sx={{ mt: 2 }}>
+        {/* <Grid container spacing={2} sx={{ mt: 2 }}>
           <Grid item xs={4}>
             <Typography variant="h6">{profile.followers}</Typography>
             <Typography variant="body2" color="textSecondary">
@@ -50,7 +50,7 @@ function ProfileCard({ profile }) {
               게시글
             </Typography>
           </Grid>
-        </Grid>
+        </Grid> */}
       </CardContent>
     </Card>
   );

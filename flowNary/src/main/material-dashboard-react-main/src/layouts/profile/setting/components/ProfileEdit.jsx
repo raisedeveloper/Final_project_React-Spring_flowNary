@@ -4,7 +4,7 @@ import { Box, Grid, Card, CardContent, TextField, Button, Typography } from "@mu
 import { styled } from "@mui/system";
 
 const Header = styled(Box)({
-  background: 'rgba(0, 0, 0, 0.5)',
+  background: '#BA99D1',
   borderRadius: '8px 8px 0 0', // 상단만 라운드 처리
   color: 'white',  
   textAlign: 'center',
@@ -29,7 +29,7 @@ function ProfileEdit({ profile, handleProfileChange, handleSubmit }) {
   return (
     <Card>
       <Header style={{height:'2.05rem'}}>        
-        <Typography variant="subtitle1" sx={{ opacity: 0.8 }}>상세 정보</Typography>
+        <Typography variant="subtitle1" sx={{ opacity: 0.825 }}>상세 정보</Typography>
       </Header>
       <CardContent>
         <form onSubmit={onSubmit}>
