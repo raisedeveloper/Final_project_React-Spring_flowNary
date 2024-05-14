@@ -4,6 +4,7 @@ import Settings from "layouts/profile/setting";
 import Album from "layouts/album";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
+import Mypage from "layouts/mypage";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
@@ -33,7 +34,7 @@ const routes = [
     type: "collapse",
     name: "채팅",
     key: "chatting",
-    icon: <Icon fontSize="xx-large">receipt_long</Icon>,
+    icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
     component: <Billing />,
   },
@@ -41,24 +42,32 @@ const routes = [
     type: "collapse",
     name: "마이페이지",
     key: "mypage",
+    icon: <Icon variant="outlined" fontSize="xx-large">contact_page</Icon>,
+    route: "/mypage",
+    component: <Mypage />,
+  },
+  {
+    type: "collapse",
+    name: "f_패밀리",
+    key: "friends",
+    icon: <Icon fontSize="xx-large">diversity_1</Icon>,
+    route: "/friends",
+    component: <Profile />,
+  },
+  {
+    type: "collapse",
+    name: "알림",
+    key: "notifications",
     icon: <Icon fontSize="xx-large">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
   },
   {
     type: "collapse",
-    name: "친구",
-    key: "friends",
-    icon: <Icon fontSize="xx-large">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
-  },
-  {
-    type: "collapse",
-    name: "달력",
+    name: "특별한 날",
     key: "chalendar",
-    icon: <Icon fontSize="xx-large">person</Icon>,
-    route: "/profile",
+    icon: <Icon fontSize="xx-large">calendar_month</Icon>,
+    route: "/chalendar",
     component: <Profile />,
   },
   {
@@ -66,15 +75,15 @@ const routes = [
     name: "할 일",
     key: "to-do",
     icon: <Icon fontSize="xx-large">person</Icon>,
-    route: "/profile",
+    route: "/to-do",
     component: <Profile />,
   },
   {
     type: "collapse",
     name: "설정",
-    key: "setting",
+    key: "profile/settings",
     icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
-    route: "/profile/setting",
+    route: "/profile/settings",
     component: <Settings />,
   },
   {
@@ -87,12 +96,21 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "회원가입",
+    name: "로그아웃",
     key: "sign-up",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,
-    route: "/authentication/sign-up",
+    icon: <Icon fontSize="xx-large">logout</Icon>,
+    route: "/home",
     component: <SignUp />,
   },
+
+  // {
+  //   type: "collapse",
+  //   name: "회원가입",
+  //   key: "sign-up",
+  //   icon: <Icon fontSize="xx-large">assignment</Icon>,
+  //   route: "/authentication/sign-up",
+  //   component: <SignUp />,
+  // },
 ];
 
 export default routes;
