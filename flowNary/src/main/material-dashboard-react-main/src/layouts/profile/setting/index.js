@@ -28,7 +28,7 @@ import dayjs from 'dayjs';
 import MDBox from "components/MDBox";
 import { TextAlignment } from "@cloudinary/url-gen/qualifiers";
 
-export default function SettingDetail() {
+export default function Settings() {
   const navigate = useNavigate();
 
   // localStorage를 이용해서 user 받아오기
