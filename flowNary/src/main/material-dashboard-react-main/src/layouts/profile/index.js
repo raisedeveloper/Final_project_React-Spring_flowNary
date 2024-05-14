@@ -200,4 +200,4 @@ function Settings() {
   );
 }
 
-export default Overview;
+export default Settings;
