@@ -117,7 +117,7 @@ export default function App() {
       shadow="sm"
       borderRadius="50%"
       position="fixed"
-      left="2rem"
+      right="2rem"
       bottom="2rem"
       zIndex={99}
       color="dark"
@@ -126,7 +126,7 @@ export default function App() {
       
     >
       <Icon fontSize="small" color="inherit">
-        settings
+      filter_vintage
       </Icon>
     </MDBox>
   );
