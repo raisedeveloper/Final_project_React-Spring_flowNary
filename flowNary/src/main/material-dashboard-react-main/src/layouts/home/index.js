@@ -20,58 +20,35 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
-// import { position } from "stylis";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [weather, setWeather] = useState('');
+
   // 위치 뽑아내기
   const getCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
-      let lat = position.coords.latitude
-      let lon = position.coords.longitude
-      getWeatherByCurrentLocation(lat, lon)
-    })
-  }
-  //api 가져오기
+      let lat = position.coords.latitude;
+      let lon = position.coords.longitude;
+      getWeatherByCurrentLocation(37.566309, 126.977207);
+    });
+  };
+
+  // API 가져오기
   const getWeatherByCurrentLocation = async (lat, lon) => {
-    let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}`
-    let response = await fetch(url)
+    let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}`;
+    let response = await fetch(url);
     let data = await response.json();
     setWeather(data);
-  }
+  };
 
   useEffect(() => {
     getCurrentLocation();
   }, []);
 
-
-  // const getWeather = async (lat, lon) => {
-  //   try {
-  //     const res = await axios.get(
-  //       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&}&units=metric&lang=kr`
-  //     );
-
-  //     // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
-  //     const weatherId = res.data.weather[0].id;
-  //     const weatherKo = weatherDescKo[weatherId];
-  //     // 날씨 아이콘 가져오기
-  //     const weatherIcon = res.data.weather[0].icon;
-  //     const weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
-  //     // 소수점 버리기
-  //     const temp = Math.round(res.data.main.temp);
-
-  //     console.log("umi" + weatherIcon);
-  //     setWeather({
-  //       description: weatherKo,
-  //       name: cityName,
-  //       temp: temp,
-  //       icon: weatherIconAdrs,
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+  useEffect(() => {
+    console.log(weather); // 상태가 업데이트된 후에 로그를 출력합니다.
+  }, [weather]); // weather 상태가 변경될 때마다 이펙트가 실행됩니다.
 
   return (
     <DashboardLayout>
@@ -735,13 +712,14 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
                 <MDBox sx={{ backgroundColor: 'silver' }}>
-                  <div className="weather-box">
-                    <div>{weather?.name}</div>
-                    <h2>
-                      {weather?.main.temp}℃ / {weather?.main.temp * 1.8 + 32}℉
-                    </h2>
-                    <h3>{weather?.weather[0].description}</h3>
-                  </div>
+                  {weather && weather.name && weather.main && (
+                    <div className="weather-box">
+                      <div>{weather.name}</div>
+                      <h2>
+                        {(weather.main.temp - 273.15).toFixed(1)}℃ / {((weather.main.temp - 273.15) * 1.8 + 32).toFixed(1)}℉
+                      </h2>
+                      <h3>{weather.weather[0].description}</h3>
+                    </div>)}
                   <div className="weather-btn">
                     <Button variant="warning" className="btn">
                       Current Location
