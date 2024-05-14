@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useEffect } from "react";
 
 // react-router-dom components
@@ -46,6 +31,7 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
+import { Card } from "@mui/material";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -110,6 +96,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       );
     } else if (type === "title") {
       returnValue = (
+        // 타이틀
         <MDTypography
           key={key}
           color={textColor}
@@ -117,7 +104,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           variant="caption"
           fontWeight="bold"
           textTransform="uppercase"
-          pl={3}
+          pl={1}
           mt={2}
           mb={1}
           ml={1}
@@ -146,7 +133,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       variant="permanent"
       ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
     >
-      <MDBox pt={3} pb={1} px={4} textAlign="center">
+      <MDBox pt={1} pb={1} px={5} textAlign="center">
         <MDBox
           display={{ xs: "block", xl: "none" }}
           position="absolute"
@@ -163,10 +150,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
           {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
         </MDBox>
+        <Card>
+          <div>프로필 영역</div>
+        </Card>
       </MDBox>
-      <Divider style={{opacity:1, border:2}}/>
+      <Divider style={{ opacity: 1, border: 2 }} />
       <List>{renderRoutes}</List>
     </SidenavRoot>
+
   );
 }
 
