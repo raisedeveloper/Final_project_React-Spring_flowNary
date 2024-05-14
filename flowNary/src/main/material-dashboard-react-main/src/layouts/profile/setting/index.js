@@ -21,7 +21,7 @@ import { correct, wrong } from "../../../api/alert.jsx";
 import ProfileCard from "./components/ProfileCard";
 import ProfileEdit from "./components/ProfileEdit";
 
-export default function SettingDetail() {
+export default function Settings() {
   const navigate = useNavigate();
 
   // localStorage를 이용해서 user 받아오기
