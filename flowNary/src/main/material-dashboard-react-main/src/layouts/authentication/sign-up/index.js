@@ -184,7 +184,7 @@ export default function Register() {
                     console.log(error)
                 });
                 setTimeout(() => {
-                    navigate('/login');
+                    navigate('/sign-in');
                 }, 1000); // 1000 밀리초 = 1초 딜레이
             })
             .catch(error => {
@@ -239,7 +239,7 @@ export default function Register() {
                     <p style={{ marginBottom: '1px' }}>&nbsp;</p>
                     <hr style={{ border: '1px solid rgba(255, 255, 255, 0.4)' }} />
                     <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>계정이 이미 있으신가요?</p>
-                    <Link to="/login" className={`custom-button ${theme}`}>FlowNary<br />로그인</Link>
+                    <Link to="/authentication/sign-in" className={`custom-button ${theme}`}>FlowNary<br />로그인</Link>
                     <br />
                     <div className="container">
                         <button onClick={toggleTheme} className="fill">테마변경</button>

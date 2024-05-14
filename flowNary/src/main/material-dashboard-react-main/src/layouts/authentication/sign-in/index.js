@@ -175,7 +175,7 @@ export default function Login() {
                 icon: "error",
                 title: "앗! 잠시만요",
                 text: "이메일 혹은 비밀번호가 맞지 않아요.",
-                footer: '<a href="register">혹시 계정이 없으신가요?</a>'
+                footer: '<a href="/authentication/sing-up">혹시 계정이 없으신가요?</a>'
             });
             console.error(error);
         }
@@ -213,7 +213,7 @@ export default function Login() {
                     <br /><br />
                     <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</p>
                     <div>
-                        <Link to="/register" className={`custom-button ${theme}`}>가입하기</Link>
+                        <Link to="/authentication/sign-up" className={`custom-button ${theme}`}>가입하기</Link>
                     </div>
                     <br />
                     <div className="container">

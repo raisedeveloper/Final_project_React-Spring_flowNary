@@ -173,7 +173,6 @@ export default function Home() {
                     </Card>
                   </MDBox>
                 </Grid>
-
                 <Grid item xs={12} md={6} lg={6}>
                   <MDBox mb={3}>
                     <Card sx={{

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -37,6 +37,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
   const location = useLocation();
+  const confirmLocation = location.pathname.split('/')[1];
   const collapseName = location.pathname.replace("/", "");
 
   let textColor = "white";
@@ -48,6 +49,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+
+  console.log(location);
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -159,6 +162,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     </SidenavRoot>
 
   );
+
 }
 
 // Setting default values for the props of Sidenav

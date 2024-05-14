@@ -1,6 +1,6 @@
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
-import Tables from "layouts/tables";
+import Settings from "layouts/profile/setting";
 import Album from "layouts/album";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
@@ -68,6 +68,14 @@ const routes = [
     icon: <Icon fontSize="xx-large">person</Icon>,
     route: "/profile",
     component: <Profile />,
+  },
+  {
+    type: "collapse",
+    name: "설정",
+    key: "setting",
+    icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
+    route: "/profile/setting",
+    component: <Settings />,
   },
   {
     type: "collapse",
