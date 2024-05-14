@@ -1,6 +1,6 @@
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
-import Settings from "layouts/setting";
+import Settings from "layouts/profile/setting";
 import Album from "layouts/album";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
