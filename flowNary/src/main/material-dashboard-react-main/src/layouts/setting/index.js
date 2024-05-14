@@ -1,6 +1,6 @@
 // 기본
 import React, { useEffect, useState } from "react";
-import { Box, Button, Card, TextField, Typography, InputLabel, MenuItem, FormControl, Select, Avatar, Grid } from "@mui/material";
+import { Box, Button, Card, TextField, Typography, InputLabel, Grid, MenuItem, FormControl, Select, Avatar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 // css 연결
@@ -25,6 +25,8 @@ import { correct, wrong } from "../../api/alert.jsx";
 
 // 생일 표현 
 import dayjs from 'dayjs';
+import MDBox from "components/MDBox";
+import { TextAlignment } from "@cloudinary/url-gen/qualifiers";
 
 export default function SettingDetail() {
   const navigate = useNavigate();
@@ -136,66 +138,81 @@ export default function SettingDetail() {
             <Typography variant="h6" sx={{ mt: 2, mb: 2, fontWeight: 'bold', color: 'rgb(92, 22, 153)', margin: '0px 0px 0px 15px', }}>
               개인정보 수정
             </Typography>
-            <Box sx={{ m: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              {/* 프로필 사진, 닉네임, 편집 버튼 */}
-              <SettingPicture profile={profile} nickname={nickname} image={image} onChangePicture={handlePicture} /><br />
 
-              {/* 프로필 편집 폼 */}
-              <TextField fullWidth label="이메일" variant="outlined" value={email} disabled sx={{ mt: 2, width: '100%' }} /><br />
+            {/* 프로필 사진, 닉네임, 편집 버튼 */}
+            <SettingPicture profile={profile} nickname={nickname} image={image} onChangePicture={handlePicture} /><br />
 
-              {/* 소개 영역 */}
-              <TextField fullWidth label="상태 메시지를 수정하세요" variant="outlined" value={statusMessage}
-                onChange={handleStat} sx={{ width: '100%' }} />
-
+            <Grid container spacing={6}>
               {/* 성별 선택 영역 */}
-              <Box sx={{ alignSelf: 'flex-start', mt: 2, mb: 2, width: '100%' }}>
-                <FormControl fullWidth>
-                  <InputLabel>성별</InputLabel>
-                  <Select value={(gender === 0 ? 'man' : (gender === 1 ? 'woman' : 'none')) || 'none'}
-                    label="성별" onChange={handleGender}>
+              <Grid item xs={12} md={6} lg={6}>
+                <MDBox fullWidth id="gender_select" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                  <Select
+                  id="gender_select"
+                    value={(gender === 0 ? 'man' : (gender === 1 ? 'woman' : 'none')) || 'none'}
+                    onChange={handleGender}
+                    sx={{
+                      width: '100%', height:'70%',
+                      textAlign: 'center', border: '0'
+                    }}
+                  >
                     <MenuItem value={"man"}>남자</MenuItem>
                     <MenuItem value={"woman"}>여자</MenuItem>
-                    <MenuItem value={"none"}>설정 안함</MenuItem>
+                    <MenuItem value={"none"}>성별 설정 안함</MenuItem>
                   </Select>
-                </FormControl>
-                <br /><br />
+                </MDBox>
+              </Grid>
 
-                {/* 생일 변경 */}
+              {/* 생일 변경 */}
+              <Grid item xs={12} md={6} lg={6}>
                 <SettingBirth birth={birth} checkingBirth={checkingBirth}
                   onBirthChange={handleBirthChange} changeCheckingBirth={handleCheckingBirth} />
-              </Box>
-
+              </Grid>
+              {/* 프로필 편집 폼 */}
+              <Grid item xs={12} md={6} lg={6}>
+                <TextField fullWidth placeholder="이메일" variant="standard" value={email} disabled sx={{ mt: 2, width: '100%' }} />
+              </Grid>
               {/* 이름 입력 */}
-              <TextField required fullWidth label="이름" variant="standard"
-                value={uname} onChange={handleUname} sx={{ mt: 2, width: '100%' }} />
-
-              {/* 닉네임 입력 */}
-              <SettingNickname nickname={nickname} email={email} checkingNickname={checkingNickname}
-                onNicknameChange={handleNickname} changeCheckingNickname={handleCheckingNickname} />
-
+              <Grid item xs={12} md={6} lg={6}>
+                <TextField required fullWidth placeholder="이름 *" variant="standard"
+                  value={uname} onChange={handleUname} sx={{ mt: 2, width: '100%' }} />
+              </Grid>
+              {/* 소개 영역 */}
+              <Grid item xs={12} md={6} lg={6}>
+                <TextField fullWidth placeholder="상태 메시지" variant="standard" value={statusMessage}
+                  onChange={handleStat} sx={{ mt: 2, width: '100%' }} />
+              </Grid>
               {/* 도메인 입력 */}
-              <TextField fullWidth label="도메인 주소" variant="standard"
-                value={snsDomain} onChange={handleSnsDomain} sx={{mt: 2, width: '100%', }} />
-
+              <Grid item xs={12} md={6} lg={6}>
+                <TextField fullWidth placeholder="도메인 주소" variant="standard"
+                  value={snsDomain} onChange={handleSnsDomain} sx={{ mt: 2, width: '100%', }} />
+              </Grid>
+              {/* 닉네임 입력 */}
+              <Grid item xs={12} md={6} lg={6}>
+                <SettingNickname nickname={nickname} email={email} checkingNickname={checkingNickname}
+                  onNicknameChange={handleNickname} changeCheckingNickname={handleCheckingNickname} />
+              </Grid>
               {/* 전화번호 입력 */}
-              <SettingTel tel={tel} email={email} checkingTel={checkingTel}
-                onTelChange={handleTel} changeCheckingTel={handleCheckingTel} />
-
+              <Grid item xs={12} md={6} lg={6}>
+                <SettingTel tel={tel} email={email} checkingTel={checkingTel}
+                  onTelChange={handleTel} changeCheckingTel={handleCheckingTel} />
+              </Grid>
               {/* 하단 버튼 영역 */}
-              <Grid container sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                <Grid item xs={8} lg={6} sx={{ display: 'flex' }}>
-                  <Button variant="contained" onClick={submitProfile}
-                    style={{ margin: '1em', width: '20%', backgroundColor: 'rgb(54, 11, 92)' }}>
-                    완료
-                  </Button>
+              <Grid item xs={12} md={6} lg={6}>
+                <Grid container sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                  <Grid item xs={8} lg={6} sx={{ display: 'flex' }}>
+                    <Button variant="contained" onClick={submitProfile} style={{ color: 'white' }}
+                      sx={{ m: '1em', width: '20%', p: 0, backgroundColor: 'rgb(54, 11, 92)', '&:hover, &:visited': { backgroundColor: 'rgb(54, 30, 150)' } }}>
+                      완료
+                    </Button>
 
-                  <Button variant="contained" onClick={goBack}
-                    style={{ margin: '1em', width: '20%', backgroundColor: '#bbbbbb' }}>
-                    취소
-                  </Button>
-                </Grid>
+                    <Button variant="contained" onClick={goBack}
+                      style={{ color: 'white' }}
+                      sx={{ m: '1em', width: '20%', p: 0, backgroundColor: '#bbbbbb', '&:hover': { backgroundColor: 'rgb(20, 20, 20)' } }}>
+                      취소
+                    </Button>
+                  </Grid>
 
-                {/* {status === 0 ?
+                  {/* {status === 0 ?
                 <Grid item xs={4} lg={6} >
                   <Button variant="contained" onClick={deactiveAccount}
                     style={{ margin: '1em', width: '15%', backgroundColor: 'red' }}>
@@ -209,11 +226,22 @@ export default function SettingDetail() {
                     활성화
                   </Button>
                 </Grid>} */}
+                </Grid>
               </Grid>
-            </Box>
+
+
+            </Grid>
+
+
+
+
+
+
+
+
           </Card >
         </Box >
-      </DashboardLayout>
+      </DashboardLayout >
     </>
   );
 }

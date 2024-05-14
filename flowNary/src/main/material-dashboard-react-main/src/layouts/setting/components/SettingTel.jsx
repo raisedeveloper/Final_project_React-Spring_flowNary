@@ -14,11 +14,11 @@ import { styled } from '@mui/material/styles';
 
 
 const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip arrow {...props} classes={{ popper: className }} />
+  <Tooltip arrow placement="top" {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     boxShadow: theme.shadows[1],
-    fontSize: 16,
+    fontSize: 13,
   },
 }));
 
@@ -90,11 +90,11 @@ export default function SettingTel(props) {
     <>
       <Grid container style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
         <Grid item xs={8} md={10} lg={10.8}>
-          <LightTooltip title="' - ' 없이 숫자만 입력하세요." placement='bottom' >
+          <LightTooltip title="' - ' 없이 숫자만 입력하세요.">
             <TextField
               fullWidth
               required
-              label="전화번호"
+              placeholder="전화번호 *"
               variant="standard"
               name="tel"
               value={tel || ''}
@@ -104,9 +104,15 @@ export default function SettingTel(props) {
           </LightTooltip>
         </Grid>
         <Grid item xs={4} md={2} lg={1.2}>
-          <Button onClick={checkTel} variant="contained" sx={{ backgroundColor: 'rgb(54, 11, 92)' }} style={{ margin: '20px 0px 0px 5px' }} >확인</Button>
+          <Button onClick={checkTel} variant="contained" style={{ color: 'white' }}
+            sx={{
+              backgroundColor: 'rgb(54, 11, 92)',
+              margin: '20px 0px 0px 5px',
+              padding: 0,
+              '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+            }} > 확인</Button>
         </Grid>
-      </Grid>
+      </Grid >
     </>
   );
 

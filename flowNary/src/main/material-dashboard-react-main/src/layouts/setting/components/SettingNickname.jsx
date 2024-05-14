@@ -13,11 +13,11 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip arrow {...props} classes={{ popper: className }} />
+  <Tooltip arrow placement="top" {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     boxShadow: theme.shadows[1],
-    fontSize: 16,
+    fontSize: 14,
   },
 }));
 
@@ -74,11 +74,11 @@ export default function SettingNickname(props) {
       <Grid container style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
         <Grid item xs={8} md={10} lg={10.8}>
           <LightTooltip
-            title="별명을 입력하세요." arrow placement="bottom" >
+            title="별명을 입력하세요."  >
             <TextField
               required
               fullWidth
-              label="닉네임"
+              placeholder="닉네임 *"
               variant="standard"
               value={nickname || ''}
               onChange={handleNickname}
@@ -87,9 +87,15 @@ export default function SettingNickname(props) {
           </LightTooltip>
         </Grid>
         <Grid item xs={4} md={2} lg={1.2}>
-          <Button onClick={checkNickname} variant="contained" sx={{ backgroundColor: 'rgb(54, 11, 92)', width: '10%' }} style={{ margin: '20px 0px 0px 5px' }} >확인</Button>
+          <Button onClick={checkNickname} variant="contained" style={{ color: 'white' }}
+            sx={{
+              backgroundColor: 'rgb(54, 11, 92)',
+              margin: '20px 0px 0px 5px',
+              padding: 0,
+              '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+            }} > 확인</Button>
         </Grid>
-      </Grid>
+      </Grid >
 
     </>
   );
