@@ -101,7 +101,7 @@ export default function SettingBirth(props) {
         <Grid item xs={8} md={10} lg={10.8}>
           <DemoContainer components={['DatePicker']}>
             <DatePicker sx={{ mt: 2, width: '100%' }} label="생년월일 *" onChange={handleBirth} slots={{ textField: TextField }}
-              value={dayjs(birth) || ''} formatDensity="spacious"  format="YYYY / MM / DD" localeText={'koKR'}/>
+              value={dayjs(birth) || ''} formatDensity="spacious"  format="YYYY / MM / DD" />
           </DemoContainer>
         </Grid>
         <Grid item xs={4} md={2} lg={1.2}>
