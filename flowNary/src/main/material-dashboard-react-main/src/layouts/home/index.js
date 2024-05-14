@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import Grid from "@mui/material/Grid";
 
@@ -48,6 +33,8 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6} lg={6}>
+
+                  {/* 카드1 - 시간x */}
                   <MDBox mb={3}>
                     <Card sx={{
                       height: "100%",
@@ -72,6 +59,7 @@ export default function Home() {
                       />
 
                       <MDBox padding="1rem">
+                        {/* 카드2 - 시간*/}
                         <MDBox
                           variant="gradient"
                           borderRadius="lg"
@@ -79,7 +67,7 @@ export default function Home() {
                           pr={0.5}
                           sx={{
                             position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
+                            height: "14rem",
                             overflow: "hidden", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
                             transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
                             '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
@@ -97,8 +85,6 @@ export default function Home() {
                             style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
                           />
 
-
-
                         </MDBox>
                         <MDBox pt={3} pb={1} px={1}>
                           <MDTypography variant="h6" textTransform="capitalize">
@@ -109,12 +95,6 @@ export default function Home() {
                           </MDTypography>
                           <Divider />
                           <MDBox display="flex" alignItems="center">
-                            {/* <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                        <Icon>schedule</Icon>
-                      </MDTypography>
-                      <MDTypography variant="button" color="text" fontWeight="light">
-                        시간
-                      </MDTypography> */}
                           </MDBox>
                         </MDBox>
                       </MDBox>
@@ -144,7 +124,6 @@ export default function Home() {
                           </IconButton>
                         }
                         title="Shrimp and Chorizo Paella"
-                      // subheader="September 14, 2016"
                       />
 
                       <MDBox padding="1rem">
@@ -159,8 +138,8 @@ export default function Home() {
                             overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
                             transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
                             '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                              transform: 'scale(1.05)', // 이미지를 확대합니다.
+                              transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
                             },
                             '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
                               boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
@@ -709,23 +688,13 @@ export default function Home() {
                   날씨 위젯 부분
                 </MDBox>
                 <MDBox>
-                  <img src="https://picsum.photos/200/300" style={{height: "50%", objectFit: "cover" }} />
+                  <img src="https://picsum.photos/200/300" style={{ height: "50%", objectFit: "cover" }} />
                 </MDBox>
                 <OrdersOverview />
               </MDBox>
             </Stack>
           </Stack>
         </MDBox >
-        {/* <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
-              <Projects />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
-            </Grid>
-          </Grid>
-        </MDBox> */}
       </MDBox >
       <Footer />
     </DashboardLayout >

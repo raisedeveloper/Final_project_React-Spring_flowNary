@@ -59,7 +59,6 @@ function ReportsBarChart({ color, title, description, date, chart }) {
               coloredShadow={color}
               py={2}
               pr={0.5}
-
               height="12.5rem"
             >
               <Bar data={data} options={options} redraw />
