@@ -102,12 +102,9 @@ export default function SettingDetail() {
   const goBack = () => { navigate(-1); }
 
   const userProfile = {
-    name: profile.username,
-    age: 25,
-    location: profile.city || "대한민국",
-    followers: "80K",
-    likes: "803K",
-    photos: "1.4K",
+    name: profile.username || "이름",
+    age: profile.age || 25 + "세",
+    location: profile.city || "대한민국", 
     image: profile.profile, // 사용자 프로필 이미지 URL
   };
 
