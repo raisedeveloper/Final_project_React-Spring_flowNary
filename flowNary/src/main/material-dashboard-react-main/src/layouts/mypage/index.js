@@ -74,7 +74,8 @@ function Notifications() {
             height: '10rem',
             margin: '20px',
             fontSize: '60px',
-            border: '2px solid primary.main' // 외곽선 색과 굵기 지정
+            border: '2px solid primary.main', // 외곽선 색과 굵기 지정
+            cursor: 'pointer',
           }}
         />
         {/* 프사 옆 정보와 팔로우 버튼 만드는 Stack 공간 */}
@@ -97,8 +98,8 @@ function Notifications() {
             </Box>
           </Stack>
           <Stack direction={'row'} spacing={2}>
-            <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '80px' }}>팔로우</Button>
-            <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '130px' }}>메시지 보내기</Button>
+            <Button variant="outlined" color="secondary" className='msg_button' style={{ border: "3px solid #BA99D1"}} sx={{ color: 'dark', width: '100px' }}>팔로우</Button>
+            <Button variant="outlined" color="primary" className='msg_button' style={{ border: "3px solid #BA99D1"}} sx={{ width: '130px' }}>메시지 보내기</Button>
             {/* <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '130px' }} onClick={handlePwd}>비밀번호 변경</Button> */}
           </Stack>
         </Stack>

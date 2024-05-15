@@ -1,6 +1,6 @@
 // @mui material components
 import Grid from "@mui/material/Grid";
-
+import axios from "axios";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 
@@ -15,14 +15,40 @@ import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatist
 // Dashboard components
 import Projects from "layouts/home/components/Projects";
 import OrdersOverview from "layouts/home/components/OrdersOverview";
-import { Avatar, Box, Card, CardHeader, CardMedia, Divider, Icon, IconButton, Stack, Typography, } from "@mui/material";
+import { Avatar, Box, Button, Card, CardHeader, CardMedia, Divider, Icon, IconButton, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
-import { position } from "stylis";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [weather, setWeather] = useState('');
+
+  // 위치 뽑아내기
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      let lat = position.coords.latitude;
+      let lon = position.coords.longitude;
+      getWeatherByCurrentLocation(37.566309, 126.977207);
+    });
+  };
+
+  // API 가져오기
+  const getWeatherByCurrentLocation = async (lat, lon) => {
+    let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}`;
+    let response = await fetch(url);
+    let data = await response.json();
+    setWeather(data);
+  };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  useEffect(() => {
+    console.log(weather); // 상태가 업데이트된 후에 로그를 출력합니다.
+  }, [weather]); // weather 상태가 변경될 때마다 이펙트가 실행됩니다.
 
   return (
     <DashboardLayout>
@@ -384,6 +410,7 @@ export default function Home() {
                             </MDTypography>
                             <MDTypography variant="button" color="text" fontWeight="light">
                               September 14, 2016
+
                             </MDTypography>
                           </MDBox>
                         </MDBox>
@@ -685,7 +712,31 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
                 <MDBox sx={{ backgroundColor: 'silver' }}>
-                  날씨 위젯 부분
+                  {weather && weather.name && weather.main && (
+                    <div className="weather-box">
+                      <div>{weather.name}</div>
+                      <h2>
+                        {(weather.main.temp - 273.15).toFixed(1)}℃ / {((weather.main.temp - 273.15) * 1.8 + 32).toFixed(1)}℉
+                      </h2>
+                      <h3>{weather.weather[0].description}</h3>
+                    </div>)}
+                  <div className="weather-btn">
+                    <Button variant="warning" className="btn">
+                      Current Location
+                    </Button>
+                    <Button variant="warning" className="btn">
+                      Paris
+                    </Button>
+                    <Button variant="warning" className="btn">
+                      New York
+                    </Button>
+                    <Button variant="warning" className="btn">
+                      London
+                    </Button>
+                    <Button variant="warning" className="btn">
+                      Busan
+                    </Button>
+                  </div>
                 </MDBox>
                 <MDBox>
                   <img src="https://picsum.photos/200/300" style={{ height: "50%", objectFit: "cover" }} />

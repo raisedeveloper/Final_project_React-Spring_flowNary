@@ -38,6 +38,7 @@ import {
   setOpenConfigurator,
 } from "context";
 import { Avatar, MenuItem } from "@mui/material";
+import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
 
 // api 컴포넌트
 import { GetWithExpiry } from "api/LocalStorage";
@@ -143,9 +144,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem icon={<Icon>email</Icon>} title="새 메시지 확인" />
-      <NotificationItem icon={<Icon>podcasts</Icon>} title="팟캐스트 세션 관리" />
-      <NotificationItem icon={<Icon>shopping_cart</Icon>} title="결제 성공적으로 완료" />
+      <NotificationItem icon={<Icon>send_outlined</Icon>} title="새로운 메시지가 있습니다" />
+      <NotificationItem icon={<Icon>reply_all</Icon>} title="새로운 댓글이 있습니다" />
+      <NotificationItem icon={<Icon>playlist_add_check</Icon>} title="오늘의 할 일이 있습니다" />
+      <NotificationItem icon={<Icon>event_available</Icon>} title="오늘의 일정이 있습니다" />
+      <NotificationItem icon={<Icon>favorite</Icon>} title="User가 좋아요를 눌렀습니다" />
+      <NotificationItem icon={<Icon>warning</Icon>} title="보안상의 문제가 있습니다" />
+      <NotificationItem icon={<Icon>diversity_1</Icon>} title="새로운 패밀리를 찾아보세요" />
+      <NotificationItem icon={<Icon>history_edu</Icon>} title="패밀리User의 새로운 게시물이 있습니다" />
     </Menu>
   );
 
@@ -172,7 +178,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
     >
       <Toolbar sx={(theme) => navbarContainer(theme)}>
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
-          <Breadcrumbs icon="home" title={route[route.length - 1]} route={route} light={light} />
+          <Breadcrumbs icon="yard" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
         {/* 헤더 박스 및 계정, 설정, 알림 아이콘 모양 */}
         {isMini ? null : (

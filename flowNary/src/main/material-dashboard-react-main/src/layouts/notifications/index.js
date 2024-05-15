@@ -235,8 +235,8 @@ function Notifications() {
             </Box>
           </Stack>
           <Stack direction={'row'} spacing={2}>
-            <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '80px' }}>팔로우</Button>
-            <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '130px' }}>메시지 보내기</Button>
+            <Button variant="outlined"  className='msg_button' style={{ color: '#000000', width: '80px' }}>팔로우</Button>
+            <Button variant="outlined" color="dark" className='msg_button' sx={{ width: '130px' }}>메시지 보내기</Button>
             {/* <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '130px' }} onClick={handlePwd}>비밀번호 변경</Button> */}
           </Stack>
         </Stack>
