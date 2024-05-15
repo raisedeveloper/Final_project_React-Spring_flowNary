@@ -97,21 +97,21 @@ export default function SettingBirth(props) {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-      <Grid container style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-        <Grid item xs={8} md={10} lg={10.8}>
+      <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Grid item xs={8} md={10} lg={9}>
           <DemoContainer components={['DatePicker']}>
             <DatePicker sx={{ mt: 2, width: '100%' }} label="생년월일 *" onChange={handleBirth} slots={{ textField: TextField }}
-              value={dayjs(birth) || ''} formatDensity="spacious"  format="YYYY / MM / DD" />
+              value={dayjs(birth) || ''} formatDensity="spacious" format="YYYY/MM/DD" />
           </DemoContainer>
         </Grid>
-        <Grid item xs={4} md={2} lg={1.2}>
+        <Grid item xs={4} md={2} lg={3}>
           <Button onClick={checkBirth} variant="contained"
-            style={{ color: 'white' }}
+            style={{ color: 'white', mt: 2, }}
             sx={{
               backgroundColor: 'rgb(54, 11, 92)',
               margin: '20px 0px 0px 5px',
               padding: 0,
-              '&:hover': { backgroundColor: 'rgb(54, 30, 150)' } 
+              '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
             }}>확인</Button>
         </Grid>
       </Grid>

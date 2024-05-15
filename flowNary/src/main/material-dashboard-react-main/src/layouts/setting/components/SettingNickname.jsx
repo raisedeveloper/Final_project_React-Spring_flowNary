@@ -71,8 +71,8 @@ export default function SettingNickname(props) {
 
   return (
     <>
-      <Grid container style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-        <Grid item xs={8} md={10} lg={10.8}>
+      <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+        <Grid item xs={8} md={10} lg={9}>
           <LightTooltip
             title="별명을 입력하세요."  >
             <TextField
@@ -86,7 +86,7 @@ export default function SettingNickname(props) {
             />
           </LightTooltip>
         </Grid>
-        <Grid item xs={4} md={2} lg={1.2}>
+        <Grid item xs={4} md={2} lg={3}>
           <Button onClick={checkNickname} variant="contained" style={{ color: 'white' }}
             sx={{
               backgroundColor: 'rgb(54, 11, 92)',
