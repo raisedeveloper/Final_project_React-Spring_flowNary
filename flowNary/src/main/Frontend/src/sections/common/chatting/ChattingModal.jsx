@@ -7,7 +7,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import ClearIcon from '@mui/icons-material/Clear';
 import ForumIcon from '@mui/icons-material/Forum';
 
-
+// Components/css 연결 
 import '../notice.css';
 import Chat from './Chat';
 
@@ -15,7 +15,7 @@ export default function ChattingModal() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  return ( 
+  return (
     <>
       {/* Aside에 표시될 DM부분 표현 */}
       <button onClick={handleOpen} className='asideStyle'>
