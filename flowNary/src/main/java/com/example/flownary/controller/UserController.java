@@ -56,14 +56,14 @@ public class UserController {
 		
 		user = userSvc.getUserEmail(email);
 		
-		// 유저 생성했으므로 1:1로 해당 유저의 Setting에 대한 정보도 생성 후 저장
-		Setting set = new Setting();
-		
-		set.setUid(user.getUid());
-		set.setTheme("default");
-		
-		setSvc.insertSetting(set);
-		
+//		// 유저 생성했으므로 1:1로 해당 유저의 Setting에 대한 정보도 생성 후 저장
+//		Setting set = new Setting();
+//		
+//		set.setUid(user.getUid());
+//		set.setTheme("default");
+//		
+//		setSvc.insertSetting(set);
+//		
 		return null;
 	}
 	
