@@ -1,11 +1,10 @@
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
-import Settings from "layouts/profile/setting";
+import Settings from "layouts/setting";
 import Album from "layouts/album";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
 import Mypage from "layouts/mypage";
-import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 
@@ -52,7 +51,7 @@ const routes = [
     key: "friends",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
     route: "/friends",
-    component: <Profile />,
+    component: <Notifications />,
   },
   {
     type: "collapse",
@@ -68,7 +67,7 @@ const routes = [
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
     route: "/chalendar",
-    component: <Profile />,
+    component: <Notifications />,
   },
   {
     type: "collapse",
@@ -76,7 +75,7 @@ const routes = [
     key: "to-do",
     icon: <Icon fontSize="xx-large">person</Icon>,
     route: "/to-do",
-    component: <Profile />,
+    component: <Notifications />,
   },
   {
     type: "collapse",
