@@ -121,6 +121,15 @@ const routes = [
     component: <SignUp />,
     visible: false,
   },
+  {
+    type: "collapse",
+    name: "Team",
+    key: "team",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/team",
+    component: <SignUp />,
+    visible: true,
+  },
 ];
 
 export default routes;

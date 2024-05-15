@@ -14,7 +14,7 @@ function collapseItem(theme, ownerState) {
     display: "flex",
     alignItems: "center",
     width: "80%",
-    padding: `${pxToRem(10)} ${pxToRem(10)}`,
+    padding: `${pxToRem(5)} ${pxToRem(10)}`,
     margin: `${pxToRem(5)} ${pxToRem(35)}`,
     borderRadius: borderRadius.xxl,
     cursor: "pointer",
@@ -100,7 +100,7 @@ function collapseText(theme, ownerState) {
 
     "& span": {
       fontWeight: 'bolder',
-      fontSize: 'large',
+      fontSize: 'small',
       lineHeight: 0,
     },
 

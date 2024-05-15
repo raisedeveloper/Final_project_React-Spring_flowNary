@@ -22,6 +22,7 @@ import axiosGet from '../../api/axiosGet';
 // ProfileCard, ProfileEdit 컴포넌트 임포트
 // import ProfileCard from "./components/ProfileCard";
 import ProfileEdit from "./components/ProfileEdit";
+import Footer from "examples/Footer";
 
 export default function Settings() {
   // localStorage를 이용해서 user 받아오기
@@ -29,18 +30,19 @@ export default function Settings() {
   const email = GetWithExpiry("email");
 
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <Box sx={{ flexGrow: 1, padding: '20px' }}>
-        <Grid container spacing={1}>
-          <Grid item xs={12} md={11}>
-            <ProfileEdit
-              email={email}
-              uid={uid}
-            />
+      <DashboardLayout>
+        <DashboardNavbar />
+        <Box sx={{ flexGrow: 1, padding: '20px' }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={11}>
+              <ProfileEdit
+                email={email}
+                uid={uid}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
-    </DashboardLayout>
+        </Box>
+      <Footer />
+      </DashboardLayout>
   );
 }

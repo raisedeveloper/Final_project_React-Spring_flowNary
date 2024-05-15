@@ -148,6 +148,7 @@ function ProfileEdit({ uid, email }) {
           <ProfileCard profile={profile} nickname={nickname} statusMessage={statusMessage} image={image} onChangePicture={handlePicture} /><br />
         </CardContent>
       </Card>
+      <br></br>
       <Card>
         <Header style={{ height: '2.05rem' }}>
           <Typography variant="subtitle1" sx={{ opacity: 0.825 }}>상세 정보</Typography>
