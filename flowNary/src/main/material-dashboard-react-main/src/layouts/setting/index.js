@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Card } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Grid } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -25,24 +24,19 @@ import axiosGet from '../../api/axiosGet';
 import ProfileEdit from "./components/ProfileEdit";
 
 export default function Settings() {
-  const navigate = useNavigate();
-
   // localStorage를 이용해서 user 받아오기
   const uid = parseInt(GetWithExpiry("uid"));
   const email = GetWithExpiry("email");
-  const user = useGetUser(uid);
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <Box sx={{ flexGrow: 1, padding: '20px' }}>
-
         <Grid container spacing={1}>
-          {/* 프로필 메인 */}
           <Grid item xs={12} md={11}>
             <ProfileEdit
               email={email}
-              user={user}
+              uid={uid}
             />
           </Grid>
         </Grid>

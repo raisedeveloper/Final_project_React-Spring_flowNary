@@ -1,6 +1,8 @@
 // 기본
 import React, { useEffect, useState } from "react";
-import { Button, TextField, Grid } from "@mui/material";
+import {
+  Button, TextField, Grid
+} from "@mui/material";
 import axios from "axios";
 import PropTypes from 'prop-types';
 
@@ -12,13 +14,12 @@ import Swal from "sweetalert2";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
-
 const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip arrow placement="top" {...props} classes={{ popper: className }} />
+  <Tooltip arrow {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     boxShadow: theme.shadows[1],
-    fontSize: 13,
+    fontSize: 16,
   },
 }));
 
@@ -88,13 +89,13 @@ export default function SettingTel(props) {
 
   return (
     <>
-      <Grid container  spacing={3} style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+      <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid item xs={8} md={10} lg={9}>
-          <LightTooltip title="' - ' 없이 숫자만 입력하세요.">
+          <LightTooltip title="' - ' 없이 숫자만 입력하세요." placement='bottom' >
             <TextField
               fullWidth
               required
-              placeholder="전화번호 *"
+              label="전화번호"
               variant="standard"
               name="tel"
               value={tel || ''}
@@ -104,25 +105,20 @@ export default function SettingTel(props) {
           </LightTooltip>
         </Grid>
         <Grid item xs={4} md={2} lg={3}>
-          <Button onClick={checkTel} variant="contained" style={{ color: 'white' }}
-            sx={{
-              backgroundColor: 'rgb(54, 11, 92)',
-              margin: '20px 0px 0px 5px',
-              padding: 0,
-              '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
-            }} > 확인</Button>
+          <Button onClick={checkTel} variant="contained" sx={{
+            backgroundColor: 'rgb(54, 11, 92)', width: '10%', margin: '20px 0px 0px 5px', padding: 0,
+            '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+          }} style={{ color: 'white' }} >확인</Button>
         </Grid>
-      </Grid >
+      </Grid>
     </>
   );
 
 }
 
-
-
 SettingTel.propTypes = {
-  tel: PropTypes.string.isRequired, // tel props가 문자열 형식이고 필수임을 검사
-  email: PropTypes.string.isRequired, // email props가 문자열 형식이고 필수임을 검사
-  changeCheckingTel: PropTypes.func.isRequired, // changeCheckingTel props가 함수 형식이고 필수임을 검사
-  onTelChange: PropTypes.func.isRequired, // onTelChange props가 함수 형식이고 필수임을 검사
+  tel: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  changeCheckingTel: PropTypes.func.isRequired,
+  onTelChange: PropTypes.func.isRequired,
 };

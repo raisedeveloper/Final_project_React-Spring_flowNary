@@ -13,11 +13,11 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip arrow placement="top" {...props} classes={{ popper: className }} />
+  <Tooltip arrow {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     boxShadow: theme.shadows[1],
-    fontSize: 14,
+    fontSize: 16,
   },
 }));
 
@@ -71,14 +71,14 @@ export default function SettingNickname(props) {
 
   return (
     <>
-      <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+      <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid item xs={8} md={10} lg={9}>
           <LightTooltip
-            title="별명을 입력하세요."  >
+            title="별명을 입력하세요." arrow placement="bottom" >
             <TextField
               required
               fullWidth
-              placeholder="닉네임 *"
+              label="닉네임"
               variant="standard"
               value={nickname || ''}
               onChange={handleNickname}
@@ -87,15 +87,12 @@ export default function SettingNickname(props) {
           </LightTooltip>
         </Grid>
         <Grid item xs={4} md={2} lg={3}>
-          <Button onClick={checkNickname} variant="contained" style={{ color: 'white' }}
-            sx={{
-              backgroundColor: 'rgb(54, 11, 92)',
-              margin: '20px 0px 0px 5px',
-              padding: 0,
-              '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
-            }} > 확인</Button>
+          <Button onClick={checkNickname} variant="contained" sx={{
+            backgroundColor: 'rgb(54, 11, 92)', width: '10%', margin: '20px 0px 0px 5px', padding: 0,
+            '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+          }} style={{ color: 'white' }} >확인</Button>
         </Grid>
-      </Grid >
+      </Grid>
 
     </>
   );
@@ -104,8 +101,8 @@ export default function SettingNickname(props) {
 
 
 SettingNickname.propTypes = {
-  nickname: PropTypes.string.isRequired, // nickname props가 문자열 형식이고 필수임을 검사
-  email: PropTypes.string.isRequired, // email props가 문자열 형식이고 필수임을 검사
-  changeCheckingNickname: PropTypes.func.isRequired, // changeCheckingNickname props가 함수 형식이고 필수임을 검사
-  onNicknameChange: PropTypes.func.isRequired, // onNicknameChange props가 함수 형식이고 필수임을 검사
+  nickname: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  changeCheckingNickname: PropTypes.func.isRequired,
+  onNicknameChange: PropTypes.func.isRequired,
 };
