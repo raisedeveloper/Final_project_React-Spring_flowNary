@@ -55,7 +55,7 @@ const routes = [
     key: "friends",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
     route: "/friends",
-    component: <Profile />,
+    component: <Mypage />,
     visible: true,
   },
   {
@@ -73,7 +73,7 @@ const routes = [
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
     route: "/chalendar",
-    component: <Profile />,
+    component: <Mypage />,
     visible: true,
   },
   {
@@ -82,7 +82,7 @@ const routes = [
     key: "to-do",
     icon: <Icon fontSize="xx-large">person</Icon>,
     route: "/to-do",
-    component: <Profile />,
+    component: <Mypage />,
     visible: true,
   },
   {
