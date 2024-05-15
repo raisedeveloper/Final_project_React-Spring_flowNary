@@ -1,37 +1,41 @@
 import { useEffect } from "react";
 
-// react-router-dom components
+// react-router-dom 컴포넌트
 import { NavLink, useLocation } from "react-router-dom";
 
-// prop-types is a library for typechecking of props.
+// prop-types는 props의 타입체크를 위한 라이브러리입니다.
 import PropTypes from "prop-types";
 
-// @mui material components
+// @mui material 컴포넌트
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
-// Material Dashboard 2 React components
+// Material Dashboard 2 React 컴포넌트
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
 
-// Material Dashboard 2 React example components
+// Material Dashboard 2 React 예제 컴포넌트
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
 
-// Custom styles for the Sidenav
+// Sidenav의 사용자 정의 스타일
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
-import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 
-// Material Dashboard 2 React context
+// Material Dashboard 2 React 컨텍스트
 import {
   useMaterialUIController,
   setMiniSidenav,
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
-import { Card } from "@mui/material";
+
+// api 컴포넌트
+import { GetWithExpiry } from "api/LocalStorage";
+import { getUser } from "api/axiosGet";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -50,32 +54,32 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
-  console.log(location);
-
   useEffect(() => {
-    // A function that sets the mini state of the sidenav.
+    // Sidenav의 미니 상태를 설정하는 함수
     function handleMiniSidenav() {
       setMiniSidenav(dispatch, window.innerWidth < 1200);
       setTransparentSidenav(dispatch, window.innerWidth < 1200 ? false : transparentSidenav);
       setWhiteSidenav(dispatch, window.innerWidth < 1200 ? false : whiteSidenav);
     }
 
-    /** 
-     The event listener that's calling the handleMiniSidenav function when resizing the window.
-    */
+    /* 창 크기 조정 시 handleMiniSidenav 함수를 호출하는 이벤트 리스너 */
     window.addEventListener("resize", handleMiniSidenav);
 
-    // Call the handleMiniSidenav function to set the state with the initial value.
+    // 초기 값으로 상태를 설정하기 위해 handleMiniSidenav 함수 호출
     handleMiniSidenav();
 
-    // Remove event listener on cleanup
+    // 정리 시 이벤트 리스너 제거
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  // Render all the routes from the routes.js (All the visible items on the Sidenav)
+  // 유저 불러오기
+  const uid = parseInt(GetWithExpiry("uid"));
+  const email = GetWithExpiry("email");
+  const uname = GetWithExpiry("uname");
+
+  // routes.js에서 모든 경로를 렌더링 (Sidenav에 보이는 모든 항목)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
     let returnValue;
-    console.log(location.pathname.split('/')[1]);
     if (type === "collapse") {
       returnValue = href ? (
         <Link
@@ -131,51 +135,62 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   });
 
   return (
-    <>
-      {location.pathname.split('/')[1] !== 'authentication' &&
-        <SidenavRoot
-          {...rest}
-          variant="permanent"
-          ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
+    <SidenavRoot
+      {...rest}
+      variant="permanent"
+      ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
+    >
+      <MDBox pt={0.1} pb={0} px={5} textAlign="center">
+        <MDBox
+          display={{ xs: "block", xl: "none" }}
+          position="absolute"
+          top={0}
+          right={0}
+          p={1.625}
+          onClick={closeSidenav}
+          sx={{ cursor: "pointer" }}
         >
-          <MDBox pt={1} pb={1} px={5} textAlign="center">
-            <MDBox
-              display={{ xs: "block", xl: "none" }}
-              position="absolute"
-              top={0}
-              right={0}
-              p={1.625}
-              onClick={closeSidenav}
-              sx={{ cursor: "pointer" }}
-            >
-              <MDTypography variant="h6" color="secondary">
-                <Icon sx={{ fontWeight: "bold" }}>close</Icon>
-              </MDTypography>
-            </MDBox>
-            <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-              {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
-            </MDBox>
-            <Card>
-              <div>프로필 영역</div>
-            </Card>
-          </MDBox>
-          <Divider style={{ opacity: 1, border: 2 }} />
-          <List>{renderRoutes}</List>
-        </SidenavRoot>
-        }
+          <MDTypography variant="h6" color="secondary">
+            <Icon sx={{ fontWeight: "bold" }}>close</Icon>
+          </MDTypography>
+        </MDBox>
 
-    </>
+        <MDBox component={NavLink} to="/" display="flex" alignItems="center">
+          {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
+        </MDBox>
+        <Box
+          sx={{
+            width: '11rem',
+            height: '2rem',
+            background: 'rgba(255, 255, 255, 0.3)',
+            borderRadius: '15px',            
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <Avatar src="/mnt/data/image.png" alt="profile picture" />
+          <Box ml={1.5}>
+            <Typography
+              color={textColor}
+              fontSize={'13.5px'}
+              fontWeight={'bold'}
+            >{email}</Typography>
+          </Box>
+        </Box>
+      </MDBox>
+      <Divider style={{ opacity: 1, border: 2 }} />
+      <List>{renderRoutes}</List>
+    </SidenavRoot>
   );
-
 }
 
-// Setting default values for the props of Sidenav
+// Sidenav의 props 기본값 설정
 Sidenav.defaultProps = {
   color: "info",
   brand: "",
 };
 
-// Typechecking props for the Sidenav
+// Sidenav의 props 타입체크
 Sidenav.propTypes = {
   color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
   brand: PropTypes.string,

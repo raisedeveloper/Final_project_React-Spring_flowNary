@@ -167,7 +167,7 @@ export default function Login() {
                     SetWithExpiry("profile", res.data.profile, 180);
                 }).catch(error => console.log(error));
 
-                navigate('/');
+                navigate('/home');
             }
         } catch (error) {
             // Firebase 오류 처리를 좀 더 일반적인 메시지로 통합
@@ -207,7 +207,7 @@ export default function Login() {
                         color: theme === 'light' ? '#dca3e7' : '#ffffff'
                     }}>또는</p>
                     <Link to="#" onClick={loginWithGoogle} className={`custom-button ${theme}`}>
-                        <img style={{ paddingRight: '5px', margin: '-5px', width: '1.55em' }} src="/img/icon/Google.png" alt="Google" />
+                        <img style={{ paddingRight: '5px', margin: '-5px', width: '1.55em' }} src="/images/icons/Google.png" alt="Google" />
                         <span>       로그인</span>
                     </Link>
                     <br /><br />
@@ -215,11 +215,7 @@ export default function Login() {
                     <div>
                         <Link to="/authentication/sign-up" className={`custom-button ${theme}`}>가입하기</Link>
                     </div>
-                    <br />
-                    <div className="container">
-                        <hr />
-                        <button onClick={toggleTheme} className="fill">테마변경</button>
-                    </div>
+                    <br />            
                 </div>
             </Card>
         </div>

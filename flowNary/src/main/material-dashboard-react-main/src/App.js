@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
@@ -48,6 +33,9 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 import brandDark from "assets/images/LightLogo.png";
 import brandWhite from "assets/images/DarkLogo.png";
 
+import Login from "layouts/authentication/sign-in";
+import Register from "layouts/authentication/sign-up";
+
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
@@ -62,6 +50,10 @@ export default function App() {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+
+  // 로그인 및 회원가입 사이드바
+  const isLoginPage = pathname === "/authentication/sign-in";
+  const isRegisterPage = pathname === "/authentication/sign-up";
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -106,6 +98,9 @@ export default function App() {
       return null;
     });
 
+    // 항목 숨기기 혹은 보이기
+    const visibleRoutes = routes.filter(route => route.visible);
+
   const configsButton = (
     <MDBox
       display="flex"
@@ -123,10 +118,10 @@ export default function App() {
       color="dark"
       sx={{ cursor: "pointer" }}
       onClick={handleConfiguratorOpen}
-      
+
     >
       <Icon fontSize="small" color="inherit">
-      filter_vintage
+        filter_vintage
       </Icon>
     </MDBox>
   );
@@ -134,13 +129,14 @@ export default function App() {
   return (
     <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
       <CssBaseline />
-      {layout === "dashboard" && (
+      {/* 로그인 이랑 가입페이지는 사이드바 가리기 */}
+      {!isLoginPage && !isRegisterPage && layout === "dashboard" && (
         <>
           <Sidenav
             color={'blue'}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
             brandName="flownary"
-            routes={routes}
+            routes={visibleRoutes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
@@ -149,8 +145,12 @@ export default function App() {
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
-        {getRoutes(routes)}
+        <Route path="/authentication/sign-in" element={<Login />} />
+        <Route path="/authentication/sign-up" element={<Register />} />
+        {getRoutes(routes)}        
         <Route path="*" element={<Navigate to="/home" />} />
+        <Route path="/authentication/sign-in" element={<Navigate to="/authentication/sign-in" />} />
+        <Route path="/authentication/sign-up" element={<Navigate to="/authentication/sign-up" />} />
       </Routes>
     </ThemeProvider>
   );
