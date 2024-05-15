@@ -1,8 +1,10 @@
 package com.example.flownary.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -65,31 +67,6 @@ public class UserController {
 		return null;
 	}
 	
-	// 회원정보 수정
-//	@PostMapping("/update")
-//	public int userUpdate(@RequestParam(value="", required =false) String uname
-//			, @RequestParam(value="", required =false) String nickname
-//			, @RequestParam(value="", required =false) String profile
-//			, @RequestParam(value="", required =false) String statusMessage
-//			, @RequestParam(value="", required =false) String snsDomain
-//			, @RequestParam("uid") int uid
-//			, @RequestParam(value="", required =false) String birth
-//			, @RequestParam(value="", required =false) String tel)
-//	{
-//		System.out.println(uid);
-//		User user = new User();
-//		user.setUid(uid);
-//		user.setUname(uname);
-//		user.setNickname(nickname);
-//		user.setProfile(profile);
-//		user.setStatusMessage(statusMessage);
-//		user.setSnsDomain(snsDomain);
-//		user.setTel(tel);
-//		
-//		userSvc.updateUser(user);
-//		
-//		return 0;
-//	}
 	
 	// 회원정보 수정 (개선판)
 	@PostMapping(value = "/update")
@@ -103,6 +80,8 @@ public class UserController {
 		user.setProfile(dto.getProfile());
 		user.setStatusMessage(dto.getStatusMessage());
 		user.setSnsDomain(dto.getSnsDomain());
+		user.setGender(dto.getGender());
+		user.setBirth(dto.getBirth());
 		user.setTel(dto.getTel());
 		
 		userSvc.updateUser(user);
@@ -193,5 +172,41 @@ public class UserController {
 		JSONObject userOut = new JSONObject(hMap);
 		
 		return userOut;
+	}
+	
+	@GetMapping("/nickname")
+	public String nickname(@RequestParam String email, String nickname) {
+		List<User> userList = userSvc.getOthersUserList(email);
+		JSONObject jObj = new JSONObject();
+		JSONArray jArr = new JSONArray();
+
+		for (int i = 0; i < userList.size(); i++) {
+			JSONObject jObject = new JSONObject();
+			User user = userList.get(i);
+
+			jObject.put("nickname", user.getNickname());
+			jArr.add(jObject);
+		}
+		jObj.put("item", jArr);
+		System.out.println(jArr.toString());
+		return jArr.toString();
+	}
+
+	@GetMapping("/tel")
+	public String tel(@RequestParam String email, String tel) {
+		List<User> userList = userSvc.getOthersUserList(email);
+		JSONObject jObj = new JSONObject();
+		JSONArray jArr = new JSONArray();
+
+		for (int i = 0; i < userList.size(); i++) {
+			JSONObject jObject = new JSONObject();
+			User user = userList.get(i);
+
+			jObject.put("tel", user.getTel());
+			jArr.add(jObject);
+		}
+		jObj.put("item", jArr);
+		System.out.println(jArr.toString());
+		return jArr.toString();
 	}
 }

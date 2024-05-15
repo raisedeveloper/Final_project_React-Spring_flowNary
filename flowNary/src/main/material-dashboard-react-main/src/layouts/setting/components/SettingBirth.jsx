@@ -31,7 +31,7 @@ export default function SettingBirth(props) {
   }, [props.birth]);
 
   const handleBirth = (e) => {
-    setBirth(dayjs(e));
+    setBirth(dayjs(e).format('YYYY-MM-DD'));
     props.onBirthChange(e);
     props.changeCheckingBirth(0);
   };

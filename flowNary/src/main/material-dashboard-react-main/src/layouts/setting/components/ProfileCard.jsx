@@ -21,6 +21,9 @@ function ProfileCard(props) {
     document.getElementById('hidden-input').click();
   };
 
+  const handlePicture = (e) => { setImage(e); } // 미리보기
+  const handleProfileChange = (e) => { setProfile(e); };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -58,8 +61,8 @@ function ProfileCard(props) {
           hidden
           id="hidden-input"
         />
-        <span>닉네임: {props.profile.nickname}</span><br />
-        <span>상태메시지: {props.profile.statusMessage}</span>
+        <span>닉네임: {nickname}</span><br />
+        <span>상태메시지: {statusMessage}</span>
         <Typography variant="h6"
           sx={{
             flexGrow: 1, fontWeight: 'bold',
