@@ -233,17 +233,15 @@ export default function Register() {
                         color: theme === 'light' ? '#dca3e7' : '#ffffff'
                     }}>혹은</p>
                     <Link to="#" onClick={RegisterWithGoogle} className={`custom-button ${theme}`}>
-                        <img style={{ paddingRight: '10px', margin: '-6px', width: '35px' }} src="/img/icon/Google.png" alt="Google" />
+                        <img style={{ paddingRight: '10px', margin: '-6px', width: '35px' }} src="/images/icons/Google.png" alt="Google" />
                         <span>로그인</span>
                     </Link>
                     <p style={{ marginBottom: '1px' }}>&nbsp;</p>
                     <hr style={{ border: '1px solid rgba(255, 255, 255, 0.4)' }} />
+                    <br />                    
                     <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>계정이 이미 있으신가요?</p>
                     <Link to="/authentication/sign-in" className={`custom-button ${theme}`}>FlowNary<br />로그인</Link>
-                    <br />
-                    <div className="container">
-                        <button onClick={toggleTheme} className="fill">테마변경</button>
-                    </div>
+                    <br />                    
                 </div>
             </Card>
         </div>

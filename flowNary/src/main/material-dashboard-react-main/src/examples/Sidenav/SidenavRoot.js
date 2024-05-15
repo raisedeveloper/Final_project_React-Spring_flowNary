@@ -11,7 +11,7 @@ export default styled(Drawer)(({ theme, ownerState }) => {
   const { palette, boxShadows, transitions, breakpoints, functions } = theme;
   const { transparentSidenav, whiteSidenav, miniSidenav, darkMode } = ownerState;
 
-  const sidebarWidth = 250;  
+  const sidebarWidth = 265;  
   const backgroundImage = '/images/flowBlur.jpg' ; // 이미지 URL
 
   const { transparent, gradients, white, background } = palette;
@@ -37,10 +37,10 @@ export default styled(Drawer)(({ theme, ownerState }) => {
       easing: transitions.easing.sharp,
       duration: transitions.duration.shorter,
     }),
-    borderRadius: "0px",        
+    borderRadius: "15px",        
     height:'100%',
     paddingTop:'0',
-    marginTop:'-2px',
+    marginTop:'-1.99px',
     marginLeft:'0',
     backgroundImage: `url(${backgroundImage})`, // 이미지 URL    
     backgroundSize: 'cover',

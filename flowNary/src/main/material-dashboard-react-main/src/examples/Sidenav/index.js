@@ -33,6 +33,10 @@ import {
   setWhiteSidenav,
 } from "context";
 
+// api 컴포넌트
+import { GetWithExpiry } from "api/LocalStorage";
+import { getUser } from "api/axiosGet";
+
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
@@ -58,9 +62,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       setWhiteSidenav(dispatch, window.innerWidth < 1200 ? false : whiteSidenav);
     }
 
-    /** 
-     창 크기 조정 시 handleMiniSidenav 함수를 호출하는 이벤트 리스너
-    */
+    /* 창 크기 조정 시 handleMiniSidenav 함수를 호출하는 이벤트 리스너 */
     window.addEventListener("resize", handleMiniSidenav);
 
     // 초기 값으로 상태를 설정하기 위해 handleMiniSidenav 함수 호출
@@ -69,6 +71,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     // 정리 시 이벤트 리스너 제거
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
+
+  // 유저 불러오기
+  const uid = parseInt(GetWithExpiry("uid"));
+  const email = GetWithExpiry("email");
+  const uname = GetWithExpiry("uname");
 
   // routes.js에서 모든 경로를 렌더링 (Sidenav에 보이는 모든 항목)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
@@ -133,7 +140,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       variant="permanent"
       ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
     >
-      <MDBox pt={1} pb={1} px={5} textAlign="center">
+      <MDBox pt={0.1} pb={0} px={5} textAlign="center">
         <MDBox
           display={{ xs: "block", xl: "none" }}
           position="absolute"
@@ -153,18 +160,22 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         </MDBox>
         <Box
           sx={{
-            width: '11.5rem',
+            width: '11rem',
+            height: '2rem',
             background: 'rgba(255, 255, 255, 0.3)',
-            borderRadius: '15px',
-            p: 1,
+            borderRadius: '15px',            
             display: 'flex',
             alignItems: 'center'
           }}
         >
           <Avatar src="/mnt/data/image.png" alt="profile picture" />
-          <Box ml={1}>
-            <Typography variant="h6" color={textColor}>user.name</Typography>
-          </Box>        
+          <Box ml={1.5}>
+            <Typography
+              color={textColor}
+              fontSize={'13.5px'}
+              fontWeight={'bold'}
+            >{email}</Typography>
+          </Box>
         </Box>
       </MDBox>
       <Divider style={{ opacity: 1, border: 2 }} />

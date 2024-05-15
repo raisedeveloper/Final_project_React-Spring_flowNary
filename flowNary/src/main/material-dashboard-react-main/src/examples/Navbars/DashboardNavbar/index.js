@@ -6,18 +6,18 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 // prop-types는 props의 타입체크를 위한 라이브러리입니다.
 import PropTypes from "prop-types";
 
-// @material-ui core 컴포넌트들
+// @material-ui core 컴포넌트
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
 
-// Material Dashboard 2 React 컴포넌트들
+// Material Dashboard 2 React 컴포넌트
 import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
 
-// Material Dashboard 2 React 예제 컴포넌트들
+// Material Dashboard 2 React 예제 컴포넌트
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
 
@@ -39,6 +39,10 @@ import {
 } from "context";
 import { Avatar, MenuItem } from "@mui/material";
 
+// api 컴포넌트
+import { GetWithExpiry } from "api/LocalStorage";
+import { getUser } from "api/axiosGet";
+
 // 헤더 부분
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -47,9 +51,16 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
   const navigate = useNavigate();
-
   const [profileMenu, setProfileMenu] = useState(null); // 프로필 메뉴 상태 추가
   const goSetting = () => navigate('/profile/settings');
+  const goMypage = () => navigate('/mypage')
+
+  // 유저 불러오기
+  const uid = parseInt(GetWithExpiry("uid"));
+  const email = GetWithExpiry("email");
+  const nickname = GetWithExpiry("nickname");
+  const uname = GetWithExpiry("uname");
+
 
   useEffect(() => {
     // 네비바 타입 설정
@@ -102,17 +113,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
         >
           <Avatar src="/클라우드 연결" alt="profile picture" /> {/* 프로필 사진 경로 */}
           <MDBox ml={1.75}>
-            <div>user.name</div>
-            <div>user.email</div>
+            <div>{uname}</div>
+            <div>{email}</div>
           </MDBox>
         </MDBox>
       </MenuItem>
-      <MenuItem onClick={() => navigate("/profile")}>
-        <Icon sx={{marginRight:'.5rem'}}>account_circle</Icon>
+      <MenuItem onClick={goMypage}>
+        <Icon sx={{ marginRight: '.5rem' }}>account_circle</Icon>
         프로필
       </MenuItem>
       <MenuItem onClick={goSetting}>
-        <Icon sx={{marginRight:'.5rem'}}>settings</Icon>
+        <Icon sx={{ marginRight: '.5rem' }}>settings</Icon>
         설정
       </MenuItem>
     </Menu>
@@ -151,6 +162,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
     },
   });
 
+
+
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -187,7 +200,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <Icon sx={iconsStyle} fontSize="medium">
                   {miniSidenav ? "menu_open" : "menu"}
                 </Icon>
-              </IconButton>           
+              </IconButton>
               <IconButton
                 size="small"
                 disableRipple
