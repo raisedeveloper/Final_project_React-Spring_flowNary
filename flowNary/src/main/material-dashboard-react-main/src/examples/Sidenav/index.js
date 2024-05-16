@@ -162,8 +162,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </MDTypography>
         </MDBox>
 
-        <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="5rem" />}
+        <MDBox component={NavLink} to="/" sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
+          {brand && <MDBox component="img" src={brand} alt="Brand" width="8rem" />}
         </MDBox>
         <Box
           sx={{
