@@ -165,8 +165,8 @@ export default function Login() {
                     }
                 }).then(res => {
                     SetWithExpiry("uid", res.data.id, 180);
-                    SetWithExpiry("email", data.user.email, 180);
-                    SetWithExpiry("profile", response.data.profile, 180);
+                    SetWithExpiry("email", res.data.email, 180);
+                    SetWithExpiry("profile", res.data.profile, 180);
                     SetWithExpiry("nickname", res.data.nickname, 180);
                     SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 }).catch(error => console.log(error));

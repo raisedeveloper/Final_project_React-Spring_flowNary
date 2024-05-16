@@ -16,6 +16,7 @@ import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import Logout from "layouts/authentication/logout";
 
 // aside 항목이름
 const routes = [
@@ -133,10 +134,11 @@ const routes = [
     name: "로그아웃",
     key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
+    route: "/logout",  // 로그아웃 경로
+    component: <Logout />,  // Logout 컴포넌트를 사용
     visible: true,
   },
+
   {
     type: "collapse",
     name: "회원가입",
