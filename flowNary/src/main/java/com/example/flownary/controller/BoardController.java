@@ -44,6 +44,7 @@ public class BoardController {
 	public JSONObject getBoard(@RequestParam int bid,
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		Board board = bSvc.getBoard(bid);
+		System.out.println(board);
 		int liked = lSvc.getLikeUidCount(uid, 1, bid);
 		User user = uSvc.getUser(board.getUid());
 		

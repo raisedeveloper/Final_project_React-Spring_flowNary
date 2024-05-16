@@ -30,7 +30,7 @@ public interface BoardDao {
 	
 	@Select("select * from board"
 			+ " where isDeleted=0 and ${field} like #{query}"
-			+ " order by modTime desc"
+			+ " order by modTime"
 			+ " limit #{count}")
 	List<Board> getBoardList(String field, String query, int count);
 	
