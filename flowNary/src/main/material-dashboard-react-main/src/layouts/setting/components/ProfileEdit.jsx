@@ -63,7 +63,7 @@ function ProfileEdit({ uid, email }) {
   // const [status, setStatus] = useState('0');
 
   useEffect(() => {
-    if (!uname && user.id) {
+    if (!uname && !statusMessage && !snsDomain && !tel && !nickname && user.id) {
       setUname(user.uname);
       setNickname(user.nickname);
       setStat(user.statusMessage);
