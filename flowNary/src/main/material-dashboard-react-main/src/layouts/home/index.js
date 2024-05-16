@@ -11,12 +11,14 @@ import Footer from "examples/Footer";
 
 // Dashboard components
 import TodoList from "layouts/home/components/todoList";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Stack, Typography, } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
 import { useEffect, useState } from "react";
+import BoardDetail from "./Board/BoardDetail";
+import Write from './write';
 
 export default function Home() {
   const weatherDescKo = {
@@ -144,6 +146,16 @@ export default function Home() {
     console.log(weather); // 상태가 업데이트된 후에 로그를 출력합니다.
   }, [weather]); // weather 상태가 변경될 때마다 이펙트가 실행됩니다.
 
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -151,6 +163,7 @@ export default function Home() {
         <MDBox mt={3}>
           <Stack direction="row" spacing={0}>
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
+              <Write />
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6} lg={6}>
 
@@ -175,11 +188,10 @@ export default function Home() {
                             <MoreVertIcon />
                           </IconButton>
                         }
-                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>Shrimp and Chorizo Paella</Typography>}
+                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>카드1</Typography>}
                       />
 
                       <MDBox padding="1rem">
-                        {/* 카드2 - 시간*/}
                         <MDBox
                           variant="gradient"
                           borderRadius="lg"
@@ -199,12 +211,13 @@ export default function Home() {
                             }
                           }}
                         >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-
+                          <button onClick={handleOpen}>
+                            <img
+                              src="https://picsum.photos/200/300"
+                              alt="Paella dish"
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
+                            />
+                          </button>
                         </MDBox>
                         <MDBox pt={3} pb={1} px={1}>
                           <MDTypography variant="h6" textTransform="capitalize">
@@ -224,6 +237,7 @@ export default function Home() {
                   </MDBox>
                 </Grid>
                 <Grid item xs={12} md={6} lg={6}>
+                  {/* 카드 2 */}
                   <MDBox mb={3}>
                     <Card sx={{
                       height: "100%",
@@ -243,7 +257,7 @@ export default function Home() {
                             <MoreVertIcon />
                           </IconButton>
                         }
-                        title="Shrimp and Chorizo Paella"
+                        title="카드2 레이아웃은 이걸로"
                       />
 
                       <MDBox padding="1rem">
@@ -295,6 +309,7 @@ export default function Home() {
                 </Grid>
                 <Grid item xs={12} md={6} lg={6}>
                   <MDBox mb={3}>
+                    {/* 카드3 */}
                     <Card sx={{
                       height: "100%",
                       transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
@@ -313,7 +328,7 @@ export default function Home() {
                             <MoreVertIcon />
                           </IconButton>
                         }
-                        title="Shrimp and Chorizo Paella"
+                        title="카드3"
                       // subheader="September 14, 2016"
                       />
 
@@ -365,6 +380,7 @@ export default function Home() {
                   </MDBox>
                 </Grid>
                 <Grid item xs={12} md={6} lg={6}>
+                  {/* 카드4 폰트사이즈는 이걸로 */}
                   <MDBox mb={3}>
                     <Card sx={{
                       height: "100%",
@@ -385,7 +401,7 @@ export default function Home() {
                             <MoreVertIcon />
                           </IconButton>
                         }
-                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>Shrimp and Chorizo Paella</Typography>}
+                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>카드4 폰트사이즈는 이걸로</Typography>}
                       />
 
                       <MDBox padding="1rem">
@@ -828,6 +844,9 @@ export default function Home() {
         </MDBox >
       </MDBox >
       <Footer />
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <BoardDetail bid={1} uid={1} />
+      </Modal>
     </DashboardLayout >
   );
 }

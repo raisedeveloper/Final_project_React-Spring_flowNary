@@ -9,6 +9,8 @@ import MDTypography from "components/MDTypography";
 // Material Dashboard 2 React example components
 import TimelineItem from "examples/Timeline/TimelineItem";
 import { useState } from "react";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 export default function TodoList() {
   const [items, setItems] = useState([
@@ -37,38 +39,40 @@ export default function TodoList() {
   const removeItem = id => {
     setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
-
   return (
-    <Card sx={{ height: "55%" }}>
-      <MDBox pt={3} px={3}>
-        <MDTypography variant="h6" fontWeight="medium">
-          최대 7개 - 해야할 일!
-        </MDTypography>
-      </MDBox>
-      <MDBox pt={3} px={3}>
-        <FormGroup>
-          {items.map(item => (
-            <div key={item.id} style={{ display: 'flex', justifyContent:'space-between' }}>
-              <FormControlLabel
-                control={<Checkbox />}
-                label={item.text}
-                onChange={() => console.log('Checkbox clicked:', item.text)}
-              />
-              <Button  color="primary" onClick={() => removeItem(item.id)}>삭제</Button>
-            </div>
-          ))}
-        </FormGroup>
+    <DashboardLayout>
+      <DashboardNavbar />
+      <Card sx={{ height: "90%", boxShadow:"none", backgroundColor:'beige' }}>
+        <MDBox pt={3} px={3}>
+          <MDTypography variant="h6" fontWeight="medium">
+            최대 7개 - 해야할 일!
+          </MDTypography>
+        </MDBox>
+        <MDBox pt={3} px={3}>
+          <FormGroup>
+            {items.map(item => (
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label={item.text}
+                  onChange={() => console.log('Checkbox clicked:', item.text)}
+                />
+                <Button color="primary" onClick={() => removeItem(item.id)}>삭제</Button>
+              </div>
+            ))}
+          </FormGroup>
+          <br />
+          <TextField
+            placeholder="새로운 할 일 추가"
+            value={newItemText}
+            onChange={e => setNewItemText(e.target.value)}
+          />
+          <Button onClick={addItem}>추가</Button>
+
+        </MDBox>
         <br />
-        <TextField
-          placeholder="새로운 할 일 추가"
-          value={newItemText}
-          onChange={e => setNewItemText(e.target.value)}
-        />
-        <Button onClick={addItem}>추가</Button>
-      </MDBox>
-    </Card>
+      </Card>
+
+    </DashboardLayout>
   );
 }
-
-
-

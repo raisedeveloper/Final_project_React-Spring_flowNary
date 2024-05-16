@@ -51,7 +51,7 @@ function collapseIconBox(theme, ownerState) {
   return {
     minWidth: pxToRem(32),
     minHeight: pxToRem(32),
-    color: active ? '#EE81C0' : '#2f154f',
+    color: active ? '#f250ae' : '#2f154f',
     borderRadius: borderRadius.md,
     display: "grid",
     placeItems: "center",
@@ -66,9 +66,9 @@ function collapseIconBox(theme, ownerState) {
 
     "&:hover": {
       backgroundColor: rgba(dark.main, 0.1), // 아이콘 박스 배경색 변경
-      color: '#EE81C0', // 아이콘 색상 변경
+      color: '#f250ae', // 아이콘 색상 변경
       "& svg, svg g": {
-        color: '#EE81C0', // SVG 아이콘 색상 변경
+        color: '#f250ae', // SVG 아이콘 색상 변경
       },
     },
   };
@@ -95,7 +95,7 @@ function collapseText(theme, ownerState) {
         easing: transitions.easing.easeInOut,
         duration: transitions.duration.standard,
       }),
-      color: active ? '#EE81C0' : '#2f154f',
+      color: active ? '#f250ae' : '#2f154f',
     },
 
     "& span": {
@@ -105,7 +105,8 @@ function collapseText(theme, ownerState) {
     },
 
     "&:hover": {
-      color: '#EE81C0', // 글자 색상 변경
+      color: '#f250ae', // 글자 색상 변경
+      
     },
   };
 }

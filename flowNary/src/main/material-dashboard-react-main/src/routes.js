@@ -1,13 +1,18 @@
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
-import Settings from "layouts/setting";
 import Album from "layouts/album";
 import Chatting from "layouts/chatting";
-import Notifications from "layouts/notifications";
 import Mypage from "layouts/mypage";
+import Family from "layouts/family";
+import Notifications from "layouts/notifications";
+import Chalendar from "layouts/schedule";
+import TodoList from "layouts/todoList";
+import Write from "layouts/write";
+import Settings from "layouts/setting";
+import Team from "layouts/team";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
-import Chalendar from "layouts/schedule";
+
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -53,10 +58,10 @@ const routes = [
   {
     type: "collapse",
     name: "f_패밀리",
-    key: "friends",
+    key: "family",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
-    route: "/friends",
-    component: <Mypage />,
+    route: "/family",
+    component: <Family />,
     visible: true,
   },
   {
@@ -83,16 +88,16 @@ const routes = [
     key: "to-do",
     icon: <Icon fontSize="xx-large">checklist</Icon>,
     route: "/to-do",
-    component: <Mypage />,
+    component: <TodoList />,
     visible: true,
   },
   {
     type: "collapse",
     name: "글쓰기",
-    key: "profile/settings",
+    key: "write",
     icon: <Icon fontSize="xx-large">history_edu</Icon>,
-    route: "/profile/settings",
-    component: <Settings />,
+    route: "/write",
+    component: <Write />,
     visible: true,
   },
   {
@@ -110,7 +115,7 @@ const routes = [
     key: "team",
     icon: <Icon fontSize="xx-large">diversity_3</Icon>,
     route: "/team",
-    component: <SignUp />,
+    component: <Team />,
     visible: true,
   },
   {

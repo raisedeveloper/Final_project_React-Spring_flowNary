@@ -5,12 +5,12 @@ import { MenuItem, FormControl, InputLabel, Select } from '@mui/material';
 function YearSelect({ selectedYear, onChange }) {
   // 년도 목록 생성 (예: 2000년부터 현재 년도까지)
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 1999 }, (_, index) => 2000 + index);
+  const years = Array.from({ length: currentYear - 2019 }, (_, index) => 2020 + index).reverse();
 
   return (
     <FormControl>
       <InputLabel id="year-select-label">Year</InputLabel>
-     
+
       <Select
         labelId="year-select-label"
         id="year-select"
@@ -19,7 +19,7 @@ function YearSelect({ selectedYear, onChange }) {
       >
         {years.map(year => (
           <MenuItem key={year} value={year}>
-            {year}
+            {year > 2020 ? { year } : "2020 이전"}
           </MenuItem>
         ))}
       </Select>
