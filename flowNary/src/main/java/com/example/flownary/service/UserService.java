@@ -1,5 +1,7 @@
 package com.example.flownary.service;
 
+import java.util.List;
+
 import com.example.flownary.entity.User;
 
 public interface UserService {
@@ -12,6 +14,8 @@ public interface UserService {
 	User getUserEmail(String email);
 	
 	void insertUser(User user);
+	
+	List<User> getOthersUserList(String email);
 	
 	void updateUser(User user);
 	

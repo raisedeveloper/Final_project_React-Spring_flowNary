@@ -133,7 +133,7 @@ export default function SettingDetail() {
           </Typography>
           <Box sx={{ m: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {/* 프로필 사진, 닉네임, 편집 버튼 */}
-            <SettingPicture profile={profile} nickname={nickname} image={image} onChangePicture={handlePicture} /><br />
+            <SettingPicture profile={profile} nickname={nickname} statusMessage={statusMessage} image={image} onChangePicture={handlePicture} /><br />
 
             {/* 프로필 편집 폼 */}
             <TextField fullWidth label="이메일" variant="outlined" value={email} disabled sx={{ mt: 2, width: '100%' }} /><br />

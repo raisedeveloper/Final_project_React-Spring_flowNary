@@ -1,16 +1,18 @@
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
-import Tables from "layouts/tables";
+import Settings from "layouts/setting";
 import Album from "layouts/album";
-import Billing from "layouts/billing";
+import Chatting from "layouts/chatting";
 import Notifications from "layouts/notifications";
-import Profile from "layouts/profile";
+import Mypage from "layouts/mypage";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Chalendar from "layouts/schedule";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
 
+// aside 항목이름
 const routes = [
   {
     type: "collapse",
@@ -19,6 +21,7 @@ const routes = [
     icon: <Icon fontSize="xx-large">roofing</Icon>,
     route: "/home",
     component: <Home />,
+    visible: true,
   },
   {
     type: "collapse",
@@ -27,46 +30,88 @@ const routes = [
     icon: <Icon fontSize="xx-large">collections</Icon>,
     route: "/album",
     component: <Album />,
+    visible: true,
   },
   {
     type: "collapse",
     name: "채팅",
     key: "chatting",
-    icon: <Icon fontSize="xx-large">receipt_long</Icon>,
+    icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
-    component: <Billing />,
+    component: <Chatting />,
+    visible: true,
   },
   {
     type: "collapse",
     name: "마이페이지",
     key: "mypage",
+    icon: <Icon variant="outlined" fontSize="xx-large">contact_page</Icon>,
+    route: "/mypage",
+    component: <Mypage />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "f_패밀리",
+    key: "friends",
+    icon: <Icon fontSize="xx-large">diversity_1</Icon>,
+    route: "/friends",
+    component: <Mypage />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "알림",
+    key: "notifications",
     icon: <Icon fontSize="xx-large">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
+    visible: true,
   },
   {
     type: "collapse",
-    name: "친구",
-    key: "friends",
-    icon: <Icon fontSize="xx-large">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
-  },
-  {
-    type: "collapse",
-    name: "달력",
+    name: "특별한 날",
     key: "chalendar",
-    icon: <Icon fontSize="xx-large">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
+    icon: <Icon fontSize="xx-large">calendar_month</Icon>,
+    route: "/chalendar",
+    component: <Chalendar />,
+    visible: true,
   },
   {
     type: "collapse",
     name: "할 일",
     key: "to-do",
-    icon: <Icon fontSize="xx-large">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
+    icon: <Icon fontSize="xx-large">checklist</Icon>,
+    route: "/to-do",
+    component: <Mypage />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "글쓰기",
+    key: "profile/settings",
+    icon: <Icon fontSize="xx-large">history_edu</Icon>,
+    route: "/profile/settings",
+    component: <Settings />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "설정",
+    key: "profile/settings",
+    icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
+    route: "/profile/settings",
+    component: <Settings />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "Team",
+    key: "team",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/team",
+    component: <SignUp />,
+    visible: true,
   },
   {
     type: "collapse",
@@ -75,6 +120,17 @@ const routes = [
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
+    visible: true,
+  },
+
+  {
+    type: "collapse",
+    name: "로그아웃",
+    key: "sign-out",
+    icon: <Icon fontSize="xx-large">logout</Icon>,
+    route: "/authentication/sign-in",
+    component: <SignIn />,
+    visible: true,
   },
   {
     type: "collapse",
@@ -83,7 +139,9 @@ const routes = [
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
+    visible: false,
   },
+
 ];
 
 export default routes;

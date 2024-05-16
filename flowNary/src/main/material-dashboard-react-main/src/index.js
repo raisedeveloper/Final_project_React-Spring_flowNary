@@ -18,16 +18,22 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "App";
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // Material Dashboard 2 React Context Provider
 import { MaterialUIControllerProvider } from "context";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
 
+const queryClient = new QueryClient();
+
 root.render(
-  <BrowserRouter>
-    <MaterialUIControllerProvider>
-      <App />
-    </MaterialUIControllerProvider>
-  </BrowserRouter>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <MaterialUIControllerProvider>
+        <App />
+      </MaterialUIControllerProvider>
+    </BrowserRouter>
+  </QueryClientProvider>
 );
+

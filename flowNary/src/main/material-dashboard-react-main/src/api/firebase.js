@@ -34,3 +34,68 @@ export function logout() {
 //     callback(user);
 //   });
 // }
+
+/*========================= scheduler =========================*/
+
+export async function getAnnivList(adate, email) {
+  return get(ref(database, 'anniversary'))
+    .then(snapshot => {
+      if (snapshot.exists()) {
+        const objects = snapshot.val();
+        let records = Object.values(objects);
+        records = records.filter(record => record.adate === adate &&
+          (record.email === 'admin@human.com' || record.email === email)
+        );
+        return records;
+      }
+      return null;
+    });
+}
+
+export async function insertAnniv(anniv) {
+  const id = uuid();
+  const { email, aname, adate, isHoliday } = anniv;
+  return set(ref(database, `anniversary/${id}`), {
+    id, email, aname, adate, isHoliday
+  });
+}
+
+export async function updateAnniv(anniv) {
+  const { id } = anniv;
+  return set(ref(database, `anniversary/${id}`), anniv);
+}
+
+export async function deleteAnniv(id) {
+  return remove(ref(database, `anniversary/${id}`));
+}
+
+export async function getSchedList(sdate, email) {
+  return get(ref(database, 'schedule'))
+    .then(snapshot => {
+      if (snapshot.exists()) {
+        const objects = snapshot.val();
+        let records = Object.values(objects);
+        records = records
+          .filter(record => record.sdate === sdate && record.email === email)
+          .sort((a, b) => a.startTime.localeCompare(b.startTime));
+        return records;
+      }
+      return null;
+    });
+}
+
+export async function insertSched(sched) {
+  const id = uuid();
+  return set(ref(database, `schedule/${id}`), {
+    id, ...sched
+  });
+}
+
+export async function updateSched(sched) {
+  const { id } = sched;
+  return set(ref(database, `schedule/${id}`), sched);
+}
+
+export async function deleteSched(id) {
+  return remove(ref(database, `schedule/${id}`));
+}

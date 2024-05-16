@@ -4,7 +4,7 @@ import { GetWithExpiry } from "./LocalStorage";
 
 // uid로 user 정보 받아오기
 export function useGetUser(uid) {
-    const [user, setUser] = useState({ 
+    const [user, setUser] = useState({
         id: uid,
         email: '',
         profile: '',
@@ -24,7 +24,7 @@ export function useGetUser(uid) {
     useEffect(() => {
         if (uid) {
             axios.get('http://localhost:8090/user/getUser', {
-                params: { 
+                params: {
                     uid: uid
                 }
             }).then(res => {
