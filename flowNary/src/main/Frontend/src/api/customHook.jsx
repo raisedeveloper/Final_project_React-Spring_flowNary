@@ -59,7 +59,7 @@ export function useGetUserNicknameLS() {
         }
     }, [uid])
 
-    return nickname;
+    return nickname; 
 }
 
 // 보드 리스트 받기
