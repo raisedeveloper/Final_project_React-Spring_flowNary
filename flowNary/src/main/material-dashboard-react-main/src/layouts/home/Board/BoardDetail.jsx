@@ -18,7 +18,7 @@ import './board.css'
 const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonLike}, ref) => {
   const board = useQuery({
     queryKey: ['board', bid, uid],
-    queryFn: () => getBoard(1, 1),
+    queryFn: () => getBoard(bid, uid),
   });
   console.log(board.data);
   if (board.isLoading) {
