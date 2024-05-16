@@ -2,11 +2,12 @@
 import Home from "layouts/home";
 import Settings from "layouts/setting";
 import Album from "layouts/album";
-import Billing from "layouts/billing";
+import Chatting from "layouts/chatting";
 import Notifications from "layouts/notifications";
 import Mypage from "layouts/mypage";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Chalendar from "layouts/schedule";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -37,7 +38,7 @@ const routes = [
     key: "chatting",
     icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
-    component: <Billing />,
+    component: <Chatting />,
     visible: true,
   },
   {
@@ -73,14 +74,14 @@ const routes = [
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
     route: "/chalendar",
-    component: <Mypage />,
+    component: <Chalendar />,
     visible: true,
   },
   {
     type: "collapse",
     name: "할 일",
     key: "to-do",
-    icon: <Icon fontSize="xx-large">person</Icon>,
+    icon: <Icon fontSize="xx-large">checklist</Icon>,
     route: "/to-do",
     component: <Mypage />,
     visible: true,
@@ -96,6 +97,15 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Team",
+    key: "team",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/team",
+    component: <SignUp />,
+    visible: true,
+  },
+  {
+    type: "collapse",
     name: "로그인",
     key: "sign-in",
     icon: <Icon fontSize="xx-large">login</Icon>,
@@ -103,6 +113,7 @@ const routes = [
     component: <SignIn />,
     visible: true,
   },
+
   {
     type: "collapse",
     name: "로그아웃",
@@ -121,15 +132,7 @@ const routes = [
     component: <SignUp />,
     visible: false,
   },
-  {
-    type: "bottom",
-    name: "Team",
-    key: "team",
-    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
-    route: "/team",
-    component: <SignUp />,
-    visible: true,
-  },
+
 ];
 
 export default routes;
