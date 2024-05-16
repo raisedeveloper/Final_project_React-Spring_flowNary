@@ -42,6 +42,8 @@
     "stylis": "4.1.4",
     "stylis-plugin-rtl": "^2.1.1",
     "sweetalert2": "^11.11.0",
+    "timeago-react": "^3.0.6",
+    "timeago.js": "^4.0.2",
     "yup": "1.1.1"
   },
   "proxy": "http://localhost:8090",

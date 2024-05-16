@@ -4,6 +4,9 @@ import axios from "axios";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 
+import TimeAgo from 'timeago-react';
+
+
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -105,8 +108,7 @@ export default function Home() {
     961: '강한 폭풍',
     962: '허리케인'
   };
-
-
+  
   const [weather, setWeather] = useState('');
 
   // 위치 뽑아내기
@@ -212,6 +214,8 @@ export default function Home() {
     addLikeForm(sendData);
   }
 
+
+
   if (dataList.isLoading) {
     return (<div>로딩 중...</div>)
   }
@@ -294,7 +298,8 @@ export default function Home() {
                                 <Icon>schedule</Icon>
                               </MDTypography>
                               <MDTypography variant="button" color="text" fontWeight="light">
-                                {data.modTime}
+                                
+                              <TimeAgo datetime={data.modTime} trim />
                               </MDTypography>
                             </MDBox>
                           </MDBox>

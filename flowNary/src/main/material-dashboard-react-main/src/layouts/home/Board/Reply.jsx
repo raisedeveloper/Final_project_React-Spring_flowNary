@@ -9,6 +9,7 @@ import {
 import { red } from '@mui/material/colors';
 import { Stack } from '@mui/system';
 import PropTypes from 'prop-types';
+import TimeAgo from 'timeago-react';
 
 
 // 이모티콘
@@ -125,7 +126,7 @@ export default function Reply(props) {
                   {/* <Button sx={{ color: 'grey', display: 'flex', alignItems: 'center' }}><FavoriteBorderIcon /></Button> */}
                 </ListItem>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >방금 전ㆍ</span>
+                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} > <TimeAgo datetime={board.data.modTime}/>ㆍ</span>
                   <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
                   <Button sx={{ color: 'grey', padding: 0 }}>답글 달기</Button>
                 </div>
@@ -165,7 +166,7 @@ export default function Reply(props) {
                     {/* <Button sx={{ color: 'grey', display: 'flex', alignItems: 'center' }}><FavoriteBorderIcon /></Button> */}
                   </ListItem>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >방금 전ㆍ</span>
+                    <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' trim />ㆍ</span>
                     <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
                     <Button sx={{ color: 'grey', padding: 0 }}>답글 달기</Button>
                   </div>
