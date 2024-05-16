@@ -27,4 +27,9 @@ public class Like_ {
 				+ time + ", stat=" + stat + "]";
 	}
 	
+	public Like_(int uid, int fuid, int oid) {
+		this.uid = uid;
+		this.fuid = fuid;
+		this.oid = oid;
+	}
 }

@@ -8,9 +8,11 @@ public interface ChatService {
 
 	Chat getChat(int cid);
 	
-	List<Chat> getChatList(int uid);
+	Chat getChatUid(int uid1, int uid2);
 	
-	List<Chat> getChatListImportant(int uid);
+	List<Chat> getChatList(int uid, int count);
+	
+	List<Chat> getChatListImportant(int uid, int count);
 	
 	void insertChat(Chat chat);
 	

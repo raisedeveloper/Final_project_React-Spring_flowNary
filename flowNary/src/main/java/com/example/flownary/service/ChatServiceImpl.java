@@ -19,15 +19,20 @@ public class ChatServiceImpl implements ChatService {
 	public Chat getChat(int cid) {
 		return cDao.getChat(cid);
 	}
-
+	
 	@Override
-	public List<Chat> getChatList(int uid) {
-		return cDao.getChatList(uid);
+	public Chat getChatUid(int uid1, int uid2) {
+		return cDao.getChatUid(uid1, uid2);
 	}
 
 	@Override
-	public List<Chat> getChatListImportant(int uid) {
-		return cDao.getChatListImportant(uid);
+	public List<Chat> getChatList(int uid, int count) {
+		return cDao.getChatList(uid, count);
+	}
+
+	@Override
+	public List<Chat> getChatListImportant(int uid, int count) {
+		return cDao.getChatListImportant(uid, count);
 	}
 
 	@Override
@@ -44,5 +49,4 @@ public class ChatServiceImpl implements ChatService {
 	public void deleteChat(int cid) {
 		cDao.deleteChat(cid);
 	}
-
 }

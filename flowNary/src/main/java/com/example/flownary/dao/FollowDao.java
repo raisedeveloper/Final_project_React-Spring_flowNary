@@ -21,6 +21,9 @@ public interface FollowDao {
 	@Select("select * from follow where fuid=#{fuid}")
 	List<Follow> getFollowListByFuid(int fuid);
 	
+	@Select("select uid from follow where fuid=#{fuid}")
+	List<Integer> getFollowIntegerListByFuid(int fuid);
+	
 	@Insert("insert into follow values(default, #{uid}, #{fuid}, default)")
 	void insertFollow(Follow follow);
 	
