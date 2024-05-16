@@ -12,6 +12,7 @@ import Settings from "layouts/setting";
 import Team from "layouts/team";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Logout from "layouts/authentication/logout";
 
 
 // @mui icons
@@ -133,8 +134,8 @@ const routes = [
     name: "로그아웃",
     key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
+    route: "/logout",  // 로그아웃 경로
+    component: <Logout />,  // Logout 컴포넌트를 사용
     visible: true,
   },
   {
