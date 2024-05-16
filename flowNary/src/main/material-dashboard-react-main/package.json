@@ -13,6 +13,7 @@
     "url": "git+https://github.com/creativetimofficial/material-dashboard-react.git"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.13.0",
     "@cloudinary/url-gen": "^1.19.0",
     "@emotion/cache": "11.10.8",
     "@emotion/react": "11.10.8",
@@ -26,6 +27,7 @@
     "axios": "^1.6.8",
     "chart.js": "4.3.0",
     "chroma-js": "2.4.2",
+    "cloudinary": "^2.2.0",
     "dayjs": "^1.11.11",
     "firebase": "^10.11.1",
     "prop-types": "15.8.1",
@@ -35,6 +37,7 @@
     "react-github-btn": "1.4.0",
     "react-input-emoji": "^5.9.0",
     "react-material-ui-carousel": "^3.4.2",
+    "react-query": "^3.39.3",
     "react-router-dom": "6.11.0",
     "react-scripts": "5.0.1",
     "react-table": "7.8.0",
@@ -44,6 +47,7 @@
     "sweetalert2": "^11.11.0",
     "yup": "1.1.1"
   },
+  "proxy": "http://localhost:8090",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

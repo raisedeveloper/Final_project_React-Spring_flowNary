@@ -44,6 +44,7 @@ public class BoardController {
 	public JSONObject getBoard(@RequestParam int bid,
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		Board board = bSvc.getBoard(bid);
+		System.out.println(board);
 		int liked = lSvc.getLikeUidCount(uid, 1, bid);
 		User user = uSvc.getUser(board.getUid());
 		
@@ -65,7 +66,6 @@ public class BoardController {
 		hMap.put("liked", (liked == 1) ? true : false);
 		hMap.put("profile", (user != null) ? user.getProfile() : null);
 		JSONObject jBoard = new JSONObject(hMap);
-		
 		return jBoard;
 	}
 	

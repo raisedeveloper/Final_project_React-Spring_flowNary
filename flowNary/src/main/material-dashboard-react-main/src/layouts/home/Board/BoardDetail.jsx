@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 import PropTypes from 'prop-types';
 
 // 아이콘
@@ -7,7 +7,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import Reply from "./Reply";
-import { getBoard } from "../../../api/axiosGet";
+import { getBoard } from "api/axiosGet";
 import { useQuery } from "@tanstack/react-query";
 import Carousel from "react-material-ui-carousel";
 import { red } from '@mui/material/colors';
@@ -16,9 +16,10 @@ import './board.css'
 
 
 export default function BoardDetail(props) {
+const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonLike}, ref) => {
   const board = useQuery({
-    queryKey: ['board', props.bid, props.uid],
-    queryFn: () => getBoard(props.bid, props.uid),
+    queryKey: ['board', bid, uid],
+    queryFn: () => getBoard(1, 1),
   });
 
   if (board.isLoading) {
@@ -71,5 +72,8 @@ export default function BoardDetail(props) {
 BoardDetail.propTypes = {
   bid: PropTypes.number.isRequired,
   uid: PropTypes.number.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  nickname: PropTypes.string.isRequired,
+  handleButtonLike: PropTypes.func.isRequired,
 };
 

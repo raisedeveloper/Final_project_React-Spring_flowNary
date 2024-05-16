@@ -46,6 +46,9 @@ import Footer from "examples/Footer";
 import "./mypage.css";
 import { GetWithExpiry } from "api/LocalStorage";
 
+import PostingModal from "../home/Board/PostingModal"
+
+
 function Notifications() {
   const nickname = GetWithExpiry('nickname');
   const profile = GetWithExpiry('profile');

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { GetWithExpiry } from "./LocalStorage";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertBoard, insertReReply, insertReply, like, userUpdate } from "./axiosPost";
+import { insertBoard, insertReReply, insertReply, like, like2, userUpdate } from "./axiosPost";
 
 /** 미사용 함수
  * @param {*} uid 
@@ -76,7 +76,7 @@ export const useAddLike = () => {
     const queryClient = useQueryClient();
 
     const { mutate } = useMutation({
-        mutationFn: like,
+        mutationFn: like2,
         onSuccess: () => {
             queryClient.invalidateQueries('board'); // 갱신하고자 하는 queryKey를 넣어야 함
         },

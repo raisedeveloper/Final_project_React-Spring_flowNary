@@ -89,21 +89,21 @@ export const getUserEmail = async (email: string) => {
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
  * @returns 
  */
-export const getBoard = async (bid: Number, uid = -1) => {
-    
-    const result = await axios.get('http://localhost:8090/board/getBoard', {
+export const getBoard = async (bid, uid) => {
+    try {
+      const response = await axios.get('http://localhost:8090/board/getBoard', {
         params: {
-            bid: bid,
-            uid: uid,
+          bid: bid,
+          uid: uid,
         }
-    }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getBoard error!');
-        console.log(error);
-    });
-
-    return result;
-}
+      });
+      return response.data;
+    } catch (error) {
+      console.log('axiosget.js: getBoard error!');
+      console.error(error);
+      throw error; // 오류를 다시 throw하여 상위에서 처리할 수 있도록 합니다.
+    }
+  };
 
 /** shareUrl을 통해 글 조회
  * @param {*} url 글 공유 Url (10자리의 무작위 숫자+영대소문자로 구성됨)

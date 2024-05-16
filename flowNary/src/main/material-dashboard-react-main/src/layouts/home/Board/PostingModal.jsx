@@ -181,15 +181,18 @@ export default function Posting() {
 
 
                             {/* 이미지 미리보기 */}
-                            {previewUrls.map((url, index) => (
-                                <Grid item key={index} xs={4} sm={2}>
-
-                                    <img src={url} alt={`Preview ${index}`} style={{ width: '15.5vh', height: '15vh', objectFit: 'cover' }} />
-                                    <Button style={{ justifyContent: 'center' }}
-                                        onClick={() => handleRemoveImage(index)}>제거</Button>
-
-                                </Grid>
-                            ))}
+                            <Grid container spacing={2}>
+                                {previewUrls.map((url, index) => (
+                                    <Grid item key={index}  xs={12} sm={4} lg={5}>
+                                        <Card>
+                                            <img src={url} alt={`Preview ${index}`} style={{ width: '15.5vh', height: '15vh', objectFit: 'fill' }} />
+                                            <Button style={{ justifyContent: 'center' }} onClick={() => handleRemoveImage(index)}>
+                                                제거
+                                            </Button>
+                                        </Card>
+                                    </Grid>
+                                ))}
+                            </Grid>
 
                         </Stack>
 

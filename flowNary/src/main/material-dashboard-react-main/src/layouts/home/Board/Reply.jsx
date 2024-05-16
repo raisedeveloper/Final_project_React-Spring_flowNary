@@ -36,10 +36,11 @@ import MDBox from 'components/MDBox/index.js';
 import './board.css';
 
 export default function Reply(props) {
-  // const bid = props.bid;
-  // const nickname = props.nickname;
+  const bid = props.bid;
+  const nickname = props.nickname;
   const [text, setText] = useState('');
-  // const uid = props.uid;
+  const uid = props.uid;
+  const handleButtonLike = props.handleButtonLike;
   const [expandedContents, setExpandedContents] = useState({});
 
   const replyList = useQuery({
@@ -170,7 +171,7 @@ export default function Reply(props) {
               </Stack>
             </Stack>
             <MDBox>
-              <Button sx={{ padding: 0, width: 0 }}>
+              <Button sx={{ padding: 0, width: 0 }} onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
                 <FavoriteIcon />
               </Button>
               <Button sx={{ padding: 0, width: 0 }}>
@@ -211,4 +212,5 @@ Reply.propTypes = {
   bid: PropTypes.number.isRequired,
   nickname: PropTypes.string.isRequired,
   uid: PropTypes.number.isRequired,
+  handleButtonLike: PropTypes.func.isRequired,
 };
