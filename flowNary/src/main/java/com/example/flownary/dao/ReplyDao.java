@@ -41,5 +41,5 @@ public interface ReplyDao {
 	void updateReplyLikeCount(int rid, int likeCount);
 	
 	@Update("update reply set isDeleted=-1 where rid=#{rid}")
-	void deleteReply(Reply reply);
+	void deleteReply(int rid);
 }

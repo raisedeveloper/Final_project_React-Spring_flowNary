@@ -62,6 +62,30 @@ public class BoardServiceImpl implements BoardService{
 	}
 	
 	@Override
+	public int getBoardListCount(String field, String query) {
+		query = "%" + query + "%";
+		return boardDao.getBoardListCount(field, query);
+	}
+	
+	@Override
+	public int getBoardListCountSearch(List<String> field, String query) {
+		query = "%" + query + "%";
+		
+		if (field.size() == 1)
+		{
+			return boardDao.getBoardListCount(field.get(0), query);
+		}
+		else if (field.size() == 2)
+		{
+			return boardDao.getBoardListCount2(field.get(0), field.get(1), query);
+		}
+		else
+		{
+			return boardDao.getBoardListCount3(field.get(0), field.get(1), field.get(2), query);			
+		}
+	}
+	
+	@Override
 	public void insertBoard(Board board) {
 		boardDao.insertBoard(board);
 	}

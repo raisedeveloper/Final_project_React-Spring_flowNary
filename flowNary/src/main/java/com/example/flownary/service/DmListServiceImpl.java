@@ -21,13 +21,13 @@ public class DmListServiceImpl implements DmListService {
 	}
 
 	@Override
-	public List<DmList> getDmListList(int cid) {
-		return dDao.getDmListList(cid);
+	public List<DmList> getDmListList(int cid, int count) {
+		return dDao.getDmListList(cid, count);
 	}
 
 	@Override
-	public List<DmList> getDmListListByUid(int uid) {
-		return dDao.getDmListListByUid(uid);
+	public List<DmList> getDmListListByUid(int uid, int count) {
+		return dDao.getDmListListByUid(uid, count);
 	}
 
 	@Override

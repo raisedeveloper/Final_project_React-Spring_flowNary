@@ -13,11 +13,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Chat {
+public class ChatUser {
 
 	int cid;
-	int uid1;
-	int uid2;
+	int uid;
 	int status;
-	LocalDateTime regTime;
+	LocalDateTime statusTime;
 }

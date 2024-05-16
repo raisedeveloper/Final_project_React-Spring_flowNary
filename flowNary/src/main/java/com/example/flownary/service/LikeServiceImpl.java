@@ -26,6 +26,11 @@ public class LikeServiceImpl implements LikeService {
 	}
 	
 	@Override
+	public int getLikeUserCount(int fuid, int type) {
+		return lDao.getLikeUserCount(fuid, type);
+	}
+	
+	@Override
 	public Like_ getLikeUid(int uid, int type, int oid) {
 		return lDao.getLikeUid(uid, type, oid);
 	}

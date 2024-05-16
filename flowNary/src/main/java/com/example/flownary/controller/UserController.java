@@ -1,10 +1,8 @@
 package com.example.flownary.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Pattern;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -17,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.flownary.dto.User.RegisterUserDto;
+import com.example.flownary.dto.User.UpdateUserDtoPwd;
 import com.example.flownary.entity.Setting;
 import com.example.flownary.entity.User;
 import com.example.flownary.service.SettingService;
@@ -33,40 +33,39 @@ public class UserController {
 	@Autowired private SettingService setSvc;
 	
 	// 회원가입
-	@GetMapping("/register")
-	public JSONObject userRegister(@RequestParam String hashuid, @RequestParam int provider,
-			@RequestParam String email, @RequestParam String pwd) {
+	@PostMapping("/register")
+	public int userRegister(@RequestBody RegisterUserDto dto) {
 		// 암호화 비밀번호 생성
 		String hashedPwd = "";
+		String hashuid = "";
 		
-		if (!pwd.equals("nn"))
-			hashedPwd = BCrypt.hashpw(pwd, BCrypt.gensalt());
+		if (!dto.getPwd().equals("nn"))
+			hashedPwd = BCrypt.hashpw(dto.getPwd(), BCrypt.gensalt());
 		
-		if (hashuid.equals("nonGoogle"))
+		if (!dto.getHashuid().equals("nonGoogle"))
 		{
-			hashuid = "";
+			hashuid = dto.getHashuid();
 		}
 		
 		User user = new User();
 		user.setHashUid(hashuid);
-		user.setEmail(email);
+		user.setEmail(dto.getEmail());
 		user.setPwd(hashedPwd);
-		user.setProvider(provider);
+		user.setProvider(dto.getProvider());
 		userSvc.insertUser(user);
 		
-		user = userSvc.getUserEmail(email);
+		user = userSvc.getUserEmail(dto.getEmail());
 		
-//		// 유저 생성했으므로 1:1로 해당 유저의 Setting에 대한 정보도 생성 후 저장
-//		Setting set = new Setting();
-//		
-//		set.setUid(user.getUid());
-//		set.setTheme("default");
-//		
-//		setSvc.insertSetting(set);
-//		
-		return null;
+		// 유저 생성했으므로 1:1로 해당 유저의 Setting에 대한 정보도 생성 후 저장
+		Setting set = new Setting();
+		
+		set.setUid(user.getUid());
+		set.setTheme("default");
+		
+		setSvc.insertSetting(set);
+		
+		return 0;
 	}
-	
 	
 	// 회원정보 수정 (개선판)
 	@PostMapping(value = "/update")
@@ -80,18 +79,18 @@ public class UserController {
 		user.setProfile(dto.getProfile());
 		user.setStatusMessage(dto.getStatusMessage());
 		user.setSnsDomain(dto.getSnsDomain());
-		user.setGender(dto.getGender());
-		user.setBirth(dto.getBirth());
 		user.setTel(dto.getTel());
 		
 		userSvc.updateUser(user);
 		return 0;
 	}
 	
-	@GetMapping("/updatepwd")
-	public int userUpdate(@RequestParam int uid, @RequestParam String pwd1, @RequestParam String pwd2)
+	@PostMapping("/updatepwd")
+	public int userUpdate(@RequestBody UpdateUserDtoPwd dto)
 	{
 		String pattern = "^(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{6,16}$";
+		String pwd1 = dto.getPwd1();
+		String pwd2 = dto.getPwd2();
 		
 		// 비밀번호 불일치
 		if (!pwd1.equals(pwd2))
@@ -114,7 +113,7 @@ public class UserController {
 		String hashedPwd = BCrypt.hashpw(pwd1, BCrypt.gensalt());
 		User user = new User();
 		user.setPwd(hashedPwd);
-		user.setUid(uid);
+		user.setUid(dto.getUid());
 		
 		userSvc.updateUserPwd(user);
 		
@@ -126,6 +125,9 @@ public class UserController {
 	public JSONObject getUser(@RequestParam int uid)
 	{
 		User user = userSvc.getUser(uid);
+		
+		if (user == null)
+			return null;
 		
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		hMap.put("id", uid);
@@ -153,6 +155,9 @@ public class UserController {
 	{
 		User user = userSvc.getUserEmail(email);
 		
+		if (user == null)
+			return null;
+		
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		hMap.put("id", user.getUid());
 		hMap.put("email", user.getEmail());
@@ -172,41 +177,5 @@ public class UserController {
 		JSONObject userOut = new JSONObject(hMap);
 		
 		return userOut;
-	}
-	
-	@GetMapping("/nickname")
-	public String nickname(@RequestParam String email, String nickname) {
-		List<User> userList = userSvc.getOthersUserList(email);
-		JSONObject jObj = new JSONObject();
-		JSONArray jArr = new JSONArray();
-
-		for (int i = 0; i < userList.size(); i++) {
-			JSONObject jObject = new JSONObject();
-			User user = userList.get(i);
-
-			jObject.put("nickname", user.getNickname());
-			jArr.add(jObject);
-		}
-		jObj.put("item", jArr);
-		System.out.println(jArr.toString());
-		return jArr.toString();
-	}
-
-	@GetMapping("/tel")
-	public String tel(@RequestParam String email, String tel) {
-		List<User> userList = userSvc.getOthersUserList(email);
-		JSONObject jObj = new JSONObject();
-		JSONArray jArr = new JSONArray();
-
-		for (int i = 0; i < userList.size(); i++) {
-			JSONObject jObject = new JSONObject();
-			User user = userList.get(i);
-
-			jObject.put("tel", user.getTel());
-			jArr.add(jObject);
-		}
-		jObj.put("item", jArr);
-		System.out.println(jArr.toString());
-		return jArr.toString();
 	}
 }

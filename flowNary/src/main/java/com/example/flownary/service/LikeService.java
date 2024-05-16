@@ -11,6 +11,8 @@ public interface LikeService {
 	
 	int getLikeUidCount(int uid, int type, int oid);
 	
+	int getLikeUserCount(int fuid, int type);
+	
 	Like_ getLikeUid(int uid, int type, int oid);
 
 	List<Like_> getLikeList(int type, int oid);
