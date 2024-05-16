@@ -24,7 +24,6 @@ import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import TimelineItem from "examples/Timeline/TimelineItem";
-import Transaction from "layouts/billing/components/Transaction";
 import YearSelect from '../yearSelect';
 import { useState } from "react";
 
