@@ -1,131 +1,224 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
+// 기본
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Card } from "@mui/material";
+import { SetWithExpiry } from "../../../api/LocalStorage";
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+// firebase 연결
+import { login } from "../../../api/firebase";
+import { GoogleAuthProvider, getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
-Coded by www.creative-tim.com
+// css/componets 연결
+import '../theme.css'; // CSS 임포트
 
- =========================================================
+// alert 창
+import Swal from "sweetalert2";
+import axios from "axios";
 
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
+export default function Login() {
+    const [theme, setTheme] = useState('light'); // 초기 테마를 'light'로 설정
 
-import { useState } from "react";
+    // 테마를 토글하는 함수
+    const toggleTheme = () => {
+        setTheme(theme === 'light' ? 'dark' : 'light');
+    };
 
-// react-router-dom components
-import { Link } from "react-router-dom";
+    const auth = getAuth();
 
-// @mui material components
-import Card from "@mui/material/Card";
-import Switch from "@mui/material/Switch";
-import Grid from "@mui/material/Grid";
-import MuiLink from "@mui/material/Link";
+    // 테마에 따른 배경 이미지 경로 변경
+    const backgroundImage = theme === 'light' ? '/images/flowLight.png' : '/images/flowNight.png';
+    const logoImage = theme === 'light' ? '/images/LightLogo.png' : '/images/DarkLogo.png';
+    const HelloLogo = theme === 'light' ? '/images/HelloLight.png' : '/images/HelloBlack.png';
 
-// @mui icons
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import GoogleIcon from "@mui/icons-material/Google";
+    const [userInfo, setUserInfo] = useState({ email: '', password: '' });
+    const navigate = useNavigate();
+    const handleChange = e => {
+        setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+    }
 
-// Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import MDButton from "components/MDButton";
+    // 구글로 로그인
+    const loginWithGoogle = async () => {
+        try {
+            const auth = getAuth();
+            const provider = new GoogleAuthProvider();
+            const data = await signInWithPopup(auth, provider);
 
-// Authentication layout components
-import BasicLayout from "layouts/authentication/components/BasicLayout";
+            // 이메일로 사용자 조회
+            const response = await axios.get('http://localhost:8090/user/getUserByEmail', {
+                params: {
+                    email: data.user.email
+                }
+            });
 
-// Images
-import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+            // 사용자가 존재하지 않으면 회원가입 진행
+            if (Object.keys(response.data).length === 0) {
+                await axios.get("http://localhost:8090/user/register", {
+                    params: {
+                        email: data.user.email,
+                        pwd: 'nn',
+                        hashuid: data.user.uid,
+                        provider: 1,
+                    }
+                });
+                // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
+                SetWithExpiry("email", data.user.email, 180);
+                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", res.data.nickname, 180);
+                Swal.fire({
+                    icon: 'success',
+                    title: "구글 회원가입에 성공했습니다.",
+                    showClass: {
+                        popup: `
+                                    animate__animated
+                                    animate__fadeInUp
+                                    animate__faster
+                                `
+                    },
+                    hideClass: {
+                        popup: `
+                                    animate__animated
+                                    animate__fadeOutDown
+                                    animate__faster
+                                `
+                    }
+                });
+                console.log("구글 회원가입 성공!" + response.data);
+            } else {
+                SetWithExpiry("email", data.user.email, 180);
+                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", res.data.nickname, 180);
+                Swal.fire({
+                    icon: 'success',
+                    title: "구글 로그인에 성공했습니다.",
+                    showClass: {
+                        popup: `
+                                    animate__animated
+                                    animate__fadeInUp
+                                    animate__faster
+                                `
+                    },
+                    hideClass: {
+                        popup: `
+                                    animate__animated
+                                    animate__fadeOutDown
+                                    animate__faster
+                                `
+                    }
+                });
+                console.log("구글 로그인 성공!" + response.data);
+            }
+            navigate('/');
+        } catch (error) {
+            console.error("구글 로그인 오류:", error);
+        }
+    };
 
-function Basic() {
-  const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
+    function handleKeyPress(event) {
+        if (event && event.key === 'Enter') {
+            event.preventDefault(); // 기본 동작 방지
+            handleSubmit();
+        }
+    }
 
-  return (
-    <BasicLayout image={bgImage}>
-      <Card>
-        <MDBox
-          variant="gradient"
-          bgColor="info"
-          borderRadius="lg"
-          coloredShadow="info"
-          mx={2}
-          mt={-3}
-          p={2}
-          mb={1}
-          textAlign="center"
-        >
-          <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Sign in
-          </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <FacebookIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <GitHubIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <GoogleIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-          </Grid>
-        </MDBox>
-        <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
-            <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
-            </MDBox>
-            <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
-            </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                onClick={handleSetRememberMe}
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-              >
-                &nbsp;&nbsp;Remember me
-              </MDTypography>
-            </MDBox>
-            <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
-              </MDButton>
-            </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
-              <MDTypography variant="button" color="text">
-                Don&apos;t have an account?{" "}
-                <MDTypography
-                  component={Link}
-                  to="/authentication/sign-up"
-                  variant="button"
-                  color="info"
-                  fontWeight="medium"
-                  textGradient
-                >
-                  Sign up
-                </MDTypography>
-              </MDTypography>
-            </MDBox>
-          </MDBox>
-        </MDBox>
-      </Card>
-    </BasicLayout>
-  );
+    const handleSubmit = async () => {
+        // e.preventDefault();
+
+        try {
+            // 이메일이 빈칸인 경우
+            if (!userInfo.email) {
+                Swal.fire({
+                    icon: "warning",
+                    text: "이메일을 입력해주세요.",
+                });
+                return;
+            }
+
+            // 비밀번호가 빈칸인 경우
+            if (!userInfo.password) {
+                Swal.fire({
+                    icon: "warning",
+                    text: "비밀번호를 입력해주세요.",
+                });
+                return;
+            }
+
+            // Firebase Authentication을 통해 사용자를 인증합니다.
+            const checkuser = await signInWithEmailAndPassword(auth, userInfo.email, userInfo.password);
+
+            // 사용자가 존재하는 경우
+            if (checkuser) {
+                login(userInfo);
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "로그인에 성공하였습니다!",
+                    showConfirmButton: false,
+                    timer: 1200
+                });
+
+                axios.get('http://localhost:8090/user/getUserByEmail', {
+                    params: {
+                        email: userInfo.email
+                    }
+                }).then(res => {
+                    SetWithExpiry("uid", res.data.id, 180);
+                    SetWithExpiry("email", res.data.email, 180);
+                    SetWithExpiry("profile", res.data.profile, 180);
+                    SetWithExpiry("nickname", res.data.nickname, 180);
+                }).catch(error => console.log(error));
+
+                navigate('/home');
+            }
+        } catch (error) {
+            // Firebase 오류 처리를 좀 더 일반적인 메시지로 통합
+            Swal.fire({
+                icon: "error",
+                title: "앗! 잠시만요",
+                text: "이메일 혹은 비밀번호가 맞지 않아요.",
+                footer: '<a href="/authentication/sing-up">혹시 계정이 없으신가요?</a>'
+            });
+            console.error(error);
+        }
+    }
+
+    return (
+        <div className={`background ${theme}`} style={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+        }}>
+            <Card id='cardMain' className="cardMain">
+                <div id='login-box' className="loginBox">
+                    <div className={`welcome-message`}>
+                        <img src={HelloLogo} alt='Hello' style={{ maxWidth: '10%' }} />
+                    </div>
+                    <img src={logoImage} alt='LOGO' style={{ maxWidth: '20%' }} />
+
+                    <br />
+                    <input type="email" name='email' placeholder="닉네임 혹은 이메일" className="commonInputStyle"
+                        onChange={handleChange} onKeyUp={handleKeyPress} />
+                    <br />
+                    <input type="password" name='password' placeholder="비밀번호" className="commonInputStyle"
+                        onChange={handleChange} onKeyUp={handleKeyPress} />
+                    <br />
+                    <button className="fill" onClick={handleSubmit} >로그인</button>
+                    <p style={{
+                        marginTop: '3px', marginBottom: '10px',
+                        color: theme === 'light' ? '#dca3e7' : '#ffffff'
+                    }}>또는</p>
+                    <Link to="#" onClick={loginWithGoogle} className={`custom-button ${theme}`}>
+                        <img style={{ paddingRight: '5px', margin: '-5px', width: '1.55em' }} src="/images/icons/Google.png" alt="Google" />
+                        <span>       로그인</span>
+                    </Link>
+                    <br /><br />
+                    <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</p>
+                    <div>
+                        <Link to="/authentication/sign-up" className={`custom-button ${theme}`}>가입하기</Link>
+                    </div>
+                    <br />            
+                </div>
+            </Card>
+        </div>
+    );
 }
-
-export default Basic;

@@ -1,71 +1,134 @@
 // Material Dashboard 2 React layouts
-import Dashboard from "layouts/dashboard";
-import Tables from "layouts/tables";
+import Home from "layouts/home";
+import Settings from "layouts/setting";
+import Album from "layouts/album";
 import Billing from "layouts/billing";
 import Notifications from "layouts/notifications";
-import Profile from "layouts/profile";
+import Mypage from "layouts/mypage";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
 
+// aside 항목이름
 const routes = [
   {
     type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
-    icon: <Icon fontSize="xx-large">dashboard</Icon>,
-    route: "/dashboard",
-    component: <Dashboard />,
+    name: "홈",
+    key: "home",
+    icon: <Icon fontSize="xx-large">roofing</Icon>,
+    route: "/home",
+    component: <Home />,
+    visible: true,
   },
   {
     type: "collapse",
-    name: "Tables",
-    key: "tables",
-    icon: <Icon fontSize="xx-large">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    name: "앨범",
+    key: "album",
+    icon: <Icon fontSize="xx-large">collections</Icon>,
+    route: "/album",
+    component: <Album />,
+    visible: true,
   },
   {
     type: "collapse",
-    name: "Billing",
-    key: "billing",
-    icon: <Icon fontSize="xx-large">receipt_long</Icon>,
-    route: "/billing",
+    name: "채팅",
+    key: "chatting",
+    icon: <Icon fontSize="xx-large">send</Icon>,
+    route: "/chatting",
     component: <Billing />,
+    visible: true,
   },
   {
     type: "collapse",
-    name: "Notifications",
+    name: "마이페이지",
+    key: "mypage",
+    icon: <Icon variant="outlined" fontSize="xx-large">contact_page</Icon>,
+    route: "/mypage",
+    component: <Mypage />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "f_패밀리",
+    key: "friends",
+    icon: <Icon fontSize="xx-large">diversity_1</Icon>,
+    route: "/friends",
+    component: <Mypage />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "알림",
     key: "notifications",
     icon: <Icon fontSize="xx-large">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
+    visible: true,
   },
   {
     type: "collapse",
-    name: "Profile",
-    key: "profile",
+    name: "특별한 날",
+    key: "chalendar",
+    icon: <Icon fontSize="xx-large">calendar_month</Icon>,
+    route: "/chalendar",
+    component: <Mypage />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "할 일",
+    key: "to-do",
     icon: <Icon fontSize="xx-large">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
+    route: "/to-do",
+    component: <Mypage />,
+    visible: true,
   },
   {
     type: "collapse",
-    name: "Sign In",
+    name: "설정",
+    key: "profile/settings",
+    icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
+    route: "/profile/settings",
+    component: <Settings />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "로그인",
     key: "sign-in",
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
+    visible: true,
   },
   {
     type: "collapse",
-    name: "Sign Up",
+    name: "로그아웃",
+    key: "sign-out",
+    icon: <Icon fontSize="xx-large">logout</Icon>,
+    route: "/authentication/sign-in",
+    component: <SignIn />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "회원가입",
     key: "sign-up",
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
+    visible: false,
+  },
+  {
+    type: "bottom",
+    name: "Team",
+    key: "team",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/team",
+    component: <SignUp />,
+    visible: true,
   },
 ];
 

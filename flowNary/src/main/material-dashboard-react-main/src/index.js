@@ -37,4 +37,3 @@ root.render(
   </QueryClientProvider>
 );
 
-

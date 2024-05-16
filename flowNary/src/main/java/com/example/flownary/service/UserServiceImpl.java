@@ -1,5 +1,7 @@
 package com.example.flownary.service;
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void insertUser(User user) {
 		uDao.insertUser(user);
-	}
+	}      
+	@Override
+	   public List<User> getOthersUserList(String email) {
+        return uDao.getOthersUserList(email);
+  }
 
 	@Override
 	public void updateUser(User user) {
