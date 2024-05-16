@@ -43,6 +43,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import "./mypage.css";
 
 function Notifications() {
   const [successSB, setSuccessSB] = useState(false);
