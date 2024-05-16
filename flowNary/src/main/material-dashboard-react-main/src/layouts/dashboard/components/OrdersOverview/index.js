@@ -26,8 +26,8 @@ import TimelineItem from "examples/Timeline/TimelineItem";
 
 function OrdersOverview() {
   return (
-    <Card sx={{ height: "100%" }}>
-      <MDBox pt={3} px={3}>
+    <Card sx={{display: "flex", alignItems: "stretch" }}>
+      {/* <MDBox pt={3} px={3}>
         <MDTypography variant="h6" fontWeight="medium">
           Orders overview
         </MDTypography>
@@ -75,8 +75,9 @@ function OrdersOverview() {
           title="New card added for order #4395133"
           dateTime="18 DEC 4:54 AM"
           lastItem
-        />
-      </MDBox>
+        // />
+      </MDBox> */}
+         <img src="chatting.png" style={{ width: "100%", height: "100%"}} />
     </Card>
   );
 }

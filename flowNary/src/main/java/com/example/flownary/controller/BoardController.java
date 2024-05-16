@@ -65,7 +65,6 @@ public class BoardController {
 		hMap.put("liked", (liked == 1) ? true : false);
 		hMap.put("profile", (user != null) ? user.getProfile() : null);
 		JSONObject jBoard = new JSONObject(hMap);
-		
 		return jBoard;
 	}
 	
