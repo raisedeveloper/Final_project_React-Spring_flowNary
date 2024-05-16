@@ -30,6 +30,7 @@ import {
   Avatar, Box, Button, Chip, Divider, List, ListItem, ListItemAvatar,
   ListItemText, Modal, Paper, Stack, TextField, Typography, InputAdornment,
   IconButton, Link,
+  CardMedia,
 } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -47,25 +48,20 @@ import "./mypage.css";
 import { GetWithExpiry } from "api/LocalStorage";
 
 import PostingModal from "../home/Board/PostingModal"
-
+import { useQuery } from "@tanstack/react-query";
+import { getMyBoardList } from "api/axiosGet";
 
 function Notifications() {
+
+  const uid = parseInt(GetWithExpiry('uid'));
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const board = useQuery({
+    queryKey: ['board', uid],
+    queryFn: () => getMyBoardList(uid),
+  });
+  console.log(board);
   const nickname = GetWithExpiry('nickname');
   const profile = GetWithExpiry('profile');
-
-  const [successSB, setSuccessSB] = useState(false);
-  const [infoSB, setInfoSB] = useState(false);
-  const [warningSB, setWarningSB] = useState(false);
-  const [errorSB, setErrorSB] = useState(false);
-
-  const openSuccessSB = () => setSuccessSB(true);
-  const closeSuccessSB = () => setSuccessSB(false);
-  const openInfoSB = () => setInfoSB(true);
-  const closeInfoSB = () => setInfoSB(false);
-  const openWarningSB = () => setWarningSB(true);
-  const closeWarningSB = () => setWarningSB(false);
-  const openErrorSB = () => setErrorSB(true);
-  const closeErrorSB = () => setErrorSB(false);
 
   const alertContent = (name) => (
     <MDTypography variant="body2" color="white">
@@ -75,60 +71,6 @@ function Notifications() {
       </MDTypography>
       . Give it a click if you like.
     </MDTypography>
-  );
-
-  const renderSuccessSB = (
-    <MDSnackbar
-      color="success"
-      icon="check"
-      title="Material Dashboard"
-      content="Hello, world! This is a notification message"
-      dateTime="11 mins ago"
-      open={successSB}
-      onClose={closeSuccessSB}
-      close={closeSuccessSB}
-      bgWhite
-    />
-  );
-
-  const renderInfoSB = (
-    <MDSnackbar
-      icon="notifications"
-      title="Material Dashboard"
-      content="Hello, world! This is a notification message"
-      dateTime="11 mins ago"
-      open={infoSB}
-      onClose={closeInfoSB}
-      close={closeInfoSB}
-    />
-  );
-
-  const renderWarningSB = (
-    <MDSnackbar
-      color="warning"
-      icon="star"
-      title="Material Dashboard"
-      content="Hello, world! This is a notification message"
-      dateTime="11 mins ago"
-      open={warningSB}
-      onClose={closeWarningSB}
-      close={closeWarningSB}
-      bgWhite
-    />
-  );
-
-  const renderErrorSB = (
-    <MDSnackbar
-      color="error"
-      icon="warning"
-      title="Material Dashboard"
-      content="Hello, world! This is a notification message"
-      dateTime="11 mins ago"
-      open={errorSB}
-      onClose={closeErrorSB}
-      close={closeErrorSB}
-      bgWhite
-    />
   );
 
   return (
@@ -167,7 +109,7 @@ function Notifications() {
             </Box>
           </Stack>
           <Stack direction={'row'} spacing={2}>
-            <Button color="secondary" className='msg_button' style={{ border: "3px solid #BA99D1" }} sx={{ color: 'dark', width: '50%' }}>팔로우</Button>
+            <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1" }} sx={{ width: '50%' }}>팔로우</Button>
             <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1" }} sx={{ width: '70%' }}>메시지 보내기</Button>
 
             {/* <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '130px' }} onClick={handlePwd}>비밀번호 변경</Button> */}
@@ -186,7 +128,7 @@ function Notifications() {
       </Stack>
       <Divider sx={{ marginTop: '20px', marginBottom: '10px' }}></Divider>
       {/* 게시물과 태그 넣는 거 생성 */}
-      <Stack direction="row" justifyContent="center" alignItems='center' spacing={5} sx={{mt:2}}>
+      <Stack direction="row" justifyContent="center" alignItems='center' spacing={5} sx={{ mt: 2 }}>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
           <SubjectIcon sx={{ fontSize: 'large' }} />
           <Typography sx={{ fontSize: 'large' }}>게시물</Typography>
@@ -198,74 +140,41 @@ function Notifications() {
       </Stack>
       <br />
       {/* 게시물 표시하는 Grid */}
-      <Grid container>
-        <Grid item xs={3}> {/* 1/3 만큼 가로를 차지하고 3개가 넘어가면 다음 줄에 생성 */}
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              1
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              2
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              3
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              4
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              5
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              6
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              7
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              8
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper elevation={3} className='uploadlist'>
-            <Box className='uploaditem'>
-              9
-            </Box>
-          </Paper>
-        </Grid>
+      <Grid container spacing={1}>
+        {board && board.data && board.data.map((data) => {
+          const modTime = data.modTime;
+          if (!modTime) return null; // modTime이 없으면 건너뜁니다.
+
+          const yearFromModTime = new Date(modTime).getFullYear(); // modTime에서 연도를 추출합니다.
+          if (yearFromModTime !== selectedYear) return null; // 선택한 연도와 다른 경우 건너뜁니다.
+
+          return (
+            <Grid item key={data.bid} xs={3}>
+              <MDBox>
+                <MDBox sx={{ width: '100%', height: '100%' }}>
+                  <MDBox
+                    variant="gradient"
+                    borderRadius="lg"
+                    sx={{
+                      transition: 'box-shadow 0.3s',
+                      height: "12.5rem",
+                      backgroundColor: 'rgba(0, 0, 0, 0)',
+                      '&:hover': {
+                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
+                      }
+                    }}
+                  >
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}`} alt="Paella dish" />
+                  </MDBox>
+                </MDBox>
+              </MDBox>
+            </Grid>
+          );
+        })}
 
       </Grid>
       <Footer />
-    </DashboardLayout>
+    </DashboardLayout >
   );
 }
 

@@ -26,7 +26,7 @@ import Footer from "examples/Footer";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
 // Dashboard components
-import ShowAlbumList from "layouts/album/components/showAlbumList";
+import ShowAlbumList from "./components/showAlbumList";
 import { Box, Card, CardMedia, Divider, Icon } from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";

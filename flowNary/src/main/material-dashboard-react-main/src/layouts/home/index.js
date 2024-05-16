@@ -243,8 +243,6 @@ export default function Home() {
                               src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                             />
                           }
-
-
                           action={
                             <IconButton aria-label="settings">
                               <MoreVertIcon />
@@ -334,11 +332,6 @@ export default function Home() {
       {/* 게시글 모달 */}
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
-        {/* <BoardDetail handleClose={handleClose}
-          nickname={nickname} handleButtonLike={handleButtonLike} /> */}
-        {/* <div>
-          <ClearIcon onClick={handleClose} sx={{ cursor: 'pointer', fontSize: '26px', backgroundColor: 'rgb(162, 152, 182)', borderRadius: '100%', margin: '3px' }} />
-        </div> */}
       </Modal>
       <Footer />
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
