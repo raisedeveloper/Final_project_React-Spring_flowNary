@@ -151,7 +151,7 @@ export default function Posting() {
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>
               <Button component="label">
-                <Icon style={{ fontSize: 30 }}>add_photo_alternate</Icon>
+                <Icon style={{ color: 'black' }}>add_photo_alternate</Icon>
                 <input
                   type="file"
                   multiple
@@ -162,7 +162,7 @@ export default function Posting() {
 
               </Button>
               <Button expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                <Icon fontSize='small'>add_location_alt</Icon>
+                <Icon style={{ color: 'black' }} fontSize='small'>add_location_alt</Icon>
 
                 <Typography fontSize='small'>
                   {/* 카카오 맵 API 지도 생성 */}
@@ -172,11 +172,11 @@ export default function Posting() {
             </div>
             <div>
               <Button component="label">
-                <Typography sx={{ marginRight: '1em', fontSize: 'small' }}>비공개</Typography>
+                <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight:'bold' }} style={{ color: 'black' }}>비공개</Typography>
                 <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-                <Typography sx={{ marginLeft: '1em', fontSize: 'small' }}>공개</Typography>
+                <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight:'bold' }} style={{ color: 'black' }}>공개</Typography>
               </Button>
-              <Button type="submit" color="primary">작성</Button>
+              <Button type="submit" style={{ color: 'black' }}>작성</Button>
             </div>
           </Grid>
 

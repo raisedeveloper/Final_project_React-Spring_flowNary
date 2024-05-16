@@ -285,7 +285,7 @@ export default function Home() {
                               <img
                                 src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`}
                                 alt="Paella dish"
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                style={{ cursor:'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                               />
                             </button>
                           </MDBox>
