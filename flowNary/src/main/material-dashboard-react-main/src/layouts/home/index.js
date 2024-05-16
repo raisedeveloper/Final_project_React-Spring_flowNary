@@ -811,7 +811,7 @@ export default function Home() {
                       <MDTypography variant="h6" fontWeight="medium">
                         Weather 정보
                       </MDTypography>
-                      <Avatar sx={{ width: 200, height: 200, }} src={weather.link} alt="날씨 아이콘" />
+                      <Avatar sx={{ width: 200, height: 200 }} src={weather.link} alt="날씨 아이콘" />
                       <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
                         {weather.name}:  {weather.temp}℃
                         <br />

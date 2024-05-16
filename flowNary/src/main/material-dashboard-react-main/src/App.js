@@ -109,7 +109,7 @@ export default function App() {
       {!isLoginPage && !isRegisterPage && layout === "dashboard" && (
         <>
           <Sidenav
-            color={'blue'}
+            color={'primary'}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
             brandName="flownary"
             routes={visibleRoutes}

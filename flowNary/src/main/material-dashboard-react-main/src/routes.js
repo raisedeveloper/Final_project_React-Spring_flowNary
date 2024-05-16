@@ -122,7 +122,7 @@ const routes = [
     visible: false,
   },
   {
-    type: "collapse",
+    type: "bottom",
     name: "Team",
     key: "team",
     icon: <Icon fontSize="xx-large">diversity_3</Icon>,

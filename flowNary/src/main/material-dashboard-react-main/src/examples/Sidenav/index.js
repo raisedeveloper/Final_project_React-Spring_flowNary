@@ -75,7 +75,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   // 유저 불러오기
   const uid = parseInt(GetWithExpiry("uid"));
   const email = GetWithExpiry("email");
-  const uname = GetWithExpiry("uname");
+  const nickname = GetWithExpiry("nickname");
+  const profile = GetWithExpiry("profile");
 
   // routes.js에서 모든 경로를 렌더링 (Sidenav에 보이는 모든 항목)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
@@ -129,6 +130,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           }
         />
       );
+    } else if (type === "bottom") {
+      (
+        <NavLink key={key} to={route}>
+          <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
+        </NavLink>
+      );
     }
 
     return returnValue;
@@ -156,25 +163,25 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         </MDBox>
 
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
+          {brand && <MDBox component="img" src={brand} alt="Brand" width="5rem" />}
         </MDBox>
         <Box
           sx={{
             width: '11rem',
             height: '2rem',
             background: 'rgba(255, 255, 255, 0.3)',
-            borderRadius: '15px',            
+            borderRadius: '15px',
             display: 'flex',
             alignItems: 'center'
           }}
         >
-          <Avatar src="/mnt/data/image.png" alt="profile picture" />
+          <Avatar src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} alt="profile picture" />
           <Box ml={1.5}>
             <Typography
               color={textColor}
               fontSize={'13.5px'}
               fontWeight={'bold'}
-            >{email}</Typography>
+            >{nickname}</Typography>
           </Box>
         </Box>
       </MDBox>
