@@ -16,24 +16,24 @@ import './board.css'
 
 
 export default function BoardDetail(props) {
-const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonLike}, ref) => {
-  const board = useQuery({
-    queryKey: ['board', bid, uid],
-    queryFn: () => getBoard(1, 1),
-  });
+  const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonLike }) => {
+    const board = useQuery({
+      queryKey: ['board', bid, uid],
+      queryFn: () => getBoard(1, 1),
+    });
 
-  if (board.isLoading) {
-    return <div>로딩 중...</div>;
-  }
+    if (board.isLoading) {
+      return <div>로딩 중...</div>;
+    }
 
-  const image = board.data.image != null ? board.data.image.split(',') : null;
-  console.log("이미지" + image);
+    const image = board.data.image != null ? board.data.image.split(',') : null;
+    console.log("이미지" + image);
 
-  return (
-    <Box className="board_modal">
-      <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
-        <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
-          <Carousel>
+    return (
+      <Box className="board_modal">
+        <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
+          <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
+            <Carousel>
               {image &&
                 image.map((image, index) => (
                   <Box
@@ -57,23 +57,25 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
                     alt={`Image ${index + 1}`}
                   />
                 ))}
-      </Carousel>
+            </Carousel>
+          </Stack>
+
+          {/* Reply 컴포넌트 추가 */}
+          <Reply bid={49} uid={1} nickname={"james"} />
+
+          {/* 닫기 버튼 */}
         </Stack>
+      </Box>
+    );
+  });
+  
+  BoardDetail.propTypes = {
+    bid: PropTypes.number.isRequired,
+    uid: PropTypes.number.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    nickname: PropTypes.string.isRequired,
+    handleButtonLike: PropTypes.func.isRequired,
+  };
+}
 
-        {/* Reply 컴포넌트 추가 */}
-        <Reply bid={49} uid={1} nickname={"james"} />
-
-        {/* 닫기 버튼 */}
-      </Stack>
-    </Box>
-  );
-};
-
-BoardDetail.propTypes = {
-  bid: PropTypes.number.isRequired,
-  uid: PropTypes.number.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  nickname: PropTypes.string.isRequired,
-  handleButtonLike: PropTypes.func.isRequired,
-};
 

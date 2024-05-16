@@ -216,16 +216,6 @@ export default function Home() {
     return (<div>로딩 중...</div>)
   }
 
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
