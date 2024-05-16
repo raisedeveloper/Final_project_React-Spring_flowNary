@@ -31,6 +31,14 @@ import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
 
 export default function Home() {
 
+  const [expanded, setExpanded] = useState({});
+
+  const handleToggle = (bid) => {
+    setExpanded((prevExpanded) => ({
+      ...prevExpanded,
+      [bid]: !prevExpanded[bid]
+    }));
+  };
 
   const weatherDescKo = {
     201: '가벼운 비를 동반한 천둥구름',
@@ -218,15 +226,6 @@ export default function Home() {
     return (<div>로딩 중...</div>)
   }
 
-  const [expanded, setExpanded] = useState({});
-
-  const handleToggle = (bid) => {
-    setExpanded((prevExpanded) => ({
-      ...prevExpanded,
-      [bid]: !prevExpanded[bid]
-    }));
-  };
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -282,7 +281,7 @@ export default function Home() {
                               }
                             }}
                           >
-                            <button onClick={() => handleToggle(data.bid)}>
+                            <button onClick={handleOpen.bind(null, data.bid)}>
                               <img
                                 src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`}
                                 alt="Paella dish"
