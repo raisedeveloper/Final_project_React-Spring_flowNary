@@ -60,7 +60,7 @@ export default function TodoList() {
           해야할 일!
         </MDTypography>
       </MDBox>
-      <MDBox>
+      <MDBox pt={3} px={3}>
         <FormGroup>
           {items.map(item => (
             <div key={item.id} style={{ display: 'flex', alignItems: 'center' }}>

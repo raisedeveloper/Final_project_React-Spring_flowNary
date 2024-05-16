@@ -29,7 +29,7 @@ import MDSnackbar from "components/MDSnackbar";
 import {
   Avatar, Box, Button, Chip, Divider, List, ListItem, ListItemAvatar,
   ListItemText, Modal, Paper, Stack, TextField, Typography, InputAdornment,
-  IconButton, Link, 
+  IconButton, Link,
 } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -44,8 +44,12 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import "./mypage.css";
+import { GetWithExpiry } from "api/LocalStorage";
 
 function Notifications() {
+  const nickname = GetWithExpiry('nickname');
+  const profile = GetWithExpiry('profile');
+
   const [successSB, setSuccessSB] = useState(false);
   const [infoSB, setInfoSB] = useState(false);
   const [warningSB, setWarningSB] = useState(false);
@@ -128,13 +132,13 @@ function Notifications() {
     <DashboardLayout>
       <DashboardNavbar />
       {/* 상단 정보 넣는 Stack 태그 */}
-      <Stack direction={'row'} sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}> {/* 방향을 row로 지정하면 가로 방향으로 배치됨 */}
+      <Stack direction={'row'} sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}> {/* 방향을 row로 지정하면 가로 방향으로 배치됨 */}
         {/* Avatar 태그 : 유튜브 프사처럼 동그란 이미지 넣을 수 있는 것 */}
         <Avatar
-          // src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.profile}`}
+          src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
           sx={{
-            width: '15rem',
-            height: '15rem',
+            width: '9rem',
+            height: '9rem',
             margin: '20px',
             fontSize: '60px',
             border: '2px solid primary.main' // 외곽선 색과 굵기 지정
@@ -144,7 +148,7 @@ function Notifications() {
         <Stack sx={{ padding: '20px' }} fontWeight={'bold'}>
           <Stack direction={'row'} spacing={2} sx={{ marginTop: '10px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="h4" fontWeight={'bold'}>
-              {/* {user.nickname} */}JAMES
+              {nickname}
             </Typography>
             {/* <Button onClick={handleCheckingPwd}><SettingsIcon sx={{ fontSize: '50px', color: 'darkgray' }} /></Button> */}
           </Stack>
@@ -160,8 +164,9 @@ function Notifications() {
             </Box>
           </Stack>
           <Stack direction={'row'} spacing={2}>
-            <Button variant="outlined"  className='msg_button' style={{ color: '#000000', width: '80px' }}>팔로우</Button>
-            <Button variant="outlined" color="dark" className='msg_button' sx={{ width: '130px' }}>메시지 보내기</Button>
+            <Button variant="outlined" color="secondary" className='msg_button' style={{ border: "3px solid #BA99D1" }} sx={{ color: 'dark', width: '50%' }}>팔로우</Button>
+            <Button variant="outlined" color="primary" className='msg_button' style={{ border: "3px solid #BA99D1" }} sx={{ width: '70%' }}>메시지 보내기</Button>
+
             {/* <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '130px' }} onClick={handlePwd}>비밀번호 변경</Button> */}
           </Stack>
         </Stack>
@@ -176,79 +181,78 @@ function Notifications() {
         {/* <Link href={user.snsDomain}>{user.snsDomain}</Link> */}
         {/* {user.statusMessage} */}
       </Stack>
-      <Divider sx={{ marginTop: '20px', marginBottom: '10px' }}><Chip label="활동"></Chip></Divider>
-
+      <Divider sx={{ marginTop: '20px', marginBottom: '10px' }}></Divider>
       {/* 게시물과 태그 넣는 거 생성 */}
-      <Stack direction="row" justifyContent="center" alignItems='center' spacing={5}>
+      <Stack direction="row" justifyContent="center" alignItems='center' spacing={5} sx={{mt:2}}>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
-          <SubjectIcon sx={{ fontSize: '15px' }} />
-          <Typography sx={{ fontSize: '12px' }}>게시물</Typography>
+          <SubjectIcon sx={{ fontSize: 'large' }} />
+          <Typography sx={{ fontSize: 'large' }}>게시물</Typography>
         </Stack>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
-          <BookmarkIcon sx={{ fontSize: '15px' }} />
-          <Typography sx={{ fontSize: '12px' }}>책갈피</Typography>
+          <BookmarkIcon sx={{ fontSize: 'large' }} />
+          <Typography sx={{ fontSize: 'large' }}>책갈피</Typography>
         </Stack>
       </Stack>
-
+      <br />
       {/* 게시물 표시하는 Grid */}
       <Grid container>
-        <Grid item xs={4}> {/* 1/3 만큼 가로를 차지하고 3개가 넘어가면 다음 줄에 생성 */}
+        <Grid item xs={3}> {/* 1/3 만큼 가로를 차지하고 3개가 넘어가면 다음 줄에 생성 */}
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               1
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               2
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               3
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               4
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               5
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               6
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               7
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               8
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Paper elevation={3} className='uploadlist'>
             <Box className='uploaditem'>
               9

@@ -88,6 +88,15 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "글쓰기",
+    key: "profile/settings",
+    icon: <Icon fontSize="xx-large">history_edu</Icon>,
+    route: "/profile/settings",
+    component: <Settings />,
+    visible: true,
+  },
+  {
+    type: "collapse",
     name: "설정",
     key: "profile/settings",
     icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
