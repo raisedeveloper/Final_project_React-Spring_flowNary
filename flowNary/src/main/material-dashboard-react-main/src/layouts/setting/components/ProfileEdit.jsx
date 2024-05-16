@@ -109,6 +109,7 @@ function ProfileEdit({ uid, email }) {
     if (checkingTel === 0) { wrong("전화번호 중복 확인을 해주세요"); return; }
 
     const url = await UploadImage(image); // 이 줄이 비동기 작업을 기다리고 URL을 반환합니다.
+    SetWithExpiry("nickname", nickname, 180); // 세션에 바로 추가
     if (!url) { // 이미지 변경 X
       await axios.post('http://localhost:8090/user/update', {
         uid: uid,
