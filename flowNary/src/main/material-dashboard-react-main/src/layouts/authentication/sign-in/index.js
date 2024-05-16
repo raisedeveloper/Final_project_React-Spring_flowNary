@@ -64,6 +64,7 @@ export default function Login() {
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
                 SetWithExpiry("nickname", res.data.nickname, 180);
+                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
@@ -87,6 +88,7 @@ export default function Login() {
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
                 SetWithExpiry("nickname", res.data.nickname, 180);
+                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
@@ -163,9 +165,10 @@ export default function Login() {
                     }
                 }).then(res => {
                     SetWithExpiry("uid", res.data.id, 180);
-                    SetWithExpiry("email", res.data.email, 180);
-                    SetWithExpiry("profile", res.data.profile, 180);
+                    SetWithExpiry("email", data.user.email, 180);
+                    SetWithExpiry("profile", response.data.profile, 180);
                     SetWithExpiry("nickname", res.data.nickname, 180);
+                    SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 }).catch(error => console.log(error));
 
                 navigate('/home');
