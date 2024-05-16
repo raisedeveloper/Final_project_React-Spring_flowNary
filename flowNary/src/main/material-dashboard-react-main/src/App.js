@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";  
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -33,7 +33,6 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 import brandDark from "assets/images/LightLogo.png";
 import brandWhite from "assets/images/DarkLogo.png";
 
-// 로그인 관련
 import Login from "layouts/authentication/sign-in";
 import Register from "layouts/authentication/sign-up";
 
@@ -99,10 +98,10 @@ export default function App() {
       return null;
     });
 
-  // 항목 숨기기 혹은 보이기
+    // 항목 숨기기 혹은 보이기
   const visibleRoutes = routes.filter(route => route.visible);
 
-
+ 
   return (
     <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
       <CssBaseline />
@@ -124,7 +123,7 @@ export default function App() {
       <Routes>
         <Route path="/authentication/sign-in" element={<Login />} />
         <Route path="/authentication/sign-up" element={<Register />} />
-        {getRoutes(routes)}
+        {getRoutes(routes)}        
         <Route path="*" element={<Navigate to="/home" />} />
         <Route path="/authentication/sign-in" element={<Navigate to="/authentication/sign-in" />} />
         <Route path="/authentication/sign-up" element={<Navigate to="/authentication/sign-up" />} />

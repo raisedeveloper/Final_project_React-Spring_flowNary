@@ -63,7 +63,7 @@ export default function Board() {
   const path2 = path[path.length - 1];
 
   /////////////////// useQuery로 BoardList 받기 ///////////////////
-  const dataList = useQuery({
+  const dataList = useQuery({y
     queryKey: ['boardList', uid],
     queryFn: () => getBoardList(10, uid),
   });
