@@ -16,6 +16,7 @@ Coded by www.creative-tim.com
 // @mui material components
 import Grid from "@mui/material/Grid";
 
+
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 
@@ -27,137 +28,340 @@ import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
-// Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-
 // Dashboard components
-import Projects from "layouts/dashboard/components/Projects";
-import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import Projects from "./components/Projects";
+import OrdersOverview from "./components/OrdersOverview";
+import { Avatar, Box, Button, Card, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-function Dashboard() {
-  const { sales, tasks } = reportsLineChartData;
+import { Bar } from "react-chartjs-2";
+import MDTypography from "components/MDTypography";
+import BoardDetail from "./Board/BoardDetail";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { GetWithExpiry } from "api/LocalStorage";
+import { useGetUserNicknameLS } from "api/customHook";
+import ClearIcon from '@mui/icons-material/Clear';
 
+
+export default function Home() {
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
-                percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                icon="leaderboard"
-                title="Today's Users"
-                count="2,300"
-                percentage={{
-                  color: "success",
-                  amount: "+3%",
-                  label: "than last month",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
-                percentage={{
-                  color: "success",
-                  amount: "+1%",
-                  label: "than yesterday",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: "Just updated",
-                }}
-              />
-            </MDBox>
-          </Grid>
-        </Grid>
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
+        <MDBox mt={3}>
+          <Stack direction="row" spacing={0}>
+            <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
+              <Grid container spacing={3}>
+                {/* 카드 1번 */}
+                <Grid item xs={12} md={6} lg={6}>
+                  <MDBox mb={3}>
+                    <Card sx={{
+                      height: "100%",
+                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
+                      '&:hover': {
+                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
+                        marginBottom: 3
+                      }
+                    }}>
+                      <CardHeader sx={{ padding: 1 }}
+                        avatar={
+                          <Avatar aria-label="recipe" sx={{ width: 33, height: 33 }}>
+                            R
+                          </Avatar>
+                        }
+                        action={
+                          <IconButton aria-label="settings">
+                            <MoreVertIcon />
+                          </IconButton>
+                        }
+                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>Shrimp and Chorizo Paella</Typography>}
+                      />
+
+                      <MDBox padding="1rem">
+                        <MDBox
+                          variant="gradient"
+                          borderRadius="lg"
+                          py={2}
+                          pr={0.5}
+                          sx={{
+                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                            height: "12.5rem",
+                            overflow: "hidden", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
+                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
+                              transform: 'scale(1.1)', // 이미지를 확대합니다.
+                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                            },
+                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
+                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                            }
+                          }}
+                        >
+                          <img
+                            src="https://picsum.photos/200/300"
+                            alt="Paella dish"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
+                          />
+
+
+
+                        </MDBox>
+                        <MDBox pt={3} pb={1} px={1}>
+                          <MDTypography variant="h6" textTransform="capitalize">
+                            제목
+                          </MDTypography>
+                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                            설명
+                          </MDTypography>
+                          <Divider />
+                          <MDBox display="flex" alignItems="center">
+                            {/* <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
+                        <Icon>schedule</Icon>
+                      </MDTypography>
+                      <MDTypography variant="button" color="text" fontWeight="light">
+                        시간
+                      </MDTypography> */}
+                          </MDBox>
+                        </MDBox>
+                      </MDBox>
+                    </Card>
+
+
+                  </MDBox>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  {/* 카드 2번 */}
+                  <MDBox mb={3}>
+                    <Card sx={{
+                      height: "100%",
+                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
+                      '&:hover': {
+                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
+                      }
+                    }}>
+                      <CardHeader sx={{ padding: 1 }}
+                        avatar={
+                          <Avatar aria-label="recipe">
+                            R
+                          </Avatar>
+                        }
+                        action={
+                          <IconButton aria-label="settings">
+                            <MoreVertIcon />
+                          </IconButton>
+                        }
+                        title="Shrimp and Chorizo Paella"
+                      // subheader="September 14, 2016"
+                      />
+
+                      <MDBox padding="1rem">
+                        <MDBox
+                          variant="gradient"
+                          borderRadius="lg"
+                          py={2}
+                          pr={0.5}
+                          sx={{
+                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                            height: "12.5rem",
+                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
+                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
+                              transform: 'scale(1.1)', // 이미지를 확대합니다.
+                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                            },
+                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
+                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                            }
+                          }}
+                        >
+                          <button onClick={handleOpen}>
+                            <img
+                              src="cat.jpg"
+                              alt="Paella dish"
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
+                            />
+                          </button>
+                        </MDBox>
+                        <MDBox pt={3} pb={1} px={1}>
+                          <MDTypography variant="h6" textTransform="capitalize">
+                            제목
+                          </MDTypography>
+                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                            설명
+                          </MDTypography>
+                          <Divider />
+                          <MDBox display="flex" alignItems="center">
+                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
+                              <Icon>schedule</Icon>
+                            </MDTypography>
+                            <MDTypography variant="button" color="text" fontWeight="light">
+                              September 14, 2016
+                            </MDTypography>
+                          </MDBox>
+                        </MDBox>
+                      </MDBox>
+                    </Card>
+                  </MDBox>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <MDBox mb={3}>
+                    <Card sx={{
+                      height: "100%",
+                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
+                      '&:hover': {
+                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
+                      }
+                    }}>
+                      <CardHeader sx={{ padding: 1 }}
+                        avatar={
+                          <Avatar aria-label="recipe">
+                            R
+                          </Avatar>
+                        }
+                        action={
+                          <IconButton aria-label="settings">
+                            <MoreVertIcon />
+                          </IconButton>
+                        }
+                        title="Shrimp and Chorizo Paella"
+                      // subheader="September 14, 2016"
+                      />
+
+                      <MDBox padding="1rem">
+                        <MDBox
+                          variant="gradient"
+                          borderRadius="lg"
+                          py={2}
+                          pr={0.5}
+                          sx={{
+                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                            height: "12.5rem",
+                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
+                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
+                              transform: 'scale(1.1)', // 이미지를 확대합니다.
+                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                            },
+                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
+                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                            }
+                          }}
+                        >
+                          <img
+                            src="https://picsum.photos/200/300"
+                            alt="Paella dish"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
+                          />
+                        </MDBox>
+                        <MDBox pt={3} pb={1} px={1}>
+                          <MDTypography variant="h6" textTransform="capitalize">
+                            제목
+                          </MDTypography>
+                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                            설명
+                          </MDTypography>
+                          <Divider />
+                          <MDBox display="flex" alignItems="center">
+                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
+                              <Icon>schedule</Icon>
+                            </MDTypography>
+                            <MDTypography variant="button" color="text" fontWeight="light">
+                              September 14, 2016
+                            </MDTypography>
+                          </MDBox>
+                        </MDBox>
+                      </MDBox>
+                    </Card>
+                  </MDBox>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6} lg={6}>
+                  <Card>
+                    DD
+                  </Card>
+                </Grid>
+
+
+              </Grid>
+            </Stack>
+            <Stack direction="column" sx={{ flex: 0.5 }}>
+              <MDBox mb={3} sx={{ position: "sticky", top: "10%" }}>
+                <MDBox sx={{ backgroundColor: 'silver' }}>
+                  날씨 위젯 부분
+                </MDBox>
+                <MDBox>
+                  <img src="weather.png" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </MDBox>
+                <OrdersOverview />
               </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="daily sales"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) increase in today sales.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox>
-        <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
-              <Projects />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
-            </Grid>
-          </Grid>
-        </MDBox>
-      </MDBox>
+            </Stack>
+          </Stack>
+        </MDBox >
+      </MDBox >
       <Footer />
-    </DashboardLayout>
+      {/* 게시글 모달 */}
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description"> 
+        <BoardDetail bid={49} uid={1} />
+        {/* <BoardDetail handleClose={handleClose}
+          nickname={nickname} handleButtonLike={handleButtonLike} /> */}
+           {/* <div>
+          <ClearIcon onClick={handleClose} sx={{ cursor: 'pointer', fontSize: '26px', backgroundColor: 'rgb(162, 152, 182)', borderRadius: '100%', margin: '3px' }} />
+        </div> */}
+      </Modal>
+    </DashboardLayout >
   );
 }
-
-export default Dashboard;
