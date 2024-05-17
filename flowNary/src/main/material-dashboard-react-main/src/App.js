@@ -33,8 +33,8 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 import brandDark from "assets/images/LightLogo.png";
 import brandWhite from "assets/images/DarkLogo.png";
 
-import Login from "layouts/authentication/sign-in/LoginIndex";
-import Register from "layouts/authentication/sign-up/RegisterIndex";
+import Login from "layouts/authentication/sign-in/LoginIndex.js";
+import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
