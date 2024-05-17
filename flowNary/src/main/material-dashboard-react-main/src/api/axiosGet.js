@@ -89,7 +89,7 @@ export const getUserEmail = async (email: string) => {
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
  * @returns 
  */
-export const getBoard = async (bid, uid) => {
+export const getBoard = async (bid, uid = -1) => {
     try {
       const response = await axios.get('http://localhost:8090/board/getBoard', {
         params: {

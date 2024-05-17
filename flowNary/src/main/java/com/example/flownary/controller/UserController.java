@@ -30,7 +30,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
 	@Autowired private UserService userSvc;
@@ -126,7 +125,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public JSONObject getUser(@RequestParam int uid)
+	public JSONObject getUser(@RequestParam(defaultValue = "-1") int uid)
 	{
 		User user = userSvc.getUser(uid);
 		

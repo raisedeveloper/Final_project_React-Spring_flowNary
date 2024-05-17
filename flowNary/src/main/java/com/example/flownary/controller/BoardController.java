@@ -29,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @SuppressWarnings("unchecked")
 public class BoardController {
 	private final UserService uSvc;
