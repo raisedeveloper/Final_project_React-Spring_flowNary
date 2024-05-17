@@ -346,6 +346,7 @@ export default function Home() {
           </Stack>
         </MDBox >
       </MDBox >
+      
       {/* 게시글 모달 */}
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
@@ -354,6 +355,7 @@ export default function Home() {
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} />
       </Modal>
-    </DashboardLayout >
+    </DashboardLayout >  
   );
+
 }
