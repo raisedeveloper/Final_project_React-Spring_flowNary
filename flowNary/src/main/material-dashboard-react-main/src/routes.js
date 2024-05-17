@@ -1,3 +1,7 @@
+// routes.js
+import React from 'react';
+import Icon from '@mui/material/Icon';
+
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
 import Album from "layouts/album";
@@ -14,12 +18,7 @@ import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Logout from "layouts/authentication/logout";
 
-
-// @mui icons
-import Icon from "@mui/material/Icon";
-
-// aside 항목이름
-const routes = [
+const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "홈",
@@ -92,7 +91,6 @@ const routes = [
     component: <TodoList />,
     visible: true,
   },
-
   {
     type: "collapse",
     name: "글쓰기",
@@ -102,7 +100,6 @@ const routes = [
     component: <Write />,
     visible: true,
   },
-
   {
     type: "collapse",
     name: "설정",
@@ -112,7 +109,6 @@ const routes = [
     component: <Settings />,
     visible: true,
   },
-
   {
     type: "collapse",
     name: "로그인",
@@ -120,17 +116,16 @@ const routes = [
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
-    visible: true,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
-
   {
     type: "collapse",
     name: "로그아웃",
     key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
-    route: "/logout",  // 로그아웃 경로
-    component: <Logout />,  // Logout 컴포넌트를 사용
-    visible: true,
+    route: "/logout",
+    component: <Logout />,
+    visible: isLoggedIn, // 로그인되었을 때만 보임
   },
   {
     type: "collapse",
@@ -139,9 +134,8 @@ const routes = [
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
-    visible: false,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
-
 ];
 
-export default routes;
+export default createRoutes;

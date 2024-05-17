@@ -10,7 +10,7 @@ const Logout = () => {
     signOut(auth).then(() => {
       console.log('로그아웃 성공');
       localStorage.clear();
-      navigate('/authentication/sign-in');
+      navigate('/');
     })
     .catch((error) => {
       console.error('로그아웃 오류:', error);
