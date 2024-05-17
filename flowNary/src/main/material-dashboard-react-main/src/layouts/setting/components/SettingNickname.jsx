@@ -35,7 +35,7 @@ export default function SettingNickname(props) {
   }, [props.nickname, nickname]);
 
   const checkNickname = () => {
-    axios.get('http://localhost:8090/user/nickname',
+    axios.get('/user/nickname',
       {
         params: {
           email: props.email

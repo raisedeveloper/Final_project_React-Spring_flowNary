@@ -1,6 +1,6 @@
 import axios from "axios"
 import { UploadImage } from "./image";
-
+const API_BASE_URL = "/";
 /** 유저 등록
  * @param {*} hashuid google 로그인에서만 만들어지는 hash형태의 uid
  * @param {*} provider google 로그인이면 1, 일반 로그인이면 0
@@ -10,7 +10,7 @@ import { UploadImage } from "./image";
  */
 export const userRegister = async (hashuid: string, provider: number, email: string, pwd: string) => {
 
-    return axios.get('http://localhost:8090/user/register', {
+    return axios.get(`${API_BASE_URL}user/register`, {
         params: {
             hashuid: hashuid,
             provider: provider,
@@ -31,7 +31,7 @@ export const userRegister = async (hashuid: string, provider: number, email: str
  */
 export const userUpdatePwd = async (uid: number, pwd1: string, pwd2: string) => {
 
-    const result = await axios.get('http://localhost:8090/user/updatepwd', {
+    const result = await axios.get(`${API_BASE_URL}user/updatepwd`, {
         params: {
             uid: uid,
             pwd1: pwd1,
@@ -52,7 +52,7 @@ export const userUpdatePwd = async (uid: number, pwd1: string, pwd2: string) => 
  */
 export const getUser = async (uid: number) => {
 
-    const result = await axios.get('http://localhost:8090/user/getUser', {
+    const result = await axios.get(`${API_BASE_URL}user/getUser`, {
         params: {
             uid: uid,
         }
@@ -71,7 +71,7 @@ export const getUser = async (uid: number) => {
  */
 export const getUserEmail = async (email: string) => {
 
-    const result = await axios.get('http://localhost:8090/user/getUserByEmail', {
+    const result = await axios.get(`${API_BASE_URL}user/getUserByEmail`, {
         params: {
             email: email,
         }
@@ -91,7 +91,7 @@ export const getUserEmail = async (email: string) => {
  */
 export const getBoard = async (bid, uid = -1) => {
     try {
-      const response = await axios.get('http://localhost:8090/board/getBoard', {
+      const response = await axios.get(`${API_BASE_URL}board/getBoard`, {
         params: {
           bid: bid,
           uid: uid,
@@ -113,7 +113,7 @@ export const getBoard = async (bid, uid = -1) => {
 export const getBoardUrl = async (url: string, uid = -1) => {
     console.log(url);
 
-    const result = await axios.get('http://localhost:8090/board/getBoardUrl', {
+    const result = await axios.get(`${API_BASE_URL}board/getBoardUrl`, {
         params: {
             url: url,
             uid: uid,
@@ -139,7 +139,7 @@ export const getBoardUrl = async (url: string, uid = -1) => {
  */
 export const getBoardList = async (count = 1, field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
-    const result = await axios.get('http://localhost:8090/board/list', {
+    const result = await axios.get(`${API_BASE_URL}board/list`, {
         params: {
             c: count,
             f: field,
@@ -164,7 +164,7 @@ export const getBoardList = async (count = 1, field='title', field2 = '', field3
  */
 export const getMyBoardList = async (uid) => {
 
-    const result = await axios.get('http://localhost:8090/board/mylist', {
+    const result = await axios.get(`${API_BASE_URL}board/mylist`, {
         params: {
             uid: uid,
         }
@@ -186,7 +186,7 @@ export const getMyBoardList = async (uid) => {
  */
 export const getReplyList = async (bid: Number, offset: Number, limit: number) => {
     
-    const result = await axios.get('http://localhost:8090/board/replyList', {
+    const result = await axios.get(`${API_BASE_URL}board/replyList`, {
         params: {
             bid: bid,
             offset: offset,
@@ -207,7 +207,7 @@ export const getReplyList = async (bid: Number, offset: Number, limit: number) =
  */
 export const getReReplyList = async (rid: number) => {
 
-    const result = await axios.get('http://localhost:8090/board/re_ReplyList', {
+    const result = await axios.get(`${API_BASE_URL}board/re_ReplyList`, {
         params: {
             rid: rid,
         }
@@ -226,7 +226,7 @@ export const getReReplyList = async (rid: number) => {
  */
 export const deleteBoard = async (bid: number) => {
 
-    return axios.get('http://localhost:8090/board/re_ReplyList', {
+    return axios.get(`${API_BASE_URL}board/re_ReplyList`, {
         params: {
             bid: bid,
         }
@@ -248,7 +248,7 @@ export const deleteBoard = async (bid: number) => {
  */
 export const getBoardListCount = async (field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
-    const result = await axios.get('http://localhost:8090/board/listCount', {
+    const result = await axios.get(`${API_BASE_URL}board/listCount`, {
         params: {
             f: field,
             f2: field2,

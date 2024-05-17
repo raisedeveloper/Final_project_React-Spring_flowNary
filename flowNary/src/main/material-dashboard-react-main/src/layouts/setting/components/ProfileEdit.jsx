@@ -111,7 +111,7 @@ function ProfileEdit({ uid, email }) {
     const url = await UploadImage(image); // 이 줄이 비동기 작업을 기다리고 URL을 반환합니다.
     SetWithExpiry("nickname", nickname, 180); // 세션에 바로 추가
     if (!url) { // 이미지 변경 X
-      await axios.post('http://localhost:8090/user/update', {
+      await axios.post('/user/update', {
         uid: uid,
         uname: uname,
         nickname: nickname,
@@ -124,7 +124,7 @@ function ProfileEdit({ uid, email }) {
       }).catch(error => console.log(error));
     } else { // 이미지 변경 O 
       SetWithExpiry("profile", url.public_id, 180); // 세션에 바로 추가
-      await axios.post('http://localhost:8090/user/update', {
+      await axios.post('/user/update', {
         uid: uid,
         uname: uname,
         nickname: nickname,
