@@ -59,7 +59,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=10' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -83,7 +83,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=1' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -107,7 +107,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=2' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -131,7 +131,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=3' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -155,7 +155,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=4' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -179,7 +179,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=5' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -204,7 +204,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=6' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -228,7 +228,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=7' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>
@@ -252,7 +252,7 @@ function OrdersOverview() {
                       }
                     }}
                   >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300?q=8' alt="Paella dish" />
                   </MDBox>
                 </MDBox>
               </Card>

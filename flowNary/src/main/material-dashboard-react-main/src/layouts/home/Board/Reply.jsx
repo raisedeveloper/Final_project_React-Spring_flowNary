@@ -147,13 +147,14 @@ export default function Reply(props) {
                       primary={data.nickname}
                       secondary={
                         <React.Fragment sx={{ overflowWrap: 'break-word', }}>
-                          {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 28))}
-                          {data.rContents != null && data.rContents.length > 30 && !expandedContents[index] && (
+                          {/* {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 50))}
+                          {data.rContents != null && data.rContents.length > 40 && !expandedContents[index] && (
                             <button className='replyOpen' onClick={() => toggleExpand(index)}>...더보기</button>
                           )}
                           {expandedContents[index] && (
                             <button className='replyClose' onClick={() => toggleExpand(index)}>접기</button>
-                          )}
+                          )} */}
+                          {data.rContents}
                         </React.Fragment>
                       }
                     >

@@ -101,11 +101,11 @@ function Notifications() {
             </Box>
           </Stack>
           <Stack direction={'row'} spacing={2}>
-            <Button variant="outlined" color="secondary" className='msg_button' style={{ border: "3px solid #BA99D1"}} sx={{ color: 'dark', width: '100px' }}>팔로우</Button>
-            <Button variant="outlined" color="primary" className='msg_button' style={{ border: "3px solid #BA99D1"}} sx={{ width: '130px' }}>메시지 보내기</Button>
-            <Button>
+            <Button variant="outlined" color="secondary" className='msg_button' style={{ border: "3px solid #BA99D1"}} sx={{ color: 'dark', width: '100px' }}><span style={{color:'purple'}}>팔로우</span></Button>
+            <Button variant="outlined" color="primary" className='msg_button' style={{ border: "3px solid #BA99D1"}} sx={{ width: '100px' }}><span style={{color:'purple'}}>메세지 보내기</span></Button>
+            {/* <Button>
               <PostingModal/>
-            </Button>
+            </Button> */}
             {/* <Button variant="outlined" color="secondary" className='msg_button' sx={{ width: '130px' }} onClick={handlePwd}>비밀번호 변경</Button> */}
           </Stack>
         </Stack>
