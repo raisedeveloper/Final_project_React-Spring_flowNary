@@ -28,15 +28,11 @@ export default function Posting() {
 
   const uid = parseInt(GetWithExpiry("uid"));
 
-  // uid가 로컬스토리지에 없으면 로그인 창으로 이동
-  if (!uid) {
-    navigate("/login");
-  }
   const [nickname, setNickname] = useState('');
 
   useEffect(() => {
     if (uid !== null) {
-      axios.get('http://localhost:8090/user/getUser', {
+      axios.get('/user/getUser', {
         params: {
           uid: uid,
         }
@@ -114,7 +110,7 @@ export default function Posting() {
 
     axios({
       method: "POST",
-      url: 'http://localhost:8090/board/insert',
+      url: '/board/insert',
       data: sendData,
       headers: { 'Content-Type': 'application/json' }
     }).catch(error => console.log(error));

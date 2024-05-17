@@ -7,7 +7,7 @@ export function useGetBoardList(count, update) {
     useEffect(() => {
         if (count > 0)
         {
-            axios.get('http://localhost:8090/board/list', {
+            axios.get('/board/list', {
                 params: {
                   c: count,
                 }
@@ -41,7 +41,7 @@ export function useGetBoard(bid: int, open: Boolean, update: Boolean) {
     useEffect(() => {
         if (bid != null && open == true)
         {
-            axios.get('http://localhost:8090/board/getBoard', {
+            axios.get('/board/getBoard', {
                 params: {
                   bid: bid
                 }
@@ -72,7 +72,7 @@ export function useGetReplyList(bid: int, open: Boolean, update: Boolean, count:
     useEffect(() => {
         if (bid != null && open == true)
         {
-            axios.get('http://localhost:8090/board/replyList', {
+            axios.get('/board/replyList', {
                 params: {
                   bid: bid,
                   offset: 0,
@@ -106,7 +106,7 @@ export function useGetBoardByUrl(url: String) {
     useEffect(() => {
         if (url != null && url != '')
         {
-            axios.get('http://localhost:8090/board/getBoardUrl', {
+            axios.get('/board/getBoardUrl', {
                 params: {
                     url: url
                 }

@@ -34,7 +34,7 @@ export default function Posting() {
 
     useEffect(() => {
         if (uid !== null) {
-            axios.get('http://localhost:8090/user/getUser', {
+            axios.get('/user/getUser', {
                 params: {
                     uid: uid,
                 }
@@ -112,7 +112,7 @@ export default function Posting() {
 
         axios({
             method: "POST",
-            url: 'http://localhost:8090/board/insert',
+            url: '/board/insert',
             data: sendData,
             headers: { 'Content-Type': 'application/json' }
         }).catch(error => console.log(error));
