@@ -1,38 +1,20 @@
+
 import { useState, useEffect, useMemo } from "react";
-
-// react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";  
-
-// @mui material components
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
-
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-
-// Material Dashboard 2 React example components
 import Sidenav from "examples/Sidenav";
 import Configurator from "examples/Configurator";
-
-// Material Dashboard 2 React themes
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
-
-// Material Dashboard 2 React Dark Mode themes
 import themeDark from "assets/theme-dark";
 import themeDarkRTL from "assets/theme-dark/theme-rtl";
-
-// Material Dashboard 2 React routes
 import routes from "routes";
-
-// Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
-
-// Images
 import brandDark from "assets/images/LightLogo.png";
 import brandWhite from "assets/images/DarkLogo.png";
-
 import Login from "layouts/authentication/sign-in";
 import Register from "layouts/authentication/sign-up";
 
@@ -50,6 +32,7 @@ export default function App() {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 확인용 변수
 
   // 로그인 및 회원가입 사이드바
   const isLoginPage = pathname === "/authentication/sign-in";
@@ -98,10 +81,9 @@ export default function App() {
       return null;
     });
 
-    // 항목 숨기기 혹은 보이기
-  const visibleRoutes = routes.filter(route => route.visible);
+  // 항목 숨기기 혹은 보이기
+  const visibleRoutes = routes.filter(route => route.visible && (isLoggedIn || route.key !== 'sign-in'));
 
- 
   return (
     <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
       <CssBaseline />
