@@ -1,3 +1,18 @@
+/**
+=========================================================
+* Material Dashboard 2 React - v2.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
 import { useState } from "react";
 
 // @mui material components
@@ -29,6 +44,8 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import "./mypage.css";
+import { GetWithExpiry } from "api/LocalStorage";
 
 import PostingModal from "../home/Board/PostingModal"
 import { useQuery } from "@tanstack/react-query";
@@ -63,21 +80,20 @@ function Notifications() {
       <Stack direction={'row'} sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}> {/* 방향을 row로 지정하면 가로 방향으로 배치됨 */}
         {/* Avatar 태그 : 유튜브 프사처럼 동그란 이미지 넣을 수 있는 것 */}
         <Avatar
-          // src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.profile}`}
+          src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
           sx={{
-            width: '10rem',
-            height: '10rem',
+            width: '9rem',
+            height: '9rem',
             margin: '20px',
             fontSize: '60px',
-            border: '2px solid primary.main', // 외곽선 색과 굵기 지정
-            cursor: 'pointer',
+            border: '2px solid primary.main' // 외곽선 색과 굵기 지정
           }}
         />
         {/* 프사 옆 정보와 팔로우 버튼 만드는 Stack 공간 */}
         <Stack sx={{ padding: '20px' }} fontWeight={'bold'}>
           <Stack direction={'row'} spacing={2} sx={{ marginTop: '10px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="h4" fontWeight={'bold'}>
-              {/* {user.nickname} */}JAMES
+              {nickname}
             </Typography>
             {/* <Button onClick={handleCheckingPwd}><SettingsIcon sx={{ fontSize: '50px', color: 'darkgray' }} /></Button> */}
           </Stack>
@@ -110,16 +126,16 @@ function Notifications() {
         {/* <Link href={user.snsDomain}>{user.snsDomain}</Link> */}
         {/* {user.statusMessage} */}
       </Stack>
-      <Divider sx={{ marginTop: '20px', marginBottom: '10px', border: '2px' }} />
+      <Divider sx={{ marginTop: '20px', marginBottom: '10px' }}></Divider>
       {/* 게시물과 태그 넣는 거 생성 */}
       <Stack direction="row" justifyContent="center" alignItems='center' spacing={5} sx={{ mt: 2 }}>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
-          <BookmarkIcon sx={{ fontSize: '15px' }} />
-          <Typography sx={{ fontSize: '12px' }}>책갈피</Typography>
+          <SubjectIcon sx={{ fontSize: 'large' }} />
+          <Typography sx={{ fontSize: 'large' }}>게시물</Typography>
         </Stack>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
-          <SubjectIcon sx={{ fontSize: '15px' }} />
-          <Typography sx={{ fontSize: '12px' }}>통계</Typography>
+          <BookmarkIcon sx={{ fontSize: 'large' }} />
+          <Typography sx={{ fontSize: 'large' }}>책갈피</Typography>
         </Stack>
       </Stack>
       <br />
@@ -156,8 +172,10 @@ function Notifications() {
           );
         })}
 
-
-        <Footer />
-    </DashboardLayout >  
+      </Grid>
+      <Footer />
+    </DashboardLayout >
+  );
+}
 
 export default Notifications;

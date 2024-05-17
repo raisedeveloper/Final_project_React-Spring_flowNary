@@ -9,6 +9,7 @@ import {
 import { red } from '@mui/material/colors';
 import { Stack } from '@mui/system';
 import PropTypes from 'prop-types';
+import TimeAgo from 'timeago-react';
 
 
 // 이모티콘
@@ -34,8 +35,6 @@ import { getBoard, getBoardList, getBoardUrl, getReplyList } from 'api/axiosGet.
 import BoardDetail from './BoardDetail.jsx';
 import MDBox from 'components/MDBox/index.js';
 import './board.css';
-import TimeAgo from 'timeago-react';
-
 
 export default function Reply(props) {
   const bid = props.bid;
@@ -45,6 +44,10 @@ export default function Reply(props) {
   const handleButtonLike = props.handleButtonLike;
   const [expandedContents, setExpandedContents] = useState({});
 
+  const board = useQuery({
+    queryKey: ['board', bid, uid],
+    queryFn: () => getBoard(bid, uid),
+  });
   const replyList = useQuery({
     queryKey: ['board', props.bid],
     queryFn: () => getReplyList(props.bid, 0, 20),
@@ -97,21 +100,20 @@ export default function Reply(props) {
               <Paper>
                 <ListItem alignItems="flex-start" sx={{ marginTop: 0.5, marginLeft: 0.5 }}>
                   <Avatar
-                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/`}
+                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.data.profile}`}
                   />
-
                   <ListItemText sx={{ paddingLeft: 1 }}
-                    primary="닉네임"
+                    primary={board.data.nickname}
                     secondary={
                       <React.Fragment sx={{ overflowWrap: 'break-word', }}>
-                        {/* {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 28))}
-                      {data.rContents != null && data.rContents.length > 30 && !expandedContents[index] && (
-                        <button className='replyOpen' onClick={() => toggleExpand(index)}>...더보기</button>
+                        {board.data.bContents != null && (expandedContents[0] ? board.data.bContents :board.data.bContents.slice(0, 28))}
+                      {board.data.bContents!= null && board.data.bContents.length > 30 && !expandedContents[0] && (
+                        <button className='replyOpen' onClick={() => toggleExpand(0)}>...더보기</button>
                       )}
-                      {expandedContents[index] && (
-                        <button className='replyClose' onClick={() => toggleExpand(index)}>접기</button>
-                      )} */}
-                        이곳은 글쓴이 bContents 영역입니다
+                      {expandedContents[0] && (
+                        <button className='replyClose' onClick={() => toggleExpand(0)}>접기</button>
+                      )}
+                        {/* {board.data.bContents} */}
                       </React.Fragment>
                     }
                   >
@@ -124,14 +126,16 @@ export default function Reply(props) {
                   {/* <Button sx={{ color: 'grey', display: 'flex', alignItems: 'center' }}><FavoriteBorderIcon /></Button> */}
                 </ListItem>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >방금 전ㆍ</span>
+                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} > <TimeAgo datetime={board.data.modTime}/>ㆍ</span>
                   <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
                   <Button sx={{ color: 'grey', padding: 0 }}>답글 달기</Button>
                 </div>
                 {/* <ReReplyList params={data.rid}/> */}
               </Paper>
             </List>
-            {replyList.data && replyList.data.map((data, index) => (
+
+
+            {replyList.data && replyList.data.map((data, index)  => (
               <List key={index} sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', paddingRight: 0 }}>
                 <Paper sx={{ border: 'none' }}>
                   <ListItem alignItems="flex-start" sx={{ marginTop: 0.5, marginLeft: 0.5 }}>
@@ -162,7 +166,7 @@ export default function Reply(props) {
                     {/* <Button sx={{ color: 'grey', display: 'flex', alignItems: 'center' }}><FavoriteBorderIcon /></Button> */}
                   </ListItem>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} ><TimeAgo datetime={timestamp} /></span>
+                    <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' trim />ㆍ</span>
                     <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
                     <Button sx={{ color: 'grey', padding: 0 }}>답글 달기</Button>
                   </div>
@@ -174,7 +178,8 @@ export default function Reply(props) {
         </Stack>
         <MDBox>
           <Button sx={{ padding: 0, width: 0 }} onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
-            <FavoriteIcon />
+            <FavoriteIcon sx={board.data.liked ? { color: 'red' } : { color: 'blue' }} />
+            {board.data.likeCount}
           </Button>
           <Button sx={{ padding: 0, width: 0 }}>
             <ShareIcon />
@@ -185,12 +190,8 @@ export default function Reply(props) {
           <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <input
               value={text}
-              onChange={setText}
-              // onEnter={handleOnEnter}
+              onChange={(e) => setText(e.target.value)}
               placeholder="입력.."
-              // shouldReturn
-              //fontSize={15}
-              language='kr'
               style={{
                 padding: '10px 15px',
                 fontSize: '1rem',

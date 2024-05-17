@@ -17,7 +17,6 @@ import Logout from "layouts/authentication/logout";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
-import Logout from "layouts/authentication/logout";
 
 // aside 항목이름
 const routes = [
@@ -139,7 +138,6 @@ const routes = [
     component: <Logout />,  // Logout 컴포넌트를 사용
     visible: true,
   },
-
   {
     type: "collapse",
     name: "회원가입",
