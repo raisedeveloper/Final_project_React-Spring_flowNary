@@ -175,13 +175,13 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             alignItems: 'center'
           }}
         >
-          <Avatar src='https://picsum.photos/200/300?q=11' alt="profile picture" />
+          <Avatar src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} alt="profile picture" />
           <Box ml={1.5}>
             <Typography
               color={textColor}
               fontSize={'13.5px'}
               fontWeight={'bold'}
-            >flowNary</Typography>
+            >{nickname}</Typography>
           </Box>
         </Box>
       </MDBox>

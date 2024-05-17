@@ -25,7 +25,7 @@ public interface UserDao {
 	List<User> getUserList(int count, int offset);
 	
 	@Select("select email, nickname, profile from user"
-			+ "where uid=#{uid}")
+			+ " where uid=#{uid}")
 	GetUserNickEmailDto getUserNicknameEmail(int uid);
 	
 	@Insert("insert into user values (default, #{email}, #{pwd}, default, default"

@@ -9,7 +9,6 @@ import {
 import { red } from '@mui/material/colors';
 import { Stack } from '@mui/system';
 import PropTypes from 'prop-types';
-import TimeAgo from 'timeago-react';
 
 
 // 이모티콘
@@ -46,10 +45,6 @@ export default function Reply(props) {
   const handleButtonLike = props.handleButtonLike;
   const [expandedContents, setExpandedContents] = useState({});
 
-  const board = useQuery({
-    queryKey: ['board', bid, uid],
-    queryFn: () => getBoard(bid, uid),
-  });
   const replyList = useQuery({
     queryKey: ['board', props.bid],
     queryFn: () => getReplyList(props.bid, 0, 20),
