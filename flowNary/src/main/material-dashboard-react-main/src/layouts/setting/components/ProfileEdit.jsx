@@ -137,15 +137,15 @@ function ProfileEdit({ uid, email }) {
       }).catch(error => console.log(error));
     }
     correct("설정 변경에 성공했습니다.");
-    navigate(-1);
+    navigate('/setting');
   }
 
   const goBack = () => { navigate(-1); }
   return (
     <>
-      <Card sx={{ width: { xs: '100%', sm: 500, md: 600, lg: 700, xl: 820 }, borderRadius: "16px", boxShadow: 3, margin: 'auto' }}>
+      <Card sx={{ width: '100%', borderRadius: "16px", boxShadow: 3, margin: 'auto' }}>
         <Background />
-        <CardContent sx={{ textAlign: "center", mt: -8 }}>
+        <CardContent sx={{textAlign: "center", mt: -8 }}>
           <ProfileCard profile={profile} nickname={nickname} statusMessage={statusMessage} image={image} onChangePicture={handlePicture} /><br />
         </CardContent>
       </Card>

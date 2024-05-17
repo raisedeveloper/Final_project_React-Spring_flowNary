@@ -1,17 +1,17 @@
 // Material Dashboard 2 React layouts
-import Home from "layouts/home";
-import Album from "layouts/album";
-import Chatting from "layouts/chatting";
-import Mypage from "layouts/mypage";
-import Family from "layouts/family";
-import Notifications from "layouts/notifications";
-import Chalendar from "layouts/schedule";
-import TodoList from "layouts/todoList";
-import Write from "layouts/write";
-import Settings from "layouts/setting";
-import Team from "layouts/team";
-import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
+import Home from "layouts/home/HomeIndex";
+import Album from "layouts/album/AlbumIndex";
+import Chatting from "layouts/chatting/ChattingIndex";
+import Mypage from "layouts/mypage/MypageIndex";
+import Family from "layouts/family/FamilyIndex";
+import Notifications from "layouts/notifications/NoticeIndex";
+import Chalendar from "layouts/schedule/ScheduleIndex";
+import TodoList from "layouts/todoList/TodoListIndex";
+import Write from "layouts/write/WriteIndex";
+import Settings from "layouts/setting/SettingIndex";
+import Team from "layouts/team/TeamIndex";
+import SignIn from "layouts/authentication/sign-in/LoginIndex";
+import SignUp from "layouts/authentication/sign-up/RegisterIndex";
 import Logout from "layouts/authentication/logout";
 
 

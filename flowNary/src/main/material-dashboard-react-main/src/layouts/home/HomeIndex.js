@@ -235,8 +235,8 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
               <Write />
               <Grid container spacing={3}>
-                {dataList.data && dataList.data.map((data) => (
-                  <Grid key={data.bid} item xs={12} md={6} lg={6}>
+                {dataList.data && dataList.data.map((data, idx) => (
+                  <Grid key={idx} item xs={12} md={6} lg={6}>
                     <MDBox mb={3}>
                       <Card sx={{
                         height: "100%",
@@ -285,7 +285,7 @@ export default function Home() {
                               <img
                                 src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`}
                                 alt="Paella dish"
-                                style={{ cursor:'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                               />
                             </button>
                           </MDBox>
