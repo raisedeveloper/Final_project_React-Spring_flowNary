@@ -21,6 +21,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<User> getOthersUserList(String email) {
+		return uDao.getOthersUserList(email);
+	}
+	
+	@Override
 	public User getUserEmail(String email) {
 		return uDao.getUserEmail(email);
 	}
@@ -62,4 +67,5 @@ public class UserServiceImpl implements UserService {
 	public void updateUserPwd(User user) {
 		uDao.updateUserPwd(user);
 	}
+
 }

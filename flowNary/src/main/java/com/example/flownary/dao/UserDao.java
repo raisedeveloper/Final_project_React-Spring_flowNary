@@ -19,12 +19,15 @@ public interface UserDao {
 	@Select("select * from user where email=#{email}")
 	User getUserEmail(String email);
 	
+	@Select("select * from user where  email!=#{email}")
+	List<User> getOthersUserList(String email);
+	
 	@Select("select * from user where isDeleted=0"
 			+ " order by regDate desc"
 			+ " limit #{count} offset #{offset}")
 	List<User> getUserList(int count, int offset);
 	
-	@Select("select email, nickname, profile from user"
+	@Select("select email, nickname, profile from user "
 			+ "where uid=#{uid}")
 	GetUserNickEmailDto getUserNicknameEmail(int uid);
 	

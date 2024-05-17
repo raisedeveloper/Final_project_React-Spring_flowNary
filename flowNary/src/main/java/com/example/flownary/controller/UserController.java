@@ -8,6 +8,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -122,7 +123,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/getUser")
-	public JSONObject getUser(@RequestParam int uid)
+	public JSONObject getUser(@RequestParam(defaultValue = "-1") int uid)
 	{
 		User user = userSvc.getUser(uid);
 		
@@ -177,5 +178,41 @@ public class UserController {
 		JSONObject userOut = new JSONObject(hMap);
 		
 		return userOut;
+	}
+
+@GetMapping("/nickname")
+	public String nickname(@RequestParam String email, String nickname) {
+		List<User> userList = userSvc.getOthersUserList(email);
+		JSONObject jObj = new JSONObject();
+		JSONArray jArr = new JSONArray();
+
+		for (int i = 0; i < userList.size(); i++) {
+			JSONObject jObject = new JSONObject();
+			User user = userList.get(i);
+
+			jObject.put("nickname", user.getNickname());
+			jArr.add(jObject);
+		}
+		jObj.put("item", jArr);
+		System.out.println(jArr.toString());
+		return jArr.toString();
+	}
+
+	@GetMapping("/tel")
+	public String tel(@RequestParam String email, String tel) {
+		List<User> userList = userSvc.getOthersUserList(email);
+		JSONObject jObj = new JSONObject();
+		JSONArray jArr = new JSONArray();
+
+		for (int i = 0; i < userList.size(); i++) {
+			JSONObject jObject = new JSONObject();
+			User user = userList.get(i);
+
+			jObject.put("tel", user.getTel());
+			jArr.add(jObject);
+		}
+		jObj.put("item", jArr);
+		System.out.println(jArr.toString());
+		return jArr.toString();
 	}
 }
