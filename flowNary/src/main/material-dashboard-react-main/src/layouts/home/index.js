@@ -26,9 +26,19 @@ import { useAddLike, useGetUserNicknameLS } from "api/customHook";
 import { useQuery } from "@tanstack/react-query";
 import { getBoardList } from "api/axiosGet";
 import { getBoard } from "api/axiosGet";
+import TimeAgo from "timeago-react";
+import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
 
 export default function Home() {
 
+  const [expanded, setExpanded] = useState({});
+
+  const handleToggle = (bid) => {
+    setExpanded((prevExpanded) => ({
+      ...prevExpanded,
+      [bid]: !prevExpanded[bid]
+    }));
+  };
 
   const weatherDescKo = {
     201: '가벼운 비를 동반한 천둥구름',
@@ -243,8 +253,6 @@ export default function Home() {
                               src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                             />
                           }
-
-
                           action={
                             <IconButton aria-label="settings">
                               <MoreVertIcon />
@@ -277,7 +285,7 @@ export default function Home() {
                               <img
                                 src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`}
                                 alt="Paella dish"
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                style={{ cursor:'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                               />
                             </button>
                           </MDBox>
@@ -285,16 +293,23 @@ export default function Home() {
                             <MDTypography variant="h6" textTransform="capitalize">
                               {data.title}
                             </MDTypography>
-                            <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                              {data.bContents}
-                            </MDTypography>
+                            {expanded[data.bid] ? (
+                              <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                                {data.bContents}
+                              </MDTypography>
+                            ) : (
+                              <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                {data.bContents}
+                              </MDTypography>
+                            )}
+                            <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '접기' : '더 보기'}</Button>
                             <Divider />
                             <MDBox display="flex" alignItems="center">
                               <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
                                 <Icon>schedule</Icon>
                               </MDTypography>
                               <MDTypography variant="button" color="text" fontWeight="light">
-                                {data.modTime}
+                                <TimeAgo datetime={data.modTime} locale={koreanStrings} />
                               </MDTypography>
                             </MDBox>
                           </MDBox>
@@ -334,15 +349,10 @@ export default function Home() {
       {/* 게시글 모달 */}
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
-        {/* <BoardDetail handleClose={handleClose}
-          nickname={nickname} handleButtonLike={handleButtonLike} /> */}
-        {/* <div>
-          <ClearIcon onClick={handleClose} sx={{ cursor: 'pointer', fontSize: '26px', backgroundColor: 'rgb(162, 152, 182)', borderRadius: '100%', margin: '3px' }} />
-        </div> */}
       </Modal>
       <Footer />
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-        <BoardDetail bid={1} uid={1} />
+        <BoardDetail bid={bid} uid={uid} />
       </Modal>
     </DashboardLayout >
   );

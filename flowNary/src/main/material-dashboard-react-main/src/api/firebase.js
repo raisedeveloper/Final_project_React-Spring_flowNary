@@ -34,8 +34,7 @@ export function logout() {
 //     callback(user);
 //   });
 // }
-
-/*========================= scheduler =========================*/
+/*========================= anniversary =========================*/
 
 export async function getAnnivList(adate, email) {
   return get(ref(database, 'anniversary'))
@@ -69,6 +68,8 @@ export async function deleteAnniv(id) {
   return remove(ref(database, `anniversary/${id}`));
 }
 
+/*========================= schedule =========================*/
+
 export async function getSchedList(sdate, email) {
   return get(ref(database, 'schedule'))
     .then(snapshot => {
@@ -77,11 +78,11 @@ export async function getSchedList(sdate, email) {
         let records = Object.values(objects);
         records = records
           .filter(record => record.sdate === sdate && record.email === email)
-          .sort((a, b) => a.startTime.localeCompare(b.startTime));
+          .sort((a, b) => a.startTime.localeCompare(b.startTime)); 
         return records;
       }
       return null;
-    });
+    }); 
 }
 
 export async function insertSched(sched) {

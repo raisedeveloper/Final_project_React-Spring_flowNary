@@ -158,6 +158,26 @@ export const getBoardList = async (count = 1, field='title', field2 = '', field3
     return result;
 }
 
+/** 내 글 리스트 받기 for 앨범, 마이페이지
+ * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
+ * @returns 
+ */
+export const getMyBoardList = async (uid) => {
+
+    const result = await axios.get('http://localhost:8090/board/mylist', {
+        params: {
+            uid: uid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getMyBoardList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+
 /** 댓글 리스트 받기
  * @param {*} bid 글 번호
  * @param {*} offset 맨 처음부터 보여주지 않을 개수 (ex: limit 20에 offset 10이면 11~20번째 글만 리턴)
@@ -220,7 +240,7 @@ export const deleteBoard = async (bid: number) => {
 /** 검색어를 입력하여 받은 게시물의 총 개수 구하기
  * @param {*} field 검색 분야 1 (기본값 'title')
  * @param {*} field2 분야 2 (기본값 '')
- * @param {*} field3 분야 3 (기본값 '')
+ * @param {*} field3 분야 3 (기본값 '') 
  * @param {*} query 검색어 (기본값 '')
  * @param {*} type 검색 유형 (1: field 1개, 2: field 2개, 3: field 3개, 기본값 1)
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)

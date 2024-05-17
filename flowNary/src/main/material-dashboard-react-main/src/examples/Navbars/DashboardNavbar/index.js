@@ -61,6 +61,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const email = GetWithExpiry("email");
   const nickname = GetWithExpiry("nickname");
   const uname = GetWithExpiry("uname");
+  const profile = GetWithExpiry("profile");
 
 
   useEffect(() => {
@@ -106,13 +107,13 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleProfileMenuClose}
       sx={{ mt: 2 }}
     >
-      <MenuItem disabled>
+      <MenuItem onClick={goMypage}>
         <MDBox
           display="flex"
           alignItems="center"
           px={0.5} py={1}
         >
-          <Avatar src="/클라우드 연결" alt="profile picture" /> {/* 프로필 사진 경로 */}
+          <Avatar src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} alt="profile picture" /> {/* 프로필 사진 경로 */}
           <MDBox ml={1.75}>
             <div>{uname}</div>
             <div>{email}</div>

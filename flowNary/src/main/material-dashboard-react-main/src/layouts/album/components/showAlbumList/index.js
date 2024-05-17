@@ -1,266 +1,69 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
 import { CardMedia, Grid } from "@mui/material";
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
-
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-
-// Material Dashboard 2 React example components
 import TimelineItem from "examples/Timeline/TimelineItem";
 import YearSelect from '../yearSelect';
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getMyBoardList } from "api/axiosGet";
+import { GetWithExpiry } from "api/LocalStorage";
+import './album.css';
 
-function OrdersOverview() {
+function ShowAlbumList() {
+  const uid = parseInt(GetWithExpiry('uid'));
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const board = useQuery({
+    queryKey: ['board', uid],
+    queryFn: () => getMyBoardList(uid),
+  });
+  const [year, setYear] = useState(null);
+  console.log(board.data);
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
   };
+
   return (
     <MDBox py={3}>
       <MDBox mt={4.5}>
         <YearSelect selectedYear={selectedYear} onChange={handleYearChange} />
-        <p>선택 연도: {selectedYear}</p>
-        <br />
-        <Grid container spacing={3} sx={{ border: '2px solid white', }}>
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox >
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
+        <Grid container mt={3} spacing={3} sx={{ border: '2px solid white', }}>
+          {board && board.data && board.data.map((data) => {
+            const modTime = data.modTime;
+            if (!modTime) return null; // modTime이 없으면 건너뜁니다.
+            
+            const yearFromModTime = new Date(modTime).getFullYear(); // modTime에서 연도를 추출합니다.
+            if (yearFromModTime !== selectedYear) return null; // 선택한 연도와 다른 경우 건너뜁니다.
 
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{ height: "100%" }}>
+            return (
+              <Grid item key={data.bid} xs={12} md={6} lg={4}>
                 <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
+                  <MDBox sx={{ width: '100%', height: '100%' }}>
+                    <MDBox
+                      variant="gradient"
+                      borderRadius="lg"
+                      sx={{
+                        height: "12.5rem",
+                        transition: 'box-shadow 0.3s',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        '&:hover': {
+                          boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
+                        }
+                      }}
+                    >
+                      <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}`} alt="Paella dish" />
+                    </MDBox>
                   </MDBox>
                 </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <MDBox mb={1}>
-              <Card sx={{
-                height: "100%",
-              }}>
-                <MDBox>
-                  <MDBox
-                    variant="gradient"
-                    borderRadius="lg"
-                    sx={{
-                      height: "12.5rem",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      backgroundColor: 'rgba(0, 0, 0, 0)',
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}
-                  >
-                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image='https://picsum.photos/200/300' alt="Paella dish" />
-                  </MDBox>
-                </MDBox>
-              </Card>
-            </MDBox>
-          </Grid>
+              </Grid>
+            );
+          })}
         </Grid>
       </MDBox >
     </MDBox >
   );
 }
 
-export default OrdersOverview;
+export default ShowAlbumList;

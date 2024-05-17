@@ -12,6 +12,7 @@ import Settings from "layouts/setting";
 import Team from "layouts/team";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Logout from "layouts/authentication/logout";
 
 
 // @mui icons

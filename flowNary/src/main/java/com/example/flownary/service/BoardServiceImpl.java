@@ -42,6 +42,11 @@ public class BoardServiceImpl implements BoardService{
 		query = "%" + query + "%";
 		return boardDao.getBoardList(field, query, count);
 	}
+	
+	@Override
+	public List<Board> getMyBoardList(int uid) {
+		return boardDao.getBoardList4(uid);
+	}
 
 	@Override
 	public List<Board> getBoardListSearch(int count, List<String> field, String query) {

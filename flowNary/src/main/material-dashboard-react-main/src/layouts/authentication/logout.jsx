@@ -9,9 +9,7 @@ const Logout = () => {
   useEffect(() => {
     signOut(auth).then(() => {
       console.log('로그아웃 성공');
-      localStorage.removeItem("uid");
-      localStorage.removeItem("email");
-      localStorage.removeItem("profile");
+      localStorage.clear();
       navigate('/authentication/sign-in');
     })
     .catch((error) => {

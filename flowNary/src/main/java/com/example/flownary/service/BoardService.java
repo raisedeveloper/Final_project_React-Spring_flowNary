@@ -8,7 +8,7 @@ public interface BoardService {
 	public static final int COUNT_PER_PAGE = 5; // 스크롤할때마다 보여주는 게시물 수
 
 	Board getBoard(int bid);
-	
+
 	int getBoardShareUrl(String ShareUrl);
 	
 	Board getBoardShareUrl2(String ShareUrl);
@@ -16,6 +16,8 @@ public interface BoardService {
 	int getBoardCount(String field, String query);
 	
 	List<Board> getBoardList(int count, String field, String query);
+	
+	List<Board> getMyBoardList(int uid);
 	
 	List<Board> getBoardListSearch(int count, List<String> field, String query);
 	
