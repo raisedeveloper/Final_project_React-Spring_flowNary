@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getSchedList, insertSched, updateSched, deleteSched } from '../../../api/firebase';
+import { getSchedList, insertSched, updateSched, deleteSched } from 'api/firebase';
 
 export default function useSched(ymd) {
   const queryClient = useQueryClient();

@@ -2,6 +2,9 @@ package com.example.flownary.service;
 
 import java.util.List;
 
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.flownary.dao.NoticeDao;
@@ -14,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class NoticeServiceImpl implements NoticeService {
 
 	private final NoticeDao nDao;
+	private final SqlSessionFactory sqlSessionFactory;
 
 	@Override
 	public Notice getNotice(int nid) {
@@ -33,6 +37,30 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public void insertNotice(Notice notice) {
 		nDao.insertNotice(notice);
+	}
+	
+	@Override
+	public void insertNoticeList(List<Notice> list) {
+		try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+			NoticeDao mapper = sqlSession.getMapper(NoticeDao.class);
+			
+			int n = 0;
+			
+			for (Notice notice : list) {
+				mapper.insertNotice(notice);
+				n++;
+				if (n > 1000)
+				{
+					n = 0;
+					sqlSession.flushStatements();
+				}
+			}
+			sqlSession.flushStatements();
+			sqlSession.commit();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -137,3 +137,17 @@ export const like = async (sendData: string) => {
         console.log(error);
     });
 }
+
+export const like2 = async (sendData: {
+    uid: Number,
+    type: Number,
+    oid: Number,
+    fuid: number,
+}) => {
+    return axios('http://localhost:8090/board/like', 
+        sendData
+    ).catch(error => {
+        console.log("axiospost.js: like error!");
+        console.log(error);
+    });
+}

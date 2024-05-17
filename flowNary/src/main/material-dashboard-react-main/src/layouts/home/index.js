@@ -11,14 +11,35 @@ import Footer from "examples/Footer";
 
 // Dashboard components
 import TodoList from "layouts/home/components/todoList";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Stack, Typography, } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
 import { useEffect, useState } from "react";
+import BoardDetail from "./Board/BoardDetail";
+import Write from './write';
+
+import { useLocation, useNavigate } from "react-router-dom";
+import { GetWithExpiry } from "api/LocalStorage";
+import { useAddLike, useGetUserNicknameLS } from "api/customHook";
+import { useQuery } from "@tanstack/react-query";
+import { getBoardList } from "api/axiosGet";
+import { getBoard } from "api/axiosGet";
+import TimeAgo from "timeago-react";
+import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
 
 export default function Home() {
+
+  const [expanded, setExpanded] = useState({});
+
+  const handleToggle = (bid) => {
+    setExpanded((prevExpanded) => ({
+      ...prevExpanded,
+      [bid]: !prevExpanded[bid]
+    }));
+  };
+
   const weatherDescKo = {
     201: '가벼운 비를 동반한 천둥구름',
     200: '비를 동반한 천둥구름',
@@ -127,7 +148,7 @@ export default function Home() {
         description: weatherKo,
         name: cityName,
         temp: temp,
-        link: weatherIconAdrs,
+        links: weatherIconAdrs,
       });
       console.log(weather);
 
@@ -140,9 +161,70 @@ export default function Home() {
     getCurrentLocation();
   }, []);
 
-  useEffect(() => {
-    console.log(weather); // 상태가 업데이트된 후에 로그를 출력합니다.
-  }, [weather]); // weather 상태가 변경될 때마다 이펙트가 실행됩니다.
+  /////////////////////////////////////////////////////////////////////
+  // 유저 정보 받아오기
+
+  const navigate = useNavigate();
+
+  const uid = GetWithExpiry("uid");
+  const email = GetWithExpiry("email");
+  const profile = GetWithExpiry("profile");
+
+  const [bid, setBid] = useState(0);
+  const [text, setText] = useState('');
+  const [open, setOpen] = useState(false);
+
+  // if (uid == -1) {
+  //   navigate("/login");
+  // }
+  const nickname = useGetUserNicknameLS();
+
+  // 창 열고 닫기
+  const handleOpen = (e) => {
+    setOpen(true);
+    setBid(e);
+  }
+  const handleClose = () => {
+    setOpen(false);
+    setBid(-1);
+  };
+
+  const location = useLocation();
+  const path = location.pathname.split('/');
+  const path2 = path[path.length - 1];
+
+  /////////////////// useQuery로 BoardList 받기 ///////////////////
+  const dataList = useQuery({
+    queryKey: ['boardList', uid],
+    queryFn: () => getBoardList(10, uid),
+  });
+
+  const addLike = useAddLike();
+  const addLikeForm = (sendData) => {
+    addLike(sendData);
+  }
+
+  // 좋아요 버튼 누를 때 넘기기
+  function handleButtonLike(bid, uid2) {
+    // var sendData = JSON.stringify({
+    //   uid: uid,
+    //   fuid: uid2,
+    //   oid: bid,
+    //   type: 1
+    // })
+    const sendData = {
+      uid: uid,
+      fuid: uid2,
+      oid: bid,
+      type: 1,
+    }
+
+    addLikeForm(sendData);
+  }
+
+  if (dataList.isLoading) {
+    return (<div>로딩 중...</div>)
+  }
 
   return (
     <DashboardLayout>
@@ -151,658 +233,95 @@ export default function Home() {
         <MDBox mt={3}>
           <Stack direction="row" spacing={0}>
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
+              <Write />
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6} lg={6}>
-
-                  {/* 카드1 - 시간x */}
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                        marginBottom: 3
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe" sx={{ width: 33, height: 33 }}>
-                            R
-                          </Avatar>
+                {dataList.data && dataList.data.map((data, idx) => (
+                  <Grid key={idx} item xs={12} md={6} lg={6}>
+                    <MDBox mb={3}>
+                      <Card sx={{
+                        height: "100%",
+                        transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
+                        '&:hover': {
+                          boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
                         }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>Shrimp and Chorizo Paella</Typography>}
-                      />
+                      }}>
+                        <CardHeader
+                          sx={{ padding: 1 }}
+                          avatar={
+                            <Avatar
+                              aria-label="recipe"
+                              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
+                            />
+                          }
+                          action={
+                            <IconButton aria-label="settings">
+                              <MoreVertIcon />
+                            </IconButton>
+                          }
+                          title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
+                        />
 
-                      <MDBox padding="1rem">
-                        {/* 카드2 - 시간*/}
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "14rem",
-                            overflow: "hidden", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
+                        <MDBox padding="1rem">
+                          <MDBox
+                            variant="gradient"
+                            borderRadius="lg"
+                            py={2}
+                            pr={0.5}
+                            sx={{
+                              position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                              height: "12.5rem",
+                              overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
+                              transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                              '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
+                                transform: 'scale(1.05)', // 이미지를 확대합니다.
+                                transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                              },
+                              '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
+                                boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                              }
+                            }}
+                          >
+                            <button onClick={handleOpen.bind(null, data.bid)}>
+                              <img
+                                src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`}
+                                alt="Paella dish"
+                                style={{ cursor:'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                              />
+                            </button>
+                          </MDBox>
+                          <MDBox pt={3} pb={1} px={1}>
+                            <MDTypography variant="h6" textTransform="capitalize">
+                              {data.title}
+                            </MDTypography>
+                            {expanded[data.bid] ? (
+                              <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                                {data.bContents}
+                              </MDTypography>
+                            ) : (
+                              <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                {data.bContents}
+                              </MDTypography>
+                            )}
+                            <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '접기' : '더 보기'}</Button>
+                            <Divider />
+                            <MDBox display="flex" alignItems="center">
+                              <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
+                                <Icon>schedule</Icon>
+                              </MDTypography>
+                              <MDTypography variant="button" color="text" fontWeight="light">
+                                <TimeAgo datetime={data.modTime} locale={koreanStrings} />
+                              </MDTypography>
+                            </MDBox>
                           </MDBox>
                         </MDBox>
-                      </MDBox>
-                    </Card>
-
-
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe">
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title="Shrimp and Chorizo Paella"
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.05)', // 이미지를 확대합니다.
-                              transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                              <Icon>schedule</Icon>
-                            </MDTypography>
-                            <MDTypography variant="button" color="text" fontWeight="light">
-                              September 14, 2016
-                            </MDTypography>
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe">
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title="Shrimp and Chorizo Paella"
-                      // subheader="September 14, 2016"
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                              <Icon>schedule</Icon>
-                            </MDTypography>
-                            <MDTypography variant="button" color="text" fontWeight="light">
-                              September 14, 2016
-                            </MDTypography>
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                        marginBottom: 3
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe" sx={{ width: 33, height: 33 }}>
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>Shrimp and Chorizo Paella</Typography>}
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "hidden", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-
-
-
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            {/* <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                        <Icon>schedule</Icon>
-                      </MDTypography>
-                      <MDTypography variant="button" color="text" fontWeight="light">
-                        시간
-                      </MDTypography> */}
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-
-
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe">
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title="Shrimp and Chorizo Paella"
-                      // subheader="September 14, 2016"
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                              <Icon>schedule</Icon>
-                            </MDTypography>
-                            <MDTypography variant="button" color="text" fontWeight="light">
-                              September 14, 2016
-
-                            </MDTypography>
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe">
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title="Shrimp and Chorizo Paella"
-                      // subheader="September 14, 2016"
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                              <Icon>schedule</Icon>
-                            </MDTypography>
-                            <MDTypography variant="button" color="text" fontWeight="light">
-                              September 14, 2016
-                            </MDTypography>
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                        marginBottom: 3
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe" sx={{ width: 33, height: 33 }}>
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>Shrimp and Chorizo Paella</Typography>}
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "hidden", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-
-
-
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            {/* <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                        <Icon>schedule</Icon>
-                      </MDTypography>
-                      <MDTypography variant="button" color="text" fontWeight="light">
-                        시간
-                      </MDTypography> */}
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-
-
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe">
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title="Shrimp and Chorizo Paella"
-                      // subheader="September 14, 2016"
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                              <Icon>schedule</Icon>
-                            </MDTypography>
-                            <MDTypography variant="button" color="text" fontWeight="light">
-                              September 14, 2016
-                            </MDTypography>
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={6}>
-                  <MDBox mb={3}>
-                    <Card sx={{
-                      height: "100%",
-                      transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                      '&:hover': {
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                      }
-                    }}>
-                      <CardHeader sx={{ padding: 1 }}
-                        avatar={
-                          <Avatar aria-label="recipe">
-                            R
-                          </Avatar>
-                        }
-                        action={
-                          <IconButton aria-label="settings">
-                            <MoreVertIcon />
-                          </IconButton>
-                        }
-                        title="Shrimp and Chorizo Paella"
-                      // subheader="September 14, 2016"
-                      />
-
-                      <MDBox padding="1rem">
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.1)', // 이미지를 확대합니다.
-                              transition: 'transform 0.3s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <img
-                            src="https://picsum.photos/200/300"
-                            alt="Paella dish"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }} // 이미지를 부모 요소와 동일한 크기와 모양으로 설정하고, 부모 요소에 상대적으로 위치합니다.
-                          />
-                        </MDBox>
-                        <MDBox pt={3} pb={1} px={1}>
-                          <MDTypography variant="h6" textTransform="capitalize">
-                            제목
-                          </MDTypography>
-                          <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                            설명
-                          </MDTypography>
-                          <Divider />
-                          <MDBox display="flex" alignItems="center">
-                            <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                              <Icon>schedule</Icon>
-                            </MDTypography>
-                            <MDTypography variant="button" color="text" fontWeight="light">
-                              September 14, 2016
-                            </MDTypography>
-                          </MDBox>
-                        </MDBox>
-                      </MDBox>
-                    </Card>
-                  </MDBox>
-                </Grid>
+                      </Card>
+                    </MDBox>
+                  </Grid>
+                ))}
               </Grid>
             </Stack>
+
+            {/* 날씨 정보 */}
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
                 <MDBox>
@@ -811,7 +330,7 @@ export default function Home() {
                       <MDTypography variant="h6" fontWeight="medium">
                         Weather 정보
                       </MDTypography>
-                      <Avatar sx={{ width: 200, height: 200 }} src={weather.link} alt="날씨 아이콘" />
+                      <Avatar sx={{ width: 200, height: 200 }} src={weather.links} alt="날씨 아이콘" />
                       <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
                         {weather.name}:  {weather.temp}℃
                         <br />
@@ -827,7 +346,14 @@ export default function Home() {
           </Stack>
         </MDBox >
       </MDBox >
+      {/* 게시글 모달 */}
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
+      </Modal>
       <Footer />
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <BoardDetail bid={bid} uid={uid} />
+      </Modal>
     </DashboardLayout >
   );
 }

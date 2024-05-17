@@ -62,8 +62,9 @@ export default function Login() {
                 });
                 // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
                 SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("profile", res.data.profile, 180);
                 SetWithExpiry("nickname", res.data.nickname, 180);
+                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
@@ -85,8 +86,9 @@ export default function Login() {
                 console.log("구글 회원가입 성공!" + response.data);
             } else {
                 SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("profile", res.data.profile, 180);
                 SetWithExpiry("nickname", res.data.nickname, 180);
+                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
@@ -166,6 +168,7 @@ export default function Login() {
                     SetWithExpiry("email", res.data.email, 180);
                     SetWithExpiry("profile", res.data.profile, 180);
                     SetWithExpiry("nickname", res.data.nickname, 180);
+                    SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 }).catch(error => console.log(error));
 
                 navigate('/home');

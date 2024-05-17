@@ -1,19 +1,24 @@
+// routes.js
+import React from 'react';
+import Icon from '@mui/material/Icon';
+
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
-import Settings from "layouts/setting";
 import Album from "layouts/album";
 import Chatting from "layouts/chatting";
-import Notifications from "layouts/notifications";
 import Mypage from "layouts/mypage";
+import Family from "layouts/family";
+import Notifications from "layouts/notifications";
+import Chalendar from "layouts/schedule";
+import TodoList from "layouts/todoList";
+import Write from "layouts/write";
+import Settings from "layouts/setting";
+import Team from "layouts/team";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
-import Chalendar from "layouts/schedule";
+import Logout from "layouts/authentication/logout";
 
-// @mui icons
-import Icon from "@mui/material/Icon";
-
-// aside 항목이름
-const routes = [
+const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "홈",
@@ -52,11 +57,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "f_패밀리",
-    key: "friends",
+    name: "패밀리",
+    key: "family",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
-    route: "/friends",
-    component: <Mypage />,
+    route: "/family",
+    component: <Family />,
     visible: true,
   },
   {
@@ -70,7 +75,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "특별한 날",
+    name: "일정관리",
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
     route: "/chalendar",
@@ -83,16 +88,16 @@ const routes = [
     key: "to-do",
     icon: <Icon fontSize="xx-large">checklist</Icon>,
     route: "/to-do",
-    component: <Mypage />,
+    component: <TodoList />,
     visible: true,
   },
   {
     type: "collapse",
     name: "글쓰기",
-    key: "profile/settings",
+    key: "write",
     icon: <Icon fontSize="xx-large">history_edu</Icon>,
-    route: "/profile/settings",
-    component: <Settings />,
+    route: "/write",
+    component: <Write />,
     visible: true,
   },
   {
@@ -106,31 +111,21 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Team",
-    key: "team",
-    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
-    route: "/team",
-    component: <SignUp />,
-    visible: true,
-  },
-  {
-    type: "collapse",
     name: "로그인",
     key: "sign-in",
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
-    visible: true,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
-
   {
     type: "collapse",
     name: "로그아웃",
     key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
-    visible: true,
+    route: "/logout",
+    component: <Logout />,
+    visible: isLoggedIn, // 로그인되었을 때만 보임
   },
   {
     type: "collapse",
@@ -139,9 +134,8 @@ const routes = [
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
-    visible: false,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
-
 ];
 
-export default routes;
+export default createRoutes;

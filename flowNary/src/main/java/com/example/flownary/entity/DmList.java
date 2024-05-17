@@ -6,11 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class DmList {
 
 	int did;
@@ -21,11 +23,30 @@ public class DmList {
 	String dFile;
 	int isDeleted;
 	String nickname;
+	String profile;
 
-	@Override
-	public String toString() {
-		return "DmList [did=" + did + ", uid=" + uid + ", cid=" + cid + ", dContents=" + dContents + ", dTime=" + dTime
-				+ ", dFile=" + dFile + ", isDeleted=" + isDeleted + ", nickname=" + nickname + "]";
+	public String getdContents() {
+		return dContents;
+	}
+
+	public void setdContents(String dContents) {
+		this.dContents = dContents;
+	}
+
+	public LocalDateTime getdTime() {
+		return dTime;
+	}
+
+	public void setdTime(LocalDateTime dTime) {
+		this.dTime = dTime;
+	}
+
+	public String getdFile() {
+		return dFile;
+	}
+
+	public void setdFile(String dFile) {
+		this.dFile = dFile;
 	}
 	
 }

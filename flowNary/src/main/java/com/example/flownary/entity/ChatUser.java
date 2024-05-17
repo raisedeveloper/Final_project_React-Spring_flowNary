@@ -1,5 +1,7 @@
 package com.example.flownary.entity;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,14 +13,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Axiosdata {
+public class ChatUser {
 
-	private int uid;
-	private int bid;
-	private int rid;
-	private int rrid;
-	private int cid;
-	
-	private String email;
-	private String profile;
+	int cid;
+	int uid;
+	int status;
+	LocalDateTime statusTime;
 }

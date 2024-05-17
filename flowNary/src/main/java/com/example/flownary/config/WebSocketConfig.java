@@ -23,8 +23,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // 연결 URL : ws://localhost:8080/ws-stomp/websocket
-        registry.addEndpoint("/ws-stomp")
+        // 연결 URL : ws://localhost:8080/ws/websocket
+        registry.addEndpoint("/ws")
             // .setAllowedOrigins("http://localhost:3000") // "http://localhost:3000" 페이지로부터의 요청만 허용 
             .setAllowedOriginPatterns("**") // 전체 페이지로부터의 요청 허용
             .withSockJS();

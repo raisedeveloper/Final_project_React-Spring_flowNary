@@ -59,9 +59,9 @@ function ProfileCard(props) {
         hidden
         id="hidden-input"
       />
-      <span>닉네임: {props.nickname}</span><br />
-      <span>상태메시지: {props.statusMessage}</span>
-      <br />
+      <span style={{fontSize: 'large', fontWeight:'bold',}}>{props.nickname}</span><br />
+      <span style={{fontSize: 'large', fontWeight:'bold',}}>{props.statusMessage}</span>
+      <br /><br />
       <Button
         variant='contained'
         onClick={handleImageEdit}

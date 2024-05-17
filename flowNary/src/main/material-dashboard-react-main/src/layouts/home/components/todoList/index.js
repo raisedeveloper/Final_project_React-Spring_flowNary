@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import { Card, Icon, Checkbox, Typography, FormGroup, FormControlLabel, TextField, Button } from "@mui/material";
 import Done from '@mui/icons-material/Done';
@@ -54,31 +39,32 @@ export default function TodoList() {
   };
 
   return (
-    <Card sx={{ height: "50%" }}>
+    <Card sx={{ height: "55%" }}>
       <MDBox pt={3} px={3}>
         <MDTypography variant="h6" fontWeight="medium">
-          해야할 일!
+          최대 7개 - 해야할 일!
         </MDTypography>
       </MDBox>
       <MDBox pt={3} px={3}>
         <FormGroup>
           {items.map(item => (
-            <div key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
+            <div key={item.id} style={{ display: 'flex', justifyContent:'space-between' }}>
               <FormControlLabel
                 control={<Checkbox />}
                 label={item.text}
                 onChange={() => console.log('Checkbox clicked:', item.text)}
               />
-              <Button variant="outlined" color="secondary" onClick={() => removeItem(item.id)}>삭제</Button>
+              <Button  color="primary" onClick={() => removeItem(item.id)}>삭제</Button>
             </div>
           ))}
         </FormGroup>
+        <br />
         <TextField
-          label="Add new item"
+          placeholder="새로운 할 일 추가"
           value={newItemText}
           onChange={e => setNewItemText(e.target.value)}
         />
-        <Button onClick={addItem}>Add</Button>
+        <Button onClick={addItem}>추가</Button>
       </MDBox>
     </Card>
   );

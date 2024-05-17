@@ -61,6 +61,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const email = GetWithExpiry("email");
   const nickname = GetWithExpiry("nickname");
   const uname = GetWithExpiry("uname");
+  const profile = GetWithExpiry("profile");
 
 
   useEffect(() => {
@@ -106,26 +107,46 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleProfileMenuClose}
       sx={{ mt: 2 }}
     >
-      <MenuItem disabled>
+      <MenuItem
+        style={{ backgroundColor: "rgba(226, 223, 226, 0.625)", height: '4rem' }}
+        onClick={goMypage}>
         <MDBox
           display="flex"
           alignItems="center"
           px={0.5} py={1}
         >
-          <Avatar src="/클라우드 연결" alt="profile picture" /> {/* 프로필 사진 경로 */}
+          {/* 프로필 사진*/}
+          <Avatar
+            src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
+            alt="profile picture"
+            sx={{
+              width: '3.69rem',
+              height: '2.5rem',
+              borderRadius: '50%',
+              objectFit: 'cover'
+            }}
+          />
           <MDBox ml={1.75}>
-            <div>{uname}</div>
-            <div>{email}</div>
+            <div style={{fontWeight:'bold', fontSize:'15px'}}>{nickname}</div>
+            <div style={{marginLeft:'.125rem',fontSize:'12px'}}>{email}</div>
           </MDBox>
         </MDBox>
       </MenuItem>
-      <MenuItem onClick={goMypage}>
-        <Icon sx={{ marginRight: '.5rem' }}>account_circle</Icon>
-        프로필
+
+      <MenuItem
+        onClick={goMypage}
+        style={{ width: '15rem', height: '3rem' }}
+      >
+        <Icon sx={{ marginRight: '.5rem', }}>account_circle</Icon>
+        <p style={{fontWeight:'bold'}}>프로필</p>
       </MenuItem>
-      <MenuItem onClick={goSetting}>
+
+      <MenuItem
+        onClick={goSetting}
+        style={{ width: '15rem', height: '3rem' }}
+      >
         <Icon sx={{ marginRight: '.5rem' }}>settings</Icon>
-        설정
+        <p style={{fontWeight:'bold'}}>설정</p>
       </MenuItem>
     </Menu>
   );
