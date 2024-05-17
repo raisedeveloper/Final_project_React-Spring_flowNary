@@ -34,7 +34,6 @@ import { getBoard, getBoardList, getBoardUrl, getReplyList } from 'api/axiosGet.
 import BoardDetail from './BoardDetail.jsx';
 import MDBox from 'components/MDBox/index.js';
 import './board.css';
-import TimeAgo from 'timeago-react';
 
 
 export default function Reply(props) {
