@@ -120,7 +120,7 @@ export default function Chat() {
                         sx={{
                             marginBottom: '1.5em',
                             height: `${inputFieldHeight}px`, // 입력 필드의 높이 설정
-                            width: '80%',
+                            width: '70.5%',
                         }}
                         fullWidth
                         placeholder="메시지를 입력하세요..."

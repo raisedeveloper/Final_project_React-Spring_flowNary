@@ -1,4 +1,3 @@
-
 // Material Dashboard 2 React layouts
 import Home from "layouts/home";
 import Album from "layouts/album";
@@ -59,7 +58,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "f_패밀리",
+    name: "패밀리",
     key: "family",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
     route: "/family",
@@ -77,7 +76,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "특별한 날",
+    name: "일정관리",
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
     route: "/chalendar",
@@ -93,6 +92,7 @@ const routes = [
     component: <TodoList />,
     visible: true,
   },
+
   {
     type: "collapse",
     name: "글쓰기",
@@ -102,6 +102,7 @@ const routes = [
     component: <Write />,
     visible: true,
   },
+
   {
     type: "collapse",
     name: "설정",
@@ -111,15 +112,7 @@ const routes = [
     component: <Settings />,
     visible: true,
   },
-  {
-    type: "collapse",
-    name: "Team",
-    key: "team",
-    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
-    route: "/team",
-    component: <Team />,
-    visible: true,
-  },
+
   {
     type: "collapse",
     name: "로그인",
@@ -127,16 +120,17 @@ const routes = [
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
-    visible: !isLoggedIn,
+    visible: true,
   },
+
   {
     type: "collapse",
     name: "로그아웃",
     key: "sign-out",
-    icon: <Icon fontSize="xx-large">logout</Icon>,    
-    route: "/logout",  
-    component: <Logout />,  
-    visible: isLoggedIn,
+    icon: <Icon fontSize="xx-large">logout</Icon>,
+    route: "/logout",  // 로그아웃 경로
+    component: <Logout />,  // Logout 컴포넌트를 사용
+    visible: true,
   },
   {
     type: "collapse",
@@ -145,8 +139,9 @@ const routes = [
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
-    visible: !isLoggedIn,
+    visible: false,
   },
+
 ];
 
 export default routes;
