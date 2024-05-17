@@ -1,4 +1,5 @@
 import axios from "axios"
+const API_BASE_URL = "/";
 
 /** 사용자 정보 업데이트
  * @param {*} sendData 보내줄 정보의 Json String 데이터, 이하는 sendData에 넣어야 할 정보
@@ -23,7 +24,7 @@ export const userUpdate = async (sendData: {
     tel: string,
 }) => {
 
-    return axios.post('http://localhost:8090/user/update',
+    return axios.post(`${API_BASE_URL}user/update`,
         sendData
     ).catch(error => {
         console.log("axiospost.js: userUpdate error!");
@@ -45,7 +46,7 @@ export const insertBoard = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: 'http://localhost:8090/board/insert',
+        url: `${API_BASE_URL}board/insert`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -67,7 +68,7 @@ export const updateBoard = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: 'http://localhost:8090/board/update',
+        url: `${API_BASE_URL}board/update`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -88,7 +89,7 @@ export const insertReply = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: 'http://localhost:8090/board/reply',
+        url: `${API_BASE_URL}board/reply`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -109,7 +110,7 @@ export const insertReReply = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: 'http://localhost:8090/board/Re_Reply',
+        url: `${API_BASE_URL}board/Re_Reply`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -129,7 +130,7 @@ export const insertReReply = async (sendData: string) => {
 export const like = async (sendData: string) => {
     return axios({
         method: "POST",
-        url: 'http://localhost:8090/board/like',
+        url: `${API_BASE_URL}board/like`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -144,7 +145,7 @@ export const like2 = async (sendData: {
     oid: Number,
     fuid: number,
 }) => {
-    return axios('http://localhost:8090/board/like', 
+    return axios(`${API_BASE_URL}board/like`, 
         sendData
     ).catch(error => {
         console.log("axiospost.js: like error!");
