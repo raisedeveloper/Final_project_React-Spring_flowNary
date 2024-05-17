@@ -1,3 +1,7 @@
+// routes.js
+import React from 'react';
+import Icon from '@mui/material/Icon';
+
 // Material Dashboard 2 React layouts
 import Home from "layouts/home/HomeIndex.js";
 import Album from "layouts/album/AlbumIndex.js";
@@ -14,12 +18,7 @@ import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
 
-
-// @mui icons
-import Icon from "@mui/material/Icon";
-
-// aside 항목이름
-const routes = [
+const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "홈",
@@ -58,7 +57,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "f_패밀리",
+    name: "패밀리",
     key: "family",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
     route: "/family",
@@ -76,7 +75,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "특별한 날",
+    name: "일정관리",
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
     route: "/chalendar",
@@ -112,31 +111,21 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Team",
-    key: "team",
-    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
-    route: "/team",
-    component: <Team />,
-    visible: true,
-  },
-  {
-    type: "collapse",
     name: "로그인",
     key: "sign-in",
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
-    visible: true,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
-
   {
     type: "collapse",
     name: "로그아웃",
     key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
-    route: "/logout",  // 로그아웃 경로
-    component: <Logout />,  // Logout 컴포넌트를 사용
-    visible: true,
+    route: "/logout",
+    component: <Logout />,
+    visible: isLoggedIn, // 로그인되었을 때만 보임
   },
   {
     type: "collapse",
@@ -145,9 +134,8 @@ const routes = [
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
-    visible: false,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
-
 ];
 
-export default routes;
+export default createRoutes;

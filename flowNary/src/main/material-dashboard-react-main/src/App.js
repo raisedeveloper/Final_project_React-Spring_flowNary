@@ -1,37 +1,23 @@
+// app.js
 import { useState, useEffect, useMemo } from "react";
-
-// react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";  
-
-// @mui material components
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
-
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-
-// Material Dashboard 2 React example components
 import Sidenav from "examples/Sidenav";
 import Configurator from "examples/Configurator";
-
-// Material Dashboard 2 React themes
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
-
-// Material Dashboard 2 React Dark Mode themes
 import themeDark from "assets/theme-dark";
 import themeDarkRTL from "assets/theme-dark/theme-rtl";
-
-// Material Dashboard 2 React routes
-import routes from "routes";
-
-// Material Dashboard 2 React contexts
+import createRoutes from "./routes";  // 동적 라우트 생성 함수
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
-
-// Images
 import brandDark from "assets/images/LightLogo.png";
 import brandWhite from "assets/images/DarkLogo.png";
+import { useAuthState } from "react-firebase-hooks/auth";  // Firebase 인증 훅 사용
+import { getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
 
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
@@ -48,7 +34,10 @@ export default function App() {
     whiteSidenav,
     darkMode,
   } = controller;
+
+  const auth = getAuth();
   const [onMouseEnter, setOnMouseEnter] = useState(false);
+  const [user, loading, error] = useAuthState(auth);  // 로그인 상태 훅
   const { pathname } = useLocation();
 
   // 로그인 및 회원가입 사이드바
@@ -85,34 +74,27 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  const getRoutes = (allRoutes) =>
-    allRoutes.map((route) => {
-      if (route.collapse) {
-        return getRoutes(route.collapse);
-      }
 
-      if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
-      }
 
-      return null;
-    });
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
-    // 항목 숨기기 혹은 보이기
-  const visibleRoutes = routes.filter(route => route.visible);
+  const dynamicRoutes = createRoutes(!!user);  // 로그인 상태에 따라 라우트 동적 생성
 
- 
   return (
     <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
       <CssBaseline />
-      {/* 로그인 이랑 가입페이지는 사이드바 가리기 */}
       {!isLoginPage && !isRegisterPage && layout === "dashboard" && (
         <>
           <Sidenav
             color={'primary'}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
             brandName="flownary"
-            routes={visibleRoutes}
+            routes={dynamicRoutes.filter(route => route.visible)}  // 동적 라우트 필터링
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
@@ -121,12 +103,10 @@ export default function App() {
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
-        <Route path="/authentication/sign-in" element={<Login />} />
-        <Route path="/authentication/sign-up" element={<Register />} />
-        {getRoutes(routes)}        
+        {dynamicRoutes.map((route) => (
+          <Route path={route.route} element={route.component} key={route.key} />
+        ))}
         <Route path="*" element={<Navigate to="/home" />} />
-        <Route path="/authentication/sign-in" element={<Navigate to="/authentication/sign-in" />} />
-        <Route path="/authentication/sign-up" element={<Navigate to="/authentication/sign-up" />} />
       </Routes>
     </ThemeProvider>
   );
