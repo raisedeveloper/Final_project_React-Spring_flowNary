@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { GetWithExpiry } from "./LocalStorage";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertBoard, insertReReply, insertReply, like, userUpdate } from "./axiosPost";
+import { insertBoard, insertReReply, insertReply, like, like2, userUpdate } from "./axiosPost";
 
 /** 미사용 함수
  * @param {*} uid 
@@ -70,13 +70,12 @@ export function useGetUserNicknameLS() {
     return null;
 }
 
-/** 좋아요 시 서버로 useMutation
- */
+/* 좋아요 시 서버로 useMutation */
 export const useAddLike = () => {
     const queryClient = useQueryClient();
 
     const { mutate } = useMutation({
-        mutationFn: like,
+        mutationFn: like2,
         onSuccess: () => {
             queryClient.invalidateQueries('board'); // 갱신하고자 하는 queryKey를 넣어야 함
         },
@@ -85,8 +84,7 @@ export const useAddLike = () => {
     return mutate;
 }
 
-/** 글 작성 시 서버로 useMutation
- */
+/* 글 작성 시 서버로 useMutation */
 export const useAddBoard = () => {
     const queryClient = useQueryClient();
 
@@ -100,8 +98,7 @@ export const useAddBoard = () => {
     return mutate;
 }
 
-/** 댓글 작성 시 서버로 useMutation
- */
+/* 댓글 작성 시 서버로 useMutation */
 export const useAddReply = () => {
     const queryClient = useQueryClient();
 
@@ -115,8 +112,7 @@ export const useAddReply = () => {
     return mutate;
 }
 
-/** 댓글 작성 시 서버로 useMutation
- */
+/* 댓글 작성 시 서버로 useMutation */
 export const useAddReReply = () => {
     const queryClient = useQueryClient();
 

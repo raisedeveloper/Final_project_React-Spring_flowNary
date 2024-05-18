@@ -20,5 +20,5 @@ public interface ReplyService {
 	
 	void updateReplyLikeCount(int rid, int likeCount);
 	
-	void deleteReply(Reply reply);
+	void deleteReply(int rid);
 }

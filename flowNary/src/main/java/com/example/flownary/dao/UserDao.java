@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.User;
 
 @Mapper
@@ -18,10 +19,17 @@ public interface UserDao {
 	@Select("select * from user where email=#{email}")
 	User getUserEmail(String email);
 	
+	@Select("select * from user where  email!=#{email}")
+	List<User> getOthersUserList(String email);
+	
 	@Select("select * from user where isDeleted=0"
 			+ " order by regDate desc"
 			+ " limit #{count} offset #{offset}")
 	List<User> getUserList(int count, int offset);
+	
+	@Select("select email, nickname, profile from user "
+			+ "where uid=#{uid}")
+	GetUserNickEmailDto getUserNicknameEmail(int uid);
 	
 	@Insert("insert into user values (default, #{email}, #{pwd}, default, default"
 			+ ", default, default, default, default, default, #{gender}"

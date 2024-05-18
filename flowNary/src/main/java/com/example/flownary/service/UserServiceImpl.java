@@ -1,9 +1,12 @@
 package com.example.flownary.service;
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.example.flownary.dao.UserDao;
+import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -20,8 +23,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<User> getOthersUserList(String email) {
+		return uDao.getOthersUserList(email);
+	}
+	
+	@Override
 	public User getUserEmail(String email) {
 		return uDao.getUserEmail(email);
+	}
+	
+	@Override
+	public GetUserNickEmailDto getUserNicknameEmail(int uid) {
+		return uDao.getUserNicknameEmail(uid);
 	}
 	
 	@Override
@@ -56,4 +69,5 @@ public class UserServiceImpl implements UserService {
 	public void updateUserPwd(User user) {
 		uDao.updateUserPwd(user);
 	}
+
 }

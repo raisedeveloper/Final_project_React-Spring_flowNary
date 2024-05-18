@@ -12,12 +12,14 @@ import axios from "axios"
  * @returns 
  */
 export const userUpdate = async (sendData: {
-    uid: string,
+    uid: int,
     uname: string,
     nickname: string,
     profile: string,
     statusMessage: string,
+    birth: Date,
     snsDomain: string,
+    gender: int,
     tel: string,
 }) => {
 
@@ -131,6 +133,20 @@ export const like = async (sendData: string) => {
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
+        console.log("axiospost.js: like error!");
+        console.log(error);
+    });
+}
+
+export const like2 = async (sendData: {
+    uid: Number,
+    type: Number,
+    oid: Number,
+    fuid: number,
+}) => {
+    return axios('http://localhost:8090/board/like', 
+        sendData
+    ).catch(error => {
         console.log("axiospost.js: like error!");
         console.log(error);
     });

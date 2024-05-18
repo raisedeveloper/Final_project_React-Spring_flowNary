@@ -1,5 +1,8 @@
 package com.example.flownary.service;
 
+import java.util.List;
+
+import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.User;
 
 public interface UserService {
@@ -9,7 +12,11 @@ public interface UserService {
 
 	User getUser(int uid);
 	
+	List<User> getOthersUserList(String email);
+	
 	User getUserEmail(String email);
+	
+	GetUserNickEmailDto getUserNicknameEmail(int uid);
 	
 	void insertUser(User user);
 	

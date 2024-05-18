@@ -41,6 +41,8 @@
   display: flex;
   justify-content: flex-end;
   padding-bottom: 3px;
+  flex-direction: 'column'; 
+  align-items: 'center',
 }
 
 /* InputEmoji 스타일 */

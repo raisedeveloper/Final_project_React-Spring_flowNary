@@ -4,7 +4,7 @@ import { GetWithExpiry } from "./LocalStorage";
 
 // uid로 user 정보 받아오기
 export function useGetUser(uid) {
-    const [user, setUser] = useState({ 
+    const [user, setUser] = useState({
         id: uid,
         email: '',
         profile: '',
@@ -59,7 +59,7 @@ export function useGetUserNicknameLS() {
         }
     }, [uid])
 
-    return nickname;
+    return nickname; 
 }
 
 // 보드 리스트 받기

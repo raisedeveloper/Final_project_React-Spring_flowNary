@@ -69,6 +69,8 @@ export default function Register() {
                 // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", res.data.nickname, 180);
+                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
@@ -91,6 +93,8 @@ export default function Register() {
             } else {
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", res.data.nickname, 180);
+                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
@@ -116,8 +120,14 @@ export default function Register() {
             console.error("구글 로그인 오류:", error);
         }
     };
-    
 
+
+    function handleKeyPress(event) {
+        if (event && event.key === 'Enter') {
+            event.preventDefault(); // 이벤트가 존재하고 'Enter' 키를 눌렀을 때만 preventDefault 호출
+            handleSubmit();
+        }
+    }
 
 
     // 회원가입 항목 입력시 값 변경
@@ -126,8 +136,7 @@ export default function Register() {
     }
 
     // 가입하기 버튼 눌렀을 때 일어나는 기능
-    const handleSubmit = async e => {
-        e.preventDefault();
+    const handleSubmit = async () => {
 
         // 정규식으로 이메일 형식 확인
         const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(com|net)$/;
@@ -219,11 +228,11 @@ export default function Register() {
                     </div>
                     <img src={logoImage} alt='LOGO' style={{ maxWidth: '20%' }} />
                     <br />
-                    <input type="email" name='email' placeholder="이메일" className="commonInputStyle" onChange={handleChange} />
+                    <input type="email" name='email' placeholder="이메일" className="commonInputStyle" onKeyUp={handleKeyPress} onChange={handleChange} />
                     <br />
-                    <input type="password" name='password' placeholder="비밀번호" className="commonInputStyle" onChange={handleChange} />
+                    <input type="password" name='password' placeholder="비밀번호" className="commonInputStyle" onKeyUp={handleKeyPress} onChange={handleChange} />
                     <br />
-                    <input type="password" name='confirmPassword' placeholder="비밀번호 확인" className="commonInputStyle" onChange={handleChange} />
+                    <input type="password" name='confirmPassword' placeholder="비밀번호 확인" className="commonInputStyle" onKeyUp={handleKeyPress} onChange={handleChange} />
                     <br /><br />
                     <Link className={`custom-button ${theme}`} onClick={handleSubmit}>가입하기</Link>
                     {/* 다음줄 넘기는 br */}
@@ -238,10 +247,10 @@ export default function Register() {
                     </Link>
                     <p style={{ marginBottom: '1px' }}>&nbsp;</p>
                     <hr style={{ border: '1px solid rgba(255, 255, 255, 0.4)' }} />
-                    <br />                    
+                    <br />
                     <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>계정이 이미 있으신가요?</p>
                     <Link to="/authentication/sign-in" className={`custom-button ${theme}`}>FlowNary<br />로그인</Link>
-                    <br />                    
+                    <br />
                 </div>
             </Card>
         </div>
