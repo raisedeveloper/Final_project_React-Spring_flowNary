@@ -33,7 +33,7 @@ function ShowAlbumList() {
           {board && board.data && board.data.map((data, idx) => {
             const modTime = data.modTime;
             if (!modTime) return null; // modTime이 없으면 건너뜁니다.
-            
+
             const yearFromModTime = new Date(modTime).getFullYear(); // modTime에서 연도를 추출합니다.
             if (yearFromModTime !== selectedYear) return null; // 선택한 연도와 다른 경우 건너뜁니다.
 
@@ -45,7 +45,7 @@ function ShowAlbumList() {
                       variant="gradient"
                       borderRadius="lg"
                       sx={{
-                        height: "12.5rem",
+                        height: "15rem",
                         transition: 'box-shadow 0.3s',
                         backgroundColor: 'rgba(0, 0, 0, 0)',
                         '&:hover': {
@@ -53,7 +53,16 @@ function ShowAlbumList() {
                         }
                       }}
                     >
-                      <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`} alt="Paella dish" />
+                      <CardMedia
+                        className="albumCardList"
+                        component="img"
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          p: 0, m: 0
+                        }}
+                        image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`} alt="Paella dish" />
                     </MDBox>
                   </MDBox>
                 </MDBox>
