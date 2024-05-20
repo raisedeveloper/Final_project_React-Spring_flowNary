@@ -117,18 +117,29 @@ function DashboardNavbar({ absolute, light, isMini }) {
         >
           {/* 프로필 사진*/}
           <Avatar
-            src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
             alt="profile picture"
             sx={{
-              width: '3.69rem',
-              height: '2.5rem',
+              width: '2.75rem',
+              height: '2.75rem',
               borderRadius: '50%',
               objectFit: 'cover'
             }}
-          />
+          >
+            <div
+              style={{
+                width: '2.75rem',
+                height: '2.75rem',
+                borderRadius: '50%',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
+              }}
+            >
+            </div>
+          </Avatar>
           <MDBox ml={1.75}>
-            <div style={{fontWeight:'bold', fontSize:'15px'}}>{nickname}</div>
-            <div style={{marginLeft:'.125rem',fontSize:'12px'}}>{email}</div>
+            <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{nickname}</div>
+            <div style={{ marginLeft: '.125rem', fontSize: '12px' }}>{email}</div>
           </MDBox>
         </MDBox>
       </MenuItem>
@@ -138,7 +149,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
         style={{ width: '15rem', height: '3rem' }}
       >
         <Icon sx={{ marginRight: '.5rem', }}>account_circle</Icon>
-        <p style={{fontWeight:'bold'}}>프로필</p>
+        <p style={{ fontWeight: 'bold' }}>프로필</p>
       </MenuItem>
 
       <MenuItem
@@ -146,7 +157,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
         style={{ width: '15rem', height: '3rem' }}
       >
         <Icon sx={{ marginRight: '.5rem' }}>settings</Icon>
-        <p style={{fontWeight:'bold'}}>설정</p>
+        <p style={{ fontWeight: 'bold' }}>설정</p>
       </MenuItem>
     </Menu>
   );
