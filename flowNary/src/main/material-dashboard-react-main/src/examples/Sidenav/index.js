@@ -151,7 +151,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           <MDTypography variant="h6" color="secondary">
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </MDTypography>
-        </MDBox>      
+        </MDBox>
 
         {/* title 크기 조정 */}
         <MDBox component={NavLink} to="/" sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
@@ -166,11 +166,23 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
               borderRadius: '15px', display: 'flex', alignItems: 'center'
             }}
           >
-            <Avatar
-              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile || 'default-profile'}`}
-              sx={{ width: '4.375rem', height: '2.8125rem', borderRadius: '50%', objectFit: 'cover' }}
+            <Avatar              
+              sx={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', overflow:'hidden' }}
               onClick={goMypage}
-            />
+            >
+              <div
+                style={{
+                  width: '4rem',
+                  height: '3rem',
+                  borderRadius: '50%',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
+                }}
+              >
+              </div>
+
+            </Avatar>
             <Box ml={1.95}>
               <Typography
                 color={textColor}

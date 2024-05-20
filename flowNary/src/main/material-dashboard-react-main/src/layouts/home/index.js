@@ -246,21 +246,31 @@ export default function Home() {
                         }
                       }}>
                         <CardHeader
-                          sx={{ padding: 1 }}
+                          sx={{ padding: 1, }}
                           avatar={
                             <Avatar
-                              sx={{          
-                                paddingTop:'10px',
-                                paddingBottom:'10px',
-                                width:'50px',                     
-                                height:'50px',
-                                borderRadius: '50%',
+                              sx={{
+                                width:'3rem',
+                                height:'3rem',                                
                                 objectFit: 'cover',
-                                overflow:'hidden',
+                                overflow: 'hidden',
+                                border:'1.5px solid #fa99faad'
                               }}
                               aria-label="recipe"
-                              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                            />
+                            >
+                              <div
+                                style={{
+                                  width: '3.8rem',   
+                                  height:'3rem',
+                                  borderRadius: '50%', 
+                                  backgroundSize: 'cover', 
+                                  backgroundPosition: 'center', 
+                                  backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}')` // 이미지 URL 동적 생성
+                                }}
+                              >
+                              </div>
+                            </Avatar>
+
                           }
                           action={
                             // 더 보기

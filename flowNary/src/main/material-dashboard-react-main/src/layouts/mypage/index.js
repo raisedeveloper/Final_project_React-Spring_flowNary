@@ -78,17 +78,30 @@ function Notifications() {
       <DashboardNavbar />
       {/* 상단 정보 넣는 Stack 태그 */}
       <Stack direction={'row'} sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}> {/* 방향을 row로 지정하면 가로 방향으로 배치됨 */}
+
         {/* Avatar 태그 : 유튜브 프사처럼 동그란 이미지 넣을 수 있는 것 */}
         <Avatar
-          src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
           sx={{
             width: '9rem',
             height: '9rem',
-            margin: '20px',
+            margin: '10px',
             fontSize: '60px',
-            border: '2px solid primary.main' // 외곽선 색과 굵기 지정
-          }}
-        />
+            border: '2px solid primary.main', // 외곽선 색과 굵기 지정
+          }} >
+            
+          <div
+            style={{
+              width: '9rem',
+              height: '9rem',
+              borderRadius: '50%',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
+            }}
+          >
+          </div>
+        </Avatar>
+
         {/* 프사 옆 정보와 팔로우 버튼 만드는 Stack 공간 */}
         <Stack sx={{ padding: '20px' }} fontWeight={'bold'}>
           <Stack direction={'row'} spacing={2} sx={{ marginTop: '10px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
