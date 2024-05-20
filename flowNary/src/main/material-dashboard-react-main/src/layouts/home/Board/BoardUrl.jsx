@@ -57,10 +57,9 @@ export default function BoardUrl(props) {
           <CardHeader
             avatar={
               <Avatar
-                sx={{ 
-                  bgcolor: red[500], 
-                  width:'100px',
-
+                sx={{
+                  bgcolor: red[500],
+                  width: '100px',
                 }}
                 aria-label="recipe"
                 src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${urlBoard.profile}`}
@@ -90,9 +89,7 @@ export default function BoardUrl(props) {
               <BookmarkIcon />
             </Button>
           </CardActions>
-        </Card>) : <div>
-        url에 해당하는 글이 없습니다!
-      </div>}
+        </Card>) : <div>url에 해당하는 글이 없습니다!</div>}
     </>
   );
 
