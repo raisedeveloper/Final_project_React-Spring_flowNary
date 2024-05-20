@@ -26,7 +26,7 @@ export function useGetUser(uid) {
         hashUid: '',
     });
 
-    axios.get('http://localhost:8090/user/getUser', {
+    axios.get('/user/getUser', {
         params: {
             uid: uid
         }
@@ -46,7 +46,7 @@ export function useGetUserNicknameLS() {
     const { isLoading, data } = useQuery({
         queryKey: ['getNickname'],
         queryFn: async () => {
-            const res = await axios.get('http://localhost:8090/user/getUser', {
+            const res = await axios.get('/user/getUser', {
                 params: {
                   uid: uid,
                 }

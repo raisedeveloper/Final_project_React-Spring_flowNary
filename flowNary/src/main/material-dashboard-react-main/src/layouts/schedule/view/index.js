@@ -1,1 +1,1 @@
-export { default as ScheduleView } from '..';
+export { default as ScheduleView } from '../ScheduleIndex';

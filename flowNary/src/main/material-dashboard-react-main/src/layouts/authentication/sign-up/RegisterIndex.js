@@ -50,7 +50,7 @@ export default function Register() {
             const data = await signInWithPopup(auth, provider);
 
             // 이메일로 사용자 조회
-            const response = await axios.get('http://localhost:8090/user/getUserByEmail', {
+            const response = await axios.get('/user/getUserByEmail', {
                 params: {
                     email: data.user.email
                 }
@@ -58,7 +58,7 @@ export default function Register() {
 
             // 사용자가 존재하지 않으면 회원가입 진행
             if (Object.keys(response.data).length === 0) {
-                await axios.get("http://localhost:8090/user/register", {
+                await axios.get("/user/register", {
                     params: {
                         email: data.user.email,
                         pwd: 'nn',
@@ -182,7 +182,7 @@ export default function Register() {
                     text: "OK 버튼을 눌러주세요!",
                     icon: "success"
                 });
-                axios.get("http://localhost:8090/user/register", {
+                axios.get("/user/register", {
                     params: {
                         email: userInfo.email,
                         pwd: userInfo.password,

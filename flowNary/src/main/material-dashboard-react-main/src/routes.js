@@ -3,19 +3,19 @@ import React from 'react';
 import Icon from '@mui/material/Icon';
 
 // Material Dashboard 2 React layouts
-import Home from "layouts/home";
-import Album from "layouts/album";
-import Chatting from "layouts/chatting";
-import Mypage from "layouts/mypage";
-import Family from "layouts/family";
-import Notifications from "layouts/notifications";
-import Chalendar from "layouts/schedule";
-import TodoList from "layouts/todoList";
-import Write from "layouts/write";
-import Settings from "layouts/setting";
-import Team from "layouts/team";
-import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
+import Home from "layouts/home/HomeIndex.js";
+import Album from "layouts/album/AlbumIndex.js";
+import Chatting from "layouts/chatting/ChattingIndex.js";
+import Mypage from "layouts/mypage/MypageIndex.js";
+import Family from "layouts/family/FamilyIndex.js";
+import Notifications from "layouts/notifications/NoticeIndex.js";
+import Chalendar from "layouts/schedule/ScheduleIndex.js";
+import TodoList from "layouts/todoList/TodoListIndex.js";
+import Write from "layouts/write/WriteIndex.js";
+import Settings from "layouts/setting/SettingIndex.js";
+import Team from "layouts/team/TeamIndex.js";
+import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
+import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
 
 const createRoutes = (isLoggedIn) => [

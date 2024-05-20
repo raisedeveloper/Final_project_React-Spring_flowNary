@@ -19,6 +19,8 @@ import { useAuthState } from "react-firebase-hooks/auth";  // Firebase 인증 �
 import { getAuth } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 
+import Login from "layouts/authentication/sign-in/LoginIndex.js";
+import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
