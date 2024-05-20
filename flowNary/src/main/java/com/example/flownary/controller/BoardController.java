@@ -36,15 +36,14 @@ public class BoardController {
 	private final LikeService lSvc;
 	private final NoticeController nC;
 	private final FollowService fSvc;
-	
+  
 	@GetMapping("/getBoard")
 	public JSONObject getBoard(@RequestParam int bid, @RequestParam(defaultValue = "-1", required = false) int uid) {
 		Board board = bSvc.getBoard(bid);
-		int liked = lSvc.getLikeUidCount(uid, 1, bid);		
+		int liked = lSvc.getLikeUidCount(uid, 1, bid);
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
-		
-		if (board != null)
-		{
+
+		if (board != null) {
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 			hMap.put("bid", board.getBid());
 			hMap.put("uid", board.getUid());
@@ -62,41 +61,7 @@ public class BoardController {
 			hMap.put("liked", (liked == 1) ? true : false);
 			hMap.put("profile", (user != null) ? user.getProfile() : null);
 			JSONObject jBoard = new JSONObject(hMap);
-			
 			return jBoard;			
-		}
-		return null;
-	}
-	
-	@GetMapping("/getBoardUrl")
-	public JSONObject getBoardUrl(@RequestParam String url,
-			@RequestParam(defaultValue="-1", required=false) int uid) {
-		Board board = bSvc.getBoardShareUrl2(url);
-		
-		HashMap<String, Object> hMap = new HashMap<String, Object>();
-		
-		if (board != null)
-		{
-			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
-			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
-			hMap.put("bid", board.getBid());
-			hMap.put("uid", board.getUid());
-			hMap.put("title", board.getTitle());
-			hMap.put("bContents", board.getbContents());
-			hMap.put("modTime", board.getModTime());
-			hMap.put("viewCount", board.getViewCount());
-			hMap.put("likeCount", board.getLikeCount());
-			hMap.put("replyCount", board.getReplyCount());
-			hMap.put("image", board.getImage());
-			hMap.put("shareUrl", board.getShareUrl());
-			hMap.put("isDeleted", board.getIsDeleted());
-			hMap.put("hashTag", board.getHashTag());
-			hMap.put("nickname", board.getNickname());
-			hMap.put("liked", (liked == 1) ? true : false);
-			hMap.put("profile", (user != null) ? user.getProfile() : null);
-			JSONObject jBoard = new JSONObject(hMap);
-			System.out.println(jBoard);
-			return jBoard;
 		}
 		return null;
 	}
@@ -174,7 +139,7 @@ public class BoardController {
 		return listcount;
 	}
 	
-	@GetMapping("/list")
+	@GetMapping("/listCount")
 	public JSONArray boardList(@RequestParam(name="c", defaultValue="1", required=false) int count,
 			@RequestParam(name="f", defaultValue="title", required=false) String field,
 			@RequestParam(name="f2", defaultValue="", required=false) String field2,
@@ -183,7 +148,7 @@ public class BoardController {
 			@RequestParam(defaultValue="1", required=false) int type,
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		
-		List<Board> list = new ArrayList<>();
+		int listcount = 0;
 		
 		switch(type) {
 		case 1:
@@ -206,7 +171,6 @@ public class BoardController {
 			System.out.println("error!");
 			break;
 		}
-
 		return listcount;
 	}
 
@@ -248,7 +212,6 @@ public class BoardController {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
-			
  			hMap.put("bid", board.getBid());
 			hMap.put("uid", board.getUid());
 			hMap.put("title", board.getTitle());
@@ -320,7 +283,6 @@ public class BoardController {
 	
 	@PostMapping("/insert")
 	public int insertForm(@RequestBody InsertBoardDto dto) {
-
 		String shareUrl = "";
 		boolean t = true;
 
@@ -353,7 +315,6 @@ public class BoardController {
 
 	@PostMapping("/update")
 	public String boardUpdate(@RequestBody UpdateBoardDto dto) {
-		
 		Board board = new Board();
 		board.setTitle(dto.getTitle());
 		board.setbContents(dto.getbContents());
@@ -368,5 +329,4 @@ public class BoardController {
 	public void delete(int bid) {
 		bSvc.deleteBoard(bid);
 	}
-	
 }
