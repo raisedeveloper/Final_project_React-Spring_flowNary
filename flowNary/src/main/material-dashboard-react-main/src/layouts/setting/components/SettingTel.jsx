@@ -51,7 +51,7 @@ export default function SettingTel(props) {
   }, [props, tel]);
 
   const checkTel = () => {
-    axios.get('http://localhost:8090/user/tel', {
+    axios.get('/user/tel', {
       params: {
         email: props.email
       }

@@ -30,7 +30,7 @@ function ShowAlbumList() {
       <MDBox mt={4.5}>
         <YearSelect selectedYear={selectedYear} onChange={handleYearChange} />
         <Grid container mt={3} spacing={3} sx={{ border: '2px solid white', }}>
-          {board && board.data && board.data.map((data) => {
+          {board && board.data && board.data.map((data, idx) => {
             const modTime = data.modTime;
             if (!modTime) return null; // modTime이 없으면 건너뜁니다.
             
@@ -38,7 +38,7 @@ function ShowAlbumList() {
             if (yearFromModTime !== selectedYear) return null; // 선택한 연도와 다른 경우 건너뜁니다.
 
             return (
-              <Grid item key={data.bid} xs={12} md={6} lg={4}>
+              <Grid item key={idx} xs={12} md={6} lg={4}>
                 <MDBox>
                   <MDBox sx={{ width: '100%', height: '100%' }}>
                     <MDBox
@@ -53,7 +53,7 @@ function ShowAlbumList() {
                         }
                       }}
                     >
-                      <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}`} alt="Paella dish" />
+                      <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`} alt="Paella dish" />
                     </MDBox>
                   </MDBox>
                 </MDBox>

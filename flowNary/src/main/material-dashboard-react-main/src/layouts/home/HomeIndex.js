@@ -283,8 +283,8 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
               <Write />
               <Grid container spacing={3}>
-                {dataList.data && dataList.data.map((data) => (
-                  <Grid key={data.bid} item xs={12} md={6} lg={6}>
+                {dataList.data && dataList.data.map((data, idx) => (
+                  <Grid key={idx} item xs={12} md={6} lg={6}>
                     <MDBox mb={3}>
                       <Card sx={{
                         height: "100%",
