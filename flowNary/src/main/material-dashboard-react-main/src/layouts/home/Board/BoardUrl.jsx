@@ -39,7 +39,7 @@ export default function BoardUrl(props) {
     queryFn: () => getBoardUrl(url, props.uid),
   });
 
-  if (urlBoard.isLoading)  {
+  if (urlBoard.isLoading) {
     return (
       <div>로딩 중...</div>
     )
@@ -47,15 +47,22 @@ export default function BoardUrl(props) {
   console.log(urlBoard.data.image);
 
   const images = urlBoard.data.image != null ? urlBoard.data.image.split(',') : null;
-  
+
   return (
     <>
       {urlBoard.data.image ? (
         <Card sx={{ width: "70%", marginTop: '30px', border: '1px solid lightgrey' }}>
+
           {/* Home 부분에서 게시글이 보이는 모습 */}
           <CardHeader
             avatar={
-              <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe"
+              <Avatar
+                sx={{ 
+                  bgcolor: red[500], 
+                  width:'100px',
+
+                }}
+                aria-label="recipe"
                 src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${urlBoard.profile}`}
               />
             }
@@ -71,7 +78,7 @@ export default function BoardUrl(props) {
           <CardActions disableSpacing>
             {/* 게시글 하단 버튼 - 좋아요 / 게시글 */}
             <Button >
-              <FavoriteIcon className="customHeartBtn" sx={urlBoard.data.liked ? {color: 'red'} : {color: 'blue'} }/>{urlBoard.data.likeCount}
+              <FavoriteIcon className="customHeartBtn" sx={urlBoard.data.liked ? { color: 'red' } : { color: 'blue' }} />{urlBoard.data.likeCount}
             </Button>
             <Button onClick={() => props.handleOpen(urlBoard.data.bid)}>
               <ChatBubbleOutlineIcon />{urlBoard.data.replyCount}

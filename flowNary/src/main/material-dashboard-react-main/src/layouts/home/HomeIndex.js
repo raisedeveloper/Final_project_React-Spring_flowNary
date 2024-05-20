@@ -246,14 +246,34 @@ export default function Home() {
                         }
                       }}>
                         <CardHeader
-                          sx={{ padding: 1 }}
+                          sx={{ padding: 1, }}
                           avatar={
                             <Avatar
+                              sx={{
+                                width:'3rem',
+                                height:'3rem',                                
+                                objectFit: 'cover',
+                                overflow: 'hidden',
+                                border:'1.5px solid #fa99faad'
+                              }}
                               aria-label="recipe"
-                              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                            />
+                            >
+                              <div
+                                style={{
+                                  width: '3.8rem',   
+                                  height:'3rem',
+                                  borderRadius: '50%', 
+                                  backgroundSize: 'cover', 
+                                  backgroundPosition: 'center', 
+                                  backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}')` // 이미지 URL 동적 생성
+                                }}
+                              >
+                              </div>
+                            </Avatar>
+
                           }
                           action={
+                            // 더 보기
                             <IconButton aria-label="settings">
                               <MoreVertIcon />
                             </IconButton>
@@ -346,7 +366,7 @@ export default function Home() {
           </Stack>
         </MDBox >
       </MDBox >
-      
+
       {/* 게시글 모달 */}
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
@@ -355,7 +375,7 @@ export default function Home() {
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} />
       </Modal>
-    </DashboardLayout >  
+    </DashboardLayout >
   );
 
 }
