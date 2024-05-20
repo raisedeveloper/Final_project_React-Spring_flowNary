@@ -14,6 +14,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -216,8 +218,8 @@ public class NoticeController {
 		return jArr;
 	}
 	
-	@GetMapping("/remove")
-	public int removeNotice(@RequestParam int nid) {
+	@PostMapping("/remove")
+	public int removeNotice(@RequestBody int nid) {
 		Notice notice = nSvc.getNotice(nid);
 		
 		if (notice == null)
