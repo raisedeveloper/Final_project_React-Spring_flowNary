@@ -84,7 +84,7 @@ const createRoutes = (isLoggedIn) => [
   },
   {
     type: "collapse",
-    name: "할 일",
+    name: "To-Do 리스트",
     key: "to-do",
     icon: <Icon fontSize="xx-large">checklist</Icon>,
     route: "/to-do",

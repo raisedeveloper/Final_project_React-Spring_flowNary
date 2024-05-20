@@ -18,6 +18,9 @@ import axios from "axios";
 export default function Login() {
     const [theme, setTheme] = useState('light'); // 초기 테마를 'light'로 설정
 
+    // 애니메이션 상태
+    const [animationClass, setAnimationClass] = useState('fade-enter');
+
     // 테마를 토글하는 함수
     const toggleTheme = () => {
         setTheme(theme === 'light' ? 'dark' : 'light');
@@ -66,7 +69,7 @@ export default function Login() {
                 SetWithExpiry("nickname", res.data.nickname, 180);
                 SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
-                    icon: 'success', 
+                    icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
                     showClass: {
                         popup: `
@@ -109,7 +112,8 @@ export default function Login() {
                 });
                 console.log("구글 로그인 성공!" + response.data);
             }
-            navigate('/');
+            setAnimationClass('fade-exit');
+            setTimeout(() => navigate('/'), 150); // 애니메이션 시간을 고려한 딜레이
         } catch (error) {
             console.error("구글 로그인 오류:", error);
         }
@@ -171,7 +175,8 @@ export default function Login() {
                     SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 }).catch(error => console.log(error));
 
-                navigate('/home');
+                setAnimationClass('fade-exit');
+                setTimeout(() => navigate('/home'), 150); // 애니메이션 시간을 고려한 딜레이
             }
         } catch (error) {
             // Firebase 오류 처리를 좀 더 일반적인 메시지로 통합
@@ -186,7 +191,7 @@ export default function Login() {
     }
 
     return (
-        <div className={`background ${theme}`} style={{
+        <div className={`background ${theme} ${animationClass}`} style={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -219,7 +224,7 @@ export default function Login() {
                     <div>
                         <Link to="/authentication/sign-up" className={`custom-button ${theme}`}>가입하기</Link>
                     </div>
-                    <br />            
+                    <br />
                 </div>
             </Card>
         </div>

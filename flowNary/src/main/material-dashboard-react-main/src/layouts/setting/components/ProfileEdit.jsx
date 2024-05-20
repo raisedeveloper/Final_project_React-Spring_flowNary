@@ -59,7 +59,7 @@ function ProfileEdit({ uid, email }) {
   const [tel, setTel] = useState('');
   const [gender, setGender] = useState(2);
   const [profile, setProfile] = useState('');
-  // 활성화/비활성화
+  // 활성화, 비활성화
   // const [status, setStatus] = useState('0');
 
   useEffect(() => {

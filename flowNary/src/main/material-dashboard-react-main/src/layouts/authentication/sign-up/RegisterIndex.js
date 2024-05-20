@@ -22,6 +22,9 @@ export default function Register() {
         setTheme(theme === 'light' ? 'dark' : 'light'); // 테마 전환 함수
     };
 
+    // 애니메이션 상태
+    const [animationClass, setAnimationClass] = useState('fade-enter');
+
     // 그림 추가
     const backgroundImage = theme === 'light' ? '/images/flowLight.png' : '/images/flowNight.png';
     const logoImage = theme === 'light' ? '/images/LightLogo.png' : '/images/DarkLogo.png';
@@ -115,7 +118,8 @@ export default function Register() {
                 });
                 console.log("구글 로그인 성공!" + response.data);
             }
-            navigate('/');
+            setAnimationClass('fade-exit');
+            setTimeout(() => navigate('/'), 150); // 애니메이션 시간을 고려한 딜레이
         } catch (error) {
             console.error("구글 로그인 오류:", error);
         }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Card, CardContent, Avatar, Typography, Grid, Box } from "@mui/material";
 import { styled } from "@mui/system";
+import './ProfileSetting.css';
 
 // 배경 스타일 설정
 const Background = styled(Box)({
@@ -47,7 +48,7 @@ function ProfileCard(props) {
   return (
     <>
       <Avatar
-        alt="+"
+        className="avatarPhoto"        
         sx={{ width: 100, height: 100, margin: "0 auto", cursor: 'pointer' }}
         onClick={handleImageEdit}
       >
@@ -63,7 +64,6 @@ function ProfileCard(props) {
         >
         </div>
       </Avatar>
-
       <input
         type="file"
         onChange={handleImageChange}
@@ -71,9 +71,21 @@ function ProfileCard(props) {
         hidden
         id="hidden-input"
       />
-      <span style={{ fontSize: 'large', fontWeight: 'bold', }}>{props.nickname}</span><br />
-      <span style={{ fontSize: 'large', fontWeight: 'bold', }}>{props.statusMessage}</span>
+      <span style={{
+        fontSize: 'large',
+        fontWeight: 'bold',
+        textAlign: 'center'
+      }}>{props.nickname}</span><br />
+
+      <span
+        style={{
+          fontSize: 'medium',
+          fontWeight: 'lighter',
+          textAlign: 'center',
+        }}>{props.statusMessage}</span>
       <br /><br />
+      <p></p>
+
       <Button
         variant='contained'
         onClick={handleImageEdit}
