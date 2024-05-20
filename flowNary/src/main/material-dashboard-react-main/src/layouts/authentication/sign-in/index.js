@@ -66,7 +66,7 @@ export default function Login() {
                 SetWithExpiry("nickname", res.data.nickname, 180);
                 SetWithExpiry("statusMessage", res.data.statusMessage, 180);
                 Swal.fire({
-                    icon: 'success',
+                    icon: 'success', 
                     title: "구글 회원가입에 성공했습니다.",
                     showClass: {
                         popup: `

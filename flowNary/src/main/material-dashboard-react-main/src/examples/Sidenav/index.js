@@ -1,41 +1,25 @@
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 
 // react-router-dom 컴포넌트
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
-// prop-types는 props의 타입체크를 위한 라이브러리입니다.
-import PropTypes from "prop-types";
-
 // @mui material 컴포넌트
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
-import Icon from "@mui/material/Icon";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import { List, Divider, Link, Icon, Avatar, Box, Typography } from "@mui/material";
 
 // Material Dashboard 2 React 컴포넌트
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-
-// Material Dashboard 2 React 예제 컴포넌트
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
-
-// Sidenav의 사용자 정의 스타일
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
 
 // Material Dashboard 2 React 컨텍스트
-import {
-  useMaterialUIController,
-  setMiniSidenav,
-  setTransparentSidenav,
-  setWhiteSidenav,
-} from "context";
+import { useMaterialUIController, setMiniSidenav, setTransparentSidenav, setWhiteSidenav } from "context";
 
 // api 컴포넌트
 import { GetWithExpiry } from "api/LocalStorage";
 import { getUser } from "api/axiosGet";
+import { gl } from "chroma-js";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -44,6 +28,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const confirmLocation = location.pathname.split('/')[1];
   const collapseName = location.pathname.replace("/", "");
 
+  // 유저 불러오기
+  const uid = parseInt(GetWithExpiry("uid"));
+  const email = GetWithExpiry("email");
+  const nickname = GetWithExpiry("nickname");
+  const profile = GetWithExpiry("profile");
+
   let textColor = "white";
 
   if (transparentSidenav || (whiteSidenav && !darkMode)) {
@@ -51,6 +41,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   } else if (whiteSidenav && darkMode) {
     textColor = "inherit";
   }
+
+  // navigate
+  const navigate = useNavigate();
+  const goMypage = () => navigate('/mypage')
+  const goLogin = () => navigate('/authentication/sign-in')
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
@@ -72,15 +67,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  // 유저 불러오기
-  const uid = parseInt(GetWithExpiry("uid"));
-  const email = GetWithExpiry("email");
-  const nickname = GetWithExpiry("nickname");
-  const profile = GetWithExpiry("profile");
-
-  // navigate
-  const navigate = useNavigate();
-  const goMypage = () => navigate('/mypage')
 
   // routes.js에서 모든 경로를 렌더링 (Sidenav에 보이는 모든 항목)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
@@ -151,6 +137,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       variant="permanent"
       ownerState={{ transparentSidenav, whiteSidenav, miniSidenav, darkMode }}
     >
+
       <MDBox pt={0.1} pb={0} px={5} textAlign="center">
         <MDBox
           display={{ xs: "block", xl: "none" }}
@@ -164,47 +151,57 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           <MDTypography variant="h6" color="secondary">
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </MDTypography>
-        </MDBox>
+        </MDBox>      
 
         {/* title 크기 조정 */}
         <MDBox component={NavLink} to="/" sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
           {brand && <MDBox component="img" src={brand} alt="Brand" width="8rem" />}
         </MDBox>
 
-        {/* 아바타 투명라인 */}
-        <Box
-          sx={{
-            width: '11.5rem',
-            height: '2rem',
-            background: 'rgba(255, 255, 255, 0.3)',
-            borderRadius: '15px',
-            display: 'flex',
-            alignItems: 'center'
-          }}
-        >
-
-          {/* 아바타 */}
-          <Avatar
-            src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile || 'default-profile'}`}
-            alt="profile picture"
+        {/* 로그인 상태에 따라 아바타 또는 로그인 요청 메시지 표시 */}
+        {uid > 0 ? (
+          <Box
             sx={{
-              width: '4.375rem',
-              height: '2.8125rem',
-              borderRadius: '50%',
-              objectFit: 'cover'              
+              width: '11.5rem', height: '2rem', background: 'rgba(255, 255, 255, 0.3)',
+              borderRadius: '15px', display: 'flex', alignItems: 'center'
             }}
-            onClick={goMypage}
-          />
-
-          {/* 닉네임 표시부분 */}
-          <Box ml={1.95}>
+          >
+            <Avatar
+              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile || 'default-profile'}`}
+              sx={{ width: '4.375rem', height: '2.8125rem', borderRadius: '50%', objectFit: 'cover' }}
+              onClick={goMypage}
+            />
+            <Box ml={1.95}>
+              <Typography
+                color={textColor}
+                fontSize={'13.5px'}
+                fontWeight={'bold'}
+              >{nickname}</Typography>
+            </Box>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              width: '11.5rem', height: '2rem', background: 'rgba(255, 255, 255, 0.3)',
+              borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}
+          >
             <Typography
               color={textColor}
               fontSize={'13.5px'}
               fontWeight={'bold'}
-            >{nickname}</Typography>
+              onClick={goLogin}
+              sx={{
+                cursor: 'pointer',
+                transition: 'color 0.3s', // 색상 변화에 애니메이션 효과를 주기
+                '&:hover': {
+                  color: 'primary.dark' // 호버 시 색상을 변경 (MUI 테마 색상 사용)
+                }
+              }}
+            >로그인을 해주세요
+            </Typography>
           </Box>
-        </Box>
+        )}
       </MDBox>
       <Divider style={{ opacity: 1, border: 2 }} />
       <List>{renderRoutes}</List>
