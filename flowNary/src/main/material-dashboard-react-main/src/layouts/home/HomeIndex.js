@@ -252,7 +252,7 @@ export default function Home() {
                                 height: '3rem',
                                 objectFit: 'cover',
                                 overflow: 'hidden',
-                                border: '1.5px solid #fa99faad'
+                                border:'1.5px solid'
                               }}
                               aria-label="recipe"
                             >

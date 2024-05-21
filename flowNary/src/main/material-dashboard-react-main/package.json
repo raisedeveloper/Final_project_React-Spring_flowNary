@@ -15,6 +15,7 @@
   "dependencies": {
     "@cloudinary/react": "^1.13.0",
     "@cloudinary/url-gen": "^1.19.0",
+    "@emailjs/browser": "^4.3.3",
     "@emotion/cache": "11.10.8",
     "@emotion/react": "11.10.8",
     "@emotion/styled": "11.10.8",
@@ -29,6 +30,7 @@
     "chroma-js": "2.4.2",
     "cloudinary": "^2.2.0",
     "dayjs": "^1.11.11",
+    "emailjs-com": "^3.2.0",
     "firebase": "^10.11.1",
     "prop-types": "^15.8.1",
     "react": "18.2.0",

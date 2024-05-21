@@ -14,6 +14,7 @@ import '../theme.css';
 
 // alert 창
 import Swal from "sweetalert2";
+import EmailButton from "./EmailButton";
 
 export default function Register() {
     // 테마설정
@@ -254,6 +255,7 @@ export default function Register() {
                     <br />
                     <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>계정이 이미 있으신가요?</p>
                     <Link to="/authentication/sign-in" className={`custom-button ${theme}`}>FlowNary<br />로그인</Link>
+                    <EmailButton />
                     <br />
                 </div>
             </Card>

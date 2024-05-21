@@ -113,7 +113,7 @@ export default function Login() {
                 console.log("구글 로그인 성공!" + response.data);
             }
             setAnimationClass('fade-exit');
-            setTimeout(() => navigate('/'), 150); // 애니메이션 시간을 고려한 딜레이
+            setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
         } catch (error) {
             console.error("구글 로그인 오류:", error);
         }
@@ -176,7 +176,7 @@ export default function Login() {
                 }).catch(error => console.log(error));
 
                 setAnimationClass('fade-exit');
-                setTimeout(() => navigate('/home'), 150); // 애니메이션 시간을 고려한 딜레이
+                setTimeout(() => navigate('/home'), 500); // 애니메이션 시간을 고려한 딜레이
             }
         } catch (error) {
             // Firebase 오류 처리를 좀 더 일반적인 메시지로 통합

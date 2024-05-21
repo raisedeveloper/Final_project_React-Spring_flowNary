@@ -119,23 +119,24 @@ function DashboardNavbar({ absolute, light, isMini }) {
           <Avatar
             alt="profile picture"
             sx={{
-              width: '2.75rem',
-              height: '2.75rem',
+              width: '3rem',
+              height: '3rem',
               borderRadius: '50%',
               objectFit: 'cover'
             }}
           >
             <div
               style={{
-                width: '2.75rem',
-                height: '2.75rem',
+                width: '3rem',
+                height: '3rem',
                 borderRadius: '50%',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
+                backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')`
               }}
             >
             </div>
+
           </Avatar>
           <MDBox ml={1.75}>
             <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{nickname}</div>
