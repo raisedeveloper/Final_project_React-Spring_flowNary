@@ -14,10 +14,11 @@ import TodoList from "layouts/todoList/TodoListIndex.js";
 import Write from "layouts/write/WriteIndex.js";
 import Settings from "layouts/setting/SettingIndex.js";
 import Team from "layouts/team/TeamIndex.js";
-import Search from "layouts/Search/Search";
+import Search from "layouts/Search/SearchIndex.js";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
+import { FlashOnOutlined } from '@mui/icons-material';
 
 const createRoutes = (isLoggedIn) => [
   {
@@ -139,8 +140,9 @@ const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "검색",
-    key: "/search",
+    key: "search",
     icon: <Icon fontSize="xx-large">search</Icon>,    
+    route: "/search",
     component: <Search />,
     visible: false, // 로그인되지 않았을 때만 보임
   },

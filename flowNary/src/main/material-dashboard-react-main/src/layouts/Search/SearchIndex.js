@@ -1,8 +1,9 @@
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import MySearchList from "examples/Navbars/DashboardNavbar/search/MySearchList";
+
 import React, { useState } from "react";
+import MySearchList from "./search/MySearchList";
 
 export default function search() {
 
