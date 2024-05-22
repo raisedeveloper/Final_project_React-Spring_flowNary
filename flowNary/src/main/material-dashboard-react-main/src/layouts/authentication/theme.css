@@ -195,6 +195,7 @@ div {
     height: 80vh;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
 .welcome-message-Modal {
     opacity: 0;
     animation: fadeIn 1.5s ease forwards;
@@ -273,6 +274,7 @@ div {
     transition: 0.5s;
 
 }
+
 .google-login-button img {
     margin-right: 10px;
     width: 20px;
