@@ -1,5 +1,6 @@
 /* ============================폰트============================ */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+
 body {
     font-family: 'Noto Sans KR', sans-serif;
 }
@@ -184,16 +185,24 @@ div {
     right: auto;
     bottom: auto;
     margin-right: -50%;
-    transform: translate(-50%, -50%);    
-    background-color: white;    
+    transform: translate(-50%, -50%);
+    background-color: white;
     background-size: cover;
-    background-position: center;        
+    background-position: center;
     border-radius: 5%;
     padding: 15rem;
-    width: 100vw;
-    max-width: 60vw;
+    width: 60vw;
     height: 80vh;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+.welcome-message-Modal {
+    opacity: 0;
+    animation: fadeIn 1.5s ease forwards;
+    margin-bottom: -3%;
+    font-size: 200%;
+    font-weight: bold;
+    text-align: center;
+    color: #000000;
 }
 
 .Overlay {
@@ -207,10 +216,10 @@ div {
 
 .modal-content {
     border: 1px solid rgba(128, 128, 128, 0);
-    background: transparent ;
-    backdrop-filter: blur(5px) ;
+    background: transparent;
     display: flex;
-    width: 50vw;
+    width: 100%;
+    height: 100%;
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -241,6 +250,11 @@ div {
     margin: 10px 0;
 }
 
+.fill_Modal:hover {
+    transition: 0.5s;
+    background-color: #741ea7;
+}
+
 .google-login-button {
     display: flex;
     align-items: center;
@@ -254,6 +268,11 @@ div {
     margin: 10px 0;
 }
 
+.google-login-button:hover {
+    background: #0d53c4;
+    transition: 0.5s;
+
+}
 .google-login-button img {
     margin-right: 10px;
     width: 20px;
@@ -269,17 +288,29 @@ div {
     cursor: pointer;
 }
 
+.close-modal-button:hover {
+    transition: 0.45s;
+    background: red;
+    color: white;
+}
+
 /* ============================비밀번호 토글 라인============================ */
 .input-container {
     position: relative;
+    width: 100%;
 }
 
 .input-container input {
     width: 100%;
-    padding-right: 30px; /* 아이콘 공간 확보 */
+    padding-right: 40px;
+    /* 아이콘 공간 확보 */
+    box-sizing: border-box;
+    /* 패딩과 테두리를 포함한 전체 너비 계산 */
+    transition: width 0.5s ease;
+    /* 애니메이션 추가 */
 }
 
-.password-toggle-icon {    
+.password-toggle-icon {
     font-size: 1.125rem;
     position: absolute;
     right: 10px;

@@ -32,7 +32,8 @@ public interface UserDao {
 
 	@Update("update user set profile=#{profile}, uname=#{uname}, nickname=#{nickname}"
 			+ ", statusMessage=#{statusMessage}, snsDomain=#{snsDomain}"
-			+ ", gender=#{gender}, tel=#{tel}, hashUid=#{hashUid}, location=#{location}" + " where uid=#{uid}")
+			+ ", gender=#{gender}, tel=#{tel}, hashUid=#{hashUid}, location=#{location}"
+			+ " where uid=#{uid}")
 	void updateUser(User user);
 
 	@Update("update user set pwd=#{pwd} where uid=#{uid}")

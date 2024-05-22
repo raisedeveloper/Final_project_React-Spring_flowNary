@@ -134,10 +134,10 @@ export default function Register({ closeModal }) {
                         hashuid: 'nonGoogle',
                         email: userInfo.email,
                         pwd: userInfo.password,
-                        birth: userInfo.birth,
-                        gender: userInfo.gender,
-                        uname: userInfo.uname,
-                        nickname: userInfo.nickname,
+                        // birth: userInfo.birth,
+                        // gender: userInfo.gender,
+                        // uname: userInfo.uname,
+                        // nickname: userInfo.nickname,
                         provider: 0,
                     });
                 } catch (error) {

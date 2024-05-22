@@ -16,11 +16,11 @@ const firebaseConfig = {
 };
 
 const getPhoneNumberFromUserInput = () => {
-    return "+8201024075930"; // 여러분의 번호 또는 보낼 번호를 국제번호를 붙여서 써줍니다!
-    //  +821012345679 ( 010-1234-5678을 왼쪽과 같이, +82를 붙이고 010에서 0 하나 뺍니다)
+    return "+82 본인번호"; 
+    //  +821012345679 ( 010-1234-5678을 왼쪽과 같이, +82를 붙이고 010에서 0 하나 빼기)
 };
 
-const auth = getAuth();	// 인증객체를 만듭니다
+const auth = getAuth();	// 인증객체
 
 export default function Login() {
     const [value, Setvalue] = useState("");
@@ -29,10 +29,10 @@ export default function Login() {
         window.recaptchaVerifier = new RecaptchaVerifier(auth, "sign-in-button", {
             size: "invisible",
             callback: (response) => {
-                // reCAPTCHA solved, allow signInWithPhoneNumber.
+                // reCAPTCHA 보안인증
             },
         });
-        auth.languageCode = "ko";		// 한국어로 해줍시다
+        auth.languageCode = "ko";		// 한국어 설정
         const phoneNumber = getPhoneNumberFromUserInput(); // 위에서 받아온 번호
         const appVerifier = window.recaptchaVerifier;
         signInWithPhoneNumber(auth, phoneNumber, appVerifier)
