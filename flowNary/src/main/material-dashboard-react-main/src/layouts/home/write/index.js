@@ -161,7 +161,7 @@ export default function Posting() {
                 />
 
               </Button>
-              <Button expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+              <Button onChange={handleChange('panel2')}>
                 <Icon style={{ color: 'black' }} fontSize='small'>add_location_alt</Icon>
 
                 <Typography fontSize='small'>
