@@ -131,10 +131,9 @@ const createRoutes = (isLoggedIn) => [
     type: "collapse",
     name: "회원가입",
     key: "sign-up",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,
-    route: "/authentication/sign-up",
+    icon: <Icon fontSize="xx-large">assignment</Icon>,    
     component: <SignUp />,
-    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
+    visible: false, // 로그인되지 않았을 때만 보임
   },
 ];
 

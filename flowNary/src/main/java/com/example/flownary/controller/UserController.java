@@ -53,7 +53,7 @@ public class UserController {
 		User user = new User();
 		user.setHashUid(hashuid);
 		user.setEmail(dto.getEmail());
-		user.setPwd(hashedPwd);
+		user.setPwd(hashedPwd);				
 		user.setProvider(dto.getProvider());
 		userSvc.insertUser(user);
 		
