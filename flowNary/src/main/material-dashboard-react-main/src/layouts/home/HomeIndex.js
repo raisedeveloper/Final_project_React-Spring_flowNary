@@ -422,9 +422,6 @@ export default function Home() {
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
       </Modal>
       <Footer />
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-        <BoardDetail bid={bid} uid={uid} />
-      </Modal>
     </DashboardLayout >
   );
 
