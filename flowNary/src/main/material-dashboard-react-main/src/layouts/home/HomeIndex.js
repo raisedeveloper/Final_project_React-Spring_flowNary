@@ -16,7 +16,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import BoardDetail from "./Board/BoardDetail";
 import Write from './write';
 
@@ -24,7 +24,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { GetWithExpiry } from "api/LocalStorage";
 import { useAddLike, useGetUserNicknameLS } from "api/customHook";
 import { useQuery } from "@tanstack/react-query";
-import { getBoardList } from "api/axiosGet";
+import { getBoardList,getBoardListCount } from "api/axiosGet";
 import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
@@ -116,7 +116,6 @@ export default function Home() {
     962: '허리케인'
   };
 
-
   const [weather, setWeather] = useState('');
 
   // 위치 뽑아내기
@@ -193,11 +192,60 @@ export default function Home() {
   const path = location.pathname.split('/');
   const path2 = path[path.length - 1];
 
+  const [count, setCount] = useState(10);
+  const [page, setPage] = useState(0);
+  const [pageLoading, setPageLoading] = useState(true);
+
   /////////////////// useQuery로 BoardList 받기 ///////////////////
   const dataList = useQuery({
     queryKey: ['boardList', uid],
-    queryFn: () => getBoardList(10, uid),
+    queryFn: () => getBoardList(count, uid),
   });
+
+  const { data: allcount } = useQuery({
+    queryKey: ['BoardCount'],
+    queryFn: () => getBoardListCount(),
+    placeholderData: (p) => p,
+  })
+
+  useEffect(() => {
+    if (count >= allcount && allcount !== undefined)
+      setPageLoading(false);
+    else if (count < allcount && allcount !== undefined)
+      setPageLoading(true);
+  }, [count, page, allcount])
+
+  const callback = (entries: IntersectionObserverEntry[]) => {
+    const target = entries[0];
+    if (target.isIntersecting && pageLoading) // 타겟 요소가 화면에 들어오면 실행
+    {
+      setPage((prevpage) => prevpage + 1);
+      setCount((prevcount) => prevcount + 3);
+    }
+  };
+
+  console.log("asdfsadfdsf");
+  useEffect(() => {
+    console.log("useeffect!")
+    setTimeout(() => {
+      const observer =new IntersectionObserver(callback, {
+        rootMargin: '0px 0px 0px 0px',
+        threshold: 0,
+      })
+  
+      const observerTarget = document.getElementById("observe"); // id가 observe인 태그를 사용
+      console.log(observerTarget);
+  
+      if (observerTarget) {
+        observer.observe(observerTarget);
+      }
+      return () => { // 페이지 종료 시 타겟 해제
+        if (observer && observerTarget) {
+          observer.unobserve(observerTarget);
+        }
+      };
+    }, 1000)
+  }, [page]);
 
   const addLike = useAddLike();
   const addLikeForm = (sendData) => {
@@ -335,8 +383,11 @@ export default function Home() {
                       </Card>
                     </MDBox>
                   </Grid>
+
+
                 ))}
               </Grid>
+
             </Stack>
 
             {/* 날씨 정보 */}
@@ -364,6 +415,7 @@ export default function Home() {
           </Stack>
         </MDBox >
       </MDBox >
+      <div id="observe" style={{display: 'flex', height: '10px'}}></div>
 
       {/* 게시글 모달 */}
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">

@@ -1,10 +1,8 @@
 package com.example.flownary.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Pattern;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -180,41 +178,5 @@ public class UserController {
 		JSONObject userOut = new JSONObject(hMap);
 		
 		return userOut;
-	}
-
-@GetMapping("/nickname")
-	public String nickname(@RequestParam String email, String nickname) {
-		List<User> userList = userSvc.getOthersUserList(email);
-		JSONObject jObj = new JSONObject();
-		JSONArray jArr = new JSONArray();
-
-		for (int i = 0; i < userList.size(); i++) {
-			JSONObject jObject = new JSONObject();
-			User user = userList.get(i);
-
-			jObject.put("nickname", user.getNickname());
-			jArr.add(jObject);
-		}
-		jObj.put("item", jArr);
-		System.out.println(jArr.toString());
-		return jArr.toString();
-	}
-
-	@GetMapping("/tel")
-	public String tel(@RequestParam String email, String tel) {
-		List<User> userList = userSvc.getOthersUserList(email);
-		JSONObject jObj = new JSONObject();
-		JSONArray jArr = new JSONArray();
-
-		for (int i = 0; i < userList.size(); i++) {
-			JSONObject jObject = new JSONObject();
-			User user = userList.get(i);
-
-			jObject.put("tel", user.getTel());
-			jArr.add(jObject);
-		}
-		jObj.put("item", jArr);
-		System.out.println(jArr.toString());
-		return jArr.toString();
 	}
 }
