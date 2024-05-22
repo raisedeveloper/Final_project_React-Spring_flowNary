@@ -54,7 +54,12 @@ public class UserController {
 		user.setHashUid(hashuid);
 		user.setEmail(dto.getEmail());
 		user.setPwd(hashedPwd);				
-		user.setProvider(dto.getProvider());
+//		user.setBirth(dto.getBirth());
+//		user.setGender(dto.getGender());
+//		user.setUname(dto.getUname());
+//		user.setNickname(dto.getNickname());
+//		user.setLocation(dto.getLocation());
+		user.setProvider(dto.getProvider());		
 		userSvc.insertUser(user);
 		
 		user = userSvc.getUserEmail(dto.getEmail());

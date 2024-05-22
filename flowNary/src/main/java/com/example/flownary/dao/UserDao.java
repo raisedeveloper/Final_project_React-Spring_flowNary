@@ -33,12 +33,12 @@ public interface UserDao {
 	
 	@Insert("insert into user values (default, #{email}, #{pwd}, default, default"
 			+ ", default, default, default, default, default, #{gender}"
-			+ ", #{provider}, #{birth}, #{tel}, #{hashUid})")
+			+ ", #{provider}, #{birth}, #{tel}, #{hashUid}, location=#{location})")
 	void insertUser(User user);
 	
 	@Update("update user set profile=#{profile}, uname=#{uname}, nickname=#{nickname}"
 			+ ", statusMessage=#{statusMessage}, snsDomain=#{snsDomain}"
-			+ ", gender=#{gender}, tel=#{tel}, hashUid=#{hashUid}"
+			+ ", gender=#{gender}, tel=#{tel}, hashUid=#{hashUid}, location=#{location}"
 			+ " where uid=#{uid}")
 	void updateUser(User user);
 	
