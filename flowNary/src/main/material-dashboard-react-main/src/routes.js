@@ -17,6 +17,7 @@ import Team from "layouts/team/TeamIndex.js";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
+import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
 
 const createRoutes = (isLoggedIn) => [
   {
@@ -135,6 +136,16 @@ const createRoutes = (isLoggedIn) => [
     route: "/authentication/sign-up",
     component: <SignUp />,
     visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
+  },
+
+  {
+    type: "collapse",
+    name: "글쓰기수정",
+    key: "write",
+    icon: <Icon fontSize="xx-large">history_edu</Icon>,
+    route: "/home/Update",
+    component: <UpdateIndex />,
+    visible: false,
   },
 ];
 

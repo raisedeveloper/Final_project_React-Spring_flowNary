@@ -1,4 +1,9 @@
+import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import Home from "layouts/home/HomeIndex";
+
+const UserContext = createContext(null);
 
 /** localStorage에 key 값을 만료시간을 두고 저장하기
  * @param {*} key 저장할 키 이름
@@ -22,11 +27,12 @@ export function SetWithExpiry(key, value, ttl) {
  */
 export function GetWithExpiry(key) {
     const itemStr = localStorage.getItem(key);
-    const navigate = useNavigate();
 
     if (!itemStr) {
         if (key == "uid")
             return -1;
+        if (key == "nickname")
+            return "";
 
         return null;
     }
@@ -38,10 +44,11 @@ export function GetWithExpiry(key) {
         localStorage.removeItem(key);
         if (key === 'uid')
         {
-            alert('세션이 만료되었습니다. 로그인이 필요합니다')
             localStorage.removeItem("email");
             localStorage.removeItem("profile");
-            navigate('/login')
+            localStorage.removeItem("nickname");
+            localStorage.removeItem("statusMessage");
+            window.location.reload();
             return -1;
         }
         return null;
@@ -49,3 +56,34 @@ export function GetWithExpiry(key) {
 
     return item.value;
 }
+
+const ContextProvider = ({children}) => {
+    const [activeUser, setActiveUser] = useState({
+        uid: -1,
+        email: '',
+        nickname: '',
+    })
+
+    const updateActiveUser = (user) => {
+        setActiveUser(user);
+    }
+
+    useEffect(() => {
+        const uid = GetWithExpiry("uid");
+        const email = GetWithExpiry("email");
+        const nickname = GetWithExpiry("nickname");
+        setActiveUser({uid, email, nickname});
+    }, []);
+
+    return (
+        <UserContext.Provider value={{activeUser, updateActiveUser}}>
+            {children}
+        </UserContext.Provider>
+    )
+}
+
+ContextProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+};
+
+export { UserContext, ContextProvider };

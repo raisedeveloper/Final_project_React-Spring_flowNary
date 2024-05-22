@@ -28,7 +28,7 @@ import ReReply from "./ReReply";
 
 import Carousel from 'react-material-ui-carousel'
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAddReply, useGetUserNicknameLS,useAddReReply } from 'api/customHook.jsx';
+import { useAddReply, useGetUserNicknameLS, useAddReReply } from 'api/customHook.jsx';
 import { useGetBoard, useGetBoardByUrl, useGetBoardList, useGetReplyList } from './BoardJS.js';
 import { useQuery } from '@tanstack/react-query';
 import { getBoard, getBoardList, getBoardUrl, getReplyList } from 'api/axiosGet.js';
@@ -46,7 +46,7 @@ export default function Reply(props) {
   const [expandedContents, setExpandedContents] = useState({});
   const [formChange, setFormChange] = useState(false);
   const [showReReply, setShowReReply] = useState({});
-  const [ridtext , setRidtext] = useState(0);
+  const [ridtext, setRidtext] = useState(0);
 
   const board = useQuery({
     queryKey: ['board', bid, uid],
@@ -82,7 +82,6 @@ export default function Reply(props) {
       rContents: text,
       nickname: props.nickname,
     })
-    console.log(handleFormSubmit);
 
     addReply(sendData);
 
@@ -195,41 +194,41 @@ export default function Reply(props) {
           </MDBox>
 
           {formChange ? (
-          <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
-            <input
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="댓글입력.."
-              style={{
-                padding: '10px 15px',
-                fontSize: '1rem',
-                borderRadius: '5px',
-                border: '1px solid #ccc',
-                width: '80%',
-                boxSizing: 'border-box',
-              }}
-            />
-            <Button onClick={handleFormSubmit2} sx={{ padding: 0 }}>게시</Button>
-          </MDBox>
+            <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
+              <input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="댓글입력.."
+                style={{
+                  padding: '10px 15px',
+                  fontSize: '1rem',
+                  borderRadius: '5px',
+                  border: '1px solid #ccc',
+                  width: '80%',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <Button onClick={handleFormSubmit2} sx={{ padding: 0 }}>게시</Button>
+            </MDBox>
           ) : (
 
-          <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
-          <input
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="입력..."
-            style={{
-              padding: '10px 15px',
-              fontSize: '1rem',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              width: '80%',
-              boxSizing: 'border-box',
-            }}
-          />
-          <Button onClick={handleFormSubmit} sx={{ padding: 0 }}>게시</Button>
-        </MDBox>
-        
+            <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
+              <input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="입력..."
+                style={{
+                  padding: '10px 15px',
+                  fontSize: '1rem',
+                  borderRadius: '5px',
+                  border: '1px solid #ccc',
+                  width: '80%',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <Button onClick={handleFormSubmit} sx={{ padding: 0 }}>게시</Button>
+            </MDBox>
+
           )}
         </MDBox>
       </MDBox>

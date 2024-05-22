@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from "react";
+import React, { forwardRef, useContext, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { Box, Stack } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
@@ -15,14 +15,28 @@ import ClearIcon from '@mui/icons-material/Clear';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import TimeAgo from "timeago-react";
-import koreanStrings from './ko'
+import koreanStrings from './ko';
+import { GetWithExpiry } from "api/LocalStorage";
+import { UserContext } from "api/LocalStorage";
+import { useNavigate } from "react-router-dom";
+
+
 const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonLike }, ref) => {
   // useQuery는 항상 실행되어야 합니다.
   const { data: board, isLoading, isError, refetch } = useQuery({
     queryKey: ['board', bid, uid],
     queryFn: () => getBoard(bid, uid),
   });
-
+  const navigate = useNavigate();
+  
+  const handleUpdate = () => {
+      navigate("/home/Update")
+      sessionStorage.setItem("bid", bid);
+    }
+    
+  const { activeUser } = useContext(UserContext);
+  
+  
   if (isLoading) {
     return <div>로딩 중...</div>;
   }
@@ -30,7 +44,7 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
   if (isError) {
     return <div>오류가 발생했습니다.</div>;
   }
-
+  
   // board 데이터가 있을 때만 image를 설정합니다.
   const image = board?.image ? board.image.split(',') : null;
   console.log("이미지", image);
@@ -39,7 +53,10 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
     <Box className="board_modal" ref={ref}>
       <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
         <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
-          <Carousel sx={{border: '1px solid red'}}>
+            {board.uid == activeUser.uid ? (
+              <Button onClick={handleUpdate}>수정</Button>
+            ) : null}
+          <Carousel sx={{ border: '1px solid red' }}>
             {image && image.map((image, index) => (
               <Box
                 key={index}
@@ -66,7 +83,7 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
 
           {/* 이미지 없을때 */}
           {image == null ? (
-            <Card sx={{ height: "100vh", padding: 3 , border: '1px solid purple' }}>
+            <Card sx={{ height: "100vh", padding: 3, border: '1px solid purple' }}>
               <CardHeader
                 avatar={
                   <Avatar sx={{ bgcolor: 'red'[500] }} aria-label="recipe"
@@ -93,9 +110,9 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
                     {board.bContents}
                   </Typography>
                 </Stack>
-                  <Typography variant="body2" color="text.fisrt" sx={{marginTop:5}} >
-                    {<TimeAgo datetime={board.modTime} locale={koreanStrings} />}
-                  </Typography>
+                <Typography variant="body2" color="text.fisrt" sx={{ marginTop: 5 }} >
+                  {<TimeAgo datetime={board.modTime} locale={koreanStrings} />}
+                </Typography>
               </CardContent>
             </Card>
           ) : null}
