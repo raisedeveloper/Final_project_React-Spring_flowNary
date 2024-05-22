@@ -46,6 +46,11 @@ public interface BoardDao {
 			+ " limit #{count}")
 	List<Board> getBoardList3(String field1, String field2, String field3, String query, int count);
 	
+	@Select("select * from board"
+			+ " where isDeleted=0 and uid=${uid}"
+			+ " order by modTime ")
+	List<Board> getBoardList4(int uid);
+	
 	@Select("select count(bid) from board"
 			+ " where isDeleted=0 and ${field} like #{query}"
 			+ " order by modTime desc")

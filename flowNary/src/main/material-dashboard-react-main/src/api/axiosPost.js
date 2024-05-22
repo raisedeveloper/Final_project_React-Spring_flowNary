@@ -1,6 +1,45 @@
 import axios from "axios"
 const API_BASE_URL = "/";
 
+/** 유저 등록
+ * @param {*} hashuid google 로그인에서만 만들어지는 hash형태의 uid
+ * @param {*} provider google 로그인이면 1, 일반 로그인이면 0
+ * @param {*} email 입력한 이메일
+ * @param {*} pwd 비밀번호
+ * @returns 
+ */
+export const userRegister = async (hashuid: string, provider: number, email: string, pwd: string) => {
+
+    return axios.post(`${API_BASE_URL}user/register`, {
+        hashuid: hashuid,
+        provider: provider,
+        email: email,
+        pwd: pwd,
+    }).catch(error => {
+        console.log('axiosget.js: userRegister error!');
+        console.log(error);
+    });
+}
+
+/** 비밀번호만 바꾸는 유저정보 수정
+ * @param {*} uid 유저번호
+ * @param {*} pwd1 입력된 비밀번호 
+ * @param {*} pwd2 비밀번호 확인
+ * @returns 
+ */
+export const userUpdatePwd = async (uid: number, pwd1: string, pwd2: string) => {
+
+    return axios.post(`${API_BASE_URL}user/updatepwd`, {
+        uid: uid,
+        pwd1: pwd1,
+        pwd2: pwd2,
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: userUpdatePwd error!');
+        console.log(error);
+    });
+}
+
 /** 사용자 정보 업데이트
  * @param {*} sendData 보내줄 정보의 Json String 데이터, 이하는 sendData에 넣어야 할 정보
  * @param {*} uid 유저번호
@@ -13,14 +52,12 @@ const API_BASE_URL = "/";
  * @returns 
  */
 export const userUpdate = async (sendData: {
-    uid: int,
+    uid: number,
     uname: string,
     nickname: string,
     profile: string,
     statusMessage: string,
-    birth: Date,
     snsDomain: string,
-    gender: int,
     tel: string,
 }) => {
 
@@ -89,7 +126,7 @@ export const insertReply = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}board/reply`,
+        url: `${API_BASE_URL}reply/insert`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -104,13 +141,13 @@ export const insertReply = async (sendData: string) => {
  * @param {*} uid 작성한 사람의 유저번호
  * @param {*} rrContents 대댓글 내용
  * @param {*} nickname 작성한 사람의 닉네임
- * @returns 
+ * @returns  
  */
 export const insertReReply = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}board/Re_Reply`,
+        url: `${API_BASE_URL}reply/re_insert`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -130,7 +167,7 @@ export const insertReReply = async (sendData: string) => {
 export const like = async (sendData: string) => {
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}board/like`,
+        url: `${API_BASE_URL}like/update`,
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -139,16 +176,119 @@ export const like = async (sendData: string) => {
     });
 }
 
+/** 좋아요 / 좋아요 해제
+ * @param {*} sendData 보내줄 정보의 Json String 데이터, 이하는 sendData에 넣어야 할 정보
+ * @param {*} uid 좋아요를 한 사람의 유저번호
+ * @param {*} type 좋아요를 한 대상물의 유형 (1: 게시글, 2: 댓글, 3: 대댓글)
+ * @param {*} oid 대상물의 번호(글이면 bid, 댓글이면 rid 등)
+ * @param {*} fuid 좋아요를 한 대상이 되는 유저번호
+ * @returns 
+ */
 export const like2 = async (sendData: {
-    uid: Number,
+    uid: number,
     type: Number,
     oid: Number,
-    fuid: number,
+    fuid: Number,
 }) => {
-    return axios(`${API_BASE_URL}board/like`, 
-        sendData
+    return axios(`${API_BASE_URL}like/update`,
+        sendData  
     ).catch(error => {
         console.log("axiospost.js: like error!");
+        console.log(error);
+    });
+}
+
+/** 글 삭제
+ * @param {*} bid 글 번호
+ * @returns 
+ */
+export const deleteBoard = async (bid: number) => {
+
+    return axios.post(`${API_BASE_URL}board/delete`, {
+        bid: bid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteBoard error!');
+        console.log(error);
+    });
+}
+
+/** 댓글 삭제
+ * @param {*} rid 댓글 번호 
+ * @returns 
+ */
+export const deleteReply = async (rid: number) => {
+
+    return axios.post(`${API_BASE_URL}reply/delete`, {
+        rid: rid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteReply error!');
+        console.log(error);
+    });
+}
+
+/** 댓글 삭제
+ * @param {*} rid 댓글 번호 
+ * @returns 
+ */
+export const deleteReReply = async (rrid: number) => {
+
+    return axios.post(`${API_BASE_URL}reply/delete`, {
+        rrid: rrid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteReReply error!');
+        console.log(error);
+    });
+}
+
+export const insertChat = async (uid1: number, uid2: number) => {
+
+    return axios.post(`${API_BASE_URL}chat/insert`, {
+        uid1: uid1,
+        uid2: uid2,
+    }).catch(error => {
+        console.log('axiospost.js: insertChat error!');
+        console.log(error);
+    });
+}
+
+export const updateChat = async (cid: number, uid: number) => {
+
+    return axios.post(`${API_BASE_URL}chat/update`, {
+        cid: cid,
+        uid: uid,
+    }).catch(error => {
+        console.log('axiospost.js: updateChat error!');
+        console.log(error);
+    });
+}
+
+export const exitChat = async (cid: number, uid: number) => {
+
+    return axios.post(`${API_BASE_URL}chat/exit`, {
+        cid: cid,
+        uid: uid,
+    }).catch(error => {
+        console.log('axiospost.js: exitChat error!');
+        console.log(error);
+    });
+}
+
+export const deleteChat = async (cid: number) => {
+
+    return axios.post(`${API_BASE_URL}chat/delete`, {
+        cid: cid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteChat error!');
+        console.log(error);
+    });
+}
+
+export const deleteDm = async (did: number) => {
+
+    return axios.post(`${API_BASE_URL}chat/delete`, {
+        did: did,
+    }).catch(error => {
+        console.log('axiospost.js: deleteChat error!');
         console.log(error);
     });
 }
