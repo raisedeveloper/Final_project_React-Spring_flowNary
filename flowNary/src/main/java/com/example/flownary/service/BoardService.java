@@ -17,6 +17,8 @@ public interface BoardService {
 	
 	List<Board> getBoardList(int count, String field, String query);
 	
+	List<Board> getMyBoardList(int uid);
+	
 	List<Board> getBoardListSearch(int count, List<String> field, String query);
 	
 	int getBoardListCount(String field, String query);
