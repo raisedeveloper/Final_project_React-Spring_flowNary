@@ -14,6 +14,7 @@ import TodoList from "layouts/todoList/TodoListIndex.js";
 import Write from "layouts/write/WriteIndex.js";
 import Settings from "layouts/setting/SettingIndex.js";
 import Team from "layouts/team/TeamIndex.js";
+import Search from "layouts/Search/Search";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
@@ -133,6 +134,14 @@ const createRoutes = (isLoggedIn) => [
     key: "sign-up",
     icon: <Icon fontSize="xx-large">assignment</Icon>,    
     component: <SignUp />,
+    visible: false, // 로그인되지 않았을 때만 보임
+  },
+  {
+    type: "collapse",
+    name: "검색",
+    key: "/search",
+    icon: <Icon fontSize="xx-large">search</Icon>,    
+    component: <Search />,
     visible: false, // 로그인되지 않았을 때만 보임
   },
 ];

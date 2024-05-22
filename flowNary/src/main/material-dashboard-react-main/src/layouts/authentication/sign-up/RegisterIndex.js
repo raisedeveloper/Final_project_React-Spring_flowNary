@@ -131,9 +131,13 @@ export default function Register({ closeModal }) {
 
                 try {
                     await axios.post("/user/register", {
+                        hashuid: 'nonGoogle',
                         email: userInfo.email,
                         pwd: userInfo.password,
-                        hashuid: 'nonGoogle',
+                        birth: userInfo.birth,
+                        gender: userInfo.gender,
+                        uname: userInfo.uname,
+                        nickname: userInfo.nickname,
                         provider: 0,
                     });
                 } catch (error) {

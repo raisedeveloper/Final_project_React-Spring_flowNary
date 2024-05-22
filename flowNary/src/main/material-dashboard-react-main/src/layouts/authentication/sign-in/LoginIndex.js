@@ -33,6 +33,7 @@ export default function Login() {
     const backgroundImage = '/images/flowLight.png';
     const logoImage = '/images/LightLogo.png';
     const HelloLogo = '/images/HelloLight.png';
+    const logoImage_Modal = '/images/DarkLogo.png'
 
     const auth = getAuth();
 
@@ -243,8 +244,17 @@ export default function Login() {
                 overlayClassName="Overlay"
             >
                 <div className="modal-content">
-                    <h2>FlowNary</h2>
-                    <p>아래 가입양식에 따라 회원가입을 진행해주세요!</p>
+                    <div className={`welcome-message-Modal`}>
+                        <img src={logoImage_Modal} alt='LOGO'
+                            style={{                                
+                                width:'10vw',
+                                height:'10vh',
+                                marginTop: '0px',
+                                marginBottom: '-1rem'
+                            }} />
+                    </div>
+                    <h2>환영합니다!</h2>
+                    <p style={{ fontSize: '16px' }}>아래 가입양식에 따라 회원가입을 진행해주세요</p>
                     <Register closeModal={closeModal} /> {/* closeModal 전달 */}
                     <button onClick={closeModal} className="close-modal-button">닫기</button>
                 </div>

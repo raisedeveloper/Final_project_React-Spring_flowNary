@@ -37,7 +37,7 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
-import { Avatar, MenuItem } from "@mui/material";
+import { Avatar, Box, Button, Grid, MenuItem, Modal, TextField } from "@mui/material";
 import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
 
 // api 컴포넌트
@@ -162,7 +162,27 @@ function DashboardNavbar({ absolute, light, isMini }) {
       </MenuItem>
     </Menu>
   );
+  const [searchtext, setSearchtext] = useState(sessionStorage.getItem("search"));
 
+
+  const handleSearch = () => {
+    if (searchtext === '' || searchtext === null) {
+      alert('검색어를 입력하십시오');
+    }
+    else {
+      sessionStorage.setItem("search", searchtext);
+      if (location.pathname !== 'search') {
+        navigate('/search');
+      }
+      else {
+        window.location.replace('/search');
+      }
+    }
+  } 
+
+  const handleSearchText = (e) => {
+    setSearchtext(e.target.value);
+  }
 
   // 알림 메뉴 렌더링
   const renderMenu = () => (
@@ -216,10 +236,23 @@ function DashboardNavbar({ absolute, light, isMini }) {
         {/* 헤더 박스 및 계정, 설정, 알림 아이콘 모양 */}
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput style={{ height: 1 }} label="Search" />
-            </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
+              <TextField
+                id="outlined-multiline-flexible"
+                variant="standard"
+                placeholder="검색"
+                onChange={handleSearchText}
+                value={searchtext}
+              />
+              <IconButton
+                size="small"
+                color="inherit"
+                disableRipple
+                sx={{ cursor: 'pointer', mx: 2 }}
+                onClick={handleSearch} // 프로필 메뉴 열기 핸들러 연결
+              >
+                <Icon sx={iconsStyle}>search</Icon>
+              </IconButton>
               <IconButton
                 size="small"
                 disableRipple
