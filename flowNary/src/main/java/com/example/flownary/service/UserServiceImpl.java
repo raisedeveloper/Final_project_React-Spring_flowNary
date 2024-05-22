@@ -1,7 +1,5 @@
 package com.example.flownary.service;
 
-import java.util.List;
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +8,8 @@ import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.User;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service

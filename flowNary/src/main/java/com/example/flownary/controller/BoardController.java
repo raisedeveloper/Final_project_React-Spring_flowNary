@@ -36,7 +36,7 @@ public class BoardController {
 	private final LikeService lSvc;
 	private final NoticeController nC;
 	private final FollowService fSvc;
-
+  
 	@GetMapping("/getBoard")
 	public JSONObject getBoard(@RequestParam int bid, @RequestParam(defaultValue = "-1", required = false) int uid) {
 		Board board = bSvc.getBoard(bid);
@@ -61,8 +61,7 @@ public class BoardController {
 			hMap.put("liked", (liked == 1) ? true : false);
 			hMap.put("profile", (user != null) ? user.getProfile() : null);
 			JSONObject jBoard = new JSONObject(hMap);
-			System.out.println(jBoard);
-			return jBoard;
+			return jBoard;			
 		}
 		return null;
 	}
@@ -104,20 +103,20 @@ public class BoardController {
 			return null;
 		}
 	}
-
+	
 	@GetMapping("/listCount")
-	public int boardListCount(@RequestParam(name = "f", defaultValue = "title", required = false) String field,
-			@RequestParam(name = "f2", defaultValue = "", required = false) String field2,
-			@RequestParam(name = "f3", defaultValue = "", required = false) String field3,
-			@RequestParam(name = "q", defaultValue = "", required = false) String query,
-			@RequestParam(defaultValue = "1", required = false) int type,
-			@RequestParam(defaultValue = "-1", required = false) int uid) {
-
+	public int boardListCount(@RequestParam(name="f", defaultValue="title", required=false) String field,
+			@RequestParam(name="f2", defaultValue="", required=false) String field2,
+			@RequestParam(name="f3", defaultValue="", required=false) String field3,
+			@RequestParam(name="q", defaultValue="", required=false) String query,
+			@RequestParam(defaultValue="1", required=false) int type,
+			@RequestParam(defaultValue="-1", required=false) int uid) {
+		
 		int listcount = 0;
-
-		switch (type) {
+		
+		switch(type) {
 		case 1:
-			listcount = bSvc.getBoardListCount(field, query);
+			listcount = bSvc.getBoardListCount(field, query);			
 			break;
 		case 2:
 			List<String> fieldList = new ArrayList<>();
@@ -136,7 +135,6 @@ public class BoardController {
 			System.out.println("error!");
 			break;
 		}
-
 		return listcount;
 	}
 
@@ -178,8 +176,7 @@ public class BoardController {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
-
-			hMap.put("bid", board.getBid());
+ 			hMap.put("bid", board.getBid());
 			hMap.put("uid", board.getUid());
 			hMap.put("title", board.getTitle());
 			hMap.put("bContents", board.getbContents());
@@ -250,7 +247,6 @@ public class BoardController {
 	
 	@PostMapping("/insert")
 	public int insertForm(@RequestBody InsertBoardDto dto) {
-
 		String shareUrl = "";
 		boolean t = true;
 
@@ -283,21 +279,18 @@ public class BoardController {
 
 	@PostMapping("/update")
 	public String boardUpdate(@RequestBody UpdateBoardDto dto) {
-
 		Board board = new Board();
 		board.setTitle(dto.getTitle());
 		board.setbContents(dto.getbContents());
 		board.setImage(dto.getImage());
 		board.setHashTag(dto.getHashTag());
-
+		
 		bSvc.updateBoard(board);
 		return "수정되었습니다";
 	}
-
+	
 	@GetMapping("/delete")
 	public void delete(int bid) {
 		bSvc.deleteBoard(bid);
 	}
-
-
 }

@@ -206,12 +206,7 @@ export default function Home() {
 
   // 좋아요 버튼 누를 때 넘기기
   function handleButtonLike(bid, uid2) {
-    // var sendData = JSON.stringify({
-    //   uid: uid,
-    //   fuid: uid2,
-    //   oid: bid,
-    //   type: 1
-    // })
+
     const sendData = {
       uid: uid,
       fuid: uid2,
@@ -226,6 +221,9 @@ export default function Home() {
     return (<div>로딩 중...</div>)
   }
 
+  // 최신순으로 정렬
+  const sortedDataList = dataList.data?.slice().sort((a, b) => new Date(b.modTime) - new Date(a.modTime));
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -235,7 +233,7 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
               <Write />
               <Grid container spacing={3}>
-                {dataList.data && dataList.data.map((data, idx) => (
+                {sortedDataList && sortedDataList.map((data, idx) => (
                   <Grid key={idx} item xs={12} md={6} lg={6}>
                     <MDBox mb={3}>
                       <Card sx={{
@@ -246,14 +244,34 @@ export default function Home() {
                         }
                       }}>
                         <CardHeader
-                          sx={{ padding: 1 }}
+                          sx={{ padding: 1, }}
                           avatar={
                             <Avatar
+                              sx={{
+                                width: '3rem',
+                                height: '3rem',
+                                objectFit: 'cover',
+                                overflow: 'hidden',
+                                border:'1.5px solid'
+                              }}
                               aria-label="recipe"
-                              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                            />
+                            >
+                              <div
+                                style={{
+                                  width: '3.8rem',
+                                  height: '3rem',
+                                  borderRadius: '50%',
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
+                                  backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}')` // 이미지 URL 동적 생성
+                                }}
+                              >
+                              </div>
+                            </Avatar>
+
                           }
                           action={
+                            // 더 보기
                             <IconButton aria-label="settings">
                               <MoreVertIcon />
                             </IconButton>
@@ -346,7 +364,7 @@ export default function Home() {
           </Stack>
         </MDBox >
       </MDBox >
-      
+
       {/* 게시글 모달 */}
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
@@ -355,7 +373,7 @@ export default function Home() {
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} />
       </Modal>
-    </DashboardLayout >  
+    </DashboardLayout >
   );
 
 }

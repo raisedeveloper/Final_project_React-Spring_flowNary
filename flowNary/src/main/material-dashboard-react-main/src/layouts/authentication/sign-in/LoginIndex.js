@@ -1,4 +1,3 @@
-// 기본
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@mui/material";
@@ -15,20 +14,27 @@ import '../theme.css'; // CSS 임포트
 import Swal from "sweetalert2";
 import axios from "axios";
 
+// react-modal 추가
+import Modal from 'react-modal';
+
+// RegisterIndex 컴포넌트 추가
+import Register from "../sign-up/RegisterIndex";
+
+// 모달 element
+Modal.setAppElement('#app');
+
 export default function Login() {
     const [theme, setTheme] = useState('light'); // 초기 테마를 'light'로 설정
 
-    // 테마를 토글하는 함수
-    const toggleTheme = () => {
-        setTheme(theme === 'light' ? 'dark' : 'light');
-    };
+    // 애니메이션 상태
+    const [animationClass, setAnimationClass] = useState('fade-enter');
+
+    // 이미지 함수
+    const backgroundImage = '/images/flowLight.png';
+    const logoImage = '/images/LightLogo.png';
+    const HelloLogo = '/images/HelloLight.png';
 
     const auth = getAuth();
-
-    // 테마에 따른 배경 이미지 경로 변경
-    const backgroundImage = theme === 'light' ? '/images/flowLight.png' : '/images/flowNight.png';
-    const logoImage = theme === 'light' ? '/images/LightLogo.png' : '/images/DarkLogo.png';
-    const HelloLogo = theme === 'light' ? '/images/HelloLight.png' : '/images/HelloBlack.png';
 
     const [userInfo, setUserInfo] = useState({ email: '', password: '' });
     const navigate = useNavigate();
@@ -109,12 +115,12 @@ export default function Login() {
                 });
                 console.log("구글 로그인 성공!" + response.data);
             }
-            navigate('/');
+            setAnimationClass('fade-exit');
+            setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
         } catch (error) {
             console.error("구글 로그인 오류:", error);
         }
     };
-
 
     function handleKeyPress(event) {
         if (event && event.key === 'Enter') {
@@ -150,28 +156,20 @@ export default function Login() {
 
             // 사용자가 존재하는 경우
             if (checkuser) {
-                login(userInfo);
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "로그인에 성공하였습니다!",
-                    showConfirmButton: false,
-                    timer: 1200
-                });
-
-                axios.get('/user/getUserByEmail', {
-                    params: {
-                        email: userInfo.email
-                    }
-                }).then(res => {
+                const user = auth.currentUser;
+                if (user) {
+                    SetWithExpiry("uid", user.uid, 180); // 올바른 uid 설정
+                    login(userInfo);
+                    Swal.fire({ position: "center", icon: "success", title: "로그인에 성공하였습니다!", showConfirmButton: false, timer: 1200 });
+                    const res = await axios.get('/user/getUserByEmail', { params: { email: userInfo.email } });
                     SetWithExpiry("uid", res.data.id, 180);
                     SetWithExpiry("email", res.data.email, 180);
                     SetWithExpiry("profile", res.data.profile, 180);
                     SetWithExpiry("nickname", res.data.nickname, 180);
                     SetWithExpiry("statusMessage", res.data.statusMessage, 180);
-                }).catch(error => console.log(error));
-
-                navigate('/home');
+                    setAnimationClass('fade-exit');
+                    setTimeout(() => navigate('/home'), 500);
+                }
             }
         } catch (error) {
             // Firebase 오류 처리를 좀 더 일반적인 메시지로 통합
@@ -185,8 +183,21 @@ export default function Login() {
         }
     }
 
+    // 모달 상태
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    // 모달 열기
+    const openModal = () => {
+        setModalIsOpen(true);
+    };
+
+    // 모달 닫기
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
+
     return (
-        <div className={`background ${theme}`} style={{
+        <div className={`background ${theme} ${animationClass}`} style={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -217,11 +228,27 @@ export default function Login() {
                     <br /><br />
                     <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</p>
                     <div>
-                        <Link to="/authentication/sign-up" className={`custom-button ${theme}`}>가입하기</Link>
+                        <Link to="#" onClick={openModal} className={`custom-button ${theme}`}>가입하기</Link>
                     </div>
-                    <br />            
+                    <br />
                 </div>
             </Card>
+
+            {/* 모달 */}
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Register Modal"
+                className="Modal"
+                overlayClassName="Overlay"
+            >
+                <div className="modal-content">
+                    <h2>FlowNary</h2>
+                    <p>아래 가입양식에 따라 회원가입을 진행해주세요!</p>
+                    <Register closeModal={closeModal} /> {/* closeModal 전달 */}
+                    <button onClick={closeModal} className="close-modal-button">닫기</button>
+                </div>
+            </Modal>
         </div>
     );
 }
