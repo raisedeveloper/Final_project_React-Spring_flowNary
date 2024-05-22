@@ -122,6 +122,7 @@ function ProfileEdit({ uid, email }) {
         gender: gender,
         tel: tel,
       }).catch(error => console.log(error));
+      
     } else { // 이미지 변경 O 
       SetWithExpiry("profile", url.public_id, 180); // 세션에 바로 추가
       await axios.post('/user/update', {

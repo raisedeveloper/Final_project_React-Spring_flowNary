@@ -18,11 +18,11 @@ public class User {
 		int provider;
 		String email;
 		String pwd;
-//		String uname;
-//		String nickname;
-//		int gender;
-//		LocalDate birth;		
-//		String location;
+		String uname;
+		String nickname;
+		int gender;
+		LocalDate birth;		
+		String location;
 	}
 	
 	@Getter

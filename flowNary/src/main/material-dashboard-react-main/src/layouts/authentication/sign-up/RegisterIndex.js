@@ -7,6 +7,11 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, createUserWithEmailAndPas
 import '../theme.css';
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
+import { MenuItem, Select, TextField } from "@mui/material";
+import { correct, wrong } from "../../../api/alert.jsx";
+import SettingBirth from "layouts/setting/components/SettingBirth";
+import SettingNickname from "layouts/setting/components/SettingNickname";
+import dayjs from 'dayjs';
 
 export default function Register({ closeModal }) {
     const [theme, setTheme] = useState('light');
@@ -14,6 +19,12 @@ export default function Register({ closeModal }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
+
+    // 가입 성별
+    const [gender, setGender] = useState(2);
+    const [birth, setBirth] = useState('');
+    const [uname, setUname] = useState(null);
+    const [nickname, setNickname] = useState('');
 
     useEffect(() => {
         const firebaseConfig = {
@@ -134,10 +145,10 @@ export default function Register({ closeModal }) {
                         hashuid: 'nonGoogle',
                         email: userInfo.email,
                         pwd: userInfo.password,
-                        // birth: userInfo.birth,
-                        // gender: userInfo.gender,
-                        // uname: userInfo.uname,
-                        // nickname: userInfo.nickname,
+                        birth: userInfo.birth,
+                        gender: userInfo.gender,
+                        uname: userInfo.uname,
+                        nickname: userInfo.nickname,
                         provider: 0,
                     });
                 } catch (error) {
