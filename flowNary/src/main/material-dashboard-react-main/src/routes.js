@@ -7,6 +7,9 @@ import Notifications from "layouts/notifications";
 import Mypage from "layouts/mypage";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import UserList from "layouts/admin/userList/userListIndex";
+import BoardList from "layouts/admin/boardList/boardListIndex";
+import Statistics from "layouts/admin/statistics/statisticsIndex";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -122,12 +125,39 @@ const routes = [
     visible: false,
   },
   {
-    type: "bottom",
+    type: "collapse",
     name: "Team",
     key: "team",
     icon: <Icon fontSize="xx-large">diversity_3</Icon>,
     route: "/team",
     component: <SignUp />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "Statistics",
+    key: "statistics",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/statistics",
+    component: <Statistics />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "UserList",
+    key: "userList",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/userList",
+    component: <UserList />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "BoardList",
+    key: "boardList",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/boardList",
+    component: <BoardList />,
     visible: true,
   },
 ];
