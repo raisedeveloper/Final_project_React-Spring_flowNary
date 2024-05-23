@@ -13,7 +13,7 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip arrow {...props} classes={{ popper: className }} />
+  <Tooltip arrow placement='top' {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     boxShadow: theme.shadows[1],
@@ -35,7 +35,7 @@ export default function SettingNickname(props) {
   }, [props.nickname, nickname]);
 
   const checkNickname = () => {
-    axios.get('http://localhost:8090/user/nickname',
+    axios.get('/user/nickname',
       {
         params: {
           email: props.email
@@ -47,7 +47,14 @@ export default function SettingNickname(props) {
           console.error('User list is undefined or null');
           return;
         }
-
+        if (!nickname) {
+          Swal.fire({
+            icon: "warning",
+            text: "닉네임을 입력하세요",
+          });
+          props.changeCheckingNickname(0);
+          return;
+        }
         const nicknames = userList.map(user => user.nickname);
         if (nicknames.includes(nickname)) {
           Swal.fire({
@@ -74,7 +81,7 @@ export default function SettingNickname(props) {
       <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid item xs={8} md={10} lg={9}>
           <LightTooltip
-            title="별명을 입력하세요." arrow placement="bottom" >
+            title="별명을 입력하세요." >
             <TextField
               required
               fullWidth

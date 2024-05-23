@@ -37,12 +37,13 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
-import { Avatar, MenuItem } from "@mui/material";
+import { Avatar, Box, Button, Grid, MenuItem, Modal, TextField } from "@mui/material";
 import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
 
 // api 컴포넌트
 import { GetWithExpiry } from "api/LocalStorage";
 import { getUser } from "api/axiosGet";
+import { wrong } from "api/alert";
 
 // 헤더 부분
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -61,6 +62,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const email = GetWithExpiry("email");
   const nickname = GetWithExpiry("nickname");
   const uname = GetWithExpiry("uname");
+  const profile = GetWithExpiry("profile");
 
 
   useEffect(() => {
@@ -106,30 +108,82 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleProfileMenuClose}
       sx={{ mt: 2 }}
     >
-      <MenuItem disabled>
+      <MenuItem
+        style={{ backgroundColor: "rgba(226, 223, 226, 0.625)", height: '4rem' }}
+        onClick={goMypage}>
         <MDBox
           display="flex"
           alignItems="center"
           px={0.5} py={1}
         >
-          <Avatar src="/클라우드 연결" alt="profile picture" /> {/* 프로필 사진 경로 */}
+          {/* 프로필 사진*/}
+          <Avatar
+            alt="profile picture"
+            sx={{
+              width: '3rem',
+              height: '3rem',
+              borderRadius: '50%',
+              objectFit: 'cover'
+            }}
+          >
+            <div
+              style={{
+                width: '3rem',
+                height: '3rem',
+                borderRadius: '50%',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')`
+              }}
+            >
+            </div>
+
+          </Avatar>
           <MDBox ml={1.75}>
-            <div>{uname}</div>
-            <div>{email}</div>
+            <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{nickname}</div>
+            <div style={{ marginLeft: '.125rem', fontSize: '12px' }}>{email}</div>
           </MDBox>
         </MDBox>
       </MenuItem>
-      <MenuItem onClick={goMypage}>
-        <Icon sx={{ marginRight: '.5rem' }}>account_circle</Icon>
-        프로필
+
+      <MenuItem
+        onClick={goMypage}
+        style={{ width: '15rem', height: '3rem' }}
+      >
+        <Icon sx={{ marginRight: '.5rem', }}>account_circle</Icon>
+        <p style={{ fontWeight: 'bold' }}>프로필</p>
       </MenuItem>
-      <MenuItem onClick={goSetting}>
+
+      <MenuItem
+        onClick={goSetting}
+        style={{ width: '15rem', height: '3rem' }}
+      >
         <Icon sx={{ marginRight: '.5rem' }}>settings</Icon>
-        설정
+        <p style={{ fontWeight: 'bold' }}>설정</p>
       </MenuItem>
     </Menu>
   );
+  const [searchtext, setSearchtext] = useState('');
 
+
+  const handleSearch = () => {
+    if (searchtext === '' || searchtext === null) {
+      wrong('검색어를 입력하십시오');
+    }
+    else {
+      sessionStorage.setItem("search", searchtext);
+      if (location.pathname !== 'search') {
+        navigate('/search');
+      }
+      else {
+        window.location.replace('/search');
+      }
+    }
+  }
+
+  const handleSearchText = (e) => {
+    setSearchtext(e.target.value);
+  }
 
   // 알림 메뉴 렌더링
   const renderMenu = () => (
@@ -168,7 +222,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
     },
   });
 
-
+  function handleKeyPress(event) {
+    if (event && event.key === 'Enter') {
+      event.preventDefault();
+      handleSearch();
+    }
+  }
 
   return (
     <AppBar
@@ -183,10 +242,24 @@ function DashboardNavbar({ absolute, light, isMini }) {
         {/* 헤더 박스 및 계정, 설정, 알림 아이콘 모양 */}
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput style={{ height: 1 }} label="Search" />
-            </MDBox>
-            <MDBox color={light ? "white" : "inherit"}>
+            <MDBox color={light ? "white" : "inherit"} sx={{ display: { lg: 'flex', xs: 'none' } }}>
+              <TextField
+                id="outlined-multiline-flexible"
+                variant="standard"
+                placeholder="검색어를 입력하세요!"
+                onChange={handleSearchText}
+                value={searchtext}
+                onKeyUp={handleKeyPress}
+              />
+              <IconButton
+                size="small"
+                color="inherit"
+                disableRipple
+                sx={{ cursor: 'pointer', mx: 2 }}
+                onClick={handleSearch} // 프로필 메뉴 열기 핸들러 연결
+              >
+                <Icon sx={iconsStyle}>search</Icon>
+              </IconButton>
               <IconButton
                 size="small"
                 disableRipple
@@ -195,17 +268,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleProfileMenuOpen} // 프로필 메뉴 열기 핸들러 연결
               >
                 <Icon sx={iconsStyle}>account_circle</Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarMobileMenu}
-                onClick={handleProfileMenuOpen}
-              >
-                <Icon sx={iconsStyle} fontSize="medium">
-                  {miniSidenav ? "menu_open" : "menu"}
-                </Icon>
               </IconButton>
               <IconButton
                 size="small"

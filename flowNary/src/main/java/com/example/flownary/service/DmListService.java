@@ -8,9 +8,9 @@ public interface DmListService {
 
 	DmList getDmList(int did);
 	
-	List<DmList> getDmListList(int cid);
+	List<DmList> getDmListList(int cid, int count);
 	
-	List<DmList> getDmListListByUid(int uid);
+	List<DmList> getDmListListByUid(int uid, int count);
 	
 	void insertDmList(DmList dmList);
 	

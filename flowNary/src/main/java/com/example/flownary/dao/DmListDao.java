@@ -15,15 +15,24 @@ public interface DmListDao {
 	@Select("select * from dmlist where did=#{did}")
 	DmList getDmList(int did);
 	
-	@Select("select * from dmlist where cid=#{cid}")
-	List<DmList> getDmListList(int cid);
+	@Select("select * from dmlist where cid=#{cid}"
+			+ " where isDeleted=0"
+			+ " order by dTime desc"
+			+ " limit #{count}")
+	List<DmList> getDmListList(int cid, int count);
 	
-	@Select("select * from dmlist where uid=#{uid}")
-	List<DmList> getDmListListByUid(int uid);
+	@Select("select * from dmlist where uid=#{uid}"
+			+ " order by dTime desc"
+			+ " limit #{count}")
+	List<DmList> getDmListListByUid(int uid, int count);
 	
 	@Insert("insert into dmlist values(default, #{uid}, #{cid}, #{dContents}"
-			+ ", default, #{dFile}, default)")
+			+ ", #{dTime}, #{dFile}, default)")
 	void insertDmList(DmList dmList);
+	
+	@Insert("insert into dmlist values(default, #{uid}, #{cid}, #{dContents}"
+			+ ", default, #{dFile}, default")
+	void insertDmListNoTime(DmList dmList);
 	
 	@Update("update dmlist set isDeleted=-1 where did=#{did}")
 	void deleteDmList(int did);

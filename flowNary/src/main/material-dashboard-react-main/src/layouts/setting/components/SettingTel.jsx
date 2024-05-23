@@ -15,11 +15,11 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip arrow {...props} classes={{ popper: className }} />
+  <Tooltip arrow placement='top' {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     boxShadow: theme.shadows[1],
-    fontSize: 16,
+    fontSize: 14,
   },
 }));
 
@@ -51,7 +51,7 @@ export default function SettingTel(props) {
   }, [props, tel]);
 
   const checkTel = () => {
-    axios.get('http://localhost:8090/user/tel', {
+    axios.get('/user/tel', {
       params: {
         email: props.email
       }
@@ -60,6 +60,14 @@ export default function SettingTel(props) {
         const userList = response.data; // 응답 데이터 전체를 가져옵니다.
         if (!userList) {
           console.error('User list is undefined or null');
+          return;
+        }
+        if (tel.length !== 13) {
+          Swal.fire({
+            icon: "warning",
+            text: "전화번호가 잘못되었습니다.",
+          });
+          props.changeCheckingTel(0);
           return;
         }
         const tels = userList.map(user => user.tel);
@@ -91,7 +99,7 @@ export default function SettingTel(props) {
     <>
       <Grid container spacing={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid item xs={8} md={10} lg={9}>
-          <LightTooltip title="' - ' 없이 숫자만 입력하세요." placement='bottom' >
+          <LightTooltip title="' - ' 없이 숫자만 입력하세요."  >
             <TextField
               fullWidth
               required

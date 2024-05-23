@@ -1,23 +1,23 @@
 package com.example.flownary.entity;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Chat {
 
 	int cid;
 	int uid1;
 	int uid2;
-
-	@Override
-	public String toString() {
-		return "Chat [cid=" + cid + ", uid1=" + uid1 + ", uid2=" + uid2 + "]";
-	}
-	
+	int status;
+	LocalDateTime regTime;
 }

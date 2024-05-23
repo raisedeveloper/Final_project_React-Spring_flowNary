@@ -51,7 +51,7 @@ public class ReplyServiceImpl implements ReplyService{
 	}
 
 	@Override
-	public void deleteReply(Reply reply) {
-		rDao.deleteReply(reply);
+	public void deleteReply(int rid) {
+		rDao.deleteReply(rid);
 	}
 }

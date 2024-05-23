@@ -1,21 +1,26 @@
+// routes.js
+import React from 'react';
+import Icon from '@mui/material/Icon';
+
 // Material Dashboard 2 React layouts
-import Home from "layouts/home";
-import Settings from "layouts/setting";
-import Album from "layouts/album";
-import Billing from "layouts/billing";
-import Notifications from "layouts/notifications";
-import Mypage from "layouts/mypage";
-import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
-import UserList from "layouts/admin/userList/userListIndex";
-import BoardList from "layouts/admin/boardList/boardListIndex";
-import Statistics from "layouts/admin/statistics/statisticsIndex";
+import Home from "layouts/home/HomeIndex.js";
+import Album from "layouts/album/AlbumIndex.js";
+import Chatting from "layouts/chatting/ChattingIndex.js";
+import Mypage from "layouts/mypage/MypageIndex.js";
+import Family from "layouts/family/FamilyIndex.js";
+import Notifications from "layouts/notifications/NoticeIndex.js";
+import Chalendar from "layouts/schedule/ScheduleIndex.js";
+import TodoList from "layouts/todoList/TodoListIndex.js";
+import Write from "layouts/write/WriteIndex.js";
+import Settings from "layouts/setting/SettingIndex.js";
+import Team from "layouts/team/TeamIndex.js";
+import Search from "layouts/Search/SearchIndex.js";
+import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
+import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
+import Logout from "layouts/authentication/logout";
+import { FlashOnOutlined } from '@mui/icons-material';
 
-// @mui icons
-import Icon from "@mui/material/Icon";
-
-// aside 항목이름
-const routes = [
+const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "홈",
@@ -40,7 +45,7 @@ const routes = [
     key: "chatting",
     icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
-    component: <Billing />,
+    component: <Chatting />,
     visible: true,
   },
   {
@@ -54,11 +59,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "f_패밀리",
-    key: "friends",
+    name: "패밀리",
+    key: "family",
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
-    route: "/friends",
-    component: <Mypage />,
+    route: "/family",
+    component: <Family />,
     visible: true,
   },
   {
@@ -72,20 +77,29 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "특별한 날",
+    name: "일정관리",
     key: "chalendar",
     icon: <Icon fontSize="xx-large">calendar_month</Icon>,
     route: "/chalendar",
-    component: <Mypage />,
+    component: <Chalendar />,
     visible: true,
   },
   {
     type: "collapse",
-    name: "할 일",
+    name: "To-Do 리스트",
     key: "to-do",
-    icon: <Icon fontSize="xx-large">person</Icon>,
+    icon: <Icon fontSize="xx-large">checklist</Icon>,
     route: "/to-do",
-    component: <Mypage />,
+    component: <TodoList />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "글쓰기",
+    key: "write",
+    icon: <Icon fontSize="xx-large">history_edu</Icon>,
+    route: "/write",
+    component: <Write />,
     visible: true,
   },
   {
@@ -104,34 +118,33 @@ const routes = [
     icon: <Icon fontSize="xx-large">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
-    visible: true,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
   {
     type: "collapse",
     name: "로그아웃",
     key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
-    visible: true,
+    route: "/logout",
+    component: <Logout />,
+    visible: isLoggedIn, // 로그인되었을 때만 보임
   },
   {
     type: "collapse",
     name: "회원가입",
     key: "sign-up",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,
-    route: "/authentication/sign-up",
+    icon: <Icon fontSize="xx-large">assignment</Icon>,    
     component: <SignUp />,
-    visible: false,
+    visible: false, // 로그인되지 않았을 때만 보임
   },
   {
     type: "collapse",
-    name: "Team",
-    key: "team",
-    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
-    route: "/team",
-    component: <SignUp />,
-    visible: true,
+    name: "검색",
+    key: "search",
+    icon: <Icon fontSize="xx-large">search</Icon>,    
+    route: "/search",
+    component: <Search />,
+    visible: false, // 로그인되지 않았을 때만 보임
   },
   {
     type: "collapse",
@@ -162,4 +175,4 @@ const routes = [
   },
 ];
 
-export default routes;
+export default createRoutes;

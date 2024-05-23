@@ -30,8 +30,8 @@ public interface BoardDao {
 	
 	@Select("select * from board"
 			+ " where isDeleted=0 and ${field} like #{query}"
-			+ " order by modTime desc"
-			+ " limit #{count}")
+			+ " order by modTime "
+			+ " limit #{count}" )
 	List<Board> getBoardList(String field, String query, int count);
 	
 	@Select("select * from board"
@@ -46,13 +46,33 @@ public interface BoardDao {
 			+ " limit #{count}")
 	List<Board> getBoardList3(String field1, String field2, String field3, String query, int count);
 	
+	@Select("select * from board"
+			+ " where isDeleted=0 and uid=${uid}"
+			+ " order by modTime ")
+	List<Board> getBoardList4(int uid);
+	
+	@Select("select count(bid) from board"
+			+ " where isDeleted=0 and ${field} like #{query}"
+			+ " order by modTime desc")
+	int getBoardListCount(String field, String query);
+	
+	@Select("select count(bid) from board"
+			+ " where isDeleted=0 and (${field1} like #{query} or ${field2} like #{query})"
+			+ " order by modTime desc")
+	int getBoardListCount2(String field1, String field2, String query);
+	
+	@Select("select count(bid) from board"
+			+ " where isDeleted=0 and (${field1} like #{query} or ${field2} like #{query} or ${field3} like #{query})"
+			+ " order by modTime desc")
+	int getBoardListCount3(String field1, String field2, String field3, String query);
+	
 	@Insert("insert into board values(default, #{uid}, #{title}, #{bContents}, default, "
 			+ " default, default, default, #{image}, #{shareUrl}, "
 			+ " #{nickname}, #{hashTag}, default)")
 	void insertBoard(Board board);
 	
 	@Update("update board set title=#{title}, bContents=#{bContents}, image=#{image}"
-			+ ", shareUrl=#{shareUrl}, hashTag=#{hashTag} where bid=#{bid}")
+			+ ", hashTag=#{hashTag} where bid=#{bid}")
 	void updateBoard(Board board);
 	
 	@Update("update board set nickname=#{nickname} where uid=#{uid}")

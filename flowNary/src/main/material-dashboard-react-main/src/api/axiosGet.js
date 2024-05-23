@@ -1,50 +1,6 @@
 import axios from "axios"
 import { UploadImage } from "./image";
-
-/** 유저 등록
- * @param {*} hashuid google 로그인에서만 만들어지는 hash형태의 uid
- * @param {*} provider google 로그인이면 1, 일반 로그인이면 0
- * @param {*} email 입력한 이메일
- * @param {*} pwd 비밀번호
- * @returns 
- */
-export const userRegister = async (hashuid: string, provider: number, email: string, pwd: string) => {
-
-    return axios.get('http://localhost:8090/user/register', {
-        params: {
-            hashuid: hashuid,
-            provider: provider,
-            email: email,
-            pwd: pwd,
-        }
-    }).catch(error => {
-        console.log('axiosget.js: userRegister error!');
-        console.log(error);
-    });
-}
-
-/** 비밀번호만 바꾸는 유저정보 수정
- * @param {*} uid 유저번호
- * @param {*} pwd1 입력된 비밀번호 
- * @param {*} pwd2 비밀번호 확인
- * @returns 
- */
-export const userUpdatePwd = async (uid: number, pwd1: string, pwd2: string) => {
-
-    const result = await axios.get('http://localhost:8090/user/updatepwd', {
-        params: {
-            uid: uid,
-            pwd1: pwd1,
-            pwd2: pwd2,
-        }
-    }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: userUpdatePwd error!');
-        console.log(error);
-    });
-
-    return result;
-}
+const API_BASE_URL = "/";
 
 /** 유저번호로 유저 조회
  * @param {*} uid 유저번호 
@@ -52,7 +8,7 @@ export const userUpdatePwd = async (uid: number, pwd1: string, pwd2: string) => 
  */
 export const getUser = async (uid: number) => {
 
-    const result = await axios.get('http://localhost:8090/user/getUser', {
+    const result = await axios.get(`${API_BASE_URL}user/getUser`, {
         params: {
             uid: uid,
         }
@@ -71,7 +27,7 @@ export const getUser = async (uid: number) => {
  */
 export const getUserEmail = async (email: string) => {
 
-    const result = await axios.get('http://localhost:8090/user/getUserByEmail', {
+    const result = await axios.get(`${API_BASE_URL}user/getUserByEmail`, {
         params: {
             email: email,
         }
@@ -91,7 +47,7 @@ export const getUserEmail = async (email: string) => {
  */
 export const getBoard = async (bid: Number, uid = -1) => {
     
-    const result = await axios.get('http://localhost:8090/board/getBoard', {
+    const result = await axios.get(`${API_BASE_URL}board/getBoard`, {
         params: {
             bid: bid,
             uid: uid,
@@ -113,7 +69,7 @@ export const getBoard = async (bid: Number, uid = -1) => {
 export const getBoardUrl = async (url: string, uid = -1) => {
     console.log(url);
 
-    const result = await axios.get('http://localhost:8090/board/getBoardUrl', {
+    const result = await axios.get(`${API_BASE_URL}board/getBoardUrl`, {
         params: {
             url: url,
             uid: uid,
@@ -139,7 +95,7 @@ export const getBoardUrl = async (url: string, uid = -1) => {
  */
 export const getBoardList = async (count = 1, field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
-    const result = await axios.get('http://localhost:8090/board/list', {
+    const result = await axios.get(`${API_BASE_URL}board/list`, {
         params: {
             c: count,
             f: field,
@@ -158,6 +114,23 @@ export const getBoardList = async (count = 1, field='title', field2 = '', field3
     return result;
 }
 
+export const getMyBoardList = async (uid) => {
+
+    const result = await axios.get(`${API_BASE_URL}board/mylist`, {
+        params: {
+            uid: uid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getMyBoardList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+ 
+
+
 /** 댓글 리스트 받기
  * @param {*} bid 글 번호
  * @param {*} offset 맨 처음부터 보여주지 않을 개수 (ex: limit 20에 offset 10이면 11~20번째 글만 리턴)
@@ -166,7 +139,7 @@ export const getBoardList = async (count = 1, field='title', field2 = '', field3
  */
 export const getReplyList = async (bid: Number, offset: Number, limit: number) => {
     
-    const result = await axios.get('http://localhost:8090/board/replyList', {
+    const result = await axios.get(`${API_BASE_URL}reply/list`, {
         params: {
             bid: bid,
             offset: offset,
@@ -187,7 +160,7 @@ export const getReplyList = async (bid: Number, offset: Number, limit: number) =
  */
 export const getReReplyList = async (rid: number) => {
 
-    const result = await axios.get('http://localhost:8090/board/re_ReplyList', {
+    const result = await axios.get(`${API_BASE_URL}reply/re_list`, {
         params: {
             rid: rid,
         }
@@ -198,23 +171,6 @@ export const getReReplyList = async (rid: number) => {
     });
 
     return result;
-}
-
-/** 글 삭제
- * @param {*} bid 글 번호
- * @returns 
- */
-export const deleteBoard = async (bid: number) => {
-
-    return axios.get('http://localhost:8090/board/re_ReplyList', {
-        params: {
-            bid: bid,
-        }
-    }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getReplyList error!');
-        console.log(error);
-    });
 }
 
 /** 검색어를 입력하여 받은 게시물의 총 개수 구하기
@@ -228,7 +184,7 @@ export const deleteBoard = async (bid: number) => {
  */
 export const getBoardListCount = async (field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
-    const result = await axios.get('http://localhost:8090/board/listCount', {
+    const result = await axios.get(`${API_BASE_URL}board/listCount`, {
         params: {
             f: field,
             f2: field2,
@@ -240,6 +196,197 @@ export const getBoardListCount = async (field='title', field2 = '', field3 = '',
     }).then((response) => response.data)
     .catch(error => {
         console.log('axiosget.js: getBoardListCount error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 채팅방 받기
+ * @param {*} cid 채팅방 번호
+ * @param {*} uid 현재 접속하고 있는 유저 번호
+ * @returns 
+ */
+export const getChat = async (cid: number, uid = -1) => {
+
+    const result = await axios.get(`${API_BASE_URL}chat/get`, {
+        params: {
+            cid: cid,
+            uid: uid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getChat error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 채팅방 리스트 받기
+ * @param {*} uid 자신의 채팅방 리스트를 받을 유저번호
+ * @param {*} count 개수 (기본값 1)
+ * @param {*} status 채팅방 상태 (기본값 0)
+ * @returns 
+ */
+export const getChatList = async (uid: number, count = 1, status = 0) => {
+
+    const result = await axios.get(`${API_BASE_URL}chat/list`, {
+        params: {
+            uid: uid,
+            count: count,
+            status: status,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getChatList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 채팅 리스트 받기
+ * @param {*} cid 채팅방 번호
+ * @param {*} count 개수 (기본값 20)
+ * @returns 
+ */
+export const getDmList = async (cid: number, count: 20) => {
+
+    const result = await axios.get(`${API_BASE_URL}dmlist/list`, {
+        params: {
+            cid: cid,
+            count: count,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getDmList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 특정 유저의 채팅 목록 받기
+ * @param {*} uid 유저 번호
+ * @param {*} count 개수 (기본값 20)
+ * @returns 
+ */
+export const getDmListUid = async (uid: number, count: 20) => {
+
+    const result = await axios.get(`${API_BASE_URL}dmlist/listUid`, {
+        params: {
+            cid: cid,
+            count: count,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getDmListUid error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 특정 유저가 팔로우한 팔로우 목록 리스트
+ * @param {*} uid 유저 번호
+ * @returns 
+ */
+export const getFollowList = async (uid: number) => {
+
+    const result = await axios.get(`${API_BASE_URL}follow/getList`, {
+        params: {
+            uid: uid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getFollowList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 특정 유저'를' 팔로우한 팔로우 목록 리스트
+ * @param {*} fuid 대상의 유저 번호
+ * @returns 
+ */
+export const getFollowMeList = async (fuid: number) => {
+
+    const result = await axios.get(`${API_BASE_URL}follow/getMyList`, {
+        params: {
+            fuid: fuid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getFollowMeList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 특정 유저가 받은 좋아요 수
+ * @param {*} fuid 대상 유저 번호
+ * @param {*} type 유형 (1: 게시글, 2: 댓글, 3: 대댓글, 0: 전체)
+ * @returns 
+ */
+export const getLikeUid = async (fuid: number, type = 1) => {
+
+    const result = await axios.get(`${API_BASE_URL}like/count`, {
+        params: {
+            fuid: fuid,
+            type: type,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getLikeUid error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 특정 대상의 좋아요 수
+ * @param {*} type 유형 (1: 게시글, 2: 댓글, 3: 대댓글)
+ * @param {*} oid 오브젝트 번호 (게시글일 경우 bid)
+ * @returns 
+ */
+export const getLikeList = async (type: number, oid: number) => {
+
+    const result = await axios.get(`${API_BASE_URL}like/list`, {
+        params: {
+            type: type,
+            oid: oid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getLikeList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+/** 활성화 된 알림 목록 받기
+ * @param {*} uid 유저 번호
+ * @param {*} type 유형 (기본값 0)
+ * 1: 팔로잉한 사람이 게시물 작성 시
+ * 2: 자신의 게시물에 댓글이 달릴 시
+ * 3: 타인이 자신을 팔로잉 했을 시
+ * 4: Dm(개인 메세지)을 받았을 시
+ * @returns 
+ */
+export const getNoticeList = async (uid: number, type = 0) => {
+ 
+    const result = await axios.get(`${API_BASE_URL}notice/list`, {
+        params: {
+            uid: uid,
+            type: type,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getNoticeList error!');
         console.log(error);
     });
 
