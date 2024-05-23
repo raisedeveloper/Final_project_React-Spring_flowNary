@@ -17,11 +17,11 @@ import { correct, wrong } from "../../api/alert.jsx";
 
 // api - axios
 
-import axiosGet from '../../api/axiosGet';
+import axiosGet from '../../api/axiosGet.js';
 
 // ProfileCard, ProfileEdit 컴포넌트 임포트
 // import ProfileCard from "./components/ProfileCard";
-import ProfileEdit from "./components/ProfileEdit";
+import ProfileEdit from "./components/ProfileEdit.jsx";
 import Footer from "examples/Footer";
 
 export default function Settings() {

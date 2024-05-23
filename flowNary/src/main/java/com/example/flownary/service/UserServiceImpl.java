@@ -1,7 +1,5 @@
 package com.example.flownary.service;
 
-import java.util.List;
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
