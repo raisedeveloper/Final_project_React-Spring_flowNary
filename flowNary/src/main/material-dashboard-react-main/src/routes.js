@@ -140,6 +140,15 @@ const createRoutes = (isLoggedIn) => [
   },
 
   {
+    type: "bottom",
+    name: "검색",
+    key: "search",
+    route: "/search",
+    component: <Search />,
+    visible: false, // 로그인되지 않았을 때만 보임
+  },
+
+  {
     type: "collapse",
     name: "글쓰기수정",
     key: "write",
