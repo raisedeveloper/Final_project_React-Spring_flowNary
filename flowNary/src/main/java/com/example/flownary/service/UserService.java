@@ -12,9 +12,9 @@ public interface UserService {
 
 	User getUser(int uid);
 	
-	List<User> getOthersUserList(String email);
-	
 	User getUserEmail(String email);
+	
+	List<User> getOthersUserList(String email);
 	
 	GetUserNickEmailDto getUserNicknameEmail(int uid);
 	

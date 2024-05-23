@@ -158,7 +158,7 @@ export default function Posting() {
                   />
 
                 </Button>
-                <Button expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                <Button onChange={handleChange('panel2')}>
                   <Icon style={{ color: 'black' }} fontSize='small'>add_location_alt</Icon>
 
                   <Typography fontSize='small'>
@@ -191,23 +191,28 @@ export default function Posting() {
 
           {/* 제목 작성 부분 */}
           <Grid item xs={12} sm={6}>
-            <InputEmoji
-              value={title}
-              onChange={setTitle}
-              cleanOnEnter
-              onEnter={handleOnEnter}
-              placeholder="제목을 입력하세요..."
-              shouldReturn
-              fontSize={15}
-              language='kr'
-            />
+             <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="제목 입력..."
+            style={{
+              padding: '12px 15px',
+              fontSize: '1rem',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              width: '93%',
+              marginLeft:'15px',
+              marginBottom:'10px',
+              boxSizing: 'border-box',
+            }}
+          />
           </Grid>
 
           {/* 게시글 작성 부분 */}
           <Grid item xs={12} sm={6}>
             <TextField
-              value={title}
-              onChange={setTitle}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               multiline
               rows={15}
               onEnter={handleOnEnter}
@@ -221,9 +226,6 @@ export default function Posting() {
           </Grid>
 
           {/* 위치 */}
-
-
-
           {/* 게시물 공개 비공개 */}
 
         </form>

@@ -8,7 +8,7 @@ public interface BoardService {
 	public static final int COUNT_PER_PAGE = 5; // 스크롤할때마다 보여주는 게시물 수
 
 	Board getBoard(int bid);
-
+	
 	int getBoardShareUrl(String ShareUrl);
 	
 	Board getBoardShareUrl2(String ShareUrl);

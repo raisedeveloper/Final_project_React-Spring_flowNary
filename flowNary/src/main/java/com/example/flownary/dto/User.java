@@ -1,5 +1,7 @@
 package com.example.flownary.dto;
 
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,12 @@ public class User {
 		int provider;
 		String email;
 		String pwd;
+		LocalDate birth;
+		String uname;
+		String nickname;
+		String tel;
+//		int gender;
+//		String location;
 	}
 	
 	@Getter

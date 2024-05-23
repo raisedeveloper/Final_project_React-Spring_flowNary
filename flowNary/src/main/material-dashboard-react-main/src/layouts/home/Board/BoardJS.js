@@ -5,11 +5,10 @@ export function useGetBoardList(count, update) {
     const [dataList, setDataList] = useState([]);
 
     useEffect(() => {
-        if (count > 0)
-        {
+        if (count > 0) {
             axios.get('/board/list', {
                 params: {
-                  c: count,
+                    c: count,
                 }
             }).then(res => {
                 const formData = res.data.map(item => ({
@@ -26,9 +25,9 @@ export function useGetBoardList(count, update) {
                 }));
                 setDataList(formData);
             })
-            .catch(err => {
-                console.log(err);
-            });
+                .catch(err => {
+                    console.log(err);
+                });
         }
     }, [update])
 
@@ -39,11 +38,10 @@ export function useGetBoard(bid: int, open: Boolean, update: Boolean) {
     const [board, setBoard] = useState({});
 
     useEffect(() => {
-        if (bid != null && open == true)
-        {
+        if (bid != null && open == true) {
             axios.get('/board/getBoard', {
                 params: {
-                  bid: bid
+                    bid: bid
                 }
             }).then(res => {
                 const formData = {
@@ -59,7 +57,7 @@ export function useGetBoard(bid: int, open: Boolean, update: Boolean) {
                 }
                 setBoard(formData);
             }).catch(error => console.log(error));
-            
+
         }
     }, [open, update])
 
@@ -70,28 +68,27 @@ export function useGetReplyList(bid: int, open: Boolean, update: Boolean, count:
     const [replyList, setReplyList] = useState([]);
 
     useEffect(() => {
-        if (bid != null && open == true)
-        {
+        if (bid != null && open == true) {
             axios.get('/board/replyList', {
                 params: {
-                  bid: bid,
-                  offset: 0,
-                  limit: count
+                    bid: bid,
+                    offset: 0,
+                    limit: count
                 }
             })
                 .then(res => {
-                  const formData = res.data.map(item => ({
-                    rid: item.rid,
-                    rContents: item.rContents,
-                    modTime: item.modTime,
-                    likeCount: item.likeCount,
-                    nickname: item.nickname,
-                    profile:item.profile,
-                  }));
-                  setReplyList(formData);
+                    const formData = res.data.map(item => ({
+                        rid: item.rid,
+                        rContents: item.rContents,
+                        modTime: item.modTime,
+                        likeCount: item.likeCount,
+                        nickname: item.nickname,
+                        profile: item.profile,
+                    }));
+                    setReplyList(formData);
                 })
                 .catch(err => {
-                  console.log(err);
+                    console.log(err);
                 });
         }
     }, [open, update])
@@ -104,8 +101,7 @@ export function useGetBoardByUrl(url: String) {
     const [board, setBoard] = useState({});
 
     useEffect(() => {
-        if (url != null && url != '')
-        {
+        if (url != null && url != '') {
             axios.get('/board/getBoardUrl', {
                 params: {
                     url: url
