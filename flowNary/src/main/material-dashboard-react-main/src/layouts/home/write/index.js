@@ -1,6 +1,6 @@
 // 기본
 import React, { useEffect, useState } from "react";
-import { Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon } from "@mui/material";
+import { Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon, Input } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -15,12 +15,14 @@ import CreateIcon from '@mui/icons-material/Create';
 
 // css 연결
 import './posting.css';
+import '../Board/board.css';
 import { AntSwitch } from './postingStyle.jsx';
 import { UploadImage } from "../../../api/image.js";
 // import { FindImage, UploadImage2 } from "../../api/image.js";
 import { GetWithExpiry } from "../../../api/LocalStorage.js";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import MDBox from "components/MDBox";
 
 
 export default function Posting() {
@@ -133,18 +135,15 @@ export default function Posting() {
   };
 
   function handleOnEnter(text) { console.log('enter', text) }
-
+  const changeContents = (e) => {setTitle(e)}
   return (
 
-    <Box mt={-5} sx={{ p: 2, mb: 1 }}>
+    <MDBox mt={-5} sx={{ p: 2, mb: 1 }}>
       {/* 모달의 상단에 있는 헤더 부분 */}
       <form onSubmit={handleFormSubmit}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={2}>
-          <Typography variant="h6" component="h2" fontWeight="bold">새 글쓰기</Typography>
+          <Typography variant="h6" component="h2" fontWeight="bold">공유하고 싶은 이야기가 있나요?</Typography>
         </Stack>
-
-        {/* 구분선 */}
-        <hr style={{ opacity: '0.5' }} />
 
         {/* 이미지 업로드 및 미리보기 */}
         <Grid container spacing={2}>
@@ -172,9 +171,9 @@ export default function Posting() {
             </div>
             <div>
               <Button component="label">
-                <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight:'bold' }} style={{ color: 'black' }}>비공개</Typography>
+                <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
                 <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-                <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight:'bold' }} style={{ color: 'black' }}>공개</Typography>
+                <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>공개</Typography>
               </Button>
               <Button type="submit" style={{ color: 'black' }}>작성</Button>
             </div>
@@ -193,30 +192,16 @@ export default function Posting() {
         </Grid>
 
         {/* 제목 작성 부분 */}
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} p='2px'>
           <InputEmoji
             value={title}
-            onChange={setTitle}
-            cleanOnEnter
+            onChange={changeContents}
             onEnter={handleOnEnter}
-            placeholder="제목을 입력하세요..."
+            placeholder="신비로운 당신의 일상을 알려주세요!"
             shouldReturn
             fontSize={15}
             language='kr'
-          />
-        </Grid>
 
-        {/* 게시글 작성 부분 */}
-        <Grid item xs={12} sm={6}>
-          <InputEmoji
-            value={title}
-            onChange={setTitle}
-            cleanOnEnter
-            onEnter={handleOnEnter}
-            placeholder="문구를 입력하세요..."
-            shouldReturn
-            fontSize={15}
-            language='kr'
           />
         </Grid>
 
@@ -227,6 +212,6 @@ export default function Posting() {
         {/* 게시물 공개 비공개 */}
 
       </form>
-    </Box>
+    </MDBox>
   );
 }

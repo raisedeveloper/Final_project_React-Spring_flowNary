@@ -434,7 +434,7 @@ export default function Home() {
             </Stack>
 
             {/* 날씨 정보 */}
-            <Stack direction="column" sx={{ flex: 0.5 }}>
+            <Stack direction="column" sx={{ flex: 0.3, display:{ lg:'flex', xs:'none'} }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
                 <MDBox>
                   <Card sx={{ height: "100%" }}>

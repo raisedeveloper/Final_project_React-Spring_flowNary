@@ -1,6 +1,6 @@
 // 기본
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Avatar, Box, Button, Card, CardHeader, Chip, Divider, Grid, Icon, IconButton, Modal, Paper, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, CardHeader, Chip, Divider, Grid, Icon, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
 
 // 아이콘
 import ImageIcon from '@mui/icons-material/Image';
@@ -9,7 +9,7 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 // css 연결
 import './search.css';
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import TimeAgo from "timeago-react";
@@ -18,6 +18,7 @@ import Footer from "examples/Footer";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GetWithExpiry } from "api/LocalStorage";
 import { useAddLike } from "api/customHook";
+import { wrong } from "api/alert";
 
 export default function MySearchList() {
   const uid = GetWithExpiry("uid");
@@ -202,21 +203,59 @@ export default function MySearchList() {
     }
   }
 
+  const navigate = useNavigate();
+  const [searchtext, setSearchtext] = useState(sessionStorage.getItem("search"));
+
+  const handleSearchs = () => {
+    if (searchtext === '' || searchtext === null) {
+      wrong('검색어를 입력하십시오');
+    }
+    else {
+      sessionStorage.setItem("search", searchtext);
+      if (location.pathname !== 'search') {
+        navigate('/search');
+      }
+      else {
+        window.location.replace('/search');
+      }
+    }
+  }
+
+  const handleSearchText = (e) => {
+    setSearchtext(e.target.value);
+  }
+  function handleKeyPress(event) {
+    if (event && event.key === 'Enter') {
+      event.preventDefault();
+      handleSearchs();
+    }
+  }
   return (
     <div>
       <Box sx={{ width: '100%', minHeight: '1000px' }}>
         <Grid container sx={{ padding: '20px' }}>
-          <Grid item xs={0} lg={2}>
-          </Grid>
-          <Grid item xs={12} lg={8}>
+          <Grid item >
             {/* 헤드라인 */}
             <Stack>
-              <Stack sx={{ padding: '20px' }} fontWeight={'bold'}>
-                <Typography variant="h4" fontWeight={'bold'}>
-                  검색어: {query}
-                </Typography>
+              <Stack sx={{ padding: '20px', width:'40vw' }} fontWeight={'bold'}>
+                <TextField
+                  id="outlined-multiline-flexible"
+                  variant="standard"
+                  placeholder="검색어를 입력하세요!"
+                  onChange={handleSearchText}
+                  value={searchtext}
+                  onKeyUp={handleKeyPress}
+                />
+                <IconButton
+                  size="small"
+                  color="inherit"
+                  disableRipple
+                  sx={{ cursor: 'pointer', mx: 2 }}
+                  onClick={handleSearchs}
+                />
+
               </Stack>
-              <Stack direction={'row'}>
+              <Stack direction={'row'} sx={{display:{lg:'flex', xs:'none'}}}>
                 <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} sx={{ marginRight: '10px' }} onClick={() => handleSearch(1)}>제목</Button>
                 <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} sx={{ marginRight: '10px' }} onClick={() => handleSearch(2)}>내용</Button>
                 <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} sx={{ marginRight: '10px' }} onClick={() => handleSearch(3)}>제목+내용</Button>
@@ -224,25 +263,13 @@ export default function MySearchList() {
                 <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} onClick={() => handleSearch(5)}>제목+내용+아이디</Button>
               </Stack>
             </Stack>
-            <Divider sx={{ marginTop: '20px', marginBottom: '10px' }}></Divider>
-
-            {/* 버튼
-            <Stack direction="row" justifyContent="center" alignItems='center' spacing={5}>
-              <Stack direction="row" sx={{ cursor: 'pointer' }}>
-                <ImageIcon sx={{ fontSize: '15px' }} />
-                <Typography sx={{ fontSize: '12px' }}>사진</Typography>
-              </Stack>
-              <Stack direction="row" sx={{ cursor: 'pointer' }}>
-                <PlayCircleIcon sx={{ fontSize: '15px' }} />
-                <Typography sx={{ fontSize: '12px' }}>동영상</Typography>
-              </Stack>
-            </Stack> */}
+            <Divider sx={{ marginTop: '2rem', marginBottom: '2rem' }}></Divider>
 
             {/* 목록 */}
             <Grid container spacing={3}>
               {Array.isArray(boardList) && boardList.length > 0 ? (
                 boardList.map((data, idx) => (
-                  <Grid key={idx} item xs={12} md={6} lg={6}>
+                  <Grid key={idx} item lg={4}>
                     <MDBox mb={3}>
                       <Card sx={{
                         height: "100%",
@@ -347,7 +374,11 @@ export default function MySearchList() {
                   </Grid>
                 ))
               ) : (
-                <div>검색 결과가 없습니다!</div>
+                <Grid item  lg={12}>
+                  <MDTypography>
+                    검색 결과가 없습니다!
+                  </MDTypography>
+                </Grid>
               )}
             </Grid>
           </Grid>
