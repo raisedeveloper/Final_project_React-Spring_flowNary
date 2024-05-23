@@ -1,5 +1,5 @@
 // 기본
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -18,36 +18,40 @@ import './posting.css';
 import { AntSwitch } from './postingStyle.jsx';
 import { UploadImage } from "api/image.js";
 // import { FindImage, UploadImage2 } from "../../api/image.js";
-import { GetWithExpiry } from "api/LocalStorage.js";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { updateBoard } from "api/axiosPost";
+import { getBoard } from "api/axiosGet";
+import { useQuery } from "@tanstack/react-query";
 
 
 export default function Posting() {
-  const navigate = useNavigate();
-
-  const uid = parseInt(GetWithExpiry("uid"));
-
+  const bid = sessionStorage.getItem("bid");
+  // 글 내용
+  const [text, setText] = useState('');
+  const [title, setTitle] = useState('');
+  const [bContents, setBcontents] = useState('');
+  const [shareUrl, setShareUrl] = useState('');
+  const [image, setImage] = useState('');
+  const [hashTag, setHashTag] = useState('');
   const [nickname, setNickname] = useState('');
+  const [profile, setProfile] = useState('');
+
+  const board = useQuery({
+    queryKey: ['board', bid],
+    queryFn: () => getBoard(bid),
+  });
 
   useEffect(() => {
-    if (uid !== null) {
-      axios.get('/user/getUser', {
-        params: {
-          uid: uid,
-        }
-      }).then(res => {
-        if (res.data.nickname !== null && res.data.nickname !== '') {
-          setNickname(res.data.nickname);
-        }
-        else {
-          setNickname(res.data.email);
-        }
-      }).catch(error => console.log(error));
+    if (board.data) {
+      if (!title) setTitle(board.data.title);
+      if (!text) setText(board.data.bContents);
+      if (!shareUrl) setShareUrl(board.data.shareUrl);
+      if (!hashTag) setHashTag(board.data.hashTag);
+      if (!nickname) setNickname(board.data.nickname);
+      if (!profile) setProfile(board.data.profile);
     }
-  }, [uid]); // 종속성 배열에서 uid 제거
-
-
+  }, [board.data, title, text, shareUrl, hashTag, nickname, profile]);
   // 창열고 닫기
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -64,9 +68,6 @@ export default function Posting() {
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
-  // 글 내용
-  const [text, setText] = useState('');
-  const [title, setTitle] = useState('');
 
   // 파일이 선택되었을 때 호출되는 함수
   const handleFileChange = async (event) => {
@@ -99,27 +100,13 @@ export default function Posting() {
     );
 
     var sendData = JSON.stringify({
-      uid: uid,
       title: title,
       bContents: text,
       image: imageList.toString(),
-      nickname: nickname,
-      shareUrl: 'http://localhost:3000/',
       hashTag: null
     })
-
-    axios({
-      method: "POST",
-      url: '/board/insert',
-      data: sendData,
-      headers: { 'Content-Type': 'application/json' }
-    }).catch(error => console.log(error));
-
-    setImages([]);
-    //setImageList([]);
-    setText('');
-    setTitle('');
-    setPreviewUrls([]);
+    console.log(sendData);
+    updateBoard(sendData);
   };
 
   // 이미지 삭제 핸들러
@@ -137,7 +124,7 @@ export default function Posting() {
         {/* 모달의 상단에 있는 헤더 부분 */}
         <form onSubmit={handleFormSubmit}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={2}>
-            <Typography variant="h6" component="h2" fontWeight="bold">새 글쓰기</Typography>
+            <Typography variant="h6" component="h2" fontWeight="bold">수정하기</Typography>
           </Stack>
 
           {/* 구분선 */}

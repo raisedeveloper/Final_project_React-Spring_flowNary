@@ -75,7 +75,7 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  // // 서버 종료 시 처리 (beforeunload 이벤트 리스너 추가)
+  // 서버 종료 시 처리 (beforeunload 이벤트 리스너 추가)
   // useEffect(() => {
   //   const handleBeforeUnload = (event) => {
   //     // 파이어베이스 로그아웃
