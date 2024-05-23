@@ -7,13 +7,187 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, createUserWithEmailAndPas
 import '../theme.css';
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
+import SettingBirth from "layouts/setting/components/SettingBirth";
+import SettingNickname from "layouts/setting/components/SettingNickname";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Button, Grid, TextField, styled } from "@mui/material";
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { wrong, correct } from "api/alert";
+import { userRegister } from "api/axiosPost";
+import SmsLogin from './SmsLogin';
+
+const LightTooltip = styled(({ className, ...props }) => (
+    <Tooltip placement='left' {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        marginRight: 5,
+        boxShadow: theme.shadows[1],
+        fontSize: 16,
+    },
+}));
 
 export default function Register({ closeModal }) {
+    const email = 'nobody@gmail.com';
     const [theme, setTheme] = useState('light');
     const [userInfo, setUserInfo] = useState({ email: '', password: '', confirmPassword: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
+
+    // 가입 조건
+    const [gender, setGender] = useState(2);
+    const [birth, setBirth] = useState('');
+    const [uname, setUname] = useState('');
+    const [nickname, setNickname] = useState('');
+
+    const [checkingBirth, setCheckingBirth] = useState(0);
+    const [checkingNickname, setCheckingNickname] = useState(0);
+    const [checkingTel, setCheckingTel] = useState(0);
+
+    const [verify, setVerify] = useState(0);
+
+    const handleCheckingTel = (e) => { setCheckingTel(e) };
+
+    // 생년월일  
+    const handleBirth = (e) => {
+        const formattedBirth = dayjs(e).format('YYYY-MM-DD');
+        setBirth(formattedBirth);
+        setCheckingBirth(0);
+    };
+    // 생년월일 유효성 검사
+    const checkBirth = () => {
+        // 현재 날짜를 가져오기
+        const now = new Date();
+        const currentYear = now.getFullYear(); // 현재 연도 가져오기
+        const currentMonth = now.getMonth() + 1; // 현재 월 가져오기
+        const currentDay = now.getDate(); // 현재 일 가져오기
+
+        if (!birth) {
+            wrong("생일을 입력하세요");
+            return;
+        }
+
+        // birth가 문자열인지 확인
+        const birthStr = typeof birth === 'string' ? birth : birth.toString();
+
+        // 사용자가 입력한 생년월일을 연도, 월, 일로 나누기
+        const userYear = parseInt(birthStr.slice(0, 4));
+        const userMonth = parseInt(birthStr.slice(5, 7));
+        const userDay = parseInt(birthStr.slice(8, 10));
+
+        // 현재 날짜와 사용자가 입력한 생년월일의 차이 계산
+        let yearDiff = currentYear - userYear;
+
+        // 만약 현재 날짜의 월과 사용자의 생년월일의 월을 비교하여 현재 날짜가 사용자의 생년월일보다 작은 경우, 1년을 감소
+        if (currentMonth < userMonth || (currentMonth === userMonth && currentDay < userDay)) {
+            yearDiff--;
+        }
+        if (userYear > currentYear) {
+            wrong("현재 날짜 이상은 입력 불가능합니다.");
+            setCheckingBirth(0);
+            return;
+        } else if (yearDiff < 7) {
+            wrong("7세 이하는 등록 불가능합니다.");
+            setCheckingBirth(0);
+            return;
+        } else if (userYear <= 1900) {
+            wrong("1900년 이상만 가능합니다.");
+            setCheckingBirth(0);
+            return;
+        } else {
+            correct("적정 연령입니다.");
+            setCheckingBirth(1);
+            return;
+        }
+    }
+
+    // 닉네임
+    const handleNickname = (e) => { setNickname(e.target.value); setCheckingNickname(0); };
+
+    const checkNickname = () => {
+        axios.get('/user/nickname',
+            {
+                params: {
+                    email: email
+                }
+            })
+            .then(response => {
+                const userList = response.data; // 응답 데이터 전체를 가져옵니다.
+                if (!userList) {
+                    console.error('User list is undefined or null');
+                    return;
+                }
+                if (!nickname) {
+                    wrong("닉네임을 입력하세요");
+                    setCheckingNickname(0);
+                    return;
+                }
+                const nicknames = userList.map(user => user.nickname);
+                if (nicknames.includes(nickname)) {
+                    wrong("닉네임이 중복됩니다.");
+                    setCheckingNickname(0);
+                    return;
+                }
+                correct("닉네임 사용 가능합니다!");
+                setCheckingNickname(1);
+                return;
+            }).catch(error => {
+                console.error('Error fetching nicknames:', error);
+            });
+    }
+    // 전화번호
+    const [tel, setTel] = useState('');
+    const handleTel = (e) => { setTel(e.target.value); setCheckingTel(0); };
+
+    useEffect(() => {
+        if (tel) {
+            let telValue = tel.replace(/[^0-9]/g, '').toString(); // 숫자 이외의 문자 제거
+            if (telValue.length > 11) { telValue = telValue.slice(0, 11); }
+            if (telValue.length === 11) {
+                telValue = telValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            } else if (telValue.length === 13) {
+                telValue = telValue.replace(/-/g, '').replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            }
+            setTel(telValue);
+            setCheckingTel(0);
+        }
+    }, [tel]);
+
+    const checkTel = () => {
+        axios.get('/user/tel', {
+            params: {
+                email: email
+            }
+        })
+            .then(response => {
+                const userList = response.data; // 응답 데이터 전체를 가져옵니다.
+                if (!userList) {
+                    console.error('User list is undefined or null');
+                    return;
+                }
+                if (tel.length !== 13) {
+                    wrong("전화번호가 잘못되었습니다.");
+                    setCheckingTel(0);
+                    return;
+                }
+                const tels = userList.map(user => user.tel);
+                if (tels.includes(tel)) {
+                    wrong("전화번호가 중복됩니다.");
+                    setCheckingTel(0);
+                    return;
+                }
+                correct("전화번호 사용 가능합니다!");
+                setCheckingTel(0);
+                setVerify(1);
+                return;
+
+            }).catch(error => {
+                console.error('Error fetching tels:', error);
+            });
+    }
 
     useEffect(() => {
         const firebaseConfig = {
@@ -26,6 +200,7 @@ export default function Register({ closeModal }) {
         };
         initializeApp(firebaseConfig);
     }, []);
+
     const auth = getAuth();
 
     const RegisterWithGoogle = async () => {
@@ -93,22 +268,27 @@ export default function Register({ closeModal }) {
         setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
     }
 
+    const handeluname = e => {
+        setUname(e.target.value);
+    }
+
     const handleSubmit = async () => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(com|net)$/;
+
         if (!emailRegex.test(userInfo.email)) {
-            Swal.fire({ text: "올바른 이메일 형식이 아닙니다.", icon: "warning" });
+            wrong("올바른 이메일 형식이 아닙니다.");
             return;
         }
-        if (userInfo.password !== userInfo.confirmPassword) {
-            Swal.fire({ title: "비밀번호가 일치하지 않습니다.", text: "다시 입력해주세요", icon: "warning" });
+        if (userInfo.pwd !== userInfo.confirmPassword) {
+            wrong("비밀번호가 일치하지 않습니다.");
             return;
         }
-        if (userInfo.password.length < 6) {
-            Swal.fire({ text: "비밀번호는 6자리 이상이어야 합니다.", icon: "warning" });
+        if (userInfo.pwd.length < 6) {
+            wrong("비밀번호는 6자리 이상이어야 합니다.");
             return;
         }
 
-        if (!/[0-9]/.test(userInfo.password) || !/[!@#$%^&*?]/.test(userInfo.password)) {
+        if (!/[0-9]/.test(userInfo.pwd) || !/[!@#$%^&*?]/.test(userInfo.pwd)) {
             Swal.fire({
                 width: '50%',
                 title: '유효성 검사 경고',
@@ -118,9 +298,15 @@ export default function Register({ closeModal }) {
             return;
         }
 
-        await createUserWithEmailAndPassword(auth, userInfo.email, userInfo.password)
+        if (uname === '') { wrong("이름을 입력하세요"); return; }
+        if (checkingNickname === 0) { wrong("닉네임 중복 확인을 해주세요"); return; }
+        if (checkingTel === 0) { wrong("전화번호 중복 확인을 해주세요"); return; }
+        if (checkingBirth === 0) { wrong("생년월일 확인을 해주세요."); return; }
+
+        await createUserWithEmailAndPassword(auth, userInfo.email, userInfo.pwd)
             .then(async () => {
                 console.log("회원가입 성공");
+                console.log(userInfo.email, userInfo.pwd, uname, nickname, tel, birth);
                 Swal.fire({
                     title: "가입에 성공하셨습니다!",
                     text: "OK 버튼을 눌러주세요!",
@@ -129,17 +315,18 @@ export default function Register({ closeModal }) {
                     closeModal(); // 모달 닫기
                 });
 
+                const sendData = {
+                    hashuid: 'nonGoogle',
+                    provider: 0,
+                    email: userInfo.email,
+                    pwd: userInfo.pwd,
+                    birth: birth,
+                    uname: uname,
+                    nickname: nickname,
+                    tel: tel
+                };
                 try {
-                    await axios.post("/user/register", {
-                        hashuid: 'nonGoogle',
-                        email: userInfo.email,
-                        pwd: userInfo.password,
-                        // birth: userInfo.birth,
-                        // gender: userInfo.gender,
-                        // uname: userInfo.uname,
-                        // nickname: userInfo.nickname,
-                        provider: 0,
-                    });
+                    userRegister(sendData);
                 } catch (error) {
                     console.log(error);
                 }
@@ -173,7 +360,7 @@ export default function Register({ closeModal }) {
             <div className="input-container">
                 <input
                     type={showPassword ? 'text' : 'password'}
-                    name='password'
+                    name='pwd'
                     placeholder="비밀번호 입력"
                     className="commonInputStyle_Modal"
                     onKeyUp={handleKeyPress}
@@ -198,8 +385,92 @@ export default function Register({ closeModal }) {
                     className={`fas ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'} password-toggle-icon`}
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 />
+
             </div>
 
+            <input type="uname" name='uname' placeholder="이름을 입력하세요"
+                className="commonInputStyle_Modal" onKeyUp={handleKeyPress} onChange={handeluname} />
+
+            <div className="input-container" >
+                <Grid container spacing={1} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Grid item xs={9.5}>
+                        <LightTooltip title="별명을 입력하세요." >
+                            <input
+                                label="닉네임"
+                                className="commonInputStyle_Modal"
+                                placeholder="닉네임을 입력하세요"
+                                value={nickname || ''}
+                                onChange={handleNickname}
+                                onKeyUp={handleKeyPress}
+                            />
+                        </LightTooltip>
+                    </Grid>
+                    <Grid item xs={0.7}>
+                        <Button onClick={checkNickname} variant="contained" sx={{
+                            backgroundColor: 'rgb(54, 11, 92)', p: 0, mt: 1.2,
+                            '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+                        }} style={{ color: 'white' }} >확인</Button>
+                    </Grid>
+                    <Grid item xs={1.8}><div></div></Grid>
+                </Grid>
+            </div>
+
+            <div className="input-container" >
+                <Grid container spacing={1} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Grid item xs={9.5}>
+                        <LightTooltip title="' - ' 없이 숫자만 입력하세요."  >
+                            <input
+                                className="commonInputStyle_Modal"
+                                placeholder="전화번호를 입력하세요"
+                                name="tel"
+                                value={tel || ''}
+                                onChange={handleTel}
+                                onKeyUp={handleKeyPress}
+                                style={{ marginTop: 10, width: '100%' }}
+                            />
+                        </LightTooltip>
+                    </Grid>
+                    <Grid item xs={0.7}>
+                        <Button onClick={checkTel} variant="contained" sx={{
+                            backgroundColor: 'rgb(54, 11, 92)', p: 0, mt: 1.2,
+                            '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+                        }} style={{ color: 'white' }} >확인</Button>
+                    </Grid>
+                    <Grid item xs={1.8}><div></div></Grid>
+                </Grid>
+                {verify === 1 ? <div className="input-container">
+                    <SmsLogin handleKeyPress={handleKeyPress} tel={tel}/>
+                </div> : <></>}
+
+            </div>
+
+            <div style={{ marginTop: -2 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+                    <Grid container style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Grid item xs={9.3}>
+                            <DemoContainer components={['DatePicker']}>
+                                <DatePicker
+                                    onChange={handleBirth}
+                                    slots={{ textField: TextField }}
+                                    value={birth ? dayjs(birth) : null}
+                                    formatDensity="spacious"
+                                    format="YYYY/MM/DD"
+                                    variant='outlined'
+                                />
+                            </DemoContainer>
+                        </Grid>
+                        <Grid item xs={0.7}>
+                            <Button
+                                onClick={checkBirth}
+                                variant="contained" sx={{
+                                    backgroundColor: 'rgb(54, 11, 92)', p: 0, mt: 1.2,
+                                    '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+                                }} style={{ color: 'white' }} >확인</Button>
+                        </Grid>
+                        <Grid item xs={1}><div></div></Grid>
+                    </Grid>
+                </LocalizationProvider>
+            </div>
             <button className="fill_Modal" onClick={handleSubmit}>가입하기</button>
             <p>또는</p>
             <button onClick={RegisterWithGoogle} className="google-login-button">
@@ -212,4 +483,6 @@ export default function Register({ closeModal }) {
 
 Register.propTypes = {
     closeModal: PropTypes.func.isRequired,
+    nickname: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
 };

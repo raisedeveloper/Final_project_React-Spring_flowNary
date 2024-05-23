@@ -18,10 +18,11 @@ public class User {
 		int provider;
 		String email;
 		String pwd;
-//		String uname;
-//		String nickname;
+		LocalDate birth;
+		String uname;
+		String nickname;
+		String tel;
 //		int gender;
-//		LocalDate birth;		
 //		String location;
 	}
 	
