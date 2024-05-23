@@ -28,15 +28,15 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
     queryFn: () => getBoard(bid, uid),
   });
   const navigate = useNavigate();
-  
+
   const handleUpdate = () => {
-      navigate("/home/Update")
-      sessionStorage.setItem("bid", bid);
-    }
-    
+    navigate("/home/Update")
+    sessionStorage.setItem("bid", bid);
+  }
+
   const { activeUser } = useContext(UserContext);
-  
-  
+
+
   if (isLoading) {
     return <div>로딩 중...</div>;
   }
@@ -44,7 +44,7 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
   if (isError) {
     return <div>오류가 발생했습니다.</div>;
   }
-  
+
   // board 데이터가 있을 때만 image를 설정합니다.
   const image = board?.image ? board.image.split(',') : null;
   console.log("이미지", image);
@@ -53,15 +53,22 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
     <Box className="board_modal" ref={ref}>
       <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
         <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
-            {board.uid == activeUser.uid ? (
-              <Button onClick={handleUpdate}>수정</Button>
-            ) : null}
-          <Carousel sx={{ border: '1px solid red' }}>
+          {board.uid == activeUser.uid ? (
+            <Button onClick={handleUpdate}>수정</Button>
+          ) : null}
+
+          {/* 컨텐츠 부분 */}
+          <Carousel
+            sx={{
+              border: '1px solid red',
+              maxWidth:'100vw',              
+            }}>
             {image && image.map((image, index) => (
               <Box
                 key={index}
                 component="img"
                 sx={{
+                  margin:'0',
                   width: '100%',
                   height: '100%',
                   objectFit: 'fill',
@@ -116,10 +123,12 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
               </CardContent>
             </Card>
           ) : null}
+
+          {/* Reply 컴포넌트는 항상 렌더링 */}
+          <Reply bid={bid} uid={uid} nickname={nickname} handleButtonLike={handleButtonLike} />
+
         </Stack>
 
-        {/* Reply 컴포넌트는 항상 렌더링 */}
-        <Reply bid={bid} uid={uid} nickname={nickname} handleButtonLike={handleButtonLike} />
       </Stack>
     </Box>
   );

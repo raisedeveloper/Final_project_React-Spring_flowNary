@@ -10,7 +10,7 @@ const API_BASE_URL = "/";
  */
 export const userRegister = async (hashuid: string, provider: number, email: string, pwd: string) => {
 
-    return axios.post(`${API_BASE_URL}user/register`, {
+    return axios.post('/user/register', {
         hashuid: hashuid,
         provider: provider,
         email: email,
@@ -29,7 +29,7 @@ export const userRegister = async (hashuid: string, provider: number, email: str
  */
 export const userUpdatePwd = async (uid: number, pwd1: string, pwd2: string) => {
 
-    return axios.post(`${API_BASE_URL}user/updatepwd`, {
+    return axios.post('/user/updatepwd', {
         uid: uid,
         pwd1: pwd1,
         pwd2: pwd2,
@@ -61,7 +61,7 @@ export const userUpdate = async (sendData: {
     tel: string,
 }) => {
 
-    return axios.post(`${API_BASE_URL}user/update`,
+    return axios.post('/user/update',
         sendData
     ).catch(error => {
         console.log("axiospost.js: userUpdate error!");
@@ -80,10 +80,9 @@ export const userUpdate = async (sendData: {
  * @returns 
  */
 export const insertBoard = async (sendData: string) => {
-
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}board/insert`,
+        url: '/board/insert',
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -102,10 +101,10 @@ export const insertBoard = async (sendData: string) => {
  * @returns 
  */
 export const updateBoard = async (sendData: string) => {
-
+    console.log('보드'+sendData);
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}board/update`,
+        url: '/board/update',
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -126,7 +125,7 @@ export const insertReply = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}reply/insert`,
+        url: '/reply/insert',
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -147,7 +146,7 @@ export const insertReReply = async (sendData: string) => {
 
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}reply/re_insert`,
+        url: '/reply/re_insert',
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -167,7 +166,7 @@ export const insertReReply = async (sendData: string) => {
 export const like = async (sendData: string) => {
     return axios({
         method: "POST",
-        url: `${API_BASE_URL}like/update`,
+        url: '/like/update',
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
     }).catch(error => {
@@ -190,7 +189,7 @@ export const like2 = async (sendData: {
     oid: Number,
     fuid: Number,
 }) => {
-    return axios(`${API_BASE_URL}like/update`,
+    return axios('/like/update',
         sendData  
     ).catch(error => {
         console.log("axiospost.js: like error!");
@@ -204,7 +203,7 @@ export const like2 = async (sendData: {
  */
 export const deleteBoard = async (bid: number) => {
 
-    return axios.post(`${API_BASE_URL}board/delete`, {
+    return axios.post('/board/delete', {
         bid: bid,
     }).catch(error => {
         console.log('axiospost.js: deleteBoard error!');
@@ -218,7 +217,7 @@ export const deleteBoard = async (bid: number) => {
  */
 export const deleteReply = async (rid: number) => {
 
-    return axios.post(`${API_BASE_URL}reply/delete`, {
+    return axios.post('/reply/delete', {
         rid: rid,
     }).catch(error => {
         console.log('axiospost.js: deleteReply error!');
@@ -232,7 +231,7 @@ export const deleteReply = async (rid: number) => {
  */
 export const deleteReReply = async (rrid: number) => {
 
-    return axios.post(`${API_BASE_URL}reply/delete`, {
+    return axios.post('/reply/delete', {
         rrid: rrid,
     }).catch(error => {
         console.log('axiospost.js: deleteReReply error!');
@@ -242,7 +241,7 @@ export const deleteReReply = async (rrid: number) => {
 
 export const insertChat = async (uid1: number, uid2: number) => {
 
-    return axios.post(`${API_BASE_URL}chat/insert`, {
+    return axios.post('/chat/insert', {
         uid1: uid1,
         uid2: uid2,
     }).catch(error => {
@@ -253,7 +252,7 @@ export const insertChat = async (uid1: number, uid2: number) => {
 
 export const updateChat = async (cid: number, uid: number) => {
 
-    return axios.post(`${API_BASE_URL}chat/update`, {
+    return axios.post('/chat/update', {
         cid: cid,
         uid: uid,
     }).catch(error => {
@@ -264,7 +263,7 @@ export const updateChat = async (cid: number, uid: number) => {
 
 export const exitChat = async (cid: number, uid: number) => {
 
-    return axios.post(`${API_BASE_URL}chat/exit`, {
+    return axios.post('/chat/exit', {
         cid: cid,
         uid: uid,
     }).catch(error => {
@@ -275,7 +274,7 @@ export const exitChat = async (cid: number, uid: number) => {
 
 export const deleteChat = async (cid: number) => {
 
-    return axios.post(`${API_BASE_URL}chat/delete`, {
+    return axios.post('/chat/delete', {
         cid: cid,
     }).catch(error => {
         console.log('axiospost.js: deleteChat error!');
@@ -285,7 +284,7 @@ export const deleteChat = async (cid: number) => {
 
 export const deleteDm = async (did: number) => {
 
-    return axios.post(`${API_BASE_URL}chat/delete`, {
+    return axios.post('/chat/delete', {
         did: did,
     }).catch(error => {
         console.log('axiospost.js: deleteChat error!');

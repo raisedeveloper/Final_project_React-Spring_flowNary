@@ -81,6 +81,7 @@ export default function Posting() {
     }
 
     const selectedFiles = Array.from(event.target.files);
+    console.log(selectedFiles);
     setImages(images.concat(selectedFiles)); // 기존 이미지 배열에 추가
 
     const newPreviewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
@@ -89,7 +90,6 @@ export default function Posting() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    handleClose();
 
     const imageList = await Promise.all(
       images.map(async (image) => {
@@ -173,7 +173,7 @@ export default function Posting() {
                   <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
                   <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>공개</Typography>
                 </Button>
-                <Button type="submit" style={{ color: 'black' }}>작성</Button>
+                <Button type="submit"  style={{ color: 'black' }}>작성</Button>
               </div>
             </Grid>
 

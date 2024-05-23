@@ -295,12 +295,16 @@ public class BoardController {
 
 	@PostMapping("/update")
 	public String boardUpdate(@RequestBody UpdateBoardDto dto) {
-		
-		Board board = new Board();
+		System.out.println(dto.getTitle());
+		Board board = bSvc.getBoard(dto.getBid());
 		board.setTitle(dto.getTitle());
 		board.setbContents(dto.getbContents());
 		board.setImage(dto.getImage());
 		board.setHashTag(dto.getHashTag());
+		board.setModTime(dto.getModTime());
+		
+		System.out.println(dto.getImage());
+		System.out.println(dto.getModTime());
 		
 		bSvc.updateBoard(board);
 		return "수정되었습니다";
