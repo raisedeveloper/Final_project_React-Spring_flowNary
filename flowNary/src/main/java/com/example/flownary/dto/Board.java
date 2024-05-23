@@ -1,5 +1,7 @@
 package com.example.flownary.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +35,12 @@ public class Board {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public static class UpdateBoardDto {
+		int bid;
 		String title;
 		String bContents;
 		String image;
 		String hashTag;
+		LocalDateTime modTime;
 		
 		public String getbContents() {
 			return bContents;

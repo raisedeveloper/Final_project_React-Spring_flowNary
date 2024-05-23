@@ -61,14 +61,14 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
           <Carousel
             sx={{
               border: '1px solid red',
-              maxWidth: '100vw',
+              maxWidth:'100vw',              
             }}>
             {image && image.map((image, index) => (
 
               <Box
                 key={index}
                 sx={{
-                  margin: '0',
+                  margin:'0',
                   width: '100%',
                   height: '100%',
                   '@media (min-width: 500px)': {

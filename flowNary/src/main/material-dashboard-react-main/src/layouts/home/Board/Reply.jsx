@@ -47,6 +47,7 @@ export default function Reply(props) {
   const [formChange, setFormChange] = useState(false);
   const [showReReply, setShowReReply] = useState({});
   const [ridtext, setRidtext] = useState(0);
+  
 
   const board = useQuery({
     queryKey: ['board', bid, uid],
@@ -89,7 +90,7 @@ export default function Reply(props) {
     setFormChange(false);
   };
 
-  const handleFormSubmit2 = (e) => {
+  const handleFormSubmit2 = (e,rid) => {
     e.preventDefault();
 
     var sendData = JSON.stringify({
@@ -120,13 +121,15 @@ export default function Reply(props) {
   // 버튼 클릭 시 ReReply 컴포넌트의 가시성 토글
   const handleButtonClick = (rid) => {
     console.log(rid);
+    setFormChange(true);
+    setRidtext(rid);
+  };
+  const handleMoreReply = (rid) => {
     setShowReReply((prev) => ({
       ...prev,
       [rid]: !prev[rid],
     }));
-    setFormChange(true);
-    setRidtext(rid);
-  };
+  }
 
   return (
     <>
@@ -148,26 +151,6 @@ export default function Reply(props) {
               <BookmarkIcon />
             </Button>
           </MDBox>
-
-          {formChange ? (
-            <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
-              <input
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="댓글입력.."
-                style={{
-                  padding: '10px 15px',
-                  fontSize: '0.85rem',
-                  borderRadius: '5px',
-                  border: '1px solid #ccc',
-                  width: '80%',
-                  boxSizing: 'border-box',
-                }}
-              />
-              <Button onClick={handleFormSubmit2} sx={{ padding: 0 }}>게시</Button>
-            </MDBox>
-          ) : (
-
             <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
               <input
                 value={text}
@@ -184,8 +167,6 @@ export default function Reply(props) {
               />
               <Button onClick={handleFormSubmit} sx={{ padding: 0 }}>게시</Button>
             </MDBox>
-
-          )}
         </MDBox>
 
         {/* 댓글표시 영역 */}
@@ -194,16 +175,11 @@ export default function Reply(props) {
             <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0, border: '1px solid black' }}>
               {/* List랑 paper 영역 비슷함 */}
               <Paper sx={{ border: 'none', }}>
-                <ListItem alignItems="flex-start" sx={{ marginTop: 0.15, marginLeft: 0.5 }}>
+                <ListItem alignItems="flex-start" sx={{ marginTop: 0.5, marginLeft: 0.5 }}>
                   <Avatar
                     src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                   />
-                  <ListItemText
-                    sx={{
-                      paddingLeft: 1,
-                      margin: "0px",
-
-                    }}
+                  <ListItemText sx={{ paddingLeft: 1 }}
                     primary={data.nickname}
                     secondary={
                       <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'break-word', }}>
@@ -226,10 +202,32 @@ export default function Reply(props) {
                   {/* <Button sx={{ color: 'grey', display: 'flex', alignItems: 'center' }}><FavoriteBorderIcon /></Button> */}
                 </ListItem>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: 'grey', fontSize: '12px', paddingLeft: 50, }} >
-                    <TimeAgo datetime={data.modTime} locale='ko' trim />ㆍ</span>
+                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' trim />ㆍ</span>
                   <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
-                  <Button onClick={() => handleButtonClick(data.rid)}>답글 쓰기</Button>
+                  <Button onClick={() => handleButtonClick(data.rid)}>
+                    답글
+                    {formChange &&
+                      <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
+                        <input
+                          value={text}
+                          onChange={(e) => setText(e.target.value)}
+                          placeholder="댓글입력.."
+                          style={{
+                            padding: '10px 15px',
+                            fontSize: '1rem',
+                            borderRadius: '5px',
+                            border: '1px solid #ccc',
+                            width: '80%',
+                            boxSizing: 'border-box',
+                          }}
+                        />
+                        <Button onClick={handleFormSubmit2} sx={{ padding: 0 }}>게시</Button>
+                      </MDBox>
+                    }
+                  </Button>
+                <Button onClick={() => handleMoreReply(data.rid)}>
+                {(data.replyCount === 0 ? "댓글 달기" : `${data.replyCount}개의 댓글 보기`)}
+                </Button>
 
                 </div>
                 {showReReply[data.rid] && (

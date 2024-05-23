@@ -90,7 +90,6 @@ export const userUpdate = async (sendData: {
  * @returns 
  */
 export const insertBoard = async (sendData: string) => {
-
     return axios({
         method: "POST",
         url: '/board/insert',
@@ -112,7 +111,7 @@ export const insertBoard = async (sendData: string) => {
  * @returns 
  */
 export const updateBoard = async (sendData: string) => {
-
+    console.log('보드'+sendData);
     return axios({
         method: "POST",
         url: '/board/update',

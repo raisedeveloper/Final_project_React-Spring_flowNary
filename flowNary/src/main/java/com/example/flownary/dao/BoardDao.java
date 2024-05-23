@@ -71,7 +71,7 @@ public interface BoardDao {
 			+ " #{nickname}, #{hashTag}, default)")
 	void insertBoard(Board board);
 	
-	@Update("update board set title=#{title}, bContents=#{bContents}, image=#{image}"
+	@Update("update board set title=#{title}, bContents=#{bContents}, modTime=#{modTime}, image=#{image}"
 			+ ", hashTag=#{hashTag} where bid=#{bid}")
 	void updateBoard(Board board);
 	

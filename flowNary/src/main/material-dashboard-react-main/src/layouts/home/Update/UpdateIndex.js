@@ -36,11 +36,18 @@ export default function Posting() {
   const [hashTag, setHashTag] = useState('');
   const [nickname, setNickname] = useState('');
   const [profile, setProfile] = useState('');
+  const [modTime, setModTime] = useState('');
 
   const board = useQuery({
     queryKey: ['board', bid],
     queryFn: () => getBoard(bid),
   });
+
+  const createCloudImageUrl = (image) => {
+    return image.split(',').map(image =>
+      `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`
+    );
+  };
 
   useEffect(() => {
     if (board.data) {
@@ -48,8 +55,16 @@ export default function Posting() {
       if (!text) setText(board.data.bContents);
       if (!shareUrl) setShareUrl(board.data.shareUrl);
       if (!hashTag) setHashTag(board.data.hashTag);
+      if (!image) setImage(board.data.image);
       if (!nickname) setNickname(board.data.nickname);
       if (!profile) setProfile(board.data.profile);
+      if (!modTime) setProfile(board.data.modTime);
+
+
+      if (board.data.image) {
+        const cloudImage = createCloudImageUrl(board.data.image);
+        setPreviewUrls([cloudImage]);
+      }
     }
   }, [board.data, title, text, shareUrl, hashTag, nickname, profile]);
   // 창열고 닫기
@@ -82,7 +97,7 @@ export default function Posting() {
     }
 
     const selectedFiles = Array.from(event.target.files);
-    setImages(images.concat(selectedFiles)); // 기존 이미지 배열에 추가
+    setImages(images.concat(selectedFiles));
 
     const newPreviewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
     setPreviewUrls(previewUrls.concat(newPreviewUrls)); // 미리보기 URL 배열에 추가
@@ -90,7 +105,11 @@ export default function Posting() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    handleClose();
+
+    const currentDateTime = new Date();
+    const koreanDateTime = new Date(currentDateTime.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+    const formattedDateTime = koreanDateTime.toISOString();
+    console.log(formattedDateTime);
 
     const imageList = await Promise.all(
       images.map(async (image) => {
@@ -100,11 +119,14 @@ export default function Posting() {
     );
 
     var sendData = JSON.stringify({
+      bid: bid,
       title: title,
       bContents: text,
       image: imageList.toString(),
-      hashTag: null
+      hashTag: null,
+      modTime: formattedDateTime,
     })
+
     console.log(sendData);
     updateBoard(sendData);
   };
@@ -115,70 +137,69 @@ export default function Posting() {
     setPreviewUrls(previewUrls.filter((_, i) => i !== index)); // 미리보기 URL 배열에서 삭제
   };
 
-  function handleOnEnter(text) { console.log('enter', text) }
+  function handleOnEnter(text) { console.log('') }
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <Box mt={5} sx={{ p: 2, mb: 1, backgroundColor: 'beige', borderRadius: 5 }}>
         {/* 모달의 상단에 있는 헤더 부분 */}
-        <form onSubmit={handleFormSubmit}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={2}>
-            <Typography variant="h6" component="h2" fontWeight="bold">수정하기</Typography>
-          </Stack>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={2}>
+          <Typography variant="h6" component="h2" fontWeight="bold">수정하기</Typography>
+        </Stack>
 
-          {/* 구분선 */}
-          <hr style={{ opacity: '0.5' }} />
+        {/* 구분선 */}
+        <hr style={{ opacity: '0.5' }} />
 
-          {/* 이미지 업로드 및 미리보기 */}
-          <Grid container spacing={2}>
-            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <Button component="label">
-                  <Icon style={{ color: 'black' }}>add_photo_alternate</Icon>
-                  <input
-                    type="file"
-                    multiple
-                    hidden
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
+        {/* 이미지 업로드 및 미리보기 */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+              <Button component="label">
+                <Icon style={{ color: 'black' }}>add_photo_alternate</Icon>
+                <input
+                  type="file"
+                  multiple
+                  hidden
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
 
-                </Button>
-                <Button onChange={handleChange('panel2')}>
-                  <Icon style={{ color: 'black' }} fontSize='small'>add_location_alt</Icon>
+              </Button>
+              <Button onChange={handleChange('panel2')}>
+                <Icon style={{ color: 'black' }} fontSize='small'>add_location_alt</Icon>
 
-                  <Typography fontSize='small'>
-                    {/* 카카오 맵 API 지도 생성 */}
-                  </Typography>
+                <Typography fontSize='small'>
+                  {/* 카카오 맵 API 지도 생성 */}
+                </Typography>
 
-                </Button>
-              </div>
-              <div>
-                <Button component="label">
-                  <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
-                  <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-                  <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>공개</Typography>
-                </Button>
-                <Button type="submit" style={{ color: 'black' }}>작성</Button>
-              </div>
-            </Grid>
-
-            {/* 이미지 미리보기 */}
-            {previewUrls.map((url, index) => (
-              <Grid item key={index} xs={4} sm={2}>
-                <Card>
-                  <img src={url} alt={`Preview ${index}`} style={{ width: '15.5vh', height: '15vh', objectFit: 'cover' }} />
-                  <Button className='msg_button' style={{ justifyContent: 'center', border: "3px solid #BA99D1" }} sx={{ color: 'dark', width: '50%' }}
-                    onClick={() => handleRemoveImage(index)}>제거</Button>
-                </Card>
-              </Grid>
-            ))}
+              </Button>
+            </div>
+            <div>
+              <Button component="label">
+                <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
+                <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
+                <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>공개</Typography>
+              </Button>
+              <Button onClick={handleFormSubmit} style={{ color: 'black' }}>작성</Button>
+            </div>
           </Grid>
 
-          {/* 제목 작성 부분 */}
-          <Grid item xs={12} sm={6}>
-             <input
+          {/* 이미지 미리보기 */}
+          {previewUrls.map((url, index) => (
+            <Grid item key={index} xs={4} sem={2}>
+              <Card>
+                <img src={url} alt={`Preview ${index}`} style={{ width: '15.5vh', height: '15vh', objectFit: 'cover' }} />
+                <Button className='msg_button' style={{ justifyContent: 'center', border: "3px solid #BA99D1" }} sx={{ color: 'dark', width: '50%' }}
+                  onClick={() => handleRemoveImage(index)}>제거</Button>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* 제목 작성 부분 */}
+        <Grid item xs={12} sm={6}>
+          <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="제목 입력..."
@@ -188,34 +209,33 @@ export default function Posting() {
               borderRadius: '5px',
               border: '1px solid #ccc',
               width: '93%',
-              marginLeft:'15px',
-              marginBottom:'10px',
+              marginLeft: '15px',
+              marginBottom: '10px',
               boxSizing: 'border-box',
             }}
           />
-          </Grid>
+        </Grid>
 
-          {/* 게시글 작성 부분 */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              multiline
-              rows={15}
-              onEnter={handleOnEnter}
-              placeholder="문구를 입력하세요..."
-              shouldReturn
-              fullWidth
-              fontSize={15}
-              language='kr'
-              sx={{ pl: 2, pr: 5.5 }}
-            />
-          </Grid>
+        {/* 게시글 작성 부분 */}
+        <Grid item xs={12} sm={6}>
+          <TextField
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            multiline
+            rows={15}
+            onEnter={handleOnEnter}
+            placeholder="문구를 입력하세요..."
+            shouldReturn
+            fullWidth
+            fontSize={15}
+            language='kr'
+            sx={{ pl: 2, pr: 5.5 }}
+          />
+        </Grid>
 
-          {/* 위치 */}
-          {/* 게시물 공개 비공개 */}
+        {/* 위치 */}
+        {/* 게시물 공개 비공개 */}
 
-        </form>
       </Box>
     </DashboardLayout>
   );

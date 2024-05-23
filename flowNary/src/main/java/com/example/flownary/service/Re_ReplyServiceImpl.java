@@ -19,6 +19,11 @@ public class Re_ReplyServiceImpl implements Re_ReplyService {
 	public Re_Reply getReReply(int rrid) {
 		return rrDao.getReReply(rrid);
 	}
+	
+	@Override
+	public int getReReplyCount(int rid) {
+		return rrDao.getReReplyCount(rid);
+	}
 
 	@Override
 	public List<Re_Reply> getReReplyList(int rid) {
