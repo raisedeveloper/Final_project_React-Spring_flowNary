@@ -24,10 +24,10 @@ import { GetWithExpiry } from "api/LocalStorage.js";
 export default function Posting() {
     const navigate = useNavigate();
 
-    const uid = parseInt(GetWithExpiry("uid"));
+    const uid = GetWithExpiry("uid");
 
     // uid가 로컬스토리지에 없으면 로그인 창으로 이동
-    if (!uid) {
+    if (uid == -1) {
         navigate("/login");
     }
     const [nickname, setNickname] = useState('');
@@ -224,7 +224,7 @@ export default function Posting() {
 
 
                             {/* 위치 */}
-                            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                            <Accordion expanded={'panel2'} onChange={handleChange('panel2')}>
                                 <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
                                     <Typography>위치 추가</Typography>
                                 </AccordionSummary>
@@ -237,7 +237,7 @@ export default function Posting() {
 
 
                             {/* 게시물 공개 비공개 */}
-                            <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+                            <Accordion expanded={'panel3'} onChange={handleChange('panel3')}>
                                 <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                                     <Typography>게시글 공개 혹은 비공개 </Typography>
                                 </AccordionSummary>

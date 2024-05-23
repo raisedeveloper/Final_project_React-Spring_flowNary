@@ -31,7 +31,7 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
       <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
         <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
           <Carousel>
-            {image.map((image, index) => (
+            {image && image.map((image, index) => (
               <Box
                 key={index}
                 component="img"

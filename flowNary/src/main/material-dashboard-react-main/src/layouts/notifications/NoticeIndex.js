@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -45,8 +45,28 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import NotificationItem from "examples/Items/NotificationItem";
+import { UserContext } from "api/LocalStorage";
+import { getNoticeList } from "api/axiosGet";
+import { deleteNoticeAll } from "api/axiosPost";
 
 export default function Notifications() {
+
+  const { activeUser } = useContext(UserContext);
+  const [notices, setNotices] = useState(null);
+
+  useEffect(() => {
+    if (activeUser.uid != -1)
+    {
+      const getNotices = async () => {
+        const list = await getNoticeList(activeUser.uid, 0);
+        setNotices(list);
+        deleteNoticeAll(activeUser.uid);
+        console.log(list);
+      }
+
+      getNotices();
+    }
+  }, [])
 
   return (
     <DashboardLayout>
@@ -103,9 +123,6 @@ export default function Notifications() {
           </Box>
         </Card>
       </Box>
-
-
-
     </DashboardLayout>
   );
 }

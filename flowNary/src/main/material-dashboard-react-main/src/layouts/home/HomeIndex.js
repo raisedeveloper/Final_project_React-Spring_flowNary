@@ -16,22 +16,23 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import BoardDetail from "./Board/BoardDetail";
 import Write from './write';
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { GetWithExpiry } from "api/LocalStorage";
-import { useAddLike, useGetUserNicknameLS } from "api/customHook";
+import { ContextProvider, GetWithExpiry, UserContext } from "../../api/LocalStorage";
+import { useAddLike, useGetUserNicknameLS } from "../../api/customHook";
 import { useQuery } from "@tanstack/react-query";
-import { getBoardList } from "api/axiosGet";
-import { getBoard } from "api/axiosGet";
+import { getBoardList } from "../../api/axiosGet";
+import { getBoard } from "../../api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
 
 export default function Home() {
 
   const [expanded, setExpanded] = useState({});
+  const observerRef = useRef(null);
 
   const handleToggle = (bid) => {
     setExpanded((prevExpanded) => ({
@@ -165,6 +166,7 @@ export default function Home() {
   // 유저 정보 받아오기
 
   const navigate = useNavigate();
+  const { activeUser } = useContext(UserContext);
 
   const uid = GetWithExpiry("uid");
   const email = GetWithExpiry("email");
@@ -177,7 +179,7 @@ export default function Home() {
   // if (uid == -1) {
   //   navigate("/login");
   // }
-  const nickname = useGetUserNicknameLS();
+  const nickname = GetWithExpiry("nickname");
 
   // 창 열고 닫기
   const handleOpen = (e) => {
@@ -192,11 +194,38 @@ export default function Home() {
   const location = useLocation();
   const path = location.pathname.split('/');
   const path2 = path[path.length - 1];
+  const [count, setCount] = useState(10);
+
+  
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 1.0
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        // 화면 하단에 도달하면 count를 증가시킵니다.
+        setCount(prevCount => prevCount + 1);
+      }
+    }, options);
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, []);
 
   /////////////////// useQuery로 BoardList 받기 ///////////////////
   const dataList = useQuery({
     queryKey: ['boardList', uid],
-    queryFn: () => getBoardList(10, uid),
+    queryFn: () => getBoardList(count, uid),
   });
 
   const addLike = useAddLike();
@@ -206,12 +235,9 @@ export default function Home() {
 
   // 좋아요 버튼 누를 때 넘기기
   function handleButtonLike(bid, uid2) {
-    // var sendData = JSON.stringify({
-    //   uid: uid,
-    //   fuid: uid2,
-    //   oid: bid,
-    //   type: 1
-    // })
+    if (uid == -1)
+      return;
+    
     const sendData = {
       uid: uid,
       fuid: uid2,
@@ -283,7 +309,7 @@ export default function Home() {
                           >
                             <button onClick={handleOpen.bind(null, data.bid)}>
                               <img
-                                src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image}`}
+                                src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
                                 alt="Paella dish"
                                 style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                               />
@@ -321,7 +347,7 @@ export default function Home() {
               </Grid>
             </Stack>
 
-            {/* 날씨 정보 */}
+            
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
                 <MDBox>
@@ -346,14 +372,12 @@ export default function Home() {
           </Stack>
         </MDBox >
       </MDBox >
-      {/* 게시글 모달 */}
+      <div ref={observerRef}></div>
+      
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
       </Modal>
       <Footer />
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-        <BoardDetail bid={bid} uid={uid} />
-      </Modal>
     </DashboardLayout >
   );
 }

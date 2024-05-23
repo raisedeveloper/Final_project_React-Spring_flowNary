@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { GetWithExpiry } from "./LocalStorage";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertBoard, insertReReply, insertReply, like, like2, userUpdate } from "./axiosPost";
+import { getUserNickEmail } from "./axiosGet";
 
 /** 미사용 함수
  * @param {*} uid 
@@ -45,25 +46,19 @@ export function useGetUserNicknameLS() {
 
     const { isLoading, data } = useQuery({
         queryKey: ['getNickname'],
-        queryFn: async () => {
-            const res = await axios.get('/user/getUser', {
-                params: {
-                  uid: uid,
-                }
-            });
-
-            return res.data;
-        },
+        queryFn: () => getUserNickEmail(uid),
         refetchOnWindowFocus: false,
         refetchOnMount: false,
     })
 
     if (!isLoading && data != null && (data.nickname == null || data.nickname == '' ))
     {
+        console.log(data);
         return data.email;
     }
     else if (!isLoading && data != null && (data.nickname != null && data.nickname != ''))
     {
+        console.log(data);
         return data.nickname;
     }
 

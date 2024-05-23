@@ -21,6 +21,7 @@ import { initializeApp } from "firebase/app";
 
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
+import { ContextProvider } from "api/LocalStorage";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -97,7 +98,7 @@ export default function App() {
             routes={dynamicRoutes.filter(route => route.visible)}  // 동적 라우트 필터링
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
-          />
+            />
           <Configurator />
         </>
       )}

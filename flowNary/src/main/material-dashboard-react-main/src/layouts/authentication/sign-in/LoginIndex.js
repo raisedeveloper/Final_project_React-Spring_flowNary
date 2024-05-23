@@ -1,8 +1,8 @@
 // 기본
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@mui/material";
-import { SetWithExpiry } from "../../../api/LocalStorage";
+import { SetWithExpiry, UserContext } from "../../../api/LocalStorage";
 
 // firebase 연결
 import { login } from "../../../api/firebase";
@@ -35,6 +35,7 @@ export default function Login() {
     const handleChange = e => {
         setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
     }
+    const { updateActiveUser } = useContext(UserContext);
 
     // 구글로 로그인
     const loginWithGoogle = async () => {
@@ -52,15 +53,14 @@ export default function Login() {
 
             // 사용자가 존재하지 않으면 회원가입 진행
             if (Object.keys(response.data).length === 0) {
-                await axios.get("/user/register", {
-                    params: {
-                        email: data.user.email,
-                        pwd: 'nn',
-                        hashuid: data.user.uid,
-                        provider: 1,
-                    }
-                });
+                const result = await axios.post("/user/register", {
+                    email: data.user.email,
+                    pwd: 'nn',
+                    hashuid: data.user.uid,
+                    provider: 1,
+                }).then(res => res.data);
                 // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
+                SetWithExpiry("uid", result, 180);
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", res.data.profile, 180);
                 SetWithExpiry("nickname", res.data.nickname, 180);
@@ -85,10 +85,12 @@ export default function Login() {
                 });
                 console.log("구글 회원가입 성공!" + response.data);
             } else {
+                SetWithExpiry("uid", response.data.id, 180);
                 SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", res.data.profile, 180);
-                SetWithExpiry("nickname", res.data.nickname, 180);
-                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
+                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", response.data.nickname, 180);
+                SetWithExpiry("statusMessage", response.data.statusMessage, 180);
+                updateActiveUser({uid: response.data.id, email: data.user.email, nickname: response.data.nickname});
                 Swal.fire({
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
@@ -169,6 +171,7 @@ export default function Login() {
                     SetWithExpiry("profile", res.data.profile, 180);
                     SetWithExpiry("nickname", res.data.nickname, 180);
                     SetWithExpiry("statusMessage", res.data.statusMessage, 180);
+                    updateActiveUser({uid: res.data.id, email: res.data.email, nickname: res.data.nickname});
                 }).catch(error => console.log(error));
 
                 navigate('/home');

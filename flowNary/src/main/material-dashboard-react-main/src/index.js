@@ -21,6 +21,7 @@ import App from "App";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // Material Dashboard 2 React Context Provider
 import { MaterialUIControllerProvider } from "context";
+import { ContextProvider } from "api/LocalStorage";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
@@ -31,7 +32,9 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <MaterialUIControllerProvider>
-        <App />
+        <ContextProvider>
+          <App />
+        </ContextProvider>
       </MaterialUIControllerProvider>
     </BrowserRouter>
   </QueryClientProvider>
