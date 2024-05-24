@@ -1,4 +1,4 @@
-import { CardMedia, Grid } from "@mui/material";
+import { CardMedia, Grid, Modal } from "@mui/material";
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMyBoardList } from "api/axiosGet";
 import { GetWithExpiry } from "api/LocalStorage";
 import './album.css';
+import Carousel from "react-material-ui-carousel";
 
 function ShowAlbumList() {
   const uid = parseInt(GetWithExpiry('uid'));

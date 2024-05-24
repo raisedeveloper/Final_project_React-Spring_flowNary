@@ -7,6 +7,10 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, createUserWithEmailAndPas
 import '../theme.css';
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
+import { Button, Grid } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+
 
 export default function Register({ closeModal }) {
     const [theme, setTheme] = useState('light');
