@@ -64,7 +64,7 @@ function ProfileEdit({ uid, email }) {
   const [tel, setTel] = useState('');
   const [gender, setGender] = useState(2);
   const [profile, setProfile] = useState('');
-  // 활성화, 비활성화
+  // 활성화/비활성화
   // const [status, setStatus] = useState('0');
 
   useEffect(() => {
@@ -127,7 +127,6 @@ function ProfileEdit({ uid, email }) {
         gender: gender,
         tel: tel,
       }).catch(error => console.log(error));
-
     } else { // 이미지 변경 O 
       SetWithExpiry("profile", url.public_id, 180); // 세션에 바로 추가
       await axios.post('/user/update', {

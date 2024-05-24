@@ -8,25 +8,15 @@ const API_BASE_URL = "/";
  * @param {*} pwd 비밀번호
  * @returns 
  */
-export const userRegister = async (sendData: {
-    hashuid: string,
-    provider: number,
-    email: string,
-    pwd: string,
-    birth: string,
-    uname: string,
-    nickname: string,
-    tel: string
-}) => {
-    
-    console.log("데이터" + sendData.uname + sendData.nickname + sendData.email);
-    return axios({
-        method: "POST",
-        url: '/user/register',
-        data: sendData,
-        headers: { 'Content-Type': 'application/json' }
+export const userRegister = async (hashuid: string, provider: number, email: string, pwd: string) => {
+
+    return axios.post('/user/register', {
+        hashuid: hashuid,
+        provider: provider,
+        email: email,
+        pwd: pwd,
     }).catch(error => {
-        console.log("axiospost.js: insertBoard error!");
+        console.log('axiosget.js: userRegister error!');
         console.log(error);
     });
 }
@@ -44,10 +34,10 @@ export const userUpdatePwd = async (uid: number, pwd1: string, pwd2: string) => 
         pwd1: pwd1,
         pwd2: pwd2,
     }).then((response) => response.data)
-        .catch(error => {
-            console.log('axiosget.js: userUpdatePwd error!');
-            console.log(error);
-        });
+    .catch(error => {
+        console.log('axiosget.js: userUpdatePwd error!');
+        console.log(error);
+    });
 }
 
 /** 사용자 정보 업데이트
@@ -200,7 +190,7 @@ export const like2 = async (sendData: {
     fuid: Number,
 }) => {
     return axios('/like/update',
-        sendData
+        sendData  
     ).catch(error => {
         console.log("axiospost.js: like error!");
         console.log(error);
@@ -241,7 +231,7 @@ export const deleteReply = async (rid: number) => {
  */
 export const deleteReReply = async (rrid: number) => {
 
-    return axios.post('/reply/delete', {
+    return axios.post('/reply/re_delete', {
         rrid: rrid,
     }).catch(error => {
         console.log('axiospost.js: deleteReReply error!');

@@ -31,8 +31,6 @@ import {
   ListItemText, Modal, Paper, Stack, TextField, Typography, InputAdornment,
   IconButton, Link,
   CardMedia,
-  CardHeader,
-  Icon,
 } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -52,47 +50,19 @@ import { GetWithExpiry } from "api/LocalStorage";
 import PostingModal from "../home/Board/PostingModal"
 import { useQuery } from "@tanstack/react-query";
 import { getMyBoardList } from "api/axiosGet";
-import BoardDetail from "layouts/home/Board/BoardDetail";
-import { useAddLike } from "api/customHook";
-import TimeAgo from "timeago-react";
 
 function Notifications() {
 
   const uid = parseInt(GetWithExpiry('uid'));
-  const [bid, setBid] = useState(0);
-  const [open, setOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const board = useQuery({
     queryKey: ['board', uid],
     queryFn: () => getMyBoardList(uid),
   });
-  const handleOpen = (e) => {
-    setOpen(true);
-    setBid(e);
-  }
-  const handleClose = () => {
-    setOpen(false);
-    setBid(-1);
-  };
+  console.log(board);
   const nickname = GetWithExpiry('nickname');
   const profile = GetWithExpiry('profile');
-  function handleButtonLike(bid, uid2) {
-    if (uid == -1)
-      return;
 
-    const sendData = {
-      uid: uid,
-      fuid: uid2,
-      oid: bid,
-      type: 1,
-    }
-
-    addLikeForm(sendData);
-  }
-  const addLike = useAddLike();
-  const addLikeForm = (sendData) => {
-    addLike(sendData);
-  }
   const alertContent = (name) => (
     <MDTypography variant="body2" color="white">
       A simple {name} alert with{" "}
@@ -108,30 +78,17 @@ function Notifications() {
       <DashboardNavbar />
       {/* 상단 정보 넣는 Stack 태그 */}
       <Stack direction={'row'} sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}> {/* 방향을 row로 지정하면 가로 방향으로 배치됨 */}
-
         {/* Avatar 태그 : 유튜브 프사처럼 동그란 이미지 넣을 수 있는 것 */}
         <Avatar
+          src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
           sx={{
             width: '9rem',
             height: '9rem',
-            margin: '10px',
+            margin: '20px',
             fontSize: '60px',
-            border: '2px solid primary.main', // 외곽선 색과 굵기 지정
-          }} >
-
-          <div
-            style={{
-              width: '9rem',
-              height: '9rem',
-              borderRadius: '50%',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
-            }}
-          >
-          </div>
-        </Avatar>
-
+            border: '2px solid primary.main' // 외곽선 색과 굵기 지정
+          }}
+        />
         {/* 프사 옆 정보와 팔로우 버튼 만드는 Stack 공간 */}
         <Stack sx={{ padding: '20px' }} fontWeight={'bold'}>
           <Stack direction={'row'} spacing={2} sx={{ marginTop: '10px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
@@ -184,7 +141,7 @@ function Notifications() {
       <br />
       {/* 게시물 표시하는 Grid */}
       <Grid container spacing={1}>
-        {board && board.data && board.data.map((data, idx) => {
+        {board && board.data && board.data.map((data) => {
           const modTime = data.modTime;
           if (!modTime) return null; // modTime이 없으면 건너뜁니다.
 
@@ -192,88 +149,31 @@ function Notifications() {
           if (yearFromModTime !== selectedYear) return null; // 선택한 연도와 다른 경우 건너뜁니다.
 
           return (
-            <Grid key={idx} item xs={3}>
-              <MDBox mb={3}>
-                <Card sx={{
-                  height: "100%",
-                  transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                  '&:hover': {
-                    boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                  }
-                }}>
-                  <MDBox padding="1rem">
-                    {data.image ?
-                      <MDBox
-                        variant="gradient"
-                        borderRadius="lg"
-                        py={2}
-                        pr={0.5}
-                        sx={{
-                          position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                          height: "12.5rem",
-                          overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                          transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                          '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                            transform: 'scale(1.05)', // 이미지를 확대합니다.
-                            transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                          },
-                          '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                            boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                          }
-                        }}
-                      >
-                        <button onClick={handleOpen.bind(null, data.bid)}>
-                          <img
-                            src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
-                            alt="Paella dish"
-                            style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                          />
-                        </button>
-                      </MDBox>
-                      :
-                      <MDBox>
-                        <MDBox
-                          variant="gradient"
-                          borderRadius="lg"
-                          py={2}
-                          pr={0.5}
-                          sx={{
-                            position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                            height: "12.5rem",
-                            overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                            transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                              transform: 'scale(1.05)', // 이미지를 확대합니다.
-                              transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                            },
-                            '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                            }
-                          }}
-                        >
-                          <button onClick={handleOpen.bind(null, data.bid)}>
-                            <img
-                              src="images/LightLogo.png"
-                              alt="Paella dish"
-                              style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                            />
-                          </button>
-                        </MDBox>
-                      </MDBox>
-                    }
+            <Grid item key={data.bid} xs={3}>
+              <MDBox>
+                <MDBox sx={{ width: '100%', height: '100%' }}>
+                  <MDBox
+                    variant="gradient"
+                    borderRadius="lg"
+                    sx={{
+                      transition: 'box-shadow 0.3s',
+                      height: "12.5rem",
+                      backgroundColor: 'rgba(0, 0, 0, 0)',
+                      '&:hover': {
+                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
+                      }
+                    }}
+                  >
+                    <CardMedia component="img" sx={{ width: '100%', height: '100%', objectFit: 'cover', p: 0, m: 0 }} image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}`} alt="Paella dish" />
                   </MDBox>
-                </Card>
+                </MDBox>
               </MDBox>
             </Grid>
           );
         })}
 
       </Grid>
-      <br />
       <Footer />
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
-      </Modal>
     </DashboardLayout >
   );
 }

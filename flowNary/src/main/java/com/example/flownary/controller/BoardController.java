@@ -159,7 +159,7 @@ public class BoardController {
 		List<Board> list = new ArrayList<>();
 		
 		switch(type) {
-		case 1, 5:
+		case 1:
 			list = bSvc.getBoardList(count, field, query);			
 			break;
 		case 2:

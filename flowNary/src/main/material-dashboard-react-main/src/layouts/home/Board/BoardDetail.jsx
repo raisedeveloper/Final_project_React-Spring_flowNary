@@ -64,13 +64,14 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
               maxWidth:'100vw',              
             }}>
             {image && image.map((image, index) => (
-
               <Box
                 key={index}
+                component="img"
                 sx={{
                   margin:'0',
                   width: '100%',
                   height: '100%',
+                  objectFit: 'fill',
                   '@media (min-width: 500px)': {
                     height: '400px',
                   },
@@ -81,24 +82,15 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
                     height: '600px',
                   },
                 }}
-              >
-                <div
-                  style={{ width: '70vw', height: '55%' }}
-                  className="image-container"
-                >
-                  <img
-                    style={{ width: '100%', height: '100%', objectFit: 'fill' }}
-                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
-                    alt={`Image ${index + 1}`}
-                  />
-                </div>
-              </Box>
+                src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
+                alt={`Image ${index + 1}`}
+              />
             ))}
           </Carousel>
 
           {/* 이미지 없을때 */}
           {image == null ? (
-            <Card sx={{ height: "100vh", padding: 3, border: '3px solid purple' }}>
+            <Card sx={{ height: "100vh", padding: 3, border: '1px solid purple' }}>
               <CardHeader
                 avatar={
                   <Avatar sx={{ bgcolor: 'red'[500] }} aria-label="recipe"

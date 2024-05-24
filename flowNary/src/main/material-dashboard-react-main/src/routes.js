@@ -15,11 +15,9 @@ import Write from "layouts/write/WriteIndex.js";
 import Settings from "layouts/setting/SettingIndex.js";
 import VerifySettings from 'layouts/setting/components/SettingCheckPwd';
 import Team from "layouts/team/TeamIndex.js";
-import Search from "layouts/Search/SearchIndex.js";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
-import { FlashOnOutlined } from '@mui/icons-material';
 import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
 
 const createRoutes = (isLoggedIn) => [
@@ -88,7 +86,7 @@ const createRoutes = (isLoggedIn) => [
   },
   {
     type: "collapse",
-    name: "To-Do 리스트",
+    name: "할 일",
     key: "to-do",
     icon: <Icon fontSize="xx-large">checklist</Icon>,
     route: "/to-do",

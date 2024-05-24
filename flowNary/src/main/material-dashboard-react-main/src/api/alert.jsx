@@ -3,8 +3,8 @@ import Swal from "sweetalert2";
 
 export function correct (words){
   Swal.fire({
+    icon: 'success',
     title: words,
-    icon: "success",
     showClass: {
       popup: `
       animate__animated

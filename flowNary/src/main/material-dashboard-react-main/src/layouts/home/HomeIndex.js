@@ -13,6 +13,7 @@ import Footer from "examples/Footer";
 import TodoList from "layouts/home/components/todoList";
 import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import RttIcon from '@mui/icons-material/Rtt';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
@@ -298,9 +299,13 @@ export default function Home() {
 
     addLikeForm(sendData);
   }
+
   if (isLoading) {
-    <div>로딩중...</div>
+    return (<div>로딩 중...</div>)
   }
+  const handleExpand = () => {
+    setExpanded(!isExpanded);
+  };
 
   return (
     <DashboardLayout>
@@ -371,32 +376,32 @@ export default function Home() {
                                 :
                                 <MDBox>
                                   <MDBox
-                                    variant="gradient"
-                                    borderRadius="lg"
-                                    py={2}
-                                    pr={0.5}
-                                    sx={{
-                                      position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                                      height: "12.5rem",
-                                      overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                                      transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                      '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                        transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                        transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                      },
-                                      '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                                      }
-                                    }}
-                                  >
-                                    <button onClick={handleOpen.bind(null, data.bid)}>
-                                      <img
-                                        src="images/LightLogo.png"
-                                        alt="Paella dish"
-                                        style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                      />
-                                    </button>
-                                  </MDBox>
+                                  variant="gradient"
+                                  borderRadius="lg"
+                                  py={2}
+                                  pr={0.5}
+                                  sx={{
+                                    position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                                    height: "12.5rem",
+                                    overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
+                                    transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                                    '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
+                                      transform: 'scale(1.05)', // 이미지를 확대합니다.
+                                      transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                                    },
+                                    '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
+                                      boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                                    }
+                                  }}
+                                >
+                                  <button onClick={handleOpen.bind(null, data.bid)}>
+                                    <img
+                                      src="images/LightLogo.png"
+                                      alt="Paella dish"
+                                      style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                    />
+                                  </button>
+                                </MDBox>
                                 </MDBox>
                               }
                               <MDBox pt={3} pb={1} px={1}>
