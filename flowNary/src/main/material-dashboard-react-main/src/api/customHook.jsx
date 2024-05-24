@@ -50,8 +50,7 @@ export function useGetUserNicknameLS() {
     return null;
 }
 
-/** 좋아요 시 서버로 useMutation
- */
+/* 좋아요 시 서버로 useMutation */
 export const useAddLike = () => {
     const queryClient = useQueryClient();
 
@@ -65,8 +64,7 @@ export const useAddLike = () => {
     return mutate;
 }
 
-/** 글 작성 시 서버로 useMutation
- */
+/* 글 작성 시 서버로 useMutation */
 export const useAddBoard = () => {
     const queryClient = useQueryClient();
 
@@ -80,8 +78,7 @@ export const useAddBoard = () => {
     return mutate;
 }
 
-/** 댓글 작성 시 서버로 useMutation
- */
+/* 댓글 작성 시 서버로 useMutation */
 export const useAddReply = () => {
     const queryClient = useQueryClient();
 
@@ -95,8 +92,7 @@ export const useAddReply = () => {
     return mutate;
 }
 
-/** 댓글 작성 시 서버로 useMutation
- */
+/* 댓글 작성 시 서버로 useMutation */
 export const useAddReReply = () => {
     const queryClient = useQueryClient();
 

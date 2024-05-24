@@ -107,8 +107,6 @@ export default function Posting() {
     event.preventDefault();
 
     const currentDateTime = new Date();
-
-    
     const koreanDateTime = new Date(currentDateTime.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
     const formattedDateTime = koreanDateTime.toISOString();
     console.log(formattedDateTime);
