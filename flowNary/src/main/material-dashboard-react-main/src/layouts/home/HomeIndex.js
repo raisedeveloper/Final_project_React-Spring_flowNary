@@ -13,10 +13,11 @@ import Footer from "examples/Footer";
 import TodoList from "layouts/home/components/todoList";
 import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Popover from '@mui/material/Popover';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import BoardDetail from "./Board/BoardDetail";
 import Write from './write';
 
@@ -28,6 +29,7 @@ import { getBoardList, getBoardListCount } from "api/axiosGet";
 import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
+import { UserContext } from "api/LocalStorage";
 
 export default function Home() {
   const queryClient = useQueryClient()
@@ -178,6 +180,16 @@ export default function Home() {
   // }
   const nickname = useGetUserNicknameLS();
 
+  //수정 페이지 이동
+
+  const handleUpdate = () => {
+    navigate("../home/Update")
+    sessionStorage.setItem("bid", bid);
+  }
+
+  const { activeUser } = useContext(UserContext);
+
+
   // 창 열고 닫기
   const handleOpen = (e) => {
     setOpen(true);
@@ -301,6 +313,20 @@ export default function Home() {
   if (isLoading) {
     <div>로딩중...</div>
   }
+  //popover
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? 'simple-popover' : undefined;
+
 
   return (
     <DashboardLayout>
@@ -332,9 +358,39 @@ export default function Home() {
                                 />
                               }
                               action={
-                                <IconButton aria-label="settings">
-                                  <MoreVertIcon />
-                                </IconButton>
+                                <div>
+                                  <IconButton aria-label="settings" onClick={handleClick}>
+                                    <MoreVertIcon />
+                                  </IconButton>
+                                  <Popover
+                                    id={id}
+                                    open={openPopover}
+                                    anchorEl={anchorEl}
+                                    onClose={handleClosePopover}
+                                    anchorOrigin={{
+                                      vertical: 'bottom',
+                                      horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                      vertical: 'top',
+                                      horizontal: 'right',
+                                    }}
+                                    PaperProps={{
+                                      style: {
+                                        marginLeft: 90, // 이 값을 조정하여 팝오버의 가로 위치를 미세하게 조정
+                                      },
+                                    }}
+                                  >
+                                    <div style={{ display: 'flex', flexDirection: 'column', }}>
+                                      {data.uid === activeUser.uid ? (
+                                        <Button onClick={handleUpdate}>수정</Button>
+                                      ) : null}
+                                      <Button sx={{ padding: 0 }}>공유 하기</Button>
+                                      <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
+                                      <Button sx={{ padding: 0 }}>삭제 하기</Button>
+                                    </div>
+                                  </Popover>
+                                </div>
                               }
                               title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
                             />
