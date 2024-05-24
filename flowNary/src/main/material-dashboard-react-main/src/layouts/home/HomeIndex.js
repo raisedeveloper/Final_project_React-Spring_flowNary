@@ -13,6 +13,7 @@ import Footer from "examples/Footer";
 import TodoList from "layouts/home/components/todoList";
 import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import RttIcon from '@mui/icons-material/Rtt';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
@@ -299,6 +300,9 @@ export default function Home() {
   if (isLoading) {
     return (<div>로딩 중...</div>)
   }
+  const handleExpand = () => {
+    setExpanded(!isExpanded);
+  };
 
   return (
     <DashboardLayout>
@@ -332,9 +336,11 @@ export default function Home() {
                               action={
                                 <IconButton aria-label="settings">
                                   <MoreVertIcon />
+                                  {/* <RttIcon/> */}
                                 </IconButton>
                               }
                               title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
+                              
                             />
 
                             <MDBox padding="1rem">
@@ -458,6 +464,7 @@ export default function Home() {
             </Stack>
           </Stack>
         </MDBox >
+        
       </MDBox >
       {/* <div ref={observerRef}></div> */}
       <div id="observe" ref={observerRef} style={{ display: 'flex', height: '10px' }}></div>

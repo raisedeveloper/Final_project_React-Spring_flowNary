@@ -231,7 +231,7 @@ export const deleteReply = async (rid: number) => {
  */
 export const deleteReReply = async (rrid: number) => {
 
-    return axios.post('/reply/delete', {
+    return axios.post('/reply/re_delete', {
         rrid: rrid,
     }).catch(error => {
         console.log('axiospost.js: deleteReReply error!');

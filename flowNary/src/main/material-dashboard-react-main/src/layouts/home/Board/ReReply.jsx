@@ -80,6 +80,7 @@ export default function ReReply(props) {
   };
 
   const handleDeleteButton = (rrid) => {
+    console.log(rrid);
     deleteReReply(rrid);
   }
 
