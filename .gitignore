@@ -10,8 +10,6 @@
 # production
 /build
 
-/flowNary/bin
-
 # misc
 .DS_Store
 .env.local

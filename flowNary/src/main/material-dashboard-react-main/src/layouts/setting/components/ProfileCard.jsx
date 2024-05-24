@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Card, CardContent, Avatar, Typography, Grid, Box } from "@mui/material";
 import { styled } from "@mui/system";
-import './ProfileSetting.css';
 
 // 배경 스타일 설정
 const Background = styled(Box)({
@@ -48,22 +47,11 @@ function ProfileCard(props) {
   return (
     <>
       <Avatar
-        className="avatarPhoto"        
+        alt="+"
+        src={preview || `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${props.profile}`}
         sx={{ width: 100, height: 100, margin: "0 auto", cursor: 'pointer' }}
         onClick={handleImageEdit}
-      >
-        <div
-          style={{
-            width: '7rem',
-            height: '7rem',
-            borderRadius: '50%',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundImage: `url('${preview || `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${props.profile}`}')`
-          }}
-        >
-        </div>
-      </Avatar>
+      />
       <input
         type="file"
         onChange={handleImageChange}
@@ -71,21 +59,9 @@ function ProfileCard(props) {
         hidden
         id="hidden-input"
       />
-      <span style={{
-        fontSize: 'large',
-        fontWeight: 'bold',
-        textAlign: 'center'
-      }}>{props.nickname}</span><br />
-
-      <span
-        style={{
-          fontSize: 'medium',
-          fontWeight: 'lighter',
-          textAlign: 'center',
-        }}>{props.statusMessage}</span>
+      <span style={{fontSize: 'large', fontWeight:'bold',}}>{props.nickname}</span><br />
+      <span style={{fontSize: 'large', fontWeight:'bold',}}>{props.statusMessage}</span>
       <br /><br />
-      <p></p>
-
       <Button
         variant='contained'
         onClick={handleImageEdit}

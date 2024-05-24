@@ -2,8 +2,3 @@
 .color-rgba-test {
     color: rgba(226, 223, 226, 0.625);
 }
-
-.color-rgba-test2 {
-    color: #fa99faad;
-    clip-path: circle();
-}

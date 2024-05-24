@@ -158,10 +158,10 @@ export default function Reply(props) {
                 placeholder="입력..."
                 style={{
                   padding: '10px 15px',
-                  fontSize: '0.85rem',
+                  fontSize: '1rem',
                   borderRadius: '5px',
                   border: '1px solid #ccc',
-                  width: '100%',
+                  width: '80%',
                   boxSizing: 'border-box',
                 }}
               />

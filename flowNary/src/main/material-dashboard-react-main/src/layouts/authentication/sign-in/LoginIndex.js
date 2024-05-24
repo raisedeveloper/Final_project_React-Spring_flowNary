@@ -249,7 +249,7 @@ export default function Login() {
                             style={{                                
                                 width:'10vw',
                                 height:'10vh',
-                                marginTop: '-3rem',
+                                marginTop: '0px',
                                 marginBottom: '-1rem'
                             }} />
                     </div>
