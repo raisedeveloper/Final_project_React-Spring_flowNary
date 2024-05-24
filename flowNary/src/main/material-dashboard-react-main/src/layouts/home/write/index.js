@@ -1,6 +1,6 @@
 // 기본
-import React, { useEffect, useState } from "react";
-import { Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon, Input } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -15,12 +15,14 @@ import CreateIcon from '@mui/icons-material/Create';
 
 // css 연결
 import './posting.css';
+import '../Board/board.css';
 import { AntSwitch } from './postingStyle.jsx';
 import { UploadImage } from "../../../api/image.js";
 // import { FindImage, UploadImage2 } from "../../api/image.js";
 import { GetWithExpiry } from "../../../api/LocalStorage.js";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import MDBox from "components/MDBox";
 
 
 export default function Posting() {
@@ -71,6 +73,7 @@ export default function Posting() {
   // 글 내용
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
+  const inputRef = useRef(null);
 
   // 파일이 선택되었을 때 호출되는 함수
   const handleFileChange = async (event) => {
@@ -132,19 +135,66 @@ export default function Posting() {
     setPreviewUrls(previewUrls.filter((_, i) => i !== index)); // 미리보기 URL 배열에서 삭제
   };
 
-  function handleOnEnter(text) { console.log('enter', text) }
+  const changeContents = (e) => { setTitle(e) }
+
+  const cursorPositionRef = useRef(null);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleOnEnter(e);
+    }
+  };
+
+  const handleOnEnter = (e) => {
+    e.preventDefault(); // 기본 엔터키 동작을 막음
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+
+    // 현재 커서 위치에 줄바꿈 삽입
+    const br = document.createElement('br');
+    range.deleteContents();
+    range.insertNode(br);
+
+    // 커서를 줄바꿈 뒤로 이동
+    range.setStartAfter(br);
+    range.setEndAfter(br);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    // 상태 업데이트
+    setTitle(inputRef.current.innerHTML);
+  };
+
+  const handleMouseUp = () => {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      cursorPositionRef.current = {
+        node: range.startContainer,
+        offset: range.startOffset
+      };
+    }
+  };
+
+  useEffect(() => {
+    if (cursorPositionRef.current) {
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.setStart(cursorPositionRef.current.node, cursorPositionRef.current.offset);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }, [title]);
 
   return (
 
-    <Box mt={-5} sx={{ p: 2, mb: 1 }}>
+    <MDBox mt={-5} sx={{ p: 2, mb: 1 }}>
       {/* 모달의 상단에 있는 헤더 부분 */}
       <form onSubmit={handleFormSubmit}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={2}>
-          <Typography variant="h6" component="h2" fontWeight="bold">새 글쓰기</Typography>
+          <Typography variant="h6" component="h2" fontWeight="bold">공유하고 싶은 이야기가 있나요?</Typography>
         </Stack>
-
-        {/* 구분선 */}
-        <hr style={{ opacity: '0.5' }} />
 
         {/* 이미지 업로드 및 미리보기 */}
         <Grid container spacing={2}>
@@ -172,9 +222,9 @@ export default function Posting() {
             </div>
             <div>
               <Button component="label">
-                <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight:'bold' }} style={{ color: 'black' }}>비공개</Typography>
+                <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
                 <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-                <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight:'bold' }} style={{ color: 'black' }}>공개</Typography>
+                <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>공개</Typography>
               </Button>
               <Button type="submit" style={{ color: 'black' }}>작성</Button>
             </div>
@@ -193,31 +243,20 @@ export default function Posting() {
         </Grid>
 
         {/* 제목 작성 부분 */}
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} p='2px'>
           <InputEmoji
             value={title}
-            onChange={setTitle}
-            cleanOnEnter
-            onEnter={handleOnEnter}
-            placeholder="제목을 입력하세요..."
-            shouldReturn
+            onChange={changeContents}
+            onKeyDown={handleKeyDown}
+            onMouseUp={handleMouseUp}
+            onBlur={handleMouseUp}
+            placeholder="신비로운 당신의 일상을 알려주세요!"
+            // shouldReturn
             fontSize={15}
             language='kr'
-          />
-        </Grid>
 
-        {/* 게시글 작성 부분 */}
-        <Grid item xs={12} sm={6}>
-          <InputEmoji
-            value={title}
-            onChange={setTitle}
-            cleanOnEnter
-            onEnter={handleOnEnter}
-            placeholder="문구를 입력하세요..."
-            shouldReturn
-            fontSize={15}
-            language='kr'
           />
+
         </Grid>
 
         {/* 위치 */}
@@ -227,6 +266,6 @@ export default function Posting() {
         {/* 게시물 공개 비공개 */}
 
       </form>
-    </Box>
+    </MDBox>
   );
 }

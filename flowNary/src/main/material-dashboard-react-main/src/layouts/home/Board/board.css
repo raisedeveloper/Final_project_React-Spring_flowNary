@@ -46,7 +46,7 @@
 .react-input-emoji--container {
   color: #4b4b4b;
   text-rendering: optimizeLegibility;
-  background-color: #fff;
+  background-color: #ffffff;
   border: 1px solid #fff;
   border-radius: 21px;
   margin: 5px 10px;
@@ -114,7 +114,7 @@
 }
 
 .react-input-emoji--placeholder {
-  color: #a0a0a0;
+  color: #ad91b8;
   pointer-events: none;
   position: absolute;
   user-select: none;
@@ -147,11 +147,11 @@
 }
 
 .react-input-emoji--button svg {
-  fill: #858585;
+  fill: #ad91b8;
 }
 
 .react-input-emoji--button__show svg {
-  fill: #128b7e;
+  fill: #6f17a1;
 }
 
 .react-emoji {
@@ -197,8 +197,8 @@
 }
 
 .react-input-emoji--mention--list {
-  background-color: #fafafa;
-  border: 1px solid #eaeaea;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
   border-radius: 4px;
   margin: 0;
   padding: 0;

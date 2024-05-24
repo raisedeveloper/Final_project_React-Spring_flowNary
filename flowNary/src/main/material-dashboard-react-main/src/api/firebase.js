@@ -1,17 +1,22 @@
-import { initializeApp } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
 import {
   getAuth, signOut, signInWithEmailAndPassword,
 } from "firebase/auth";
+import { getDatabase, ref, get, set, remove } from "firebase/database"; // 추가된 부분
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SEMDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
-// eslint-disable-next-line
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+// Firebase 앱 초기화 (이미 초기화된 경우 재사용)
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const auth = getAuth(app);
+const database = getDatabase(app); // 추가된 부분
 
 export function login({ email, password }) {
   signInWithEmailAndPassword(auth, email, password)
@@ -22,20 +27,7 @@ export function logout() {
   signOut(auth).catch(console.error);
 }
 
-// export function register({ email, password }) {
-//   console.log('firebase:register():', email, password);
-//   createUserWithEmailAndPassword(auth, email, password)
-//     .then(() => {logout()})
-//     .catch(console.error);
-// }
-
-// export function onUserStateChanged(callback) {
-//   onAuthStateChanged(auth, (user) => {
-//     callback(user);
-//   });
-// }
-/*========================= anniversary =========================*/
-
+// Anniversary 관련 함수들 (추가된 부분)
 export async function getAnnivList(adate, email) {
   return get(ref(database, 'anniversary'))
     .then(snapshot => {
@@ -68,8 +60,7 @@ export async function deleteAnniv(id) {
   return remove(ref(database, `anniversary/${id}`));
 }
 
-/*========================= schedule =========================*/
-
+// Schedule 관련 함수들 (추가된 부분)
 export async function getSchedList(sdate, email) {
   return get(ref(database, 'schedule'))
     .then(snapshot => {
@@ -78,11 +69,11 @@ export async function getSchedList(sdate, email) {
         let records = Object.values(objects);
         records = records
           .filter(record => record.sdate === sdate && record.email === email)
-          .sort((a, b) => a.startTime.localeCompare(b.startTime)); 
+          .sort((a, b) => a.startTime.localeCompare(b.startTime));
         return records;
       }
       return null;
-    }); 
+    });
 }
 
 export async function insertSched(sched) {
