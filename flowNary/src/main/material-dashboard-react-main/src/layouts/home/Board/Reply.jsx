@@ -226,7 +226,7 @@ export default function Reply(props) {
                     }
                   </Button>
                 <Button onClick={() => handleMoreReply(data.rid)}>
-                {(data.replyCount === 0 ? "댓글 달기" : `${data.replyCount}개의 댓글 보기`)}
+                {(data.replyCount === 0 ? "" : `${data.replyCount}개의 댓글 보기`)}
                 </Button>
 
                 </div>
