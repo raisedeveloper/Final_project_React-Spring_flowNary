@@ -19,6 +19,7 @@ import { useAuthState } from "react-firebase-hooks/auth";  // Firebase 인증 �
 import { getAuth } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 
+
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 
@@ -75,6 +76,7 @@ export default function App() {
   }, [pathname]);
 
   // 서버 종료 시 처리 (beforeunload 이벤트 리스너 추가)
+<<<<<<< HEAD
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       // 파이어베이스 로그아웃
@@ -97,6 +99,30 @@ export default function App() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
+=======
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     // 파이어베이스 로그아웃
+  //     auth.signOut().then(() => {
+  //       console.log('User signed out.');
+  //     }).catch((error) => {
+  //       console.error('Sign out error:', error);
+  //     });
+      
+  //     // localStorage.clear();
+
+  //     // 기본 동작 방지
+  //     event.preventDefault();
+  //     event.returnValue = ''; // Chrome에서는 이 설정이 필요합니다.
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //   };
+  // }, []);
+>>>>>>> origin/sub_main
 
 
 

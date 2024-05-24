@@ -67,7 +67,7 @@ public class ReplyController {
 			jre_Reply.put("rrid", re_Reply.getRrid());
 			jre_Reply.put("rid", re_Reply.getRid());
 			jre_Reply.put("uid", re_Reply.getUid());
-			jre_Reply.put("rrContetnts", re_Reply.getRrContents());
+			jre_Reply.put("rrContents", re_Reply.getRrContents());
 			jre_Reply.put("modTime", re_Reply.getModTime());
 			jre_Reply.put("likeCount", re_Reply.getLikeCount());
 			jre_Reply.put("nickname", re_Reply.getNickname());
@@ -92,6 +92,8 @@ public class ReplyController {
 	
 	@PostMapping("/re_insert")
 	public String Re_reply(@RequestBody InsertReReply dto) {
+		System.out.println(dto.getRid());
+		System.out.println(dto.getRrContents());
 		@SuppressWarnings("static-access")
 		Re_Reply re_Reply = new Re_Reply().builder().rid(dto.getRid()).uid(dto.getUid())
 				.rrContents(dto.getRrContents()).nickname(dto.getNickname()).build();
@@ -100,19 +102,25 @@ public class ReplyController {
 		
 		nC.insertNotice(dto.getUid(), 2, dto.getRid(), reply.getUid());
 		
+		System.out.println(re_Reply);
+		
 		return "대댓글이 입력되었습니다";
 	}
 	
 	@PostMapping("/delete")
-	public int deleteReply(@RequestBody int rid) {
-		rSvc.deleteReply(rid);
+	public int deleteReply(@RequestBody JSONObject rid) {
+		System.out.println(rid);
+//		rSvc.deleteReply(rid);
 		
 		return 0;
 	}
 	
 	@PostMapping("/re_delete")
-	public int deleteReReply(@RequestBody int rrid) {
-		rrSvc.deleteReReply(rrid);
+	public int deleteReReply(@RequestBody JSONObject rrid) {
+		System.out.println((Integer) rrid.get("rrid"));
+		int rrid2 = (Integer) rrid.get("rrid");
+		System.out.println(rrid2);
+		rrSvc.deleteReReply(rrid2);
 		
 		return 0;
 	}

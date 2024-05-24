@@ -14,9 +14,12 @@ import TodoList from "layouts/todoList/TodoListIndex.js";
 import Write from "layouts/write/WriteIndex.js";
 import Settings from "layouts/setting/SettingIndex.js";
 import Team from "layouts/team/TeamIndex.js";
+import Search from "layouts/Search/SearchIndex.js";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
+import { FlashOnOutlined } from '@mui/icons-material';
+import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
 
 const createRoutes = (isLoggedIn) => [
   {
@@ -84,7 +87,7 @@ const createRoutes = (isLoggedIn) => [
   },
   {
     type: "collapse",
-    name: "할 일",
+    name: "To-Do 리스트",
     key: "to-do",
     icon: <Icon fontSize="xx-large">checklist</Icon>,
     route: "/to-do",
@@ -131,10 +134,19 @@ const createRoutes = (isLoggedIn) => [
     type: "collapse",
     name: "회원가입",
     key: "sign-up",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,
-    route: "/authentication/sign-up",
+    icon: <Icon fontSize="xx-large">assignment</Icon>,    
     component: <SignUp />,
-    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
+    visible: false, // 로그인되지 않았을 때만 보임
+  },
+
+  {
+    type: "collapse",
+    name: "글쓰기수정",
+    key: "write",
+    icon: <Icon fontSize="xx-large">history_edu</Icon>,
+    route: "/home/Update",
+    component: <UpdateIndex />,
+    visible: false,
   },
 ];
 
