@@ -311,7 +311,7 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
               <Write />
               <Grid container spacing={3}>
-                {(boardList && allcount) ? (boardList.pages.map((page, index) => (
+                {(boardList && allcount && !isLoading) ? (boardList.pages.map((page, index) => (
                   <React.Fragment key={index}>
                     {page.map((data, idx) => (
                       <Grid key={idx} item xs={12} md={6} lg={6}>

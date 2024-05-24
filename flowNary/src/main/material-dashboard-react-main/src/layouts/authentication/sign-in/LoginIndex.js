@@ -96,7 +96,7 @@ export default function Login() {
                     }
                 });
                 console.log("구글 회원가입 성공!" + response.data);
-                navigate('/');
+                
             } else {
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
@@ -121,7 +121,7 @@ export default function Login() {
                     }
                 });
                 console.log("구글 로그인 성공!" + response.data);
-                navigate('/');
+
             }
             setAnimationClass('fade-exit');
             setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
