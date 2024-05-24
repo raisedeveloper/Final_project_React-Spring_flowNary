@@ -192,7 +192,7 @@ export default function Register({ closeModal }) {
                     setCheckingTel(0);
                     return;
                 }
-                correct("전화번호 사용 가능합니다!");
+                correct("전화번호 인증 해주세요!");
                 setCheckingTel(0);
                 setVerify(1);
                 return;
@@ -206,20 +206,32 @@ export default function Register({ closeModal }) {
 
     const RegisterWithGoogle = async () => {
         try {
+            const auth = getAuth();
             const provider = new GoogleAuthProvider();
             const data = await signInWithPopup(auth, provider);
 
+            // 이메일로 사용자 조회
             const response = await axios.get('/user/getUserByEmail', {
-                params: { email: data.user.email }
+                params: {
+                    email: data.user.email
+                }
             });
 
+            // 사용자가 존재하지 않으면 회원가입 진행
             if (Object.keys(response.data).length === 0) {
-                await axios.post("/user/register", {
+                var sendData = {
                     email: data.user.email,
                     pwd: 'nn',
                     hashuid: data.user.uid,
                     provider: 1,
-                });
+                    birth: null,
+                    uname: null,
+                    nickname: null,
+                    tel: null
+                }
+                userRegister(sendData);
+
+                // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
                 SetWithExpiry("nickname", response.data.nickname, 180);
@@ -228,13 +240,22 @@ export default function Register({ closeModal }) {
                     icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
                     showClass: {
-                        popup: `animate__animated animate__fadeInUp animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeInUp
+                                    animate__faster
+                                `
                     },
                     hideClass: {
-                        popup: `animate__animated animate__fadeOutDown animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeOutDown
+                                    animate__faster
+                                `
                     }
                 });
                 console.log("구글 회원가입 성공!" + response.data);
+                navigate('/');
             } else {
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
@@ -244,15 +265,25 @@ export default function Register({ closeModal }) {
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
                     showClass: {
-                        popup: `animate__animated animate__fadeInUp animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeInUp
+                                    animate__faster
+                                `
                     },
                     hideClass: {
-                        popup: `animate__animated animate__fadeOutDown animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeOutDown
+                                    animate__faster
+                                `
                     }
                 });
                 console.log("구글 로그인 성공!" + response.data);
+                navigate('/');
             }
-            setTimeout(() => navigate('/'), 150);
+            setAnimationClass('fade-exit');
+            setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
         } catch (error) {
             console.error("구글 로그인 오류:", error);
         }
@@ -440,7 +471,7 @@ export default function Register({ closeModal }) {
                     <Grid item xs={1.8}><div></div></Grid>
                 </Grid>
                 {verify === 1 ? <div className="input-container">
-                    <SmsLogin handleKeyPress={handleKeyPress} tel={tel} setCheckingTel={setCheckingTel}/>
+                    <SmsLogin handleKeyPress={handleKeyPress} tel={tel} setCheckingTel={setCheckingTel} />
                 </div> : <></>}
 
             </div>

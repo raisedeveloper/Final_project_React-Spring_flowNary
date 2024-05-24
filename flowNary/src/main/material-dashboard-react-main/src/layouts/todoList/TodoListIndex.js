@@ -11,21 +11,24 @@ import TimelineItem from "examples/Timeline/TimelineItem";
 import { useState } from "react";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { GetWithExpiry } from "api/LocalStorage";
+import { useQuery } from "@tanstack/react-query";
+import { getTodoList } from "api/axiosGet";
 
 export default function TodoList() {
-  const [items, setItems] = useState([
-    { id: 1, text: '동사무소 다녀오기', required: false },
-    { id: 2, text: '은행 적금 계약하기', required: true },
-    { id: 3, text: '엄마한테 전화하기', required: true },
-    { id: 4, text: '6/17 종강', required: false },
-    { id: 5, text: '5/17 중간발표', required: true },
-    { id: 6, text: '5/21 면접', required: true },
-    { id: 7, text: '핸드폰 수리하기', required: true },
-  ]);
+  const uid = GetWithExpiry("uid");
+
+  const { data: dataList, isLoading, error } = useQuery({
+    queryKey: ['todoList', uid],
+    queryFn: () => getTodoList(uid),
+  });
   const [newItemText, setNewItemText] = useState('');
 
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
   const addItem = () => {
-    if (items.length < 7 && newItemText.trim() !== '') {
+    if (dataList.length < 7 && newItemText.trim() !== '') {
       const newItem = {
         id: Date.now(),
         text: newItemText,
@@ -39,10 +42,11 @@ export default function TodoList() {
   const removeItem = id => {
     setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <Card sx={{ height: "90%", boxShadow:"none", backgroundColor:'beige' }}>
+      <Card sx={{ height: "90%", boxShadow: "none", backgroundColor: 'beige' }}>
         <MDBox pt={3} px={3}>
           <MDTypography variant="h6" fontWeight="medium">
             최대 7개 - 해야할 일!
@@ -50,11 +54,11 @@ export default function TodoList() {
         </MDBox>
         <MDBox pt={3} px={3}>
           <FormGroup>
-            {items.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {dataList && dataList.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <FormControlLabel
                   control={<Checkbox />}
-                  label={item.text}
+                  label={item.contents}
                   onChange={() => console.log('Checkbox clicked:', item.text)}
                 />
                 <Button color="primary" onClick={() => removeItem(item.id)}>삭제</Button>

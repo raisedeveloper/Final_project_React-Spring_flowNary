@@ -8,7 +8,7 @@ const API_BASE_URL = "/";
  */
 export const getUser = async (uid: number) => {
 
-    const result = await axios.get(`${API_BASE_URL}user/getUser`, {
+    const result = await axios.get('user/getUser', {
         params: {
             uid: uid,
         }
@@ -27,7 +27,7 @@ export const getUser = async (uid: number) => {
  */
 export const getUserEmail = async (email: string) => {
 
-    const result = await axios.get(`${API_BASE_URL}user/getUserByEmail`, {
+    const result = await axios.get('user/getUserByEmail', {
         params: {
             email: email,
         }
@@ -47,7 +47,7 @@ export const getUserEmail = async (email: string) => {
  */
 export const getBoard = async (bid: Number, uid = -1) => {
     
-    const result = await axios.get(`${API_BASE_URL}board/getBoard`, {
+    const result = await axios.get('board/getBoard', {
         params: {
             bid: bid,
             uid: uid,
@@ -69,7 +69,7 @@ export const getBoard = async (bid: Number, uid = -1) => {
 export const getBoardUrl = async (url: string, uid = -1) => {
     console.log(url);
 
-    const result = await axios.get(`${API_BASE_URL}board/getBoardUrl`, {
+    const result = await axios.get('board/getBoardUrl', {
         params: {
             url: url,
             uid: uid,
@@ -95,7 +95,7 @@ export const getBoardUrl = async (url: string, uid = -1) => {
  */
 export const getBoardList = async (count = 1, field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
-    const result = await axios.get(`${API_BASE_URL}board/list`, {
+    const result = await axios.get('board/list', {
         params: {
             c: count,
             f: field,
@@ -116,7 +116,7 @@ export const getBoardList = async (count = 1, field='title', field2 = '', field3
 
 export const getMyBoardList = async (uid) => {
 
-    const result = await axios.get(`${API_BASE_URL}board/mylist`, {
+    const result = await axios.get('board/mylist', {
         params: {
             uid: uid,
         }
@@ -139,7 +139,7 @@ export const getMyBoardList = async (uid) => {
  */
 export const getReplyList = async (bid: Number, offset: Number, limit: number) => {
     
-    const result = await axios.get(`${API_BASE_URL}reply/list`, {
+    const result = await axios.get('reply/list', {
         params: {
             bid: bid,
             offset: offset,
@@ -160,7 +160,7 @@ export const getReplyList = async (bid: Number, offset: Number, limit: number) =
  */
 export const getReReplyList = async (rid: number) => {
 
-    const result = await axios.get(`${API_BASE_URL}reply/re_list`, {
+    const result = await axios.get('reply/re_list', {
         params: {
             rid: rid,
         }
@@ -184,7 +184,7 @@ export const getReReplyList = async (rid: number) => {
  */
 export const getBoardListCount = async (field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
-    const result = await axios.get(`${API_BASE_URL}board/listCount`, {
+    const result = await axios.get('board/listCount', {
         params: {
             f: field,
             f2: field2,
@@ -209,7 +209,7 @@ export const getBoardListCount = async (field='title', field2 = '', field3 = '',
  */
 export const getChat = async (cid: number, uid = -1) => {
 
-    const result = await axios.get(`${API_BASE_URL}chat/get`, {
+    const result = await axios.get('chat/get', {
         params: {
             cid: cid,
             uid: uid,
@@ -231,7 +231,7 @@ export const getChat = async (cid: number, uid = -1) => {
  */
 export const getChatList = async (uid: number, count = 1, status = 0) => {
 
-    const result = await axios.get(`${API_BASE_URL}chat/list`, {
+    const result = await axios.get('chat/list', {
         params: {
             uid: uid,
             count: count,
@@ -253,7 +253,7 @@ export const getChatList = async (uid: number, count = 1, status = 0) => {
  */
 export const getDmList = async (cid: number, count: 20) => {
 
-    const result = await axios.get(`${API_BASE_URL}dmlist/list`, {
+    const result = await axios.get('dmlist/list', {
         params: {
             cid: cid,
             count: count,
@@ -274,7 +274,7 @@ export const getDmList = async (cid: number, count: 20) => {
  */
 export const getDmListUid = async (uid: number, count: 20) => {
 
-    const result = await axios.get(`${API_BASE_URL}dmlist/listUid`, {
+    const result = await axios.get('dmlist/listUid', {
         params: {
             cid: cid,
             count: count,
@@ -294,7 +294,7 @@ export const getDmListUid = async (uid: number, count: 20) => {
  */
 export const getFollowList = async (uid: number) => {
 
-    const result = await axios.get(`${API_BASE_URL}follow/getList`, {
+    const result = await axios.get('follow/getList', {
         params: {
             uid: uid,
         }
@@ -313,7 +313,7 @@ export const getFollowList = async (uid: number) => {
  */
 export const getFollowMeList = async (fuid: number) => {
 
-    const result = await axios.get(`${API_BASE_URL}follow/getMyList`, {
+    const result = await axios.get('follow/getMyList', {
         params: {
             fuid: fuid,
         }
@@ -333,7 +333,7 @@ export const getFollowMeList = async (fuid: number) => {
  */
 export const getLikeUid = async (fuid: number, type = 1) => {
 
-    const result = await axios.get(`${API_BASE_URL}like/count`, {
+    const result = await axios.get('like/count', {
         params: {
             fuid: fuid,
             type: type,
@@ -354,7 +354,7 @@ export const getLikeUid = async (fuid: number, type = 1) => {
  */
 export const getLikeList = async (type: number, oid: number) => {
 
-    const result = await axios.get(`${API_BASE_URL}like/list`, {
+    const result = await axios.get('like/list', {
         params: {
             type: type,
             oid: oid,
@@ -379,10 +379,33 @@ export const getLikeList = async (type: number, oid: number) => {
  */
 export const getNoticeList = async (uid: number, type = 0) => {
  
-    const result = await axios.get(`${API_BASE_URL}notice/list`, {
+    const result = await axios.get('notice/list', {
         params: {
             uid: uid,
             type: type,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getNoticeList error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
+
+/** Todo 목록 보기
+ * @param {*} tid todo 번호
+ * @param {*} uid 접속한 유저 번호
+ * @param {*} contents 내용
+ * @param {*} pri 우선 순우;
+ * @returns 
+ */
+export const getTodoList = async (uid: number) => {
+ 
+    const result = await axios.get('todo/list', {
+        params: {
+            uid: uid,
         }
     }).then((response) => response.data)
     .catch(error => {

@@ -19,6 +19,7 @@ import Modal from 'react-modal';
 
 // RegisterIndex 컴포넌트 추가
 import Register from "../sign-up/RegisterIndex";
+import { userRegister } from "api/axiosPost";
 
 // 모달 element
 Modal.setAppElement('#app');
@@ -59,19 +60,23 @@ export default function Login() {
 
             // 사용자가 존재하지 않으면 회원가입 진행
             if (Object.keys(response.data).length === 0) {
-                await axios.get("/user/register", {
-                    params: {
-                        email: data.user.email,
-                        pwd: 'nn',
-                        hashuid: data.user.uid,
-                        provider: 1,
-                    }
-                });
+                var sendData = {
+                    email: data.user.email,
+                    pwd: 'nn',
+                    hashuid: data.user.uid,
+                    provider: 1,
+                    birth: null,
+                    uname: null,
+                    nickname: null,
+                    tel: null
+                }
+                userRegister(sendData);
+
                 // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
                 SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", res.data.profile, 180);
-                SetWithExpiry("nickname", res.data.nickname, 180);
-                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
+                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", response.data.nickname, 180);
+                SetWithExpiry("statusMessage", response.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
@@ -91,11 +96,12 @@ export default function Login() {
                     }
                 });
                 console.log("구글 회원가입 성공!" + response.data);
+                navigate('/');
             } else {
                 SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", res.data.profile, 180);
-                SetWithExpiry("nickname", res.data.nickname, 180);
-                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
+                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", response.data.nickname, 180);
+                SetWithExpiry("statusMessage", response.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
@@ -115,6 +121,7 @@ export default function Login() {
                     }
                 });
                 console.log("구글 로그인 성공!" + response.data);
+                navigate('/');
             }
             setAnimationClass('fade-exit');
             setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
@@ -246,9 +253,9 @@ export default function Login() {
                 <div className="modal-content">
                     <div className={`welcome-message-Modal`}>
                         <img src={logoImage_Modal} alt='LOGO'
-                            style={{                                
-                                width:'10vw',
-                                height:'10vh',
+                            style={{
+                                width: '10vw',
+                                height: '10vh',
                                 marginTop: '-3rem',
                                 marginBottom: '-1rem'
                             }} />

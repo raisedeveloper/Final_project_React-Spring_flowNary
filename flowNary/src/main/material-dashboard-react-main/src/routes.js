@@ -13,6 +13,7 @@ import Chalendar from "layouts/schedule/ScheduleIndex.js";
 import TodoList from "layouts/todoList/TodoListIndex.js";
 import Write from "layouts/write/WriteIndex.js";
 import Settings from "layouts/setting/SettingIndex.js";
+import VerifySettings from 'layouts/setting/components/SettingCheckPwd';
 import Team from "layouts/team/TeamIndex.js";
 import Search from "layouts/Search/SearchIndex.js";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
@@ -106,11 +107,18 @@ const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "설정",
-    key: "profile/settings",
+    key: "verify",
     icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
-    route: "/profile/settings",
-    component: <Settings />,
+    route: "/verify",
+    component: <VerifySettings />,
     visible: true,
+  },
+  {
+    type: "collapse",
+    name: "설정",
+    key: "settings",
+    route: "/settings",
+    component: <Settings />,
   },
   {
     type: "collapse",
@@ -134,7 +142,7 @@ const createRoutes = (isLoggedIn) => [
     type: "collapse",
     name: "회원가입",
     key: "sign-up",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,    
+    icon: <Icon fontSize="xx-large">assignment</Icon>,
     component: <SignUp />,
     visible: false, // 로그인되지 않았을 때만 보임
   },
@@ -145,7 +153,6 @@ const createRoutes = (isLoggedIn) => [
     key: "search",
     route: "/search",
     component: <Search />,
-    visible: false, // 로그인되지 않았을 때만 보임
   },
 
   {

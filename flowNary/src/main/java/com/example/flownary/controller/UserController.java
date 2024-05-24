@@ -131,7 +131,7 @@ public class UserController {
 
 		if (user == null)
 			return null;
-
+		System.out.println(user);
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		hMap.put("id", uid);
 		hMap.put("email", user.getEmail());

@@ -28,6 +28,7 @@ import { userUpdate } from '../../../api/axiosPost';
 // 생일 표현 
 import dayjs from 'dayjs';
 import ProfileCard from "./ProfileCard";
+import { useQuery } from "@tanstack/react-query";
 
 const Header = styled(Box)({
   background: '#BA99D1',
@@ -49,9 +50,13 @@ const Background = styled(Box)({
 
 function ProfileEdit({ uid, email }) {
   const navigate = useNavigate();
-  const user = useGetUser(uid);
 
-  const [uname, setUname] = useState(null);
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ['user', uid],
+    queryFn: () => useGetUser(uid),
+  });
+
+  const [uname, setUname] = useState('');
   const [nickname, setNickname] = useState('');
   const [statusMessage, setStat] = useState('');
   const [snsDomain, setSnsDomain] = useState('');
@@ -63,13 +68,13 @@ function ProfileEdit({ uid, email }) {
   // const [status, setStatus] = useState('0');
 
   useEffect(() => {
-    if (!uname && !statusMessage && !snsDomain && !tel && !nickname && user.id) {
+    if (user && (!uname || !nickname)) {
       setUname(user.uname);
       setNickname(user.nickname);
       setStat(user.statusMessage);
       setSnsDomain(user.snsDomain);
-      setBirth(user.birth);
       setTel(user.tel);
+      setBirth(user.birth);
       setGender(user.gender);
       setProfile(user.profile);
     }
@@ -122,7 +127,7 @@ function ProfileEdit({ uid, email }) {
         gender: gender,
         tel: tel,
       }).catch(error => console.log(error));
-      
+
     } else { // 이미지 변경 O 
       SetWithExpiry("profile", url.public_id, 180); // 세션에 바로 추가
       await axios.post('/user/update', {
@@ -138,87 +143,88 @@ function ProfileEdit({ uid, email }) {
       }).catch(error => console.log(error));
     }
     correct("설정 변경에 성공했습니다.");
-    navigate('/setting');
   }
 
-  const goBack = () => { navigate(-1); }
+  const goBack = () => { navigate('/'); }
   return (
     <>
-      <Card sx={{ width: '100%', borderRadius: "16px", boxShadow: 3, margin: 'auto' }}>
-        <Background />
-        <CardContent sx={{textAlign: "center", mt: -8 }}>
-          <ProfileCard profile={profile} nickname={nickname} statusMessage={statusMessage} image={image} onChangePicture={handlePicture} /><br />
-        </CardContent>
-      </Card>
-      <br></br>
-      <Card>
-        <Header style={{ height: '2.05rem' }}>
-          <Typography variant="subtitle1" sx={{ opacity: 0.825 }}>상세 정보</Typography>
-        </Header>
-        <CardContent>
-          <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
-              <MDBox fullWidth id="gender_select" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <Select
-                  id="gender_select"
-                  value={(gender === 0 ? 'man' : (gender === 1 ? 'woman' : 'none'))}
-                  onChange={handleGender}
-                  sx={{
-                    width: '100%', height: '70%',
-                    textAlign: 'center', border: '0'
-                  }}
-                >
-                  <MenuItem value={"man"}>남자</MenuItem>
-                  <MenuItem value={"woman"}>여자</MenuItem>
-                  <MenuItem value={"none"}>성별 설정 안함</MenuItem>
-                </Select>
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <SettingBirth birth={birth} checkingBirth={checkingBirth}
-                onBirthChange={handleBirthChange} changeCheckingBirth={handleCheckingBirth} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth placeholder="이메일" variant="standard" value={email} disabled sx={{ mt: 2, width: '100%' }} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth placeholder="이름 *" variant="standard"
-                value={uname} onChange={handleUname} sx={{ mt: 2, width: '100%' }} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth placeholder="상태 메시지" variant="standard" value={statusMessage}
-                onChange={handleStat} sx={{ mt: 2, width: '100%' }} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth placeholder="도메인 주소" variant="standard"
-                value={snsDomain} onChange={handleSnsDomain} sx={{ mt: 2, width: '100%', }} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <SettingNickname nickname={nickname} email={email} checkingNickname={checkingNickname}
-                onNicknameChange={handleNickname} changeCheckingNickname={handleCheckingNickname} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <SettingTel tel={tel} email={email} checkingTel={checkingTel}
-                onTelChange={handleTel} changeCheckingTel={handleCheckingTel} />
-            </Grid>
-            <Grid item xs={15}>
+      {(user) ? <>
+        <Card sx={{ width: '100%', borderRadius: "16px", boxShadow: 3, margin: 'auto' }}>
+          <Background />
+          <CardContent sx={{ textAlign: "center", mt: -8 }}>
+            <ProfileCard profile={profile} nickname={nickname} statusMessage={statusMessage} image={image} onChangePicture={handlePicture} /><br />
+          </CardContent>
+        </Card>
+        <Card>
+          <Header style={{ height: '2.05rem' }}>
+            <Typography variant="subtitle1" sx={{ opacity: 0.825 }}>상세 정보</Typography>
+          </Header>
+          <CardContent>
+            <Grid container spacing={5}>
+              <Grid item xs={12} sm={6}>
+                <MDBox fullWidth id="gender_select" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                  <Select
+                    id="gender_select"
+                    value={(gender === 0 ? 'man' : (gender === 1 ? 'woman' : 'none'))}
+                    onChange={handleGender}
+                    sx={{
+                      width: '100%', height: '70%',
+                      textAlign: 'center', border: '0'
+                    }}
+                  >
+                    <MenuItem value={"man"}>남자</MenuItem>
+                    <MenuItem value={"woman"}>여자</MenuItem>
+                    <MenuItem value={"none"}>성별 설정 안함</MenuItem>
+                  </Select>
+                </MDBox>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <SettingBirth birth={birth} checkingBirth={checkingBirth}
+                  onBirthChange={handleBirthChange} changeCheckingBirth={handleCheckingBirth} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth placeholder="이메일" variant="standard" value={email} disabled sx={{ mt: 2, width: '100%' }} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth label='이름' required variant="standard"
+                  value={uname} onChange={handleUname} sx={{ mt: 2, width: '100%' }} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth label="상태메시지" required variant="standard" value={statusMessage}
+                  onChange={handleStat} sx={{ mt: 2, width: '100%' }} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth label="도메인 주소" required variant="standard"
+                  value={snsDomain} onChange={handleSnsDomain} sx={{ mt: 2, width: '100%', }} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <SettingNickname nickname={nickname} email={email} checkingNickname={checkingNickname}
+                  onNicknameChange={handleNickname} changeCheckingNickname={handleCheckingNickname} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <SettingTel tel={tel} email={email} checkingTel={checkingTel}
+                  onTelChange={handleTel} changeCheckingTel={handleCheckingTel} />
+              </Grid>
+              <Grid item xs={15}>
 
+              </Grid>
             </Grid>
-          </Grid>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button variant="contained" onClick={handleSubmit} style={{ color: 'white' }}
-              sx={{ m: '1em', width: '20%', p: 0, backgroundColor: 'rgb(54, 11, 92)', '&:hover, &:visited': { backgroundColor: 'rgb(54, 30, 150)' } }}>
-              완료
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button variant="contained" onClick={handleSubmit} style={{ color: 'white' }}
+                sx={{ m: '1em', width: '20%', p: 0, backgroundColor: 'rgb(54, 11, 92)', '&:hover, &:visited': { backgroundColor: 'rgb(54, 30, 150)' } }}>
+                완료
+              </Button>
 
-            <Button variant="contained" onClick={goBack}
-              style={{ color: 'white' }}
-              sx={{ m: '1em', width: '20%', p: 0, backgroundColor: '#bbbbbb', '&:hover': { backgroundColor: 'rgb(20, 20, 20)' } }}>
-              취소
-            </Button>
-          </Box>
-        </CardContent>
-      </Card>
+              <Button variant="contained" onClick={goBack}
+                style={{ color: 'white' }}
+                sx={{ m: '1em', width: '20%', p: 0, backgroundColor: 'coral', '&:hover': { backgroundColor: 'rgb(20, 20, 20)' } }}>
+                홈으로
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
+      </> :
+        <></>}
     </>
   );
 }

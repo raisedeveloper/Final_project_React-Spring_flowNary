@@ -104,7 +104,7 @@ function ShowAlbumList() {
               }}
             >
               <Carousel
-                autoPlay={false}
+                autoPlay={true}
                 index={currentIndex}
                 onChange={(index) => setCurrentIndex(index)}
                 navButtonsProps={{
