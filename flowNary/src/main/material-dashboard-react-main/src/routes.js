@@ -21,6 +21,9 @@ import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
 import { FlashOnOutlined } from '@mui/icons-material';
 import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
+import Statistics from 'layouts/admin/statistics/statisticsIndex';
+import UserList from 'layouts/admin/userList/userListIndex';
+import BoardList from 'layouts/admin/boardList/boardListIndex';
 
 const createRoutes = (isLoggedIn) => [
   {
