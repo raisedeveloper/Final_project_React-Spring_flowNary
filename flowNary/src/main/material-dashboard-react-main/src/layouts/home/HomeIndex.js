@@ -28,6 +28,7 @@ import { getBoardList, getBoardListCount } from "api/axiosGet";
 import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
+import AppTasks from '../admin/statistics/app-tasks';
 
 export default function Home() {
   const queryClient = useQueryClient()
@@ -39,6 +40,7 @@ export default function Home() {
       [bid]: !prevExpanded[bid]
     }));
   };
+
 
   const weatherDescKo = {
     201: '가벼운 비를 동반한 천둥구름',
@@ -133,6 +135,7 @@ export default function Home() {
       const res = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?lang=kr&lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
       );
+      console.log(res);
       // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
       const weatherId = res.data.weather[0].id;
       const weatherKo = weatherDescKo[weatherId];
@@ -148,6 +151,7 @@ export default function Home() {
         temp: temp,
         links: weatherIconAdrs,
       });
+      console.log(weather);
 
     } catch (err) {
       console.error(err);
@@ -251,6 +255,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    console.log("useeffect!")
     setTimeout(() => {
       const observer = new IntersectionObserver(callback, {
         rootMargin: '0px 0px 0px 0px',
@@ -258,6 +263,7 @@ export default function Home() {
       })
 
       const observerTarget = document.getElementById("observe"); // id가 observe인 태그를 사용
+      console.log(observerTarget);
       queryClient.refetchQueries(['boardList']);
       if (observerTarget) {
         observer.observe(observerTarget);
@@ -295,9 +301,6 @@ export default function Home() {
   if (isLoading) {
     return (<div>로딩 중...</div>)
   }
-
-  // 최신순으로 정렬
-  const sortedDataList = dataList.data?.slice().sort((a, b) => new Date(b.modTime) - new Date(a.modTime));
 
   return (
     <DashboardLayout>
@@ -337,7 +340,7 @@ export default function Home() {
                             />
 
                             <MDBox padding="1rem">
-                              {data.image ? 
+                              {data.image ?
                                 <MDBox
                                   variant="gradient"
                                   borderRadius="lg"
@@ -368,32 +371,32 @@ export default function Home() {
                                 :
                                 <MDBox>
                                   <MDBox
-                                  variant="gradient"
-                                  borderRadius="lg"
-                                  py={2}
-                                  pr={0.5}
-                                  sx={{
-                                    position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                                    height: "12.5rem",
-                                    overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                                    transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                    '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                      transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                      transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                    },
-                                    '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                      boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                                    }
-                                  }}
-                                >
-                                  <button onClick={handleOpen.bind(null, data.bid)}>
-                                    <img
-                                      src="images/LightLogo.png"
-                                      alt="Paella dish"
-                                      style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                    />
-                                  </button>
-                                </MDBox>
+                                    variant="gradient"
+                                    borderRadius="lg"
+                                    py={2}
+                                    pr={0.5}
+                                    sx={{
+                                      position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                                      height: "12.5rem",
+                                      overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
+                                      transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                                      '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
+                                        transform: 'scale(1.05)', // 이미지를 확대합니다.
+                                        transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                                      },
+                                      '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
+                                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                                      }
+                                    }}
+                                  >
+                                    <button onClick={handleOpen.bind(null, data.bid)}>
+                                      <img
+                                        src="images/LightLogo.png"
+                                        alt="Paella dish"
+                                        style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                      />
+                                    </button>
+                                  </MDBox>
                                 </MDBox>
                               }
                               <MDBox pt={3} pb={1} px={1}>
@@ -401,17 +404,12 @@ export default function Home() {
                                   <MDTypography variant="h6" textTransform="capitalize">
                                     {data.title}
                                   </MDTypography>
-                                  {expanded[data.bid] ? (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                                      {data.bContents}
-                                    </MDTypography>
-                                  ) : (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                      {data.bContents}
-                                    </MDTypography>
-                                  )}
+                                  <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                    {data.bContents}
+                                  </MDTypography>
                                 </button>
-                                <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '접기' : '더 보기'}</Button>
+                                {/* 더보기 클릭 - 모달창 팝업 */}
+                                <Button  sx={{ pl:'8rem'}} style={{ color: 'gray' }} onClick={handleOpen.bind(null, data.bid)}>더보기</Button>
                                 <Divider />
                                 <MDBox display="flex" alignItems="center">
                                   <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
@@ -434,7 +432,7 @@ export default function Home() {
             </Stack>
 
             {/* 날씨 정보 */}
-            <Stack direction="column" sx={{ flex: 0.3, display:{ lg:'flex', xs:'none'} }}>
+            <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
                 <MDBox>
                   <Card sx={{ height: "100%" }}>
@@ -452,11 +450,21 @@ export default function Home() {
                   </Card>
                 </MDBox>
                 <br />
-                <TodoList />
+                <AppTasks
+                  title="Tasks"
+                  list={[
+                    { id: '1', name: 'Create FireStone Logo' },
+                    { id: '2', name: 'Add SCSS and JS files if required' },
+                    { id: '3', name: 'Stakeholder Meeting' },
+                    { id: '4', name: 'Scoping & Estimations' },
+                    { id: '5', name: 'Sprint Showcase' },
+                  ]}
+                />
               </MDBox>
             </Stack>
           </Stack>
         </MDBox >
+
       </MDBox >
       {/* <div ref={observerRef}></div> */}
       <div id="observe" ref={observerRef} style={{ display: 'flex', height: '10px' }}></div>
@@ -468,5 +476,4 @@ export default function Home() {
       <Footer />
     </DashboardLayout >
   );
-
 }
