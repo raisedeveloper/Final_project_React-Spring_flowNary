@@ -31,8 +31,8 @@ public class TodoServiceImpl implements TodoService {
 	}
 
 	@Override
-	public void insertTodo(Todo todo) {
-		tDao.insertTodo(todo);
+	public void insertTodo(int uid, String contents) {
+		tDao.insertTodo(uid, contents);
 	}
 
 	@Override

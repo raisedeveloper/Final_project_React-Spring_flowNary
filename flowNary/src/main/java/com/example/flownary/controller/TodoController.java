@@ -53,6 +53,11 @@ public class TodoController {
 		tSvc.updateTodo(dto.getTid(), dto.getContents(), dto.getPri());
 	}
 	
+	@PostMapping("/insert")
+	public void todoinsert(@RequestBody todoDto dto) {
+		tSvc.insertTodo(dto.getUid(), dto.getContents());
+	}
+	
 	@PostMapping("/delete")
 	public void tododelete(@RequestBody JSONObject tid) {
 		System.out.println("tid" + Integer.parseInt(tid.get("tid").toString()));

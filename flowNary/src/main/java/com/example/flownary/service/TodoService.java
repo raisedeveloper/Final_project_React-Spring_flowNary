@@ -11,7 +11,7 @@ public interface TodoService {
 	
 	int getTodoHighest(int uid);
 	
-	void insertTodo(Todo todo);
+	void insertTodo(int uid, String contents);
 	
 	void updateTodo(int tid, String contents, int pri);
 	
