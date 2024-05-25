@@ -162,6 +162,33 @@ const createRoutes = (isLoggedIn) => [
     component: <UpdateIndex />,
     visible: false,
   },
+  {
+    type: "collapse",
+    name: "Statistics",
+    key: "statistics",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/statistics",
+    component: <Statistics />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "UserList",
+    key: "userList",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/userList",
+    component: <UserList />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "BoardList",
+    key: "boardList",
+    icon: <Icon fontSize="xx-large">diversity_3</Icon>,
+    route: "/boardList",
+    component: <BoardList />,
+    visible: true,
+  },
 ];
 
 export default createRoutes;
