@@ -118,22 +118,22 @@ function TaskItem({ task, checked, onChange }) {
       >
         <MenuItem onClick={handleMarkComplete}>
           <Iconify icon="eva:checkmark-circle-2-fill" sx={{ mr: 2 }} />
-          Mark Complete
+          완료
         </MenuItem>
 
         <MenuItem onClick={handleEdit}>
           <Iconify icon="solar:pen-bold" sx={{ mr: 2 }} />
-          Edit
+          수정
         </MenuItem>
 
         <MenuItem onClick={handleShare}>
           <Iconify icon="solar:share-bold" sx={{ mr: 2 }} />
-          Share
+          공유
         </MenuItem>
 
         <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="solar:trash-bin-trash-bold" sx={{ mr: 2 }} />
-          Delete
+          삭제
         </MenuItem>
       </Popover>
     </>

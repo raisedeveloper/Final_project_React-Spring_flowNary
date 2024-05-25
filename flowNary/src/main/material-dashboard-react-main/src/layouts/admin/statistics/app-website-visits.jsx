@@ -42,7 +42,9 @@ export default function AppWebsiteVisits({ title, subheader, chart, ...other }) 
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} />
+            <CardHeader
+        titleTypographyProps={{ style: { fontSize: 'large', fontWeight:'bold' } }}
+        subheaderTypographyProps={{ style: { fontSize: 'small' } }} title={title} subheader={subheader} />
 
       <Box sx={{ p: 3, pb: 1 }}>
         <Chart
