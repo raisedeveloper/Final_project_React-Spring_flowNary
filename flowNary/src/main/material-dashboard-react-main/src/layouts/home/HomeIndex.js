@@ -28,6 +28,7 @@ import { getBoardList, getBoardListCount } from "api/axiosGet";
 import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
+import AppTasks from '../admin/statistics/app-tasks';
 
 export default function Home() {
   const queryClient = useQueryClient()
@@ -138,6 +139,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    console.log("useeffect!")
     setTimeout(() => {
       const observer = new IntersectionObserver(callback, {
         rootMargin: '0px 0px 0px 0px',
@@ -285,17 +287,12 @@ export default function Home() {
                                   <MDTypography variant="h6" textTransform="capitalize">
                                     {data.title}
                                   </MDTypography>
-                                  {expanded[data.bid] ? (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                                      {data.bContents}
-                                    </MDTypography>
-                                  ) : (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                      {data.bContents}
-                                    </MDTypography>
-                                  )}
+                                  <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                    {data.bContents}
+                                  </MDTypography>
                                 </button>
-                                <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '...' : '...'}</Button>
+                                {/* 더보기 클릭 - 모달창 팝업 */}
+                                <Button sx={{ pl: '8rem' }} style={{ color: 'gray' }} onClick={handleOpen.bind(null, data.bid)}>더보기</Button>
                                 <Divider />
                                 <MDBox display="flex" alignItems="center">
                                   <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
@@ -317,9 +314,20 @@ export default function Home() {
 
             </Stack>
 
-            {/* 할일, 정보 */}
+            {/* 날씨 정보 */}
             <Stack direction="column" sx={{ flex: 0.5 }}>
-                <TodoList />
+              <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
+                <AppTasks
+                  title="Tasks"
+                  list={[
+                    { id: '1', name: 'Create FireStone Logo' },
+                    { id: '2', name: 'Add SCSS and JS files if required' },
+                    { id: '3', name: 'Stakeholder Meeting' },
+                    { id: '4', name: 'Scoping & Estimations' },
+                    { id: '5', name: 'Sprint Showcase' },
+                  ]}
+                />
+              </MDBox>
             </Stack>
           </Stack>
         </MDBox >
