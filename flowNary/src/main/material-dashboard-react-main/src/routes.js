@@ -21,6 +21,9 @@ import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
 import { FlashOnOutlined } from '@mui/icons-material';
 import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
+import Statistics from 'layouts/admin/statistics/statisticsIndex';
+import UserList from 'layouts/admin/userList/userListIndex';
+import BoardList from 'layouts/admin/boardList/boardListIndex';
 
 const createRoutes = (isLoggedIn) => [
   {
@@ -121,6 +124,14 @@ const createRoutes = (isLoggedIn) => [
     component: <Settings />,
   },
   {
+    name: "TEAM",
+    key: "team",
+    icon: <Icon fontSize="large">connect_without_contact</Icon>,
+    route: "/team",
+    component: <BoardList />,
+    visible: true,
+  },
+  {
     type: "collapse",
     name: "로그인",
     key: "sign-in",
@@ -128,15 +139,6 @@ const createRoutes = (isLoggedIn) => [
     route: "/authentication/sign-in",
     component: <SignIn />,
     visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
-  },
-  {
-    type: "collapse",
-    name: "로그아웃",
-    key: "sign-out",
-    icon: <Icon fontSize="xx-large">logout</Icon>,
-    route: "/logout",
-    component: <Logout />,
-    visible: isLoggedIn, // 로그인되었을 때만 보임
   },
   {
     type: "collapse",
@@ -161,6 +163,42 @@ const createRoutes = (isLoggedIn) => [
     route: "/home/Update",
     component: <UpdateIndex />,
     visible: false,
+  },
+  {
+    type: "collapse",
+    name: "통계",
+    key: "statistics",
+    icon: <Icon fontSize="xx-large">donut_small</Icon>,
+    route: "/statistics",
+    component: <Statistics />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "사용자 목록",
+    key: "userList",
+    icon: <Icon fontSize="xx-large">manage_accounts</Icon>,
+    route: "/userList",
+    component: <UserList />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "게시물 목록",
+    key: "boardList",
+    icon: <Icon fontSize="xx-large">manage_search</Icon>,
+    route: "/boardList",
+    component: <BoardList />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "로그아웃",
+    key: "sign-out",
+    icon: <Icon fontSize="xx-large">logout</Icon>,
+    route: "/logout",
+    component: <Logout />,
+    visible: isLoggedIn, // 로그인되었을 때만 보임
   },
 ];
 

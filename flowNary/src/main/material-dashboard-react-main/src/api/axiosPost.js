@@ -18,7 +18,7 @@ export const userRegister = async (sendData: {
     nickname: string,
     tel: string
 }) => {
-    
+
     console.log("데이터" + sendData.uname + sendData.nickname + sendData.email);
     return axios({
         method: "POST",
@@ -111,7 +111,7 @@ export const insertBoard = async (sendData: string) => {
  * @returns 
  */
 export const updateBoard = async (sendData: string) => {
-    console.log('보드'+sendData);
+    console.log('보드' + sendData);
     return axios({
         method: "POST",
         url: '/board/update',
@@ -298,6 +298,39 @@ export const deleteDm = async (did: number) => {
         did: did,
     }).catch(error => {
         console.log('axiospost.js: deleteChat error!');
+        console.log(error);
+    });
+}
+
+export const updateTodo = async (sendData: {
+    tid: number,
+    uid: Number,
+    contents: string,
+    pri: Number,
+}) => {
+    return axios.post('/todo/update', {
+        sendData
+    }).catch(error => {
+        console.log('axiospost.js: updateTodo error!');
+        console.log(error);
+    });
+}
+export const insertTodo = async (sendData:{
+    tid: Number, uid:Number, contents:String, pri:Number
+}) => {
+    return axios.post('/todo/insert', {
+        sendData
+    }).catch(error => {
+        console.log('axiospost.js: insertTodo error!');
+        console.log(error);
+    });
+}
+
+export const deleteTodo = async (tid: number) => {
+    return axios.post('/todo/delete', {
+        tid: tid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteTodo error!');
         console.log(error);
     });
 }

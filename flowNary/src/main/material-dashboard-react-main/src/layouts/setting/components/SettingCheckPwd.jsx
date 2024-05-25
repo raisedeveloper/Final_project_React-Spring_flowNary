@@ -1,8 +1,9 @@
-import { Box, Button, Grid, Icon, IconButton, InputAdornment, Modal, TextField } from "@mui/material";
+import { Box, Button, Grid, Icon, IconButton, InputAdornment, Modal, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { GetWithExpiry } from "api/LocalStorage";
 import { useGetUser } from "api/customHook";
 import axios from "axios";
+import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { GoogleAuthProvider, getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
@@ -112,7 +113,7 @@ export default function SettingModal() {
           }
         });
       }
-      navigate('/setting');
+      navigate('/settings');
     } catch (error) {
       console.error("구글 로그인 오류:", error);
     }
@@ -123,11 +124,12 @@ export default function SettingModal() {
       <DashboardLayout>
         <DashboardNavbar />
         {user && user.provider === 0 ?
-          <Box sx={{ mx: '19rem', mt: '15rem' }}>
-            <h5> 비밀번호 입력 </h5>
+          <Box sx={{ mx: '19rem', mt: '12rem' }}>
             {/* 비밀번호 입력 */}
             <TextField
               fullWidth
+              label='비밀번호 입력 후 설정할 수 있습니다'
+              required
               variant="standard"
               type={showPassword ? 'text' : 'password'}
               sx={{ width: '100%' }}
@@ -148,12 +150,12 @@ export default function SettingModal() {
             />
 
             {/* 하단 버튼 영역 */}
-            <Grid container sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              <Grid item xs={8} lg={6} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid container sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Grid item lg={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
                   variant="contained"
                   onClick={confirmPWd}
-                  style={{ margin: '1em', width: '35%', backgroundColor: 'rgb(54, 11, 92)', color: 'white', fontSize: 'small' }}
+                  style={{ margin: '1em', width: '30%', backgroundColor: 'rgb(54, 11, 92)', color: 'white', fontSize: 'small' }}
                 >
                   완료
                 </Button>
@@ -161,7 +163,7 @@ export default function SettingModal() {
                 <Button
                   variant="contained"
                   onClick={handleClose}
-                  style={{ margin: '1em', width: '35%', backgroundColor: '#bbbbbb', color: 'white', fontSize: 'small' }}
+                  style={{ margin: '1em', width: '30%', backgroundColor: '#bbbbbb', color: 'white', fontSize: 'small' }}
                 >
                   취소
                 </Button>
@@ -169,15 +171,17 @@ export default function SettingModal() {
             </Grid>
           </Box>
           :
-          <Box sx={{ marginTop: '10px' }}>
-            <Link to="#" onClick={loginWithGoogle} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-              <img
-                style={{ paddingRight: '5px', margin: '-5px', width: '1.55em' }}
-                src="/img/icon/Google.png"
-                alt="Google"
-              />
-              <span style={{ fontSize: '0.8em' }}>로그인</span>
-            </Link>
+          <Box sx={{ border:'1px solid white', backgroundColor:'rgb(236, 241, 253)', p:'3rem', m:'10rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Box>
+              <Link to="#"  onClick={loginWithGoogle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+                <img
+                  style={{ paddingRight: '5px', margin: '-5px', width: '3.2em' }}
+                  src="/images/icons/Google.png"
+                  alt="Google"
+                />
+              </Link>
+              <Typography style={{ fontSize: '1em', marginTop:'3rem'}}> 구글 로그인 후 설정 가능합니다.</Typography>
+            </Box>
           </Box>
         }
       </DashboardLayout>

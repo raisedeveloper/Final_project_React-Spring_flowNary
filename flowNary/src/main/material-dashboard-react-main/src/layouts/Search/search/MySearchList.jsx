@@ -1,6 +1,6 @@
 // 기본
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Avatar, Box, Button, Card, CardHeader, Chip, Divider, Grid, Icon, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, CardHeader, Chip, Dialog, Divider, Grid, Icon, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
 
 // 아이콘
 import ImageIcon from '@mui/icons-material/Image';
@@ -206,6 +206,10 @@ export default function MySearchList() {
   const navigate = useNavigate();
   const [searchtext, setSearchtext] = useState(sessionStorage.getItem("search"));
 
+  useEffect(() => {
+    setSearchtext(query);
+  },[query])
+
   const handleSearchs = () => {
     if (searchtext === '' || searchtext === null) {
       wrong('검색어를 입력하십시오');
@@ -385,9 +389,9 @@ export default function MySearchList() {
         </Grid>
       </Box>
       <div id="observe" style={{ display: 'flex', height: '10px' }}></div>
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Dialog open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
-      </Modal>
+      </Dialog>
       <Footer />
     </div>
   );

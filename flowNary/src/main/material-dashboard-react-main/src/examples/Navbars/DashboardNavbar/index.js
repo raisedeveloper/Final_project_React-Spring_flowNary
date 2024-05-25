@@ -37,13 +37,16 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
-import { Avatar, Box, Button, Grid, MenuItem, Modal, TextField } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, Grid, MenuItem, Modal, Popover, Stack, TextField, Typography } from "@mui/material";
 import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
 
 // api 컴포넌트
 import { GetWithExpiry } from "api/LocalStorage";
 import { getUser } from "api/axiosGet";
 import { wrong } from "api/alert";
+import MDTypography from "components/MDTypography";
+import axios from "axios";
+import { SetWithExpiry } from "api/LocalStorage";
 
 // 헤더 부분
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -56,6 +59,125 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [profileMenu, setProfileMenu] = useState(null); // 프로필 메뉴 상태 추가
   const goSetting = () => navigate('/profile/settings');
   const goMypage = () => navigate('/mypage')
+  const weatherDescKo = {
+    201: '가벼운 비를 동반한 천둥구름',
+    200: '비를 동반한 천둥구름',
+    202: '폭우를 동반한 천둥구름',
+    210: '약한 천둥구름',
+    211: '천둥구름',
+    212: '강한 천둥구름',
+    221: '불규칙적 천둥구름',
+    230: '약한 연무를 동반한 천둥구름',
+    231: '연무를 동반한 천둥구름',
+    232: '강한 안개비를 동반한 천둥구름',
+    300: '가벼운 안개비',
+    301: '안개비',
+    302: '강한 안개비',
+    310: '가벼운 적은비',
+    311: '적은비',
+    312: '강한 적은비',
+    313: '소나기와 안개비',
+    314: '강한 소나기와 안개비',
+    321: '소나기',
+    500: '악한 비',
+    501: '중간 비',
+    502: '강한 비',
+    503: '매우 강한 비',
+    504: '극심한 비',
+    511: '우박',
+    520: '약한 소나기 비',
+    521: '소나기 비',
+    522: '강한 소나기 비',
+    531: '불규칙적 소나기 비',
+    600: '가벼운 눈',
+    601: '눈',
+    602: '강한 눈',
+    611: '진눈깨비',
+    612: '소나기 진눈깨비',
+    615: '약한 비와 눈',
+    616: '비와 눈',
+    620: '약한 소나기 눈',
+    621: '소나기 눈',
+    622: '강한 소나기 눈',
+    701: '박무',
+    711: '연기',
+    721: '연무',
+    731: '모래 먼지',
+    741: '안개',
+    751: '모래',
+    761: '먼지',
+    762: '화산재',
+    771: '돌풍',
+    781: '토네이도',
+    800: '구름 한 점 없는 맑은 하늘',
+    801: '약간의 구름이 낀 하늘',
+    802: '드문드문 구름이 낀 하늘',
+    803: '구름이 거의 없는 하늘',
+    804: '구름으로 뒤덮인 흐린 하늘',
+    900: '토네이도',
+    901: '태풍',
+    902: '허리케인',
+    903: '한랭',
+    904: '고온',
+    905: '바람부는',
+    906: '우박',
+    951: '바람이 거의 없는',
+    952: '약한 바람',
+    953: '부드러운 바람',
+    954: '중간 세기 바람',
+    955: '신선한 바람',
+    956: '센 바람',
+    957: '돌풍에 가까운 센 바람',
+    958: '돌풍',
+    959: '심각한 돌풍',
+    960: '폭풍',
+    961: '강한 폭풍',
+    962: '허리케인'
+  };
+
+  const [weather, setWeather] = useState('');
+
+  // 위치 뽑아내기
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      let lat = position.coords.latitude;
+      let lon = position.coords.longitude;
+      getWeatherByCurrentLocation(37.30101111, 127.0122222);
+    });
+  };
+
+  // API 가져오기
+  const getWeatherByCurrentLocation = async (lat, lon) => {
+    try {
+      const res = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lang=kr&lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
+      );
+      console.log(res);
+      // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
+      const weatherId = res.data.weather[0].id;
+      const weatherKo = weatherDescKo[weatherId];
+      // 날씨 아이콘 가져오기
+      const weatherIcon = res.data.weather[0].icon;
+      const weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+      // 소수점 버리기
+      const temp = Math.round(res.data.main.temp);
+      const cityName = res.data.name;
+      setWeather({
+        description: weatherKo,
+        name: cityName,
+        temp: temp,
+        links: weatherIconAdrs,
+      });
+      console.log(weather);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   // 유저 불러오기
   const uid = parseInt(GetWithExpiry("uid"));
@@ -63,6 +185,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const nickname = GetWithExpiry("nickname");
   const uname = GetWithExpiry("uname");
   const profile = GetWithExpiry("profile");
+
 
 
   useEffect(() => {
@@ -165,19 +288,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
   );
   const [searchtext, setSearchtext] = useState('');
 
-
   const handleSearch = () => {
     if (searchtext === '' || searchtext === null) {
       wrong('검색어를 입력하십시오');
     }
     else {
       sessionStorage.setItem("search", searchtext);
-      if (location.pathname !== 'search') {
-        navigate('/search');
-      }
-      else {
-        window.location.replace('/search');
-      }
+      navigate('/search');
+      setSearchtext('');
     }
   }
 
@@ -229,6 +347,19 @@ function DashboardNavbar({ absolute, light, isMini }) {
     }
   }
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -242,6 +373,59 @@ function DashboardNavbar({ absolute, light, isMini }) {
         {/* 헤더 박스 및 계정, 설정, 알림 아이콘 모양 */}
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
+            <Stack direction="column" sx={{ flex: 0.5 }}>
+              <MDBox mt={1} mr={2} sx={{ position: 'sticky', top: "8%" }}>
+                <Box aria-owns={open ? 'mouse-over-popover' : undefined}
+                  aria-haspopup="true"
+                  onMouseEnter={handlePopoverOpen}
+                  onMouseLeave={handlePopoverClose}>
+                  <Grid container
+                    sx={{ display: 'flex', justifyContent: 'center', mr: 5 }}>
+                    <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
+                      <Typography sx={{ fontSize: 'small', fontWeight: 'bold' }}>{weather.temp}℃ </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Avatar sx={{ width: 50, height: 50 }} src={weather.links} alt="날씨 아이콘" />
+                    </Grid>
+                  </Grid>
+                </Box>
+                {/* 날씨 정보 */}
+                <Popover
+                  id="mouse-over-popover"
+                  sx={{
+                    pointerEvents: 'none',
+                  }}
+                  open={open}
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  onClose={handlePopoverClose}
+                  disableRestoreFocus
+                >
+                  <MDBox>
+                    <Card sx={{ height: "70%" }}>
+                      <MDBox pt={3} px={3}>
+                        <MDTypography variant="h6" fontWeight="medium">
+                          날씨 정보
+                        </MDTypography>
+                        <Avatar sx={{ width: 100, height: 100 }} src={weather.links} alt="날씨 아이콘" />
+                        <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
+                          {weather.name}:  {weather.temp}℃  {/* user의 location으로 따오기*/}
+                          <br />
+                          {weather.description}
+                        </CardContent>
+                      </MDBox>
+                    </Card>
+                  </MDBox>
+                </Popover>
+              </MDBox>
+            </Stack>
             <MDBox color={light ? "white" : "inherit"} sx={{ display: { lg: 'flex', xs: 'none' } }}>
               <TextField
                 id="outlined-multiline-flexible"
@@ -287,7 +471,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
           </MDBox>
         )}
       </Toolbar>
-    </AppBar>
+    </AppBar >
   );
 }
 
