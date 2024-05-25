@@ -36,8 +36,8 @@ public class TodoServiceImpl implements TodoService {
 	}
 
 	@Override
-	public void updateTodo(String contents, int tid) {
-		tDao.updateTodo(contents, tid);
+	public void updateTodo(int tid, String contents, int pri) {
+		tDao.updateTodo(tid, contents, pri);
 	}
 
 	@Override

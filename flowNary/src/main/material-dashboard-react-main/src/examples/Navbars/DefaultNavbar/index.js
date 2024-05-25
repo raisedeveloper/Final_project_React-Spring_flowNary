@@ -39,6 +39,7 @@ import breakpoints from "assets/theme/base/breakpoints";
 
 // Material Dashboard 2 React context
 import { useMaterialUIController } from "context";
+import axios from "axios";
 
 function DefaultNavbar({ transparent, light, action }) {
   const [controller] = useMaterialUIController();
@@ -50,6 +51,7 @@ function DefaultNavbar({ transparent, light, action }) {
   const openMobileNavbar = ({ currentTarget }) => setMobileNavbar(currentTarget.parentNode);
   const closeMobileNavbar = () => setMobileNavbar(false);
 
+ 
   useEffect(() => {
     // A function that sets the display state for the DefaultNavbarMobile.
     function displayMobileNavbar() {
@@ -129,6 +131,7 @@ function DefaultNavbar({ transparent, light, action }) {
             light={light}
           />
         </MDBox>
+          
         {action &&
           (action.type === "internal" ? (
             <MDBox display={{ xs: "none", lg: "inline-block" }}>

@@ -12,7 +12,7 @@ import SettingBirth from "layouts/setting/components/SettingBirth";
 import SettingNickname from "layouts/setting/components/SettingNickname";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Button, Grid, TextField, styled } from "@mui/material";
+import { Button, Divider, Grid, Icon, TextField, Typography, styled } from "@mui/material";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { wrong, correct } from "api/alert";
@@ -419,10 +419,10 @@ export default function Register({ closeModal }) {
                 />
 
             </div>
-
-            <input type="uname" name='uname' placeholder="이름을 입력하세요"
-                className="commonInputStyle_Modal" onKeyUp={handleKeyPress} onChange={handeluname} />
-
+            <div className="input-container" >
+                <input type="uname" name='uname' placeholder="이름을 입력하세요"
+                    className="commonInputStyle_Modal" onKeyUp={handleKeyPress} onChange={handeluname} />
+            </div>
             <div className="input-container" >
                 <Grid container spacing={1} style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Grid item xs={9.5}>
@@ -439,7 +439,7 @@ export default function Register({ closeModal }) {
                     </Grid>
                     <Grid item xs={0.7}>
                         <Button onClick={checkNickname} variant="contained" sx={{
-                            backgroundColor: 'rgb(54, 11, 92)', p: 0, mt: 1.2,
+                            backgroundColor: 'rgb(98, 0, 234)', p: 0, mt: 0.9,
                             '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
                         }} style={{ color: 'white' }} >확인</Button>
                     </Grid>
@@ -447,7 +447,7 @@ export default function Register({ closeModal }) {
                 </Grid>
             </div>
 
-            <div className="input-container" >
+            <div style={{marginTop:-1}} className="input-container" >
                 <Grid container spacing={1} style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Grid item xs={9.5}>
                         <LightTooltip title="' - ' 없이 숫자만 입력하세요."  >
@@ -464,15 +464,18 @@ export default function Register({ closeModal }) {
                     </Grid>
                     <Grid item xs={0.7}>
                         <Button onClick={checkTel} variant="contained" sx={{
-                            backgroundColor: 'rgb(54, 11, 92)', p: 0, mt: 1.2,
+                            backgroundColor: 'rgb(98, 0, 234)', p: 0, mt: 1,
                             '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
                         }} style={{ color: 'white' }} >확인</Button>
                     </Grid>
-                    <Grid item xs={1.8}><div></div></Grid>
+                    <Grid item xs={1.8}>
+                    </Grid>
                 </Grid>
-                {verify === 1 ? <div className="input-container">
-                    <SmsLogin handleKeyPress={handleKeyPress} tel={tel} setCheckingTel={setCheckingTel} />
-                </div> : <></>}
+                <div>
+                    {verify === 1 ?
+                        <SmsLogin handleKeyPress={handleKeyPress} tel={tel} setCheckingTel={setCheckingTel} />
+                        : <></>}
+                </div>
 
             </div>
 
@@ -495,7 +498,7 @@ export default function Register({ closeModal }) {
                             <Button
                                 onClick={checkBirth}
                                 variant="contained" sx={{
-                                    backgroundColor: 'rgb(54, 11, 92)', p: 0, mt: 1.2,
+                                    backgroundColor: 'rgb(98, 0, 234)', p: 0, mt: 1.2,
                                     '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
                                 }} style={{ color: 'white' }} >확인</Button>
                         </Grid>
@@ -503,12 +506,12 @@ export default function Register({ closeModal }) {
                     </Grid>
                 </LocalizationProvider>
             </div>
-            <button className="fill_Modal" onClick={handleSubmit}>가입하기</button>
-            <p>또는</p>
-            <button onClick={RegisterWithGoogle} className="google-login-button">
-                <img src="/images/icons/Google.png" alt="Google" />
-                Sign Up with Google
-            </button>
+            <Button sx={{
+                backgroundColor: 'rgb(98, 0, 234)', p: 0, mt: 1.2,
+                '&:hover': { backgroundColor: 'rgb(54, 30, 150)' }
+            }} onClick={handleSubmit} style={{ color: 'white', width: '100%' }}>가입하기</Button>
+            <Divider style={{ opacity: 1, border: 2 }} />
+            <Icon onClick={closeModal} className="close-modal-button">close</Icon>
         </div>
     );
 }

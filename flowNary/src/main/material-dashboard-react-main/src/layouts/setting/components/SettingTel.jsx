@@ -24,11 +24,11 @@ const LightTooltip = styled(({ className, ...props }) => (
 }));
 
 export default function SettingTel(props) {
-  const [tel, setTel] = useState('');
+  const [tel, setTel] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (tel === '') {
+      if (tel === null) {
         setTel(props.tel);
         clearInterval(interval);
       }
@@ -106,7 +106,7 @@ export default function SettingTel(props) {
               label="전화번호"
               variant="standard"
               name="tel"
-              value={tel || ''}
+              value={tel || null}
               onChange={handleTel}
               sx={{ mt: 2, width: '100%' }}
             />

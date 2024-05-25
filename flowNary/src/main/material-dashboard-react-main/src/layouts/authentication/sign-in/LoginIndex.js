@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Card } from "@mui/material";
+import { Button, Card, Typography } from "@mui/material";
 import { SetWithExpiry } from "../../../api/LocalStorage";
 
 // firebase 연결
@@ -73,6 +73,7 @@ export default function Login() {
                 userRegister(sendData);
 
                 // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
+                SetWithExpiry("uid", response.data.uid, 180);
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
                 SetWithExpiry("nickname", response.data.nickname, 180);
@@ -96,7 +97,7 @@ export default function Login() {
                     }
                 });
                 console.log("구글 회원가입 성공!" + response.data);
-                
+
             } else {
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
@@ -222,19 +223,19 @@ export default function Login() {
                         onChange={handleChange} onKeyUp={handleKeyPress} />
                     <br />
                     <input type="password" name='password' placeholder="비밀번호" className="commonInputStyle"
-                        onChange={handleChange} onKeyUp={handleKeyPress} />
+                        onChange={handleChange} onKeyUp={handleKeyPress} style={{marginBottom:'1rem'}}/>
                     <br />
-                    <button className="fill" onClick={handleSubmit} >로그인</button>
-                    <p style={{
-                        marginTop: '3px', marginBottom: '10px',
+                    <button className="fill" onClick={handleSubmit}><img style={{ paddingRight: '10px', margin: '-5px', width: '1.5em' }} src="/images/favicon.png" alt="f" />로그인</button>
+                    <Typography style={{
+                        marginTop: '10px', marginBottom: '8px',fontSize:'small',
                         color: theme === 'light' ? '#dca3e7' : '#ffffff'
-                    }}>또는</p>
+                    }}>또는</Typography>
                     <Link to="#" onClick={loginWithGoogle} className={`custom-button ${theme}`}>
                         <img style={{ paddingRight: '5px', margin: '-5px', width: '1.55em' }} src="/images/icons/Google.png" alt="Google" />
                         <span>       로그인</span>
                     </Link>
                     <br /><br />
-                    <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</p>
+                    <Typography style={{ fontSize:'small', marginBottom: '1rem', color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</Typography>
                     <div>
                         <Link to="#" onClick={openModal} className={`custom-button ${theme}`}>가입하기</Link>
                     </div>
@@ -254,16 +255,15 @@ export default function Login() {
                     <div className={`welcome-message-Modal`}>
                         <img src={logoImage_Modal} alt='LOGO'
                             style={{
-                                width: '10vw',
-                                height: '10vh',
-                                marginTop: '-3rem',
+                                width: '10rem',
+                                height: '3em',
                                 marginBottom: '-1rem'
                             }} />
+                        
                     </div>
-                    <h2>환영합니다!</h2>
-                    <p style={{ fontSize: '16px' }}>아래 가입양식에 따라 회원가입을 진행해주세요</p>
+                    <Typography sx={{ mb: 2, mt: 1, fontSize: 'large' }}>환영합니다!</Typography>
+                    <Typography style={{ fontSize: 'small' }}>아래 가입양식에 따라 회원가입을 진행해주세요</Typography>
                     <Register closeModal={closeModal} /> {/* closeModal 전달 */}
-                    <button onClick={closeModal} className="close-modal-button">닫기</button>
                 </div>
             </Modal>
         </div>

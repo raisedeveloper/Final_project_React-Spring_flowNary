@@ -13,7 +13,7 @@ public interface TodoService {
 	
 	void insertTodo(Todo todo);
 	
-	void updateTodo(String contents, int tid);
+	void updateTodo(int tid, String contents, int pri);
 	
 	void updateTodoPri(int pri, int tid);
 	

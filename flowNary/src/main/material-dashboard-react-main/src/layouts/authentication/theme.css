@@ -219,7 +219,7 @@ div {
     border: 1px solid rgba(128, 128, 128, 0);
     background: transparent;
     display: flex;
-    width: 100%;
+    width: 80%;
     height: 100%;
     flex-direction: column;
     align-items: center;
@@ -230,13 +230,13 @@ div {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 90vh;
+    height: 45vh;
 }
 
 .commonInputStyle_Modal {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
+    margin: 7px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -283,12 +283,12 @@ div {
 }
 
 .close-modal-button {
-    margin-bottom: 20px;
-    padding: 0.5rem;
+    margin-bottom: 1rem;
     background: #ccc;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    width: 20%;
 }
 
 .close-modal-button:hover {

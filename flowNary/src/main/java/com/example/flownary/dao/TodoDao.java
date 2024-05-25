@@ -28,8 +28,8 @@ public interface TodoDao {
 	@Insert("insert into todo values(default, #{uid}, #{contents}, default)")
 	void insertTodo(Todo todo);
 	
-	@Update("update todo set contents=#{contents} where tid=#{tid}")
-	void updateTodo(String contents, int tid);
+	@Update("update todo set contents=#{contents}, pri=#{pri} where tid=#{tid}")
+	void updateTodo(int tid, String contents, int pri);
 	
 	@Update("update todo set pri=#{pri} where tid=#{tid}")
 	void updateTodoPri(int pri, int tid);

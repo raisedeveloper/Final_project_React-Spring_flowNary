@@ -17,7 +17,7 @@ const firebaseConfig = {
 
 // Firebase 앱 초기화 (이미 초기화된 경우 재사용)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+export const auth = getAuth(app);
 
 export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
     const [value, setValue] = useState("");
@@ -73,22 +73,23 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
     };
 
     return (
-        <>
-            <div id="recaptcha-container"></div> {/* reCAPTCHA 컨테이너 추가 */}
+        <div id="recaptcha-container">
             <input
                 name="confirmPassword"
                 placeholder="인증번호를 입력하세요"
                 className="commonInputStyle_Modal"
                 onKeyUp={handleKeyPress}
                 onChange={handleVerify}
+                style={{width:'100%'}}
             />
+            <br />
             <Button
                 onClick={onClickHandle}
                 variant="contained"
                 sx={{
-                    backgroundColor: 'rgb(54, 11, 92)',
+                    backgroundColor: 'rgb(98, 0, 234)',
                     p: 0,
-                    mt: 1.2,
+                    my: 1.2, mr: 5, p:1,
                     '&:hover': { backgroundColor: 'rgb(54, 30, 150)' },
                 }}
                 style={{ color: 'white' }}
@@ -99,16 +100,16 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
                 onClick={onClickHandle2}
                 variant="contained"
                 sx={{
-                    backgroundColor: 'rgb(54, 11, 92)',
+                    backgroundColor: 'rgb(98, 0, 234)',
                     p: 0,
-                    mt: 1.2,
+                    my: 1.2, p:1,
                     '&:hover': { backgroundColor: 'rgb(54, 30, 150)' },
                 }}
                 style={{ color: 'white' }}
             >
                 인증번호 확인하기
             </Button>
-        </>
+        </div>
     );
 }
 
