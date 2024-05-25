@@ -1,27 +1,13 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { CardMedia, Grid, Modal } from "@mui/material";
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
-=======
-import { Button, CardMedia, Grid, Modal } from "@mui/material";
->>>>>>> parent of 0d2d96f (Merge branch 'juyoung' into soonhyun)
-=======
-import { Button, CardMedia, Grid, Modal } from "@mui/material";
->>>>>>> parent of 0d2d96fa (Merge branch 'juyoung' into soonhyun)
 import MDBox from "components/MDBox";
 import YearSelect from '../yearSelect';
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getMyBoardList } from "api/axiosGet";
 import { GetWithExpiry } from "api/LocalStorage";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import './album.css';
-=======
->>>>>>> parent of 0d2d96f (Merge branch 'juyoung' into soonhyun)
-=======
->>>>>>> parent of 0d2d96fa (Merge branch 'juyoung' into soonhyun)
 import Carousel from "react-material-ui-carousel";
 
 function ShowAlbumList() {
