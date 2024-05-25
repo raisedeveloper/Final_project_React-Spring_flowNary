@@ -8,11 +8,14 @@ import '../theme.css';
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Button, Grid } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 =======
+=======
+>>>>>>> parent of 0d2d96fa (Merge branch 'juyoung' into soonhyun)
 import dayjs from 'dayjs';
 import SettingBirth from "layouts/setting/components/SettingBirth";
 import SettingNickname from "layouts/setting/components/SettingNickname";
@@ -47,7 +50,10 @@ const LightTooltip = styled(({ className, ...props }) => (
         fontSize: 16,
     },
 }));
+<<<<<<< HEAD
 >>>>>>> parent of 0d2d96f (Merge branch 'juyoung' into soonhyun)
+=======
+>>>>>>> parent of 0d2d96fa (Merge branch 'juyoung' into soonhyun)
 
 export default function Register({ closeModal }) {
     const email = 'nobody@gmail.com';
