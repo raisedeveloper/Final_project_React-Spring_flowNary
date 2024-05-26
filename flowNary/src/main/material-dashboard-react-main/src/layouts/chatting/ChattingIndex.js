@@ -75,10 +75,14 @@ export default function Chat() {
                     height: 'calc(100vh - 200px)',
                     width: '80%',
                     mx: 'auto',
-                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
                 }}
             >
-                <Stack sx={{ fontSize: 'xx-large', fontWeight: 'bold', mx: 'auto' }}>
+                <Stack sx={{ fontSize: 'xx-large', fontWeight: 'bold', mx: '3 auto' }}>
                     <div style={{ color: 'rgb(88, 67, 135)' }}>
                         <Avatar
                             sx={{
@@ -104,24 +108,22 @@ export default function Chat() {
                         <hr style={{ opacity: '0.4', marginTop: 20 }} />
                     </div>
                 </Stack>
-                {/* maxHeight를 사용 스크롤 활성 */}
-                <div style={{ maxHeight: `calc(100vh - ${inputFieldHeight + 385}px)`, overflowY: 'auto' }}> {/* 메시지 영역의 최대 높이를 조정 */}
+                <div style={{ flexGrow: 1, overflowY: 'auto' }}> {/* 메시지 영역의 최대 높이를 조정 */}
                     <br />
                     {messages.map((message, index) => (
                         <Stack
                             key={index}
                             direction='row'
                             justifyContent={message.sender === 'user' ? 'flex-end' : 'flex-start'}
+                            alignItems='center'
+                            sx={{ mb: 1 }}
                         >
                             {message.sender !== 'user' &&
-                                <Avatar sx={{ width: '3rem', height: '3rem' }}
-
-                                >R</Avatar>}
+                                <Avatar sx={{ width: '3rem', height: '3rem', mr: 1 }}>R</Avatar>}
                             <div className={message.sender === 'user' ? "message" : "othermessage"}>{message.text}</div>
                             {message.sender === 'user' &&
                                 <Avatar
-                                    sx={{ width: '3rem', height: '3rem', marginRight: '.75rem' }}
-
+                                    sx={{ width: '3rem', height: '3rem', ml: 1 }}
                                 >
                                     <div
                                         style={{
@@ -134,7 +136,6 @@ export default function Chat() {
                                         }}
                                     >
                                     </div>
-
                                 </Avatar>}
                         </Stack>
                     ))}
@@ -142,18 +143,17 @@ export default function Chat() {
                 </div>
                 <Stack
                     sx={{
-                        position: 'fixed',
-                        bottom: '5px',
-                        width: { xs: '60%', sm: '70%', md: '80%' },
+                        width: '100%',
+                        mt: 2,
                     }}
+                    direction="row"
+                    alignItems="center"
                 >
                     <TextField
                         sx={{
-                            marginBottom: '1.5em',
+                            flexGrow: 1,
                             height: `${inputFieldHeight}px`, // 입력 필드의 높이 설정
-                            width: '70.5%',
                         }}
-                        fullWidth
                         placeholder="메시지를 입력하세요..."
                         variant="outlined"
                         value={inputMessage}
@@ -161,7 +161,7 @@ export default function Chat() {
                         onKeyPress={handleKeyPress}
                         InputProps={{
                             endAdornment: (
-                                <InputAdornment position="end" >
+                                <InputAdornment position="end">
                                     <IconButton onClick={handleMessageSend}>
                                         <EastIcon />
                                     </IconButton>

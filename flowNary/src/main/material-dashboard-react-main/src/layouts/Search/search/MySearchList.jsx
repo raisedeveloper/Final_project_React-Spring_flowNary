@@ -240,28 +240,32 @@ export default function MySearchList() {
       case 2: return "내용";
       case 3: return "제목+내용";
       case 4: return "아이디";
-      case 5: return "제목+내용+아이디";      
+      case 5: return "제목+내용+아이디";
     }
   };
 
   return (
     <div>
-      <Box sx={{ width: '100%', minHeight: '1000px' }}>
+      <Box sx={{ width: '50%', minHeight: '1000px' }}>
         <Grid container sx={{ padding: '20px' }}>
           <Grid item >
             {/* 헤드라인 */}
-            <Stack direction={'row'} sx={{ alignItems: 'center', width: '100%' }}>
+            <Stack direction={'row'}
+              sx={{
+                alignItems: 'center',
+                width: '50%',
+              }}>
               <Select
-                value={field}
+                style={{ height: '2.5rem' }}
+                value={renderPlaceholder(field)}
                 onChange={(e) => handleSearch(e.target.value)}
-                displayEmpty
-                renderValue={() => renderPlaceholder(field)}
                 inputProps={{ 'aria-label': 'Without label' }}
-                sx={{ 
-                  marginRight: '10px', 
-                  border: "3px solid #BA99D1", 
-                  color: 'purple', 
-                  fontWeight: 'bolder', width: '50%' }}
+                sx={{
+                  marginRight: '10px',
+                  color: 'purple',
+                  textAlign: 'center',
+                  fontWeight: 'bold', width: '50%'
+                }}
               >
                 <MenuItem value={1}>제목</MenuItem>
                 <MenuItem value={2}>내용</MenuItem>
@@ -269,6 +273,7 @@ export default function MySearchList() {
                 <MenuItem value={4}>아이디</MenuItem>
                 <MenuItem value={5}>제목+내용+아이디</MenuItem>
               </Select>
+
               <TextField
                 id="outlined-multiline-flexible"
                 variant="standard"
