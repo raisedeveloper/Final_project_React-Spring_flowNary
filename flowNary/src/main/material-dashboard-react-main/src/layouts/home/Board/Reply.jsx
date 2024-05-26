@@ -44,10 +44,16 @@ export default function Reply(props) {
   const uid = props.uid;
   const handleButtonLike = props.handleButtonLike;
   const [expandedContents, setExpandedContents] = useState({});
-  const [formChange, setFormChange] = useState(false);
+  // 입력폼,댓글폼 전환
+  const [formChange, setFormChange] = useState({});
+  // 대댓글 보여주기
   const [showReReply, setShowReReply] = useState({});
+  // 대댓글에 대한 rid
   const [ridtext, setRidtext] = useState(0);
-  
+  // 대댓글에 대한 text
+  const [replyText, setReplyText] = useState('');
+  // 대댓글에서 각각의 inputForm
+  const [formInputs, setFormInputs] = useState({});
 
   const board = useQuery({
     queryKey: ['board', bid, uid],
@@ -90,20 +96,23 @@ export default function Reply(props) {
     setFormChange(false);
   };
 
-  const handleFormSubmit2 = (e,rid) => {
+  const handleFormSubmit2 = (e) => {
     e.preventDefault();
 
     var sendData = JSON.stringify({
       rid: ridtext,
       uid: props.uid,
-      rrContents: text,
+      rrContents: formInputs[ridtext],
       nickname: props.nickname,
     })
+    console.log(ridtext)
 
     addReReply(sendData);
 
-    setText('');
-    setFormChange(true);
+    setFormInputs((prev) => ({
+      ...prev,
+      [ridtext]: '',
+    }));
   };
 
 
@@ -120,10 +129,21 @@ export default function Reply(props) {
 
   // 버튼 클릭 시 ReReply 컴포넌트의 가시성 토글
   const handleButtonClick = (rid) => {
-    console.log(rid);
-    setFormChange(true);
     setRidtext(rid);
+    setFormChange((prev) => ({
+      ...prev,
+      [rid]: !prev[rid],
+    }));
+    setFormInputs((prev) => ({
+      ...prev,
+      [rid]: '',
+    }));
+    setShowReReply((prev) => ({
+      ...prev,
+      [rid]: !prev[rid],
+    }));
   };
+
   const handleMoreReply = (rid) => {
     setShowReReply((prev) => ({
       ...prev,
@@ -139,7 +159,7 @@ export default function Reply(props) {
         </Stack>
         <MDBox>
 
-          <MDBox sx={{ border: '1px solid blue' }}>
+          <MDBox>
             <Button sx={{ padding: 0, width: 0 }} onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
               <FavoriteIcon sx={board.data.liked ? { color: 'red' } : { color: 'blue' }} />
               {board.data.likeCount}
@@ -151,28 +171,26 @@ export default function Reply(props) {
               <BookmarkIcon />
             </Button>
           </MDBox>
-            <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
-              <input
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="입력..."
-                style={{
-                  padding: '10px 15px',
-                  fontSize: '0.85rem',
-                  borderRadius: '5px',
-                  border: '1px solid #ccc',
-                  width: '100%',
-                  boxSizing: 'border-box',
-                }}
-              />
-              <Button onClick={handleFormSubmit} sx={{ padding: 0 }}>게시</Button>
-            </MDBox>
+          <MDBox sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            <Avatar
+              sx={{ bgcolor: 'red'[500] }}
+              aria-label="recipe"
+              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.profile}`}
+            />
+            <input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="입력..."
+              className="custom-input"
+            />
+            <Button onClick={handleFormSubmit} sx={{ padding: 0 }}>게시</Button>
+          </MDBox>
         </MDBox>
 
         {/* 댓글표시 영역 */}
         <Stack direction="column" sx={{ width: "100%", overflowX: 'hidden' }}>
           {replyList.data && replyList.data.map((data, index) => (
-            <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0, border: '1px solid black' }}>
+            <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0 }}>
               {/* List랑 paper 영역 비슷함 */}
               <Paper sx={{ border: 'none', }}>
                 <ListItem alignItems="flex-start" sx={{ marginTop: 0.5, marginLeft: 0.5 }}>
@@ -206,28 +224,27 @@ export default function Reply(props) {
                   <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
                   <Button onClick={() => handleButtonClick(data.rid)}>
                     답글
-                    {formChange &&
-                      <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', border: '1px solid skyblue' }}>
-                        <input
-                          value={text}
-                          onChange={(e) => setText(e.target.value)}
-                          placeholder="댓글입력.."
-                          style={{
-                            padding: '10px 15px',
-                            fontSize: '1rem',
-                            borderRadius: '5px',
-                            border: '1px solid #ccc',
-                            width: '80%',
-                            boxSizing: 'border-box',
-                          }}
-                        />
-                        <Button onClick={handleFormSubmit2} sx={{ padding: 0 }}>게시</Button>
-                      </MDBox>
-                    }
                   </Button>
-                <Button onClick={() => handleMoreReply(data.rid)}>
-                {(data.replyCount === 0 ? "댓글 달기" : `${data.replyCount}개의 댓글 보기`)}
-                </Button>
+                  {formChange[data.rid] &&
+                    <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                      <input
+                        value={formInputs[data.rid] || ''}
+                        onChange={(e) => {
+                          setFormInputs((prev) => ({
+                            ...prev,
+                            [data.rid]: e.target.value,
+                          }));
+                        }}
+                        placeholder="댓글입력.."
+                        className="custom-input"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <Button onClick={handleFormSubmit2} sx={{ padding: 0 }}>게시</Button>
+                    </MDBox>
+                  }
+                  <Button onClick={() => handleMoreReply(data.rid)}>
+                    {(data.replyCount === 0 ? "" : `${data.replyCount}개의 댓글 보기`)}
+                  </Button>
 
                 </div>
                 {showReReply[data.rid] && (

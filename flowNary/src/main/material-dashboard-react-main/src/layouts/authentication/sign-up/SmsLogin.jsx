@@ -1,10 +1,9 @@
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { Button } from "@mui/material";
-import { correct } from "api/alert";
+import { correct, wrong } from "api/alert";
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { wrong } from "api/alert";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -22,6 +21,29 @@ export const auth = getAuth(app);
 export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
     const [value, setValue] = useState("");
     const [verify, setVerify] = useState('');
+    const [timer, setTimer] = useState(0);
+    const [isTimerActive, setIsTimerActive] = useState(false);
+
+    useEffect(() => {
+        let interval = null;
+        if (isTimerActive) {
+            setTimer(180); // 3분(180초) 타이머 설정
+            interval = setInterval(() => {
+                setTimer((prev) => {
+                    if (prev === 1) {
+                        clearInterval(interval);
+                        setIsTimerActive(false);
+                        wrong("인증 시간이 만료되었습니다. 다시 시도해 주세요.");
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        } else {
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+    }, [isTimerActive]);
 
     const formatPhoneNumber = (phoneNumber) => {
         if (phoneNumber.startsWith("010")) {
@@ -48,17 +70,19 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
             .then((confirmationResult) => {
                 window.confirmationResult = confirmationResult; // 확인 결과 저장
                 correct("문자를 성공적으로 전송하였습니다!");
+                setIsTimerActive(true); // 타이머 시작
             })
             .catch((error) => {
                 wrong("문자를 전송하지 못했습니다. 번호를 확인해주세요.");
             });
     };
 
-    const getCodeFromUserInput = () => {
-        return value;
-    };
-
     const onClickHandle2 = () => {
+        if (!isTimerActive) {
+            wrong("인증 시간이 만료되었습니다. 다시 시도해 주세요.");
+            return;
+        }
+
         const code = verify;
         window.confirmationResult
             .confirm(code)
@@ -87,29 +111,37 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
                 onClick={onClickHandle}
                 variant="contained"
                 sx={{
-                    backgroundColor: 'rgb(98, 0, 234)',
-                    p: 0,
-                    my: 1.2, mr: 5, p:1,
+                    backgroundColor: 'rgb(54, 11, 92)',
+                    p: 1.5,
+                    mr: 1.5,                    
                     '&:hover': { backgroundColor: 'rgb(54, 30, 150)' },
                 }}
                 style={{ color: 'white' }}
             >
                 문자보내기
             </Button>
+
             <Button
                 onClick={onClickHandle2}
                 variant="contained"
                 sx={{
-                    backgroundColor: 'rgb(98, 0, 234)',
-                    p: 0,
-                    my: 1.2, p:1,
+                    backgroundColor: 'rgb(54, 11, 92)',
+                    p: 1.5,
+                    mr: 1.5,                    
                     '&:hover': { backgroundColor: 'rgb(54, 30, 150)' },
                 }}
                 style={{ color: 'white' }}
+                disabled={!isTimerActive}
             >
                 인증번호 확인하기
             </Button>
-        </div>
+
+            {isTimerActive && (
+                <div style={{ fontSize:'12px', marginTop:'10px'}}>
+                    남은 시간: {Math.floor(timer / 60)}분 {timer % 60}초
+                </div>
+            )}
+        </div>           
     );
 }
 

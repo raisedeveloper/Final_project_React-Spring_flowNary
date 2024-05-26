@@ -1,6 +1,5 @@
-// 기본
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Avatar, Box, Button, Card, CardHeader, Chip, Dialog, Divider, Grid, Icon, IconButton, Modal, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, CardHeader, Chip, Dialog, Divider, Grid, Icon, IconButton, MenuItem, Paper, Select, Stack, TextField, Typography } from "@mui/material";
 
 // 아이콘
 import ImageIcon from '@mui/icons-material/Image';
@@ -208,7 +207,7 @@ export default function MySearchList() {
 
   useEffect(() => {
     setSearchtext(query);
-  },[query])
+  }, [query])
 
   const handleSearchs = () => {
     if (searchtext === '' || searchtext === null) {
@@ -234,38 +233,58 @@ export default function MySearchList() {
       handleSearchs();
     }
   }
+
+  const renderPlaceholder = (value) => {
+    switch (value) {
+      case 1: return "제목";
+      case 2: return "내용";
+      case 3: return "제목+내용";
+      case 4: return "아이디";
+      case 5: return "제목+내용+아이디";      
+    }
+  };
+
   return (
     <div>
       <Box sx={{ width: '100%', minHeight: '1000px' }}>
         <Grid container sx={{ padding: '20px' }}>
           <Grid item >
             {/* 헤드라인 */}
-            <Stack>
-              <Stack sx={{ padding: '20px', width:'40vw' }} fontWeight={'bold'}>
-                <TextField
-                  id="outlined-multiline-flexible"
-                  variant="standard"
-                  placeholder="검색어를 입력하세요!"
-                  onChange={handleSearchText}
-                  value={searchtext}
-                  onKeyUp={handleKeyPress}
-                />
-                <IconButton
-                  size="small"
-                  color="inherit"
-                  disableRipple
-                  sx={{ cursor: 'pointer', mx: 2 }}
-                  onClick={handleSearchs}
-                />
-
-              </Stack>
-              <Stack direction={'row'} sx={{display:{lg:'flex', xs:'none'}}}>
-                <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} sx={{ marginRight: '10px' }} onClick={() => handleSearch(1)}>제목</Button>
-                <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} sx={{ marginRight: '10px' }} onClick={() => handleSearch(2)}>내용</Button>
-                <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} sx={{ marginRight: '10px' }} onClick={() => handleSearch(3)}>제목+내용</Button>
-                <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} sx={{ marginRight: '10px' }} onClick={() => handleSearch(4)}>아이디</Button>
-                <Button color="primary" className='msg_button' style={{ border: "3px solid #BA99D1", color: 'purple', fontWeight: 'bolder' }} onClick={() => handleSearch(5)}>제목+내용+아이디</Button>
-              </Stack>
+            <Stack direction={'row'} sx={{ alignItems: 'center', width: '100%' }}>
+              <Select
+                value={field}
+                onChange={(e) => handleSearch(e.target.value)}
+                displayEmpty
+                renderValue={() => renderPlaceholder(field)}
+                inputProps={{ 'aria-label': 'Without label' }}
+                sx={{ 
+                  marginRight: '10px', 
+                  border: "3px solid #BA99D1", 
+                  color: 'purple', 
+                  fontWeight: 'bolder', width: '50%' }}
+              >
+                <MenuItem value={1}>제목</MenuItem>
+                <MenuItem value={2}>내용</MenuItem>
+                <MenuItem value={3}>제목+내용</MenuItem>
+                <MenuItem value={4}>아이디</MenuItem>
+                <MenuItem value={5}>제목+내용+아이디</MenuItem>
+              </Select>
+              <TextField
+                id="outlined-multiline-flexible"
+                variant="standard"
+                placeholder="검색어를 입력하세요!"
+                onChange={handleSearchText}
+                value={searchtext}
+                onKeyUp={handleKeyPress}
+                sx={{ width: '40vw' }}
+              />
+              <IconButton
+                size="small"
+                color="inherit"
+                disableRipple
+                sx={{ cursor: 'pointer', mx: 2 }}
+                onClick={handleSearchs}
+              />
             </Stack>
             <Divider sx={{ marginTop: '2rem', marginBottom: '2rem' }}></Divider>
 
@@ -378,7 +397,7 @@ export default function MySearchList() {
                   </Grid>
                 ))
               ) : (
-                <Grid item  lg={12}>
+                <Grid item lg={12}>
                   <MDTypography>
                     검색 결과가 없습니다!
                   </MDTypography>
