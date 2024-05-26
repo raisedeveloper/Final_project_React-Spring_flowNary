@@ -24,13 +24,13 @@ public class Todo {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public static class TodoInsertDTO {
-	    private SendDataDTO sendData;
+	    private SendDataInsertDTO sendData;
 
-	    public SendDataDTO getSendData() {
+	    public SendDataInsertDTO getSendData() {
 	        return sendData;
 	    }
 
-	    public void setSendData(SendDataDTO sendData) {
+	    public void setSendData(SendDataInsertDTO sendData) {
 	        this.sendData = sendData;
 	    }
 	}
@@ -39,9 +39,36 @@ public class Todo {
 	@Setter
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class SendDataDTO {
+	public static class SendDataInsertDTO {
 	    private int uid;
 	    private String contents;
+	    
+	}
+	
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class TodoUpdateDTO {
+	    private SendDataUpdateDTO sendData;
+
+	    public SendDataUpdateDTO getSendData() {
+	        return sendData;
+	    }
+
+	    public void setSendData(SendDataUpdateDTO sendData) {
+	        this.sendData = sendData;
+	    }
+	}
+	
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class SendDataUpdateDTO {
+	    private int tid;
+	    private String contents;
+	    private int pri;
 	    
 	}
 	

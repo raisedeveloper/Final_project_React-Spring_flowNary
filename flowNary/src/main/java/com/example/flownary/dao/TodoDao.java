@@ -18,7 +18,7 @@ public interface TodoDao {
 	Todo getTodo(int tid);
 	
 	@Select("select * from todo where uid=#{uid}"
-			+ " order by pri desc")
+			+ " order by pri")
 	List<Todo> getTodoList(int uid);
 	
 	@Select("select pri from todo where uid=#{uid}"

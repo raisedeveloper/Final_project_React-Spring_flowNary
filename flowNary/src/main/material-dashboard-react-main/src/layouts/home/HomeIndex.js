@@ -10,7 +10,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 // Dashboard components
-import TodoList from "layouts/home/components/todoList";
+import TodoList from "layouts/todoList/TodoListIndex";
 import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -314,10 +314,9 @@ export default function Home() {
 
             </Stack>
 
-            {/* 날씨 정보 */}
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
-                <AppTasks
+                {/* <AppTasks
                   title="Tasks"
                   list={[
                     { id: '1', name: 'Create FireStone Logo' },
@@ -326,7 +325,8 @@ export default function Home() {
                     { id: '4', name: 'Scoping & Estimations' },
                     { id: '5', name: 'Sprint Showcase' },
                   ]}
-                />
+                /> */}
+                <TodoList />
               </MDBox>
             </Stack>
           </Stack>
