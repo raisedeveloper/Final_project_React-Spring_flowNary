@@ -128,6 +128,23 @@ export const getMyBoardList = async (uid) => {
 
     return result;
 }
+
+export const getLikedBoardList = async (uid) => {
+
+    const result = await axios.get('board/likelist', {
+        params: {
+            uid: uid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: likelist error!');
+        console.log(error);
+    });
+
+    return result;
+}
+ 
+
  
 
 

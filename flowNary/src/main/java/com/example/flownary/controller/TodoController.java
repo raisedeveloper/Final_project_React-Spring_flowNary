@@ -16,7 +16,6 @@ import com.example.flownary.dto.Todo.SendDataInsertDTO;
 import com.example.flownary.dto.Todo.SendDataUpdateDTO;
 import com.example.flownary.dto.Todo.TodoInsertDTO;
 import com.example.flownary.dto.Todo.TodoUpdateDTO;
-import com.example.flownary.dto.Todo.todoDto;
 import com.example.flownary.entity.Todo;
 import com.example.flownary.service.TodoService;
 
@@ -52,7 +51,6 @@ public class TodoController {
 
 	@PostMapping("/update")
 	public void todoUpdate(@RequestBody TodoUpdateDTO dto) {
-		System.out.println("되나?" + dto.toString());
 		SendDataUpdateDTO sendData = dto.getSendData();
 	    int tid = sendData.getTid();
 	    String contents = sendData.getContents();

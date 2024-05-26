@@ -11,14 +11,15 @@ import Footer from "examples/Footer";
 
 // Dashboard components
 import TodoList from "layouts/todoList/TodoListIndex";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import BoardDetail from "./Board/BoardDetail";
 import Write from './write';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetWithExpiry } from "api/LocalStorage";
@@ -29,10 +30,15 @@ import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
 import AppTasks from '../admin/statistics/app-tasks';
+import { UserContext } from "api/LocalStorage";
 
 export default function Home() {
   const queryClient = useQueryClient()
   const [expanded, setExpanded] = useState({});
+
+  // const Transition = React.forwardRef(function Transition(props, ref) {
+  //   return <Slide direction="right" ref={ref} {...props} />;
+  // });
 
   const handleToggle = (bid) => {
     setExpanded((prevExpanded) => ({
@@ -40,7 +46,6 @@ export default function Home() {
       [bid]: !prevExpanded[bid]
     }));
   };
-
 
   /////////////////////////////////////////////////////////////////////
   // 유저 정보 받아오기
@@ -60,15 +65,28 @@ export default function Home() {
   // }
   const nickname = useGetUserNicknameLS();
 
+
+  //수정 페이지 이동
+  const handleUpdate = () => {
+    navigate("../home/Update")
+    sessionStorage.setItem("bid", bid);
+  }
+
+  const { activeUser } = useContext(UserContext);
+
+
   // 창 열고 닫기
   const handleOpen = (e) => {
+
     setOpen(true);
     setBid(e);
+
   }
   const handleClose = () => {
     setOpen(false);
-    setBid(-1);
   };
+
+
 
   const location = useLocation();
   const path = location.pathname.split('/');
@@ -85,7 +103,6 @@ export default function Home() {
     queryKey: ['boardList', uid],
     queryFn: ({ pageParam = 1 }) => getBoardList(pageParam * count, uid),
     getNextPageParam: (lastPage) => {
-      console.log("lastPage:", lastPage);
       if (lastPage && lastPage.nextCursor !== undefined) {
         return lastPage.nextCursor;
       }
@@ -139,7 +156,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log("useeffect!")
     setTimeout(() => {
       const observer = new IntersectionObserver(callback, {
         rootMargin: '0px 0px 0px 0px',
@@ -147,7 +163,6 @@ export default function Home() {
       })
 
       const observerTarget = document.getElementById("observe"); // id가 observe인 태그를 사용
-      console.log(observerTarget);
       queryClient.refetchQueries(['boardList']);
       if (observerTarget) {
         observer.observe(observerTarget);
@@ -185,6 +200,21 @@ export default function Home() {
     <div>로딩중...</div>
   }
 
+  //popover
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? 'simple-popover' : undefined;
+
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -197,7 +227,7 @@ export default function Home() {
                 {(boardList && allcount && !isLoading) ? (boardList.pages.map((page, index) => (
                   <React.Fragment key={index}>
                     {page.map((data, idx) => (
-                      <Grid key={idx} item xs={12} md={6} lg={6}>
+                      <Grid key={idx} item xs={12} md={6} lg={6} >
                         <MDBox mb={3}>
                           <Card sx={{
                             height: "100%",
@@ -215,9 +245,41 @@ export default function Home() {
                                 />
                               }
                               action={
-                                <IconButton aria-label="settings">
-                                  <MoreVertIcon />
-                                </IconButton>
+                                <div>
+                                  <IconButton aria-label="settings" onClick={handleClick}>
+                                    <MoreVertIcon />
+                                  </IconButton>
+                                  <Popover
+                                    id={id}
+                                    open={openPopover}
+                                    anchorEl={anchorEl}
+                                    onClose={handleClosePopover}
+                                    anchorOrigin={{
+                                      vertical: 'bottom',
+                                      horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                      vertical: 'top',
+                                      horizontal: 'right',
+                                    }}
+                                    PaperProps={{
+                                      style: {
+                                        marginLeft: 90, // 이 값을 조정하여 팝오버의 가로 위치를 미세하게 조정
+                                      },
+                                    }}
+                                  >
+                                    {data.uid === activeUser.uid && (
+                                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+
+                                        <Button onClick={handleUpdate}>수정</Button>
+                                        <Button sx={{ padding: 0 }}>공유 하기</Button>
+                                        <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
+                                        <Button sx={{ padding: 0 }}>삭제 하기</Button>
+
+                                      </Box>
+                                    )}
+                                  </Popover>
+                                </div>
                               }
                               title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
                             />
@@ -287,12 +349,17 @@ export default function Home() {
                                   <MDTypography variant="h6" textTransform="capitalize">
                                     {data.title}
                                   </MDTypography>
-                                  <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                    {data.bContents}
-                                  </MDTypography>
+                                  {expanded[data.bid] ? (
+                                    <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                                      {data.bContents}
+                                    </MDTypography>
+                                  ) : (
+                                    <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                      {data.bContents}
+                                    </MDTypography>
+                                  )}
                                 </button>
-                                {/* 더보기 클릭 - 모달창 팝업 */}
-                                <Button sx={{ pl: '8rem' }} style={{ color: 'gray' }} onClick={handleOpen.bind(null, data.bid)}>더보기</Button>
+                                <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '...' : '...'}</Button>
                                 <Divider />
                                 <MDBox display="flex" alignItems="center">
                                   <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
@@ -314,32 +381,44 @@ export default function Home() {
 
             </Stack>
 
+
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
-                {/* <AppTasks
-                  title="Tasks"
-                  list={[
-                    { id: '1', name: 'Create FireStone Logo' },
-                    { id: '2', name: 'Add SCSS and JS files if required' },
-                    { id: '3', name: 'Stakeholder Meeting' },
-                    { id: '4', name: 'Scoping & Estimations' },
-                    { id: '5', name: 'Sprint Showcase' },
-                  ]}
-                /> */}
                 <TodoList />
               </MDBox>
             </Stack>
           </Stack>
         </MDBox >
-
       </MDBox >
       {/* <div ref={observerRef}></div> */}
       <div id="observe" ref={observerRef} style={{ display: 'flex', height: '1rem' }}></div>
 
       {/* 게시글 모달 */}
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        // TransitionComponent={Transition}
+        aria-labelledby="customized-dialog-title"
+        keepMounted
+        PaperProps={{
+          sx: {
+            width: '60%', // 원하는 너비 퍼센트로 설정
+            height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
+            maxWidth: 'none', // 최대 너비 제한 제거
+          },
+        }}
+      >
+        <IconButton aria-label="close" onClick={handleClose}
+          sx={{
+            position: 'absolute', right: 8, top: 8,
+            color: (theme) => theme.palette.grey[500],
+            zIndex: 2
+          }} >
+          <CloseIcon />
+        </IconButton>
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
-      </Modal>
+      </Dialog>
+
       <Footer />
     </DashboardLayout >
   );

@@ -145,6 +145,7 @@ public class UserController {
 		hMap.put("birth", user.getBirth());
 		hMap.put("tel", user.getTel());
 		hMap.put("hashUid", user.getHashUid());
+		hMap.put("bookmark", user.getBookmark());
 
 		JSONObject userOut = new JSONObject(hMap);
 
@@ -212,4 +213,5 @@ public class UserController {
 		jObj.put("item", jArr);
 		return jArr.toString();
 	}
+	
 }
