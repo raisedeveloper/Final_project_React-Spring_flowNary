@@ -94,28 +94,6 @@ export default function Home() {
   });
 
 
-  //   useEffect(() => {
-  //     // IntersectionObserver 생성
-  //     const observer = new IntersectionObserver((entries) => {
-  //         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-  //             fetchNextPage();
-  //         }
-  //     });
-
-  //     // 감시할 요소에 대한 참조(observerRef.current)가 있으면
-  //     if (observerRef.current) {
-  //         // IntersectionObserver를 사용하여 해당 요소를 감시합니다.
-  //         observer.observe(observerRef.current);
-
-  //         // 컴포넌트가 언마운트되거나 새로운 페이지가 불려질 때, Observer를 해제합니다.
-  //         return () => {
-  //             observer.disconnect();
-  //         };
-  //     }
-  // }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-
-
   const { data: allcount } = useQuery({
     queryKey: ['BoardCount'],
     queryFn: () => getBoardListCount(),
@@ -183,7 +161,8 @@ export default function Home() {
   }
   if (isLoading) {
     <div>로딩중...</div>
-  }
+  }  
+
 
   return (
     <DashboardLayout>

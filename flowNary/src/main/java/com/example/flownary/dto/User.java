@@ -22,8 +22,8 @@ public class User {
 		String uname;
 		String nickname;
 		String tel;
-//		int gender;
-//		String location;
+		int gender;
+		String location;
 	}
 	
 	@Getter

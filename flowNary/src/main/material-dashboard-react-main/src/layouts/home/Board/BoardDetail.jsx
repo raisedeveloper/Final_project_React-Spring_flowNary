@@ -59,10 +59,13 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
 
   return (
     <Box ref={ref}>
-      <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
+      <Stack direction="row" justifyContent="space-between"
+        sx={{
+          width: '50%', height: '100%'
+        }}>
         <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
           {/* 컨텐츠 부분 */}
-          <Card sx={{ padding: 3, display: 'flex', flexDirection: 'column',}}>
+          <Card sx={{ padding: 3, display: 'flex', flexDirection: 'column', }}>
             <CardHeader
               avatar={
                 <Avatar

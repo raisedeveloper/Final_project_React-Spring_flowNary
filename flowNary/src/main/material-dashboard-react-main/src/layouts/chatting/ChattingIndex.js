@@ -80,7 +80,26 @@ export default function Chat() {
             >
                 <Stack sx={{ fontSize: 'xx-large', fontWeight: 'bold', mx: 'auto' }}>
                     <div style={{ color: 'rgb(88, 67, 135)' }}>
-                        <Avatar alt="User" src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
+                        <Avatar
+                            sx={{
+                                width: '5rem',
+                                height: '5rem',
+                                margin: "5 auto",
+                                objectFit: 'fill'
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '5rem',
+                                    height: '5rem',
+                                    borderRadius: '50%',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile})`
+                                }}
+                            >
+                            </div>
+                        </Avatar>
                         {email}
                         <hr style={{ opacity: '0.4', marginTop: 20 }} />
                     </div>
@@ -95,16 +114,28 @@ export default function Chat() {
                             justifyContent={message.sender === 'user' ? 'flex-end' : 'flex-start'}
                         >
                             {message.sender !== 'user' &&
-                                <Avatar sx={{ width: 50, height: 50 }}
+                                <Avatar sx={{ width: '3rem', height: '3rem' }}
 
                                 >R</Avatar>}
                             <div className={message.sender === 'user' ? "message" : "othermessage"}>{message.text}</div>
                             {message.sender === 'user' &&
                                 <Avatar
-                                    sx={{ width: 50, height: 50, marginRight: '.75rem' }}
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
+                                    sx={{ width: '3rem', height: '3rem', marginRight: '.75rem' }}
 
-                                >U</Avatar>}
+                                >
+                                    <div
+                                        style={{
+                                            width: '3rem',
+                                            height: '3rem',
+                                            borderRadius: '50%',
+                                            backgroundSize: 'cover',
+                                            backgroundPosition: 'center',
+                                            backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile})`
+                                        }}
+                                    >
+                                    </div>
+
+                                </Avatar>}
                         </Stack>
                     ))}
                     <div ref={messageEndRef} />
