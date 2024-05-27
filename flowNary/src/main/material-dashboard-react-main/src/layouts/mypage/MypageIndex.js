@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useContext, useState } from "react";
 
 // @mui material components
@@ -32,7 +17,7 @@ import {
   IconButton, Link,
   CardMedia,
   CardHeader,
-  Icon,
+  Icon, Dialog
 } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -45,6 +30,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import DehazeIcon from '@mui/icons-material/Dehaze';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Popover from '@mui/material/Popover';
+import CloseIcon from '@mui/icons-material/Close';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -56,8 +42,8 @@ import { UserContext, GetWithExpiry } from "api/LocalStorage";
 import PostingModal from "../home/Board/PostingModal"
 import { useQuery } from "@tanstack/react-query";
 import { getMyBoardList } from "api/axiosGet";
-import BoardDetail from "layouts/home/Board/BoardDetail";
 import { useAddLike } from "api/customHook";
+import BoardDetail from "layouts/home/Board/BoardDetail";
 import TimeAgo from "timeago-react";
 import koreanStrings from '../home/Board/ko';
 import { getLikeList } from "api/axiosGet";

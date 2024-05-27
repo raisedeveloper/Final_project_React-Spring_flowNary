@@ -1,5 +1,5 @@
 /* 모달 스타일 */
-.board_modal {
+/* .board_modal {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -8,12 +8,13 @@
   height: 80%;
   background-color: rgb(255, 255, 255);
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
-}
+} */
 
 ::-webkit-scrollbar {
   display: none;
 }
-.search_modal {
+
+/* .search_modal {
   position: absolute;
   top: 15%;
   left: 50%;
@@ -24,10 +25,10 @@
   border: 2px solid #000;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
   padding: 20px 10px 20px 20px;
-}
+} */
 
 /* FlexContainer 스타일 */
-.board_div_style_1 {
+/* .board_div_style_1 {
   display: flex;
   flex-direction: row;
   padding: 15px;
@@ -40,13 +41,27 @@
   justify-content: flex-end;
   flex-direction: 'column'; 
   align-items: 'center',
+} */
+
+.custom-input {
+  padding: 10px 15px;
+  font-size: 0.85rem;
+  width: 100%;
+  border: none; /* 전체 경계 제거 */
+  border-bottom: 1px solid rgb(161, 158, 158); /* 기본 상태에서 투명한 밑줄 */
+  outline: none; /* 포커스 시 기본 아웃라인 제거 */
+  transition: border-bottom 0.5s ease;
+}
+
+.custom-input:focus {
+  border-bottom: 1px solid black; /* 포커스 시 얇은 회색 밑줄 */
 }
 
 /* InputEmoji 스타일 */
 .react-input-emoji--container {
   color: #4b4b4b;
   text-rendering: optimizeLegibility;
-  background-color: #ffffff;
+  background-color: #fff;
   border: 1px solid #fff;
   border-radius: 21px;
   margin: 5px 10px;
@@ -114,7 +129,7 @@
 }
 
 .react-input-emoji--placeholder {
-  color: #ad91b8;
+  color: #a0a0a0;
   pointer-events: none;
   position: absolute;
   user-select: none;
@@ -147,11 +162,11 @@
 }
 
 .react-input-emoji--button svg {
-  fill: #ad91b8;
+  fill: #858585;
 }
 
 .react-input-emoji--button__show svg {
-  fill: #6f17a1;
+  fill: #128b7e;
 }
 
 .react-emoji {
@@ -197,8 +212,8 @@
 }
 
 .react-input-emoji--mention--list {
-  background-color: #ffffff;
-  border: 1px solid #ffffff;
+  background-color: #fafafa;
+  border: 1px solid #eaeaea;
   border-radius: 4px;
   margin: 0;
   padding: 0;

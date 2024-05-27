@@ -121,7 +121,7 @@ export default function ReReply(props) {
                     <Avatar
                       src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                     />
-                    <ListItemText sx={{ paddingLeft: 1, border: '1px solid orange' }}
+                    <ListItemText sx={{ paddingLeft: 1 }}
                       primary={data.nickname}
                       secondary={
                         // 댓글 내용
@@ -173,7 +173,6 @@ export default function ReReply(props) {
       </MDBox>
     </>
   );
-
 }
 
 ReReply.propTypes = {
