@@ -72,7 +72,6 @@ public class LikeController {
 			break;
 		}
 		
-		
 		return "좋아요";
 	}
 	

@@ -3,17 +3,28 @@ import Grid from "@mui/material/Grid";
 import axios from "axios";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import CloseIcon from '@mui/icons-material/Close';
+
 
 // Dashboard components
 import TodoList from "layouts/todoList/TodoListIndex";
 import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Popover from '@mui/material/Popover';
 
+
+
+import { alpha, useTheme, styled } from '@mui/material/styles';
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -22,7 +33,7 @@ import Write from './write';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { GetWithExpiry } from "api/LocalStorage";
+import { UserContext, GetWithExpiry } from "api/LocalStorage";
 import { useAddLike, useGetUserNicknameLS } from "api/customHook";
 import { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { getBoardList, getBoardListCount } from "api/axiosGet";
@@ -57,6 +68,7 @@ export default function Home() {
   const profile = GetWithExpiry("profile");
 
   const [bid, setBid] = useState(0);
+  const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
 
@@ -76,14 +88,15 @@ export default function Home() {
 
 
   // 창 열고 닫기
-  const handleOpen = (e) => {
+  const handleOpen = (e, idx) => {
 
     setOpen(true);
     setBid(e);
-
+    setIndex(idx);
   }
   const handleClose = () => {
     setOpen(false);
+    console.log(open)
   };
 
 
@@ -186,6 +199,33 @@ export default function Home() {
 
     addLikeForm(sendData);
   }
+  // 댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReply(rid, uid2) {
+    if (uid == -1)
+      return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rid,
+      type: 2,
+    }
+
+    addLikeForm(sendData);
+  }
+  // 대댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReReply(rrid, uid2) {
+    if (uid === -1) return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rrid,
+      type: 3,
+    }
+
+    addLikeForm(sendData);
+  }
   if (isLoading) {
     <div>로딩중...</div>
   }
@@ -205,6 +245,16 @@ export default function Home() {
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? 'simple-popover' : undefined;
 
+  // 클릭 시 마이페이지 이동 이벤트
+  const handleMyPage = (uid) => {
+    navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
+  }
+
+  if (isLoading) {
+    return (
+      <div>Loading</div>
+    )
+  }
 
   return (
     <DashboardLayout>
@@ -273,9 +323,11 @@ export default function Home() {
                                 </div>
                               }
                               title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
+                              // 클릭 시 마이페이지 이동 이벤트
+                              onClick={() => handleMyPage(data.uid)}
                             />
 
-                            <MDBox padding="1rem">
+                            <MDBox padding="1rem" onClick={handleOpen.bind(null, data.bid, idx)}>
                               {data.image ?
                                 <MDBox
                                   variant="gradient"
@@ -296,13 +348,11 @@ export default function Home() {
                                     }
                                   }}
                                 >
-                                  <button onClick={handleOpen.bind(null, data.bid)}>
-                                    <img
-                                      src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
-                                      alt="Paella dish"
-                                      style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                    />
-                                  </button>
+                                  <img
+                                    src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                                    alt="Paella dish"
+                                    style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                  />
                                 </MDBox>
                                 :
                                 <MDBox>
@@ -325,31 +375,27 @@ export default function Home() {
                                       }
                                     }}
                                   >
-                                    <button onClick={handleOpen.bind(null, data.bid)}>
-                                      <img
-                                        src="images/LightLogo.png"
-                                        alt="Paella dish"
-                                        style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                      />
-                                    </button>
+                                    <img
+                                      src="images/LightLogo.png"
+                                      alt="Paella dish"
+                                      style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                    />
                                   </MDBox>
                                 </MDBox>
                               }
                               <MDBox pt={3} pb={1} px={1}>
-                                <button onClick={handleOpen.bind(null, data.bid)} style={{ border: 'none', backgroundColor: 'transparent', padding: 0, margin: 0 }}>
-                                  <MDTypography variant="h6" textTransform="capitalize">
-                                    {data.title}
+                                <MDTypography variant="h6" textTransform="capitalize">
+                                  {data.title}
+                                </MDTypography>
+                                {expanded[data.bid] ? (
+                                  <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                                    {data.bContents}
                                   </MDTypography>
-                                  {expanded[data.bid] ? (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                                      {data.bContents}
-                                    </MDTypography>
-                                  ) : (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                      {data.bContents}
-                                    </MDTypography>
-                                  )}
-                                </button>
+                                ) : (
+                                  <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                    {data.bContents}
+                                  </MDTypography>
+                                )}
                                 <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '...' : '...'}</Button>
                                 <Divider />
                                 <MDBox display="flex" alignItems="center">
@@ -392,11 +438,13 @@ export default function Home() {
         aria-labelledby="customized-dialog-title"
         keepMounted
         PaperProps={{
-          sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
-            height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
-            maxWidth: 'none', // 최대 너비 제한 제거
+          style: {
+            width: '75vw', // 원하는 너비로 설정
+            maxWidth: '75vw', // 최대 너비 고정
+            height: '80vh', // 원하는 높이로 설정
+            maxHeight: '80vh', // 최대 높이 고정
           },
+
         }}
       >
         <IconButton aria-label="close" onClick={handleClose}
@@ -407,7 +455,7 @@ export default function Home() {
           }} >
           <CloseIcon />
         </IconButton>
-        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
+        <BoardDetail bid={bid} uid={uid} index={index} handleClose={handleClose} nickname={nickname} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
       </Dialog>
 
       <Footer />

@@ -128,6 +128,7 @@ const createRoutes = (isLoggedIn) => [
     component: <SignUp />,
     visible: false, // 로그인되지 않았을 때만 보임
   },
+
   {
     type: "bottom",
     name: "검색",
@@ -135,6 +136,7 @@ const createRoutes = (isLoggedIn) => [
     route: "/search",
     component: <Search />,
   },
+
   {
     type: "collapse",
     name: "글쓰기수정",

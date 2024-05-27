@@ -311,9 +311,10 @@ public class BoardController {
 		
 		Board board = new Board(dto.getUid(), dto.getTitle()
 				, dto.getbContents(), dto.getImage(), shareUrl
-				, dto.getNickname(), dto.getHashTag());
+				, dto.getNickname(), dto.getHashTag(), dto.getIsDeleted());
 		
 		bSvc.insertBoard(board);
+		System.out.println(board);
 		
 		board = bSvc.getBoardShareUrl2(shareUrl);
 		if (board != null)

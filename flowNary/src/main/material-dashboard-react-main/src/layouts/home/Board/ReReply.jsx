@@ -1,5 +1,5 @@
 // 기본
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import {
   Card, CardHeader, CardMedia, CardActions, CardContent, Avatar, Typography,
   ListItemAvatar, ListItem, List, Button, Box, Modal, Paper,
@@ -14,12 +14,8 @@ import TimeAgo from 'timeago-react';
 
 // 이모티콘
 // 아이콘
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import ClearIcon from '@mui/icons-material/Clear';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 import { GetWithExpiry, SetWithExpiry } from "api/LocalStorage";
 import axios from 'axios';
@@ -39,29 +35,27 @@ import { position } from 'stylis';
 import MDTypography from 'components/MDTypography/index.js';
 import { getReReplyList } from 'api/axiosGet.js';
 import { deleteReReply } from 'api/axiosPost.js';
+import { useAddLike } from 'api/customHook.jsx';
+import { UserContext } from 'api/LocalStorage.js';
 
 export default function ReReply(props) {
   const rid = props.rid;
   const nickname = props.nickname;
   const [text, setText] = useState('');
   const uid = props.uid;
-  const handleButtonLike = props.handleButtonLike;
   const [expandedContents, setExpandedContents] = useState({});
+  const { activeUser } = useContext(UserContext);
+  const handleButtonLikeReReply = props.handleButtonLikeReReply;
 
   const ReReplyList = useQuery({
-    queryKey: ['reply', props.rid],
-    queryFn: () => getReReplyList(props.rid),
+    queryKey: ['re-reply', props.rid, activeUser.uid],
+    queryFn: () => getReReplyList(props.rid, activeUser.uid),
   });
+
 
   const addReReply = useAddReReply();
   const addReReplyForm = (sendData) => {
     addReReply(sendData);
-  }
-
-  if (ReReplyList.isLoading) {
-    return (
-      <div>로딩 중...</div>
-    )
   }
 
   const handleFormSubmit2 = (e) => {
@@ -94,6 +88,13 @@ export default function ReReply(props) {
       [index]: !prev[index],
     }));
   };
+
+  if (ReReplyList.isLoading) {
+    return (
+      <div>로딩 중...</div>
+    )
+  }
+
 
   return (
     <>
@@ -139,12 +140,14 @@ export default function ReReply(props) {
                     </ListItemText>
 
                     <Button sx={{ color: 'grey', alignSelf: 'center', marginLeft: 'auto', paddingTop: 4 }}>
-                      <FavoriteBorderIcon />
+                      {data.liked ?
+                        <FavoriteIcon sx={{ color: 'lightcoral' }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} /> 
+                        : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} />}
                     </Button>
                   </ListItem>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' trim />ㆍ</span>
-                    <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
+                    <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
+                    <Button sx={{ color: 'grey', padding: 0 }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} >좋아요 {data.likeCount}개</Button>
                     <Button sx={{ color: 'grey', padding: 0 }}>답글 달기</Button>
                     <Button onClick={() => handleDeleteButton(data.rrid)}>삭제</Button>
                   </div>
@@ -179,5 +182,5 @@ ReReply.propTypes = {
   rid: PropTypes.number.isRequired,
   nickname: PropTypes.string.isRequired,
   uid: PropTypes.number.isRequired,
-  handleButtonLike: PropTypes.func.isRequired,
+  handleButtonLikeReReply: PropTypes.func.isRequired,
 };

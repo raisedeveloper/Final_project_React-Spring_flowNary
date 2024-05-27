@@ -25,6 +25,120 @@ import Editor from "components/my-editor/editorIndex";
 
 
 export default function Posting() {
+  const navigate = useNavigate();
+
+  const uid = parseInt(GetWithExpiry("uid"));
+
+  const [nickname, setNickname] = useState('');
+
+  useEffect(() => {
+    if (uid !== null) {
+      axios.get('/user/getUser', {
+        params: {
+          uid: uid,
+        }
+      }).then(res => {
+        if (res.data.nickname !== null && res.data.nickname !== '') {
+          setNickname(res.data.nickname);
+        }
+        else {
+          setNickname(res.data.email);
+        }
+      }).catch(error => console.log(error));
+    }
+  }, [uid]); // 종속성 배열에서 uid 제거
+
+
+  // 창열고 닫기
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  // 아코디언
+  const [expanded, setExpanded] = useState('panel1');
+
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
+
+  // 이미지 파일 불러오기
+  const [images, setImages] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
+
+  // 글 내용
+  const [text, setText] = useState('');
+  const [title, setTitle] = useState('');
+
+  // 파일이 선택되었을 때 호출되는 함수
+  const handleFileChange = async (event) => {
+    if (event.target.files.length === 0) {
+      return;
+    }
+
+    // 이미지가 5개를 초과하지 않도록 확인
+    if (event.target.files.length + images.length > 5) {
+      alert('최대 5개의 이미지만 업로드할 수 있습니다.');
+      return;
+    }
+
+    const selectedFiles = Array.from(event.target.files);
+    console.log(selectedFiles);
+    setImages(images.concat(selectedFiles)); // 기존 이미지 배열에 추가
+
+    const newPreviewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviewUrls(previewUrls.concat(newPreviewUrls)); // 미리보기 URL 배열에 추가
+  };
+
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+
+    const imageList = await Promise.all(
+      images.map(async (image) => {
+        const url = await UploadImage(image);
+        return url.public_id;
+      })
+    );
+
+    var sendData = JSON.stringify({
+      uid: uid,
+      title: title,
+      bContents: text,
+      image: imageList.toString(),
+      nickname: nickname,
+      shareUrl: 'http://localhost:3000/',
+      hashTag: null,
+      isDeleted: isPublic ? 0 : -1
+    })
+
+    axios({
+      method: "POST",
+      url: '/board/insert',
+      data: sendData,
+      headers: { 'Content-Type': 'application/json' }
+    }).catch(error => console.log(error));
+
+    setImages([]);
+    //setImageList([]);
+    setText('');
+    setTitle('');
+    setPreviewUrls([]);
+  };
+
+  // 이미지 삭제 핸들러
+  const handleRemoveImage = (index) => {
+    setImages(images.filter((_, i) => i !== index)); // 이미지 배열에서 삭제
+    setPreviewUrls(previewUrls.filter((_, i) => i !== index)); // 미리보기 URL 배열에서 삭제
+  };
+
+  function handleOnEnter(text) { console.log('enter', text) }
+
+  // 게시물 공개/비공개
+
+  const [isPublic, setIsPublic] = useState(true);
+
+  const handleTogglePublic = () => {
+    setIsPublic(!isPublic);
+  };
 
   return (
     <DashboardLayout>
@@ -65,12 +179,13 @@ export default function Posting() {
                 </Button>
               </div>
               <div>
-                <Button component="label">
-                  <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
-                  <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-                  <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>공개</Typography>
+                <Button onClick={handleTogglePublic}>
+                  <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>
+                    {isPublic ? '공개' : '비공개'}
+                  </Typography>
+                  <AntSwitch sx={{ marginTop: '0.25em' }} checked={isPublic} inputProps={{ 'aria-label': 'ant design' }} />
                 </Button>
-                <Button type="submit"  style={{ color: 'black' }}>작성</Button>
+                <Button type="submit" style={{ color: 'black' }}>작성</Button>
               </div>
             </Grid>
 
@@ -88,21 +203,21 @@ export default function Posting() {
 
           {/* 제목 작성 부분 
           <Grid item xs={12} sm={6}>
-             <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="제목 입력..."
-            style={{
-              padding: '12px 15px',
-              fontSize: '1rem',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              width: '93%',
-              marginLeft:'15px',
-              marginBottom:'10px',
-              boxSizing: 'border-box',
-            }}
-          />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목 입력..."
+              style={{
+                padding: '12px 15px',
+                fontSize: '1rem',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                width: '93%',
+                marginLeft: '15px',
+                marginBottom: '10px',
+                boxSizing: 'border-box',
+              }}
+            />
           </Grid>
 
           {/* 게시글 작성 부분 
