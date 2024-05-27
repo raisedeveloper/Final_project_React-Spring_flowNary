@@ -79,7 +79,6 @@ public class UserController {
 	// 회원정보 수정 (개선판)
 	@PostMapping(value = "/update")
 	public int userUpdate2(HttpServletRequest request, @RequestBody User dto) {
-		System.out.println(dto);
 		User user = new User();
 		user.setUid(dto.getUid());
 		user.setUname(dto.getUname());
@@ -131,7 +130,6 @@ public class UserController {
 
 		if (user == null)
 			return null;
-		System.out.println(user);
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		hMap.put("id", uid);
 		hMap.put("email", user.getEmail());
@@ -147,6 +145,7 @@ public class UserController {
 		hMap.put("birth", user.getBirth());
 		hMap.put("tel", user.getTel());
 		hMap.put("hashUid", user.getHashUid());
+		hMap.put("bookmark", user.getBookmark());
 
 		JSONObject userOut = new JSONObject(hMap);
 
@@ -195,7 +194,6 @@ public class UserController {
 			jArr.add(jObject);
 		}
 		jObj.put("item", jArr);
-		System.out.println(jArr.toString());
 		return jArr.toString();
 	}
 
@@ -213,7 +211,7 @@ public class UserController {
 			jArr.add(jObject);
 		}
 		jObj.put("item", jArr);
-		System.out.println(jArr.toString());
 		return jArr.toString();
 	}
+	
 }

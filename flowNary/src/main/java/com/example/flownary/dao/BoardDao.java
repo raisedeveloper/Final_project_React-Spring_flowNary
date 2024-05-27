@@ -51,6 +51,9 @@ public interface BoardDao {
 			+ " order by modTime ")
 	List<Board> getBoardList4(int uid);
 	
+	@Select("SELECT b.* FROM like_ c JOIN board b ON b.bid=c.oid WHERE c.stat=1 AND c.uid=#{uid}")
+	List<Board> getLikedList(int uid);
+	
 	@Select("select count(bid) from board"
 			+ " where isDeleted=0 and ${field} like #{query}"
 			+ " order by modTime desc")

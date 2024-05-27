@@ -199,7 +199,7 @@ export const like2 = async (sendData: {
     oid: Number,
     fuid: Number,
 }) => {
-    return axios('/like/update',
+    return axios.post('/like/update',
         sendData
     ).catch(error => {
         console.log("axiospost.js: like error!");
@@ -302,12 +302,8 @@ export const deleteDm = async (did: number) => {
     });
 }
 
-export const updateTodo = async (sendData: {
-    tid: number,
-    uid: Number,
-    contents: string,
-    pri: Number,
-}) => {
+/// todo List
+export const updateTodo = async (sendData: { tid: number, contents: string }) => {
     return axios.post('/todo/update', {
         sendData
     }).catch(error => {
@@ -315,9 +311,8 @@ export const updateTodo = async (sendData: {
         console.log(error);
     });
 }
-export const insertTodo = async (sendData:{
-    tid: Number, uid:Number, contents:String, pri:Number
-}) => {
+
+export const insertTodo = async (sendData: { uid: number, contents: string }) => {
     return axios.post('/todo/insert', {
         sendData
     }).catch(error => {
@@ -331,6 +326,16 @@ export const deleteTodo = async (tid: number) => {
         tid: tid,
     }).catch(error => {
         console.log('axiospost.js: deleteTodo error!');
+        console.log(error);
+    });
+}
+
+ // bookmark
+ export const updateBookmark = async (bookmarks) => {
+    return axios.post('/user/bookmark', {
+        bookmarks
+    }).catch(error => {
+        console.log('axiospost.js: updatebookmark error!');
         console.log(error);
     });
 }
