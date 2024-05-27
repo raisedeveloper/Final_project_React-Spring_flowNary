@@ -1,140 +1,37 @@
 // 기본
-import React, { useEffect, useState } from "react";
-import { Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon } from "@mui/material";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+// import React, { useEffect, useState } from "react";
+// import { Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon } from "@mui/material";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
 
-// 아코디언
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+// // 아코디언
+// import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 
-// 이모티콘
-import InputEmoji from 'react-input-emoji'
+// // 이모티콘
+// import InputEmoji from 'react-input-emoji'
 
-// 아이콘
-import CreateIcon from '@mui/icons-material/Create';
+// // 아이콘
+// import CreateIcon from '@mui/icons-material/Create';
 
 // css 연결
-import './posting.css';
-import { AntSwitch } from './postingStyle.jsx';
-import { UploadImage } from "api/image.js";
-// import { FindImage, UploadImage2 } from "../../api/image.js";
-import { GetWithExpiry } from "api/LocalStorage.js";
+// import './posting.css';
+// import { AntSwitch } from './postingStyle.jsx';
+// import { UploadImage } from "api/image.js";
+// // import { FindImage, UploadImage2 } from "../../api/image.js";
+// import { GetWithExpiry } from "api/LocalStorage.js";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import Editor from "components/my-editor/editorIndex";
 
 
 export default function Posting() {
-  const navigate = useNavigate();
-
-  const uid = parseInt(GetWithExpiry("uid"));
-
-  const [nickname, setNickname] = useState('');
-
-  useEffect(() => {
-    if (uid !== null) {
-      axios.get('/user/getUser', {
-        params: {
-          uid: uid,
-        }
-      }).then(res => {
-        if (res.data.nickname !== null && res.data.nickname !== '') {
-          setNickname(res.data.nickname);
-        }
-        else {
-          setNickname(res.data.email);
-        }
-      }).catch(error => console.log(error));
-    }
-  }, [uid]); // 종속성 배열에서 uid 제거
-
-
-  // 창열고 닫기
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  // 아코디언
-  const [expanded, setExpanded] = useState('panel1');
-
-  const handleChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };
-
-  // 이미지 파일 불러오기
-  const [images, setImages] = useState([]);
-  const [previewUrls, setPreviewUrls] = useState([]);
-
-  // 글 내용
-  const [text, setText] = useState('');
-  const [title, setTitle] = useState('');
-
-  // 파일이 선택되었을 때 호출되는 함수
-  const handleFileChange = async (event) => {
-    if (event.target.files.length === 0) {
-      return;
-    }
-
-    // 이미지가 5개를 초과하지 않도록 확인
-    if (event.target.files.length + images.length > 5) {
-      alert('최대 5개의 이미지만 업로드할 수 있습니다.');
-      return;
-    }
-
-    const selectedFiles = Array.from(event.target.files);
-    console.log(selectedFiles);
-    setImages(images.concat(selectedFiles)); // 기존 이미지 배열에 추가
-
-    const newPreviewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
-    setPreviewUrls(previewUrls.concat(newPreviewUrls)); // 미리보기 URL 배열에 추가
-  };
-
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-
-    const imageList = await Promise.all(
-      images.map(async (image) => {
-        const url = await UploadImage(image);
-        return url.public_id;
-      })
-    );
-
-    var sendData = JSON.stringify({
-      uid: uid,
-      title: title,
-      bContents: text,
-      image: imageList.toString(),
-      nickname: nickname,
-      shareUrl: 'http://localhost:3000/',
-      hashTag: null
-    })
-
-    axios({
-      method: "POST",
-      url: '/board/insert',
-      data: sendData,
-      headers: { 'Content-Type': 'application/json' }
-    }).catch(error => console.log(error));
-
-    setImages([]);
-    //setImageList([]);
-    setText('');
-    setTitle('');
-    setPreviewUrls([]);
-  };
-
-  // 이미지 삭제 핸들러
-  const handleRemoveImage = (index) => {
-    setImages(images.filter((_, i) => i !== index)); // 이미지 배열에서 삭제
-    setPreviewUrls(previewUrls.filter((_, i) => i !== index)); // 미리보기 URL 배열에서 삭제
-  };
-
-  function handleOnEnter(text) { console.log('enter', text) }
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <Box mt={5} sx={{ p: 2, mb: 1, backgroundColor: 'beige', borderRadius: 5 }}>
-        {/* 모달의 상단에 있는 헤더 부분 */}
+      <Editor />
+      {/* <Box mt={5} sx={{ p: 2, mb: 1, backgroundColor: 'beige', borderRadius: 5 }}>
+        {/* 모달의 상단에 있는 헤더 부분
         <form onSubmit={handleFormSubmit}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom={2}>
             <Typography variant="h6" component="h2" fontWeight="bold">새 글쓰기</Typography>
@@ -143,7 +40,7 @@ export default function Posting() {
           {/* 구분선 */}
           <hr style={{ opacity: '0.5' }} />
 
-          {/* 이미지 업로드 및 미리보기 */}
+          {/* 이미지 업로드 및 미리보기
           <Grid container spacing={2}>
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
@@ -162,7 +59,7 @@ export default function Posting() {
                   <Icon style={{ color: 'black' }} fontSize='small'>add_location_alt</Icon>
 
                   <Typography fontSize='small'>
-                    {/* 카카오 맵 API 지도 생성 */}
+                    {/* 카카오 맵 API 지도 생성 
                   </Typography>
 
                 </Button>
@@ -177,7 +74,7 @@ export default function Posting() {
               </div>
             </Grid>
 
-            {/* 이미지 미리보기 */}
+            {/* 이미지 미리보기 
             {previewUrls.map((url, index) => (
               <Grid item key={index} xs={4} sm={2}>
                 <Card>
@@ -189,7 +86,7 @@ export default function Posting() {
             ))}
           </Grid>
 
-          {/* 제목 작성 부분 */}
+          {/* 제목 작성 부분 
           <Grid item xs={12} sm={6}>
              <input
             value={title}
@@ -208,7 +105,7 @@ export default function Posting() {
           />
           </Grid>
 
-          {/* 게시글 작성 부분 */}
+          {/* 게시글 작성 부분 
           <Grid item xs={12} sm={6}>
             <TextField
               value={text}
@@ -225,11 +122,11 @@ export default function Posting() {
             />
           </Grid>
 
-          {/* 위치 */}
-          {/* 게시물 공개 비공개 */}
+          {/* 위치 
+          {/* 게시물 공개 비공개 
 
         </form>
-      </Box>
+      </Box> */}
     </DashboardLayout>
   );
 }

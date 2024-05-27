@@ -89,19 +89,19 @@ export default function Home() {
 
 
   const location = useLocation();
-  const path = location.pathname.split('/');
   const [path2, setPath2] = useState('');
 
   useEffect(() => {
-    const getPath = async () => {
-      const path = location.pathname.split('/');
-      if (path.length > 0) {
-        const lastPath = path[path.length - 1];
-        setPath2(lastPath);
+    if (location.pathname) {
+      const getPath = async () => {
+        const path = location.pathname.split('/');
+        if (path.length > 0) {
+          const lastPath = path[path.length - 1];
+          setPath2(lastPath);
+        }
+        getPath();
       }
     };
-
-    getPath();
   }, [location.pathname]);
 
   const [count, setCount] = useState(10);
@@ -217,7 +217,7 @@ export default function Home() {
               <Grid container spacing={3}>
                 {(boardList && allcount && !isLoading) ? (boardList.pages.map((page, index) => (
                   <React.Fragment key={index}>
-                    {page.map((data, idx) => (
+                    {page && page.map((data, idx) => (
                       <Grid key={idx} item xs={12} md={6} lg={6} >
                         <MDBox mb={3}>
                           <Card sx={{

@@ -55,7 +55,6 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
 
   // board 데이터가 있을 때만 image를 설정합니다.
   const image = board?.image ? board.image.split(',') : null;
-  console.log("이미지", image);
 
   return (
     <Box ref={ref}>
@@ -169,10 +168,10 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
 });
 
 BoardDetail.propTypes = {
-  bid: PropTypes.number.isRequired,
-  uid: PropTypes.number.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  nickname: PropTypes.string.isRequired,
-  handleButtonLike: PropTypes.func.isRequired,
+  bid: PropTypes.number,
+  uid: PropTypes.number,
+  handleClose: PropTypes.func,
+  nickname: PropTypes.string,
+  handleButtonLike: PropTypes.func,
 };
 export default BoardDetail;

@@ -9,8 +9,6 @@ import Chatting from "layouts/chatting/ChattingIndex.js";
 import Mypage from "layouts/mypage/MypageIndex.js";
 import Family from "layouts/family/FamilyIndex.js";
 import Notifications from "layouts/notifications/NoticeIndex.js";
-import Chalendar from "layouts/schedule/ScheduleIndex.js";
-import TodoList from "layouts/todoList/TodoListIndex.js";
 import Write from "layouts/write/WriteIndex.js";
 import Settings from "layouts/setting/SettingIndex.js";
 import VerifySettings from 'layouts/setting/components/SettingCheckPwd';
@@ -78,24 +76,6 @@ const createRoutes = (isLoggedIn) => [
     icon: <Icon fontSize="xx-large">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
-    visible: true,
-  },
-  {
-    type: "collapse",
-    name: "일정관리",
-    key: "chalendar",
-    icon: <Icon fontSize="xx-large">calendar_month</Icon>,
-    route: "/chalendar",
-    component: <Chalendar />,
-    visible: true,
-  },
-  {
-    type: "collapse",
-    name: "To-Do 리스트",
-    key: "to-do",
-    icon: <Icon fontSize="xx-large">checklist</Icon>,
-    route: "/to-do",
-    component: <TodoList />,
     visible: true,
   },
   {

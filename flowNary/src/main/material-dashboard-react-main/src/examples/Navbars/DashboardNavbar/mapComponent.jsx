@@ -30,7 +30,7 @@ function MapComponent({ location, onLocationChange }) {
         });
 
         const infowindow = new kakao.maps.InfoWindow({
-          content: '<div style="width:150px;text-align:center;padding:6px 0;">우리회사</div>'
+          content: `<div style="width:150px;text-align:center;padding:6px 0;">${location}</div>`
         });
         infowindow.open(map, marker);
 

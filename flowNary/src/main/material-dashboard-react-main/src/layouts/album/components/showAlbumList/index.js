@@ -125,7 +125,7 @@ function ShowAlbumList() {
                 {currentImages.map((imageUrl, index) => (
                   <img
                     key={index}
-                    style={{ minWidth: '80%', maxWidth: '100%', maxHeight: '80vh', margin: '0 auto', display: 'block' }}
+                    style={{ minWidth: '40%', maxWidth: '100%', maxHeight: '80vh', margin: '0 auto', display: 'block' }}
                     src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${imageUrl}`}
                     alt={`Slide ${index}`}
                   />

@@ -11,6 +11,7 @@ import { getTodoList } from "api/axiosGet";
 import { wrong } from "api/alert";
 import { updateTodoList, updateTodo, deleteTodo, insertTodo } from "api/axiosPost";
 import Iconify from "components/iconify";
+import PropTypes from 'prop-types';
 
 export default function TodoList() {
   const uid = GetWithExpiry("uid");
@@ -112,6 +113,13 @@ export default function TodoList() {
     setUpdateText(e.target.value);
   }
 
+  function handleKeyPress(event) {
+    if (event && event.key === 'Enter') {
+        event.preventDefault();
+        addItem();
+    }
+}
+  
   return (
     <>
       <MDBox px={3}>
@@ -174,7 +182,8 @@ export default function TodoList() {
             placeholder="새로운 할 일 추가"
             value={newItemText}
             onChange={handleText}
-            sx={{ width: '100%', mx: 'auto' }}
+            style={{ width: '100%', marginLeft: 'auto' }}
+            onKeyUp={handleKeyPress}
           />
         </Grid>
         <Grid>

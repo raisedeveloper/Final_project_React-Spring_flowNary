@@ -352,6 +352,42 @@ public class BoardController {
 		bSvc.deleteBoard(bid);
 	}
 	
+	@GetMapping("/modCount")
+	public JSONArray boardRegList(@RequestParam int uid) {
 
+		List<Board> list = bSvc.getMyBoardList(uid);
+		JSONArray jArr = new JSONArray();
+		for (Board board : list) {
+			HashMap<String, Object> hMap = new HashMap<String, Object>();
+			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
+			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
+
+			hMap.put("bid", board.getBid());
+			hMap.put("uid", board.getUid());
+			hMap.put("title", board.getTitle());
+			hMap.put("bContents", board.getbContents());
+			hMap.put("modTime", board.getModTime());
+			hMap.put("viewCount", board.getViewCount());
+			hMap.put("likeCount", board.getLikeCount());
+			hMap.put("replyCount", board.getReplyCount());
+			hMap.put("image", board.getImage());
+			if (board.getImage() == null || board.getImage() == "") {
+				hMap.put("imagecount", 0);
+			} else {
+				int c = board.getImage().length() - board.getImage().replace(",", "").length();
+				hMap.put("iamgecount", c + 1);
+			}
+			hMap.put("shareUrl", board.getShareUrl());
+			hMap.put("isDeleted", board.getIsDeleted());
+			hMap.put("hashTag", board.getHashTag());
+			hMap.put("nickname", board.getNickname());
+			hMap.put("liked", (liked == 1) ? true : false);
+			hMap.put("profile", user.getProfile());
+			JSONObject jBoard = new JSONObject(hMap);
+			jArr.add(jBoard);
+		}
+		return jArr;
+	}
+	
 		
 }

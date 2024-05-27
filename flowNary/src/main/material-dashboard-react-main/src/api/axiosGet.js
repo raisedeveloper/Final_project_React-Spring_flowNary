@@ -144,10 +144,6 @@ export const getLikedBoardList = async (uid) => {
     }
 }
 
-
-
-
-
 /** 댓글 리스트 받기
  * @param {*} bid 글 번호
  * @param {*} offset 맨 처음부터 보여주지 않을 개수 (ex: limit 20에 offset 10이면 11~20번째 글만 리턴)
