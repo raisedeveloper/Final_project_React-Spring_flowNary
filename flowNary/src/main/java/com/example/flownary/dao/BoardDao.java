@@ -30,7 +30,7 @@ public interface BoardDao {
 	
 	@Select("select * from board"
 			+ " where isDeleted=0 and ${field} like #{query}"
-			+ " order by modTime "
+			+ " order by modTime desc"
 			+ " limit #{count}" )
 	List<Board> getBoardList(String field, String query, int count);
 	
@@ -71,7 +71,7 @@ public interface BoardDao {
 	
 	@Insert("insert into board values(default, #{uid}, #{title}, #{bContents}, default, "
 			+ " default, default, default, #{image}, #{shareUrl}, "
-			+ " #{nickname}, #{hashTag}, default)")
+			+ " #{nickname}, #{hashTag}, default, default)")
 	void insertBoard(Board board);
 	
 	@Update("update board set title=#{title}, bContents=#{bContents}, modTime=#{modTime}, image=#{image}"
