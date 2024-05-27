@@ -210,7 +210,7 @@ public class BoardController {
 	public JSONArray boardMyList(@RequestParam int uid) {
 
 		List<Board> list = bSvc.getMyBoardList(uid);
-		System.out.println("되는거니?1");
+//		System.out.println("되는거니?1");
 		JSONArray jArr = new JSONArray();
 		for (Board board : list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
