@@ -7,10 +7,10 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, createUserWithEmailAndPas
 import '../theme.css';
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import SettingBirth from "layouts/setting/components/SettingBirth";
 import SettingNickname from "layouts/setting/components/SettingNickname";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Button, Grid, TextField, styled } from "@mui/material";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -514,7 +514,7 @@ export default function Register({ closeModal }) {
 }
 
 Register.propTypes = {
-    closeModal: PropTypes.func.isRequired,
-    nickname: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
+    closeModal: PropTypes.func,
+    nickname: PropTypes.string,
+    email: PropTypes.string,
 };

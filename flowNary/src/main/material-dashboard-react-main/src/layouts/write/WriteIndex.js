@@ -105,7 +105,8 @@ export default function Posting() {
       image: imageList.toString(),
       nickname: nickname,
       shareUrl: 'http://localhost:3000/',
-      hashTag: null
+      hashTag: null,
+      isDeleted: isPublic ? 0 : -1
     })
 
     axios({
@@ -129,6 +130,14 @@ export default function Posting() {
   };
 
   function handleOnEnter(text) { console.log('enter', text) }
+
+  // 게시물 공개/비공개
+
+  const [isPublic, setIsPublic] = useState(true);
+
+  const handleTogglePublic = () => {
+    setIsPublic(!isPublic);
+  };
 
   return (
     <DashboardLayout>
@@ -168,12 +177,13 @@ export default function Posting() {
                 </Button>
               </div>
               <div>
-                <Button component="label">
-                  <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
-                  <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-                  <Typography sx={{ marginLeft: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>공개</Typography>
+                <Button onClick={handleTogglePublic}>
+                  <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>
+                    {isPublic ? '공개' : '비공개'}
+                  </Typography>
+                  <AntSwitch sx={{ marginTop: '0.25em' }} checked={isPublic} inputProps={{ 'aria-label': 'ant design' }} />
                 </Button>
-                <Button type="submit"  style={{ color: 'black' }}>작성</Button>
+                <Button type="submit" style={{ color: 'black' }}>작성</Button>
               </div>
             </Grid>
 
@@ -191,21 +201,21 @@ export default function Posting() {
 
           {/* 제목 작성 부분 */}
           <Grid item xs={12} sm={6}>
-             <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="제목 입력..."
-            style={{
-              padding: '12px 15px',
-              fontSize: '1rem',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              width: '93%',
-              marginLeft:'15px',
-              marginBottom:'10px',
-              boxSizing: 'border-box',
-            }}
-          />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목 입력..."
+              style={{
+                padding: '12px 15px',
+                fontSize: '1rem',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                width: '93%',
+                marginLeft: '15px',
+                marginBottom: '10px',
+                boxSizing: 'border-box',
+              }}
+            />
           </Grid>
 
           {/* 게시글 작성 부분 */}
