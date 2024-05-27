@@ -80,15 +80,14 @@ export default function AppCurrentVisits({ title, subheader, chart, ...other }) 
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
-
+      <CardHeader title={title} subheader={subheader} sx={{ mb: 3.5 }} />
       <StyledChart
         dir="ltr"
         type="pie"
         series={chartSeries}
         options={chartOptions}
         width="100%"
-        height={280}
+        height={300}
       />
     </Card>
   );

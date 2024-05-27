@@ -1,7 +1,3 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-
-import Box from '@mui/material/Box';
 
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
