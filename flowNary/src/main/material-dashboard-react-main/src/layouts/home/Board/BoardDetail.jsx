@@ -24,7 +24,7 @@ import IconButton from '@mui/material/IconButton';
 
 
 
-const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonLike }, ref) => {
+const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handleButtonLike,handleButtonLikeReply,handleButtonLikeReReply }, ref) => {
 
   // useQuery는 항상 실행되어야 합니다.
   const { data: board, isLoading, isError, refetch } = useQuery({
@@ -52,7 +52,6 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
   if (isError) {
     return <div>오류가 발생했습니다.</div>;
   }
-
   // board 데이터가 있을 때만 image를 설정합니다.
   const image = board?.image ? board.image.split(',') : null;
 
@@ -160,7 +159,7 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
           ) : null} */}
 
           {/* Reply 컴포넌트는 항상 렌더링 */}
-          <Reply bid={bid} uid={uid} nickname={nickname} handleButtonLike={handleButtonLike} />
+          <Reply bid={bid} uid={uid} index={index} nickname={nickname} handleButtonLike={handleButtonLike} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLikeReply={handleButtonLikeReply}/>
         </Stack>
       </Stack>
     </Box>
@@ -168,10 +167,13 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
 });
 
 BoardDetail.propTypes = {
-  bid: PropTypes.number,
-  uid: PropTypes.number,
-  handleClose: PropTypes.func,
-  nickname: PropTypes.string,
-  handleButtonLike: PropTypes.func,
+  bid: PropTypes.number.isRequired,
+  uid: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  nickname: PropTypes.string.isRequired,
+  handleButtonLike: PropTypes.func.isRequired,
+  handleButtonLikeReply: PropTypes.func.isRequired,
+  handleButtonLikeReReply: PropTypes.func.isRequired,
 };
 export default BoardDetail;

@@ -21,6 +21,9 @@ public interface ReplyDao {
 			+ " limit #{limit} offset #{offset}")
 	List<Reply> getReplyList(int bid, int offset, int limit);
 	
+	@Select("select count(rid) from reply where isDeleted=0 and bid=#{bid}")
+	int getReplyCount(int bid);
+	
 	@Select("select * from reply"
 			+ " where isDeleted=0 and uid=#{uid}"
 			+ " order by modTime desc"

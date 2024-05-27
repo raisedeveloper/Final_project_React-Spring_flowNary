@@ -57,8 +57,10 @@ export default function Home() {
   const profile = GetWithExpiry("profile");
 
   const [bid, setBid] = useState(0);
+  const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
+
 
   // if (uid == -1) {
   //   navigate("/login");
@@ -186,6 +188,33 @@ export default function Home() {
 
     addLikeForm(sendData);
   }
+  // 댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReply(rid, uid2) {
+    if (uid == -1)
+      return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rid,
+      type: 2,
+    }
+
+    addLikeForm(sendData);
+  }
+  // 대댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReReply(rrid, uid2) {
+    if (uid === -1) return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rrid,
+      type: 3,
+    }
+
+    addLikeForm(sendData);
+  }
   if (isLoading) {
     <div>로딩중...</div>
   }
@@ -205,6 +234,10 @@ export default function Home() {
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? 'simple-popover' : undefined;
 
+  // 클릭 시 마이페이지 이동 이벤트
+  const handleMyPage = (uid) => {
+    navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
+  }
 
   return (
     <DashboardLayout>
@@ -273,6 +306,7 @@ export default function Home() {
                                 </div>
                               }
                               title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
+                              onClick={() => handleMyPage(data.uid)}
                             />
 
                             <MDBox padding="1rem">
@@ -407,7 +441,7 @@ export default function Home() {
           }} >
           <CloseIcon />
         </IconButton>
-        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
+        <BoardDetail bid={bid} uid={uid} index={index} handleClose={handleClose} nickname={nickname} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
       </Dialog>
 
       <Footer />

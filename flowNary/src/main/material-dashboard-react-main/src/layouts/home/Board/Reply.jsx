@@ -1,5 +1,5 @@
 // 기본
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import {
   Card, CardHeader, CardMedia, CardActions, CardContent, Avatar, Typography,
   ListItemAvatar, ListItem, List, Button, Box, Modal, Paper,
@@ -20,6 +20,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import { GetWithExpiry, SetWithExpiry } from "api/LocalStorage";
 import axios from 'axios';
@@ -36,18 +37,28 @@ import BoardDetail from './BoardDetail.jsx';
 import MDBox from 'components/MDBox/index.js';
 import './board.css';
 import MDTypography from 'components/MDTypography/index.js';
+import typography from 'assets/theme/base/typography';
+import { UserContext } from 'api/LocalStorage';
+import { useAddLike } from 'api/customHook';
 
 export default function Reply(props) {
   const bid = props.bid;
   const nickname = props.nickname;
   const [text, setText] = useState('');
   const uid = props.uid;
+  const index = props.index;
+  const { activeUser } = useContext(UserContext);
   const handleButtonLike = props.handleButtonLike;
+  const handleButtonLikeReply = props.handleButtonLikeReply;
+  const handleButtonLikeReReply = props.handleButtonLikeReReply;
+
+
   const [expandedContents, setExpandedContents] = useState({});
   // 입력폼,댓글폼 전환
   const [formChange, setFormChange] = useState({});
   // 대댓글 보여주기
   const [showReReply, setShowReReply] = useState({});
+  const [showReReply2, setShowReReply2] = useState({});
   // 대댓글에 대한 rid
   const [ridtext, setRidtext] = useState(0);
   // 대댓글에 대한 text
@@ -61,7 +72,7 @@ export default function Reply(props) {
   });
   const replyList = useQuery({
     queryKey: ['board', props.bid],
-    queryFn: () => getReplyList(props.bid, 0, 20),
+    queryFn: () => getReplyList(props.bid, 0, 20, activeUser.uid),
   });
 
   const addReply = useAddReply();
@@ -140,7 +151,7 @@ export default function Reply(props) {
     }));
     setShowReReply((prev) => ({
       ...prev,
-      [rid]: !prev[rid],
+      [rid]: prev[rid],
     }));
   };
 
@@ -150,6 +161,12 @@ export default function Reply(props) {
       [rid]: !prev[rid],
     }));
   }
+  if (replyList.isLoading) {
+    return (
+      <div>로딩 중...</div>
+    );
+  }
+
 
   return (
     <>
@@ -158,16 +175,19 @@ export default function Reply(props) {
         <Stack direction="column" sx={{ padding: 1, overflowY: 'auto' }}>
         </Stack>
         <MDBox>
-
           <MDBox>
             <Button sx={{ padding: 0, width: 0 }} onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
-              <FavoriteIcon sx={board.data.liked ? { color: 'red' } : { color: 'blue' }} />
+              {board.data.liked ?
+                <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}
               {board.data.likeCount}
             </Button>
-            <Button sx={{ padding: 0, width: 0 }}>
+            {/* <Button sx={{ padding: 0, width: 0 }}>
               <ShareIcon />
-            </Button>
+            </Button> */}
           </MDBox>
+          <Typography>
+            {replyList && replyList.data[index] ? '댓글 수 ' + replyList.data[index].replyCount + '개' : ''}
+          </Typography>
           <MDBox sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <Avatar
               sx={{ bgcolor: 'red'[500] }}
@@ -186,7 +206,7 @@ export default function Reply(props) {
 
         {/* 댓글표시 영역 */}
         <Stack direction="column" sx={{ width: "100%", overflowX: 'hidden' }}>
-          {replyList.data && replyList.data.map((data, index) => (
+          {replyList && replyList.data.map((data, index) => (
             <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0 }}>
               {/* List랑 paper 영역 비슷함 */}
               <Paper sx={{ border: 'none', }}>
@@ -211,14 +231,14 @@ export default function Reply(props) {
                   </ListItemText>
 
                   <Button sx={{ color: 'grey', alignSelf: 'center', marginLeft: 'auto', paddingTop: 4 }}>
-                    <FavoriteBorderIcon />
+                    {data.liked ?
+                      <FavoriteIcon sx={{ color: 'lightcoral' }} onClick={() => handleButtonLikeReply(data.rid, data.uid)} /> 
+                      : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} onClick={() => handleButtonLikeReply(data.rid, data.uid)} />}
                   </Button>
-
-                  {/* <Button sx={{ color: 'grey', display: 'flex', alignItems: 'center' }}><FavoriteBorderIcon /></Button> */}
                 </ListItem>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' trim />ㆍ</span>
-                  <Button sx={{ color: 'grey', padding: 0 }}>좋아요 0개</Button>
+                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
+                  <Button sx={{ color: 'grey', padding: 0 }} onClick={() => handleButtonLikeReply(data.rid, data.uid)}>좋아요 {data.likeCount}개</Button>
                   <Button onClick={() => handleButtonClick(data.rid)}>
                     답글
                   </Button>
@@ -239,13 +259,18 @@ export default function Reply(props) {
                       <Button onClick={handleFormSubmit2} sx={{ padding: 0 }}>게시</Button>
                     </MDBox>
                   }
-                  <Button onClick={() => handleMoreReply(data.rid)}>
-                    {(data.replyCount === 0 ? "" : `${data.replyCount}개의 댓글 보기`)}
-                  </Button>
 
                 </div>
+                <Button onClick={() => handleMoreReply(data.rid)} sx={{ marginLeft: 3, paddingTop: 0 }}>
+                  {data.ReReplyCount > 0 && (
+                    <>
+                      <KeyboardArrowDownIcon />
+                      {`${data.ReReplyCount}개의 댓글 보기`}
+                    </>
+                  )}
+                </Button>
                 {showReReply[data.rid] && (
-                  <ReReply rid={data.rid} uid={uid} nickname={nickname} handleButtonLike={handleButtonLike} />
+                  <ReReply rid={data.rid} uid={uid} nickname={nickname} handleButtonLikeReReply={handleButtonLikeReReply} />
                 )}
               </Paper>
             </List>
@@ -261,5 +286,8 @@ Reply.propTypes = {
   bid: PropTypes.number.isRequired,
   nickname: PropTypes.string.isRequired,
   uid: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
   handleButtonLike: PropTypes.func.isRequired,
+  handleButtonLikeReply: PropTypes.func.isRequired,
+  handleButtonLikeReReply: PropTypes.func.isRequired,
 };

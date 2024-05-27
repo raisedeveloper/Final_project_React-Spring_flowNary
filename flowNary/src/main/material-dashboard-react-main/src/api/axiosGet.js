@@ -148,40 +148,44 @@ export const getLikedBoardList = async (uid) => {
  * @param {*} bid 글 번호
  * @param {*} offset 맨 처음부터 보여주지 않을 개수 (ex: limit 20에 offset 10이면 11~20번째 글만 리턴)
  * @param {*} limit 개수 제한
- * @returns 
- */
-export const getReplyList = async (bid: Number, offset: Number, limit: number) => {
-
+ * @param {*} uid 현재 접속한 유저 번호
+ * @returns  
+*/
+export const getReplyList = async (bid: Number, offset: Number, limit: Number, uid = Number) => {
+    
     const result = await axios.get('reply/list', {
         params: {
             bid: bid,
             offset: offset,
             limit: limit,
+            uid: uid,
         }
     }).then((response) => response.data)
-        .catch(error => {
-            console.log('axiosget.js: getReplyList error!');
-            console.log(error);
-        });
-
+    .catch(error => {
+        console.log('axiosget.js: getReplyList error!');
+        console.log(error);
+    });
+    
     return result;
 }
 
 /** 대댓글 리스트
  * @param {*} rid 댓글번호
+ * @param {*} uid 현재 접속한 유저 번호
  * @returns 
  */
-export const getReReplyList = async (rid: number) => {
+export const getReReplyList = async (rid: number, uid = -1) => {
 
     const result = await axios.get('reply/re_list', {
         params: {
             rid: rid,
+            uid: uid,
         }
     }).then((response) => response.data)
-        .catch(error => {
-            console.log('axiosget.js: getReplyList error!');
-            console.log(error);
-        });
+    .catch(error => {
+        console.log('axiosget.js: getReplyList error!');
+        console.log(error);
+    });
 
     return result;
 }

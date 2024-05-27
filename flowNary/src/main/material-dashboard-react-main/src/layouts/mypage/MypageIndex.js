@@ -1,3 +1,18 @@
+/**
+=========================================================
+* Material Dashboard 2 React - v2.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard-react
+* Copyright 2023 Creative Tim (https://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
 import { useContext, useEffect, useState } from "react";
 
 // @mui material components
@@ -17,7 +32,8 @@ import {
   IconButton, Link,
   CardMedia,
   CardHeader,
-  Icon, Dialog
+  Icon,
+  Dialog,
 } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -42,15 +58,23 @@ import { UserContext, GetWithExpiry } from "api/LocalStorage";
 import PostingModal from "../home/Board/PostingModal"
 import { useQuery } from "@tanstack/react-query";
 import { getMyBoardList } from "api/axiosGet";
-import { useAddLike } from "api/customHook";
 import BoardDetail from "layouts/home/Board/BoardDetail";
+import { useAddLike } from "api/customHook";
 import TimeAgo from "timeago-react";
 import koreanStrings from '../home/Board/ko';
-import { getLikedBoardList } from "api/axiosGet";
+import { useLocation } from "react-router-dom";
+import { getUser } from "api/axiosGet";
 
-function mypage() {
+function mypage(props) {
 
-  const uid = parseInt(GetWithExpiry('uid'));
+  // useLocation으로 state 받기
+  const { state } = useLocation();
+  const { activeUser } = useContext(UserContext);
+
+  // 파라메터에 있는 uid 받기
+  const { uid } = state != undefined ? state : activeUser;
+
+  // const uid = parseInt(GetWithExpiry('uid'));
   const [bid, setBid] = useState(0);
   const [open, setOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -66,8 +90,6 @@ function mypage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [expanded, setExpanded] = useState({});
 
-  const { activeUser } = useContext(UserContext);
-
   const board = useQuery({
     queryKey: ['board', uid],
     queryFn: () => getMyBoardList(uid),
@@ -78,21 +100,29 @@ function mypage() {
     queryFn: () => getLikedBoardList(uid),
   });
 
+  const user = useQuery({
+    queryKey: ['mypageuser', uid],
+    queryFn: () => getUser(uid),
+  });
+
+  const handleOpen = (e) => {
+    setOpen(true);
+    setBid(e);
+  };
+  
+  const handleClose = () => {
+    setOpen(false);
+    setBid(-1);
+  };
+
   useEffect(() => {
     console.log(board.data);
     console.log(likes.data);
   }, [likes]);
 
-  const handleOpen = (e) => {
-    setOpen(true);
-    setBid(e);
-  }
-  const handleClose = () => {
-    setOpen(false);
-    setBid(-1);
-  };
-  const nickname = GetWithExpiry('nickname');
-  const profile = GetWithExpiry('profile');
+
+  // const nickname = GetWithExpiry('nickname');
+  // const profile = GetWithExpiry('profile');
   function handleButtonLike(bid, uid2) {
     if (uid == -1)
       return;
@@ -106,9 +136,36 @@ function mypage() {
 
     addLikeForm(sendData);
   }
-  const addLike = useAddLike();
-  const addLikeForm = (sendData) => {
-    addLike(sendData);
+
+  // 댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReply(rid, uid2) {
+    if (uid == -1)
+      return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rid,
+      type: 2,
+    }
+
+    addLikeForm(sendData);
+  }
+  // 대댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReReply(rrid, uid2) {
+    if (uid === -1) return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rrid,
+      type: 3,
+    }
+
+    const addLike = useAddLike();
+    const addLikeForm = (sendData) => {
+      addLike(sendData);
+    }
   }
   const alertContent = (name) => (
     <MDTypography variant="body2" color="white">
@@ -157,6 +214,12 @@ function mypage() {
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? 'simple-popover' : undefined;
 
+  if (board.isLoading || user.isLoading) {
+    return (
+      <div>Loading</div>
+    )
+  }
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -180,7 +243,7 @@ function mypage() {
               borderRadius: '50%',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
+              backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}')` // 이미지 URL 동적 생성
             }}
           >
           </div>
@@ -190,7 +253,7 @@ function mypage() {
         <Stack sx={{ padding: '20px' }} fontWeight={'bold'}>
           <Stack direction={'row'} spacing={2} sx={{ marginTop: '10px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="h4" fontWeight={'bold'}>
-              {nickname}
+              {user.data.nickname}
             </Typography>
             {/* <Button onClick={handleCheckingPwd}><SettingsIcon sx={{ fontSize: '50px', color: 'darkgray' }} /></Button> */}
           </Stack>
@@ -224,7 +287,7 @@ function mypage() {
         {/* {user.statusMessage} */}
       </Stack>
       <Divider sx={{ marginTop: '20px', marginBottom: '10px' }}></Divider>
-
+      {/* 게시물과 태그 넣는 거 생성 */}
       {/* 게시물과 태그 넣는 거 생성 */}
       <Stack direction="row" justifyContent="center" alignItems='center' spacing={5} sx={{ mt: 2 }}>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
@@ -723,12 +786,34 @@ function mypage() {
               </Grid>
             ))}
         </Grid>}
-
       <br />
       <Footer />
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
-      </Modal>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        // TransitionComponent={Transition}
+        aria-labelledby="customized-dialog-title"
+        keepMounted
+        PaperProps={{
+          sx: {
+            width: '60%', // 원하는 너비 퍼센트로 설정
+            height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
+            maxWidth: 'none', // 최대 너비 제한 제거
+          },
+        }}
+      >
+        <IconButton aria-label="close" onClick={handleClose}
+          sx={{
+            position: 'absolute', right: 8, top: 8,
+            color: (theme) => theme.palette.grey[500],
+            zIndex: 2
+          }} >
+          <CloseIcon />
+        </IconButton>
+
+        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={user.data.nickname} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
+      </Dialog>
+
     </DashboardLayout >
   );
 }
