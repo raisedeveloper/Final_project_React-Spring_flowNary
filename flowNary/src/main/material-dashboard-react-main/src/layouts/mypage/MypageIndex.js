@@ -75,7 +75,10 @@ function mypage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [expanded, setExpanded] = useState({});
 
-  const { activeUser } = useContext(UserContext);
+  const user = useQuery({
+    queryKey: ['user', uid],
+    queryFn: () => getUser(uid),
+  });
 
   const board = useQuery({
     queryKey: ['board', uid],
@@ -182,18 +185,18 @@ function mypage() {
             fontSize: '60px',
             border: '2px solid primary.main', // 외곽선 색과 굵기 지정
           }} >
-
-          <div
-            style={{
-              width: '9rem',
-              height: '9rem',
-              borderRadius: '50%',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}')` // 이미지 URL 동적 생성
-            }}
-          >
-          </div>
+          {user &&
+            <div
+              style={{
+                width: '9rem',
+                height: '9rem',
+                borderRadius: '50%',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}')` // 이미지 URL 동적 생성
+              }}
+            >
+            </div>}
         </Avatar>
 
         {/* 프사 옆 정보와 팔로우 버튼 만드는 Stack 공간 */}

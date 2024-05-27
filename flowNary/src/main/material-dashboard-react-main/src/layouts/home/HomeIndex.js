@@ -13,16 +13,11 @@ import Slide from '@mui/material/Slide';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import CloseIcon from '@mui/icons-material/Close';
-
 
 // Dashboard components
 import TodoList from "layouts/todoList/TodoListIndex";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Popover from '@mui/material/Popover';
-
-
 
 import { alpha, useTheme, styled } from '@mui/material/styles';
 import { Bar } from "react-chartjs-2";
@@ -41,7 +36,6 @@ import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
 import AppTasks from '../admin/statistics/app-tasks';
-import { UserContext } from "api/LocalStorage";
 
 export default function Home() {
   const queryClient = useQueryClient()
