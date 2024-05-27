@@ -20,6 +20,7 @@ public class Board {
 		String image;
 		String nickname;
 		String hashTag;
+		int isDeleted;
 		
 		public String getbContents() {
 			return bContents;
@@ -41,6 +42,7 @@ public class Board {
 		String image;
 		String hashTag;
 		LocalDateTime modTime;
+		int isDeleted;
 		
 		public String getbContents() {
 			return bContents;
