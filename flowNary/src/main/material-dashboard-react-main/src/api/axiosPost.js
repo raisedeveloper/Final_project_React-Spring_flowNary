@@ -79,6 +79,13 @@ export const userUpdate = async (sendData: {
     });
 }
 
+// 24/05/27 성한 - updateUserStatus 추가
+export const updateUserStatus = async userData => {
+    // const response = await axios.post('/user/updateUserStatus', {uid: userId, status,});
+    const response = await axios.post('/user/updateUserStatus', userData);
+    return response.data;
+};
+
 /** 글 작성 후 서버에 전송
  * @param {*} sendData 보내줄 정보의 Json String 데이터, 이하는 sendData에 넣어야 할 정보
  * @param {*} uid 작성한 사람의 유저번호
@@ -330,8 +337,8 @@ export const deleteTodo = async (tid: number) => {
     });
 }
 
- // bookmark
- export const updateBookmark = async (bookmarks) => {
+// bookmark
+export const updateBookmark = async (bookmarks) => {
     return axios.post('/user/bookmark', {
         bookmarks
     }).catch(error => {

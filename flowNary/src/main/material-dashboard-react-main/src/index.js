@@ -13,6 +13,7 @@ const root = createRoot(container);
 
 const queryClient = new QueryClient();
 
+
 root.render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
@@ -22,6 +23,6 @@ root.render(
         </ContextProvider>
       </MaterialUIControllerProvider>
     </BrowserRouter>
-  </QueryClientProvider>
+  </QueryClientProvider>  
 );
 
