@@ -6,6 +6,7 @@ import Icon from '@mui/material/Icon';
 import Home from "layouts/home/HomeIndex.js";
 import Album from "layouts/album/AlbumIndex.js";
 import Chatting from "layouts/chatting/ChattingIndex.js";
+import ChatList from "layouts/chatting/Chattinglist.js";
 import Mypage from "layouts/mypage/MypageIndex.js";
 import Family from "layouts/family/FamilyIndex.js";
 import Notifications from "layouts/notifications/NoticeIndex.js";
@@ -49,11 +50,20 @@ const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "채팅",
+    key: "chatlist",
+    icon: <Icon fontSize="xx-large">send</Icon>,
+    route: "/chatlist",
+    component: <ChatList />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "채팅내부",
     key: "chatting",
     icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
     component: <Chatting />,
-    visible: true,
+    visible: false,
   },
 
   {
@@ -95,7 +105,7 @@ const createRoutes = (isLoggedIn) => [
     component: <Chalendar />,
     visible: true,
   },
-  
+
   {
     type: "collapse",
     name: "To-Do 리스트",

@@ -1,4 +1,5 @@
 import axios from "axios"
+import { name } from "dayjs/locale/ko";
 const API_BASE_URL = "/";
 
 /** 유저 등록
@@ -30,6 +31,14 @@ export const userRegister = async (sendData: {
         console.log(error);
     });
 }
+
+// 24/05/27 성한 - updateUserStatus 추가
+export const updateUserStatus = async userData => {
+    // const response = await axios.post('/user/updateUserStatus', {uid: userId, status,});
+    const response = await axios.post('/user/updateUserStatus', userData);
+    return response.data;
+};
+
 
 /** 비밀번호만 바꾸는 유저정보 수정
  * @param {*} uid 유저번호
@@ -78,13 +87,6 @@ export const userUpdate = async (sendData: {
         console.log(error);
     });
 }
-
-// 24/05/27 성한 - updateUserStatus 추가
-export const updateUserStatus = async userData => {
-    // const response = await axios.post('/user/updateUserStatus', {uid: userId, status,});
-    const response = await axios.post('/user/updateUserStatus', userData);
-    return response.data;
-};
 
 /** 글 작성 후 서버에 전송
  * @param {*} sendData 보내줄 정보의 Json String 데이터, 이하는 sendData에 넣어야 할 정보
@@ -256,20 +258,28 @@ export const deleteReReply = async (rrid: number) => {
     });
 }
 
-export const insertChat = async (uid1: number, uid2: number) => {
+/** 채팅방 생성
+ * @param {*} name 채팅방 이름
+ * @returns 
+ */
+export const insertChat = async (name: string) => {
 
     return axios.post('/chat/insert', {
-        uid1: uid1,
-        uid2: uid2,
+        name: name,
     }).catch(error => {
         console.log('axiospost.js: insertChat error!');
         console.log(error);
     });
 }
 
+/** 채팅방 내용 수정
+ * @param {*} cid 채팅방 번호
+ * @param {*} uid 
+ * @returns 
+ */
 export const updateChat = async (cid: number, uid: number) => {
 
-    return axios.post('/chat/update', {
+    return axios.post('chat/update', {
         cid: cid,
         uid: uid,
     }).catch(error => {
@@ -305,6 +315,16 @@ export const deleteDm = async (did: number) => {
         did: did,
     }).catch(error => {
         console.log('axiospost.js: deleteChat error!');
+        console.log(error);
+    });
+}
+
+export const deleteNoticeAll = async (uid: number) => {
+
+    return axios.post(`${API_BASE_URL}notice/removeAll`, {
+        uid: uid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteNoticeAll error!');
         console.log(error);
     });
 }

@@ -21,6 +21,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Icon from "@mui/material/Icon";
+import MailIcon from '@mui/icons-material/Mail';
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -35,10 +36,64 @@ import {
 
 // Material Dashboard 2 React context
 import { useMaterialUIController } from "context";
+import { Badge } from "@mui/material";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { useQuery } from "react-query";
+import { UserContext } from "api/LocalStorage";
+import { getNoticeCount } from "api/axiosGet";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
+import { useWebSocket } from "api/webSocketContext";
 
 function SidenavCollapse({ icon, name, active, ...rest }) {
   const [controller] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
+  const [alertCount, setAlertCount] = useState(0);
+  const { activeUser } = useContext(UserContext);
+  const { stompClient, isConnect } = useWebSocket();
+  
+  useEffect(() => {
+    let noticeincrease;
+    let noticereset;
+
+    if (name === '알림' && activeUser.uid != -1)
+    {
+      console.log('inside if statement for 알림');
+      const getCount = async () => {
+        const count = await getNoticeCount(activeUser.uid);
+        setAlertCount(count);
+      }
+      getCount();
+      
+      if (stompClient && isConnect)
+      {
+        noticeincrease = stompClient.subscribe(`/user/notice/` + activeUser.uid, (data) => {
+          setAlertCount(prevCount => prevCount + 1);
+        });
+        noticereset = stompClient.subscribe(`/user/noticeAll/` + activeUser.uid, (data) => {
+          setAlertCount(0);
+        });
+        console.log('Subscribed to notice');
+      }
+    }
+    else if (name === '알림' && activeUser.uid === -1)
+    {
+      console.log(stompClient);
+      console.log(noticeincrease);
+      console.log(noticereset);
+      setAlertCount(0);
+    }
+
+    return () => {
+      if (noticeincrease) {
+        noticeincrease.unsubscribe();
+      }
+      if (noticereset) {
+        noticereset.unsubscribe();
+        console.log('Unsubscribed to notice');
+      }
+    };
+  }, [activeUser.uid, stompClient, isConnect]);
 
   return (
     <ListItem component="li">
@@ -62,7 +117,13 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
           {typeof icon === "string" ? (
             <Icon sx={(theme) => collapseIcon(theme, { active })}>{icon}</Icon>
           ) : (
-            icon
+            name === '알림' ? (
+              <Badge badgeContent={alertCount} color="primary">
+                {icon}
+              </Badge>
+            ) : (
+              icon
+            )
           )}
         </ListItemIcon>
 

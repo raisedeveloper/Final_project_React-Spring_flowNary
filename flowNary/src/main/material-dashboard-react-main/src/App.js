@@ -22,6 +22,7 @@ import { initializeApp } from "firebase/app";
 
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
+import { ContextProvider } from "api/LocalStorage";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -84,7 +85,7 @@ export default function App() {
   //     }).catch((error) => {
   //       console.error('Sign out error:', error);
   //     });
-      
+
   //     // localStorage.clear();
 
   //     // 기본 동작 방지

@@ -216,7 +216,6 @@ public class BoardController {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
-
 			hMap.put("bid", board.getBid());
 			hMap.put("uid", board.getUid());
 			hMap.put("title", board.getTitle());
