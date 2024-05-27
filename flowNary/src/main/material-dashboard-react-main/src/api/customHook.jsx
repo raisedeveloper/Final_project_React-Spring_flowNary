@@ -15,8 +15,7 @@ export const useGetUser = async (uid) => {
         }
     }).then(res => res.data
     ).catch(error => console.log(error));
-    console.log('유저' + result);
-    return result;
+    return result.data;
 }
 
 /** Localstorage에 저장된 uid(현재 접속한 유저 번호) 값을 이용해서 nickname 불러오기

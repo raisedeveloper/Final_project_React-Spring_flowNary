@@ -87,6 +87,7 @@ public class UserController {
 		user.setStatusMessage(dto.getStatusMessage());
 		user.setSnsDomain(dto.getSnsDomain());
 		user.setTel(dto.getTel());
+		user.setLocation(dto.getLocation());
 
 		userSvc.updateUser(user);
 		return 0;
@@ -127,7 +128,6 @@ public class UserController {
 	@GetMapping("/getUser")
 	public JSONObject getUser(@RequestParam(defaultValue = "-1") int uid) {
 		User user = userSvc.getUser(uid);
-
 		if (user == null)
 			return null;
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
@@ -145,10 +145,11 @@ public class UserController {
 		hMap.put("birth", user.getBirth());
 		hMap.put("tel", user.getTel());
 		hMap.put("hashUid", user.getHashUid());
-		hMap.put("bookmark", user.getBookmark());
+		hMap.put("location", user.getLocation());
 
 		JSONObject userOut = new JSONObject(hMap);
 
+		System.out.println("이거 맞지:?" + userOut);
 		return userOut;
 	}
 

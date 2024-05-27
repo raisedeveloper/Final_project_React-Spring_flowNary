@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
@@ -46,7 +46,6 @@ import { useAddLike } from "api/customHook";
 import BoardDetail from "layouts/home/Board/BoardDetail";
 import TimeAgo from "timeago-react";
 import koreanStrings from '../home/Board/ko';
-import { getLikeList } from "api/axiosGet";
 import { getLikedBoardList } from "api/axiosGet";
 
 function mypage() {
@@ -57,7 +56,9 @@ function mypage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   //게시물 책갈피 토글
-  const [showToggle, setShowToggle] = useState(true);
+  const [showBoard, setShowBoard] = useState(true); // 게시글를 보여줄지 여부
+  const [showLikes, setShowLikes] = useState(false); // 좋아요를 보여줄지 여부
+
   const [changepage, setChangepage] = useState(true);
 
   // 게시물 사진 , 글영역
@@ -72,10 +73,15 @@ function mypage() {
     queryFn: () => getMyBoardList(uid),
   });
 
-  const board2 = useQuery({
-    queryKey: ['board', uid],
+  const likes = useQuery({
+    queryKey: ['boardList', uid],
     queryFn: () => getLikedBoardList(uid),
   });
+
+  useEffect(() => {
+    console.log(board.data);
+    console.log(likes.data);
+  }, [likes]);
 
   const handleOpen = (e) => {
     setOpen(true);
@@ -114,13 +120,19 @@ function mypage() {
     </MDTypography>
   );
 
-  const handleToggleButton = () => {
-    setShowToggle(true);
-  }
+  const toggleBoard = () => {
+    if (!showBoard) {
+      setShowBoard(true);
+      setShowLikes(false);
+    }
+  };
 
-  const handleToggleButton2 = () => {
-    setShowToggle(false);
-  }
+  const toggleLikes = () => {
+    if (!showLikes) {
+      setShowLikes(true);
+      setShowBoard(false);
+    }
+  };
 
   const hanldlePhotoButton = () => {
     setShowPhoto(false);
@@ -134,7 +146,6 @@ function mypage() {
     navigate("../home/Update")
     sessionStorage.setItem("bid", bid);
   }
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -217,17 +228,18 @@ function mypage() {
       {/* 게시물과 태그 넣는 거 생성 */}
       <Stack direction="row" justifyContent="center" alignItems='center' spacing={5} sx={{ mt: 2 }}>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
-          <SubjectIcon sx={{ fontSize: 'large' }} />
-          <Typography onClick={handleToggleButton} sx={{ fontSize: 'large' }}>게시물</Typography>
+          <SubjectIcon sx={{ fontSize: 'large' }} style={{ color: showBoard ? 'red' : 'rgb(0,0,0)' }} />
+          <Typography onClick={toggleBoard} sx={{ fontSize: 'large' }}>게시물</Typography>
         </Stack>
-        <Stack direction="row" sx={{ cursor: 'pointer' }}>
-          <BookmarkIcon sx={{ fontSize: 'large' }} />
-          <Typography onClick={handleToggleButton2} sx={{ fontSize: 'large' }}>좋아요</Typography>
+        <Stack direction="row" sx={{ cursor: 'pointer' }}
+        >
+          <Icon sx={{ fontSize: 'large' }} style={{ color: showLikes ? 'red' : 'rgb(0,0,0)' }}>favorite</Icon>
+          <Typography onClick={toggleLikes} sx={{ fontSize: 'large' }} >좋아요</Typography>
         </Stack>
       </Stack>
       <br />
       {/* 게시물 표시하는 Grid */}
-      {showToggle ?
+      {showBoard &&
         <Grid container spacing={1} sx={{ position: 'relative' }}>
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1, mr: 3 }}>
             <GridViewIcon onClick={hanldlePhotoButton} sx={{ cursor: 'pointer', mr: 2 }} />
@@ -468,14 +480,16 @@ function mypage() {
               </Grid>
             ))}
         </Grid>
-        :
+      }
+
+      {showLikes &&
         <Grid container spacing={1} sx={{ position: 'relative' }}>
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1, mr: 3 }}>
             <GridViewIcon onClick={hanldlePhotoButton} sx={{ cursor: 'pointer', mr: 2 }} />
             <DehazeIcon onClick={hanldlePhotoButton2} sx={{ cursor: 'pointer' }} />
           </Grid>
           {!showPhoto ?
-            (board2 && board2.data && board2.data.map((data, idx) => {
+            (likes && likes.data && likes.data.map((data, idx) => {
               const modTime = data.modTime;
               if (!modTime) return null; // modTime이 없으면 건너뜁니다.
 
@@ -559,7 +573,7 @@ function mypage() {
               );
               // 게시글 영역
             })) :
-            (board2 && board2.data && board2.data.map((data, idx) =>
+            (likes && likes.data && likes.data.map((data, idx) =>
               <Grid key={idx} item xs={12} md={6} lg={4} >
                 <MDBox mb={3}>
                   <Card sx={{
@@ -709,6 +723,7 @@ function mypage() {
               </Grid>
             ))}
         </Grid>}
+
       <br />
       <Footer />
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">

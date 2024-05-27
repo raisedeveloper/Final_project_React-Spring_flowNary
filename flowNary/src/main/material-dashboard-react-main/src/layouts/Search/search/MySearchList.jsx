@@ -257,6 +257,7 @@ export default function MySearchList() {
               }}>
               <Select
                 style={{ height: '2.5rem' }}
+                defaultValue={1}
                 value={renderPlaceholder(field)}
                 onChange={(e) => handleSearch(e.target.value)}
                 inputProps={{ 'aria-label': 'Without label' }}

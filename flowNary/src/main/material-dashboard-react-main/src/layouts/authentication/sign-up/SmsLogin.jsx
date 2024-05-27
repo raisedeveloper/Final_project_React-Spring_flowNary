@@ -73,6 +73,7 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
                 setIsTimerActive(true); // 타이머 시작
             })
             .catch((error) => {
+                console.log(error);
                 wrong("문자를 전송하지 못했습니다. 번호를 확인해주세요.");
             });
     };
@@ -97,14 +98,15 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
     };
 
     return (
-        <div id="recaptcha-container">
+        <>
+            <div id="recaptcha-container">            </div>
             <input
                 name="confirmPassword"
                 placeholder="인증번호를 입력하세요"
                 className="commonInputStyle_Modal"
                 onKeyUp={handleKeyPress}
                 onChange={handleVerify}
-                style={{width:'100%'}}
+                style={{ width: '100%' }}
             />
             <br />
             <Button
@@ -113,7 +115,7 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
                 sx={{
                     backgroundColor: 'rgb(54, 11, 92)',
                     p: 1.5,
-                    mr: 1.5,                    
+                    mr: 1.5,
                     '&:hover': { backgroundColor: 'rgb(54, 30, 150)' },
                 }}
                 style={{ color: 'white' }}
@@ -127,7 +129,7 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
                 sx={{
                     backgroundColor: 'rgb(54, 11, 92)',
                     p: 1.5,
-                    mr: 1.5,                    
+                    mr: 1.5,
                     '&:hover': { backgroundColor: 'rgb(54, 30, 150)' },
                 }}
                 style={{ color: 'white' }}
@@ -137,11 +139,11 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
             </Button>
 
             {isTimerActive && (
-                <div style={{ fontSize:'12px', marginTop:'10px'}}>
+                <div style={{ fontSize: '12px', marginTop: '10px' }}>
                     남은 시간: {Math.floor(timer / 60)}분 {timer % 60}초
                 </div>
             )}
-        </div>           
+        </>
     );
 }
 

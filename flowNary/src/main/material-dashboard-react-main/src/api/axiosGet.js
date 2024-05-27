@@ -1,6 +1,5 @@
 import axios from "axios"
 import { UploadImage } from "./image";
-const API_BASE_URL = "/";
 
 /** 유저번호로 유저 조회
  * @param {*} uid 유저번호 
@@ -13,10 +12,10 @@ export const getUser = async (uid: number) => {
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getUser error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getUser error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -32,10 +31,10 @@ export const getUserEmail = async (email: string) => {
             email: email,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getUserEmail error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getUserEmail error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -46,17 +45,17 @@ export const getUserEmail = async (email: string) => {
  * @returns 
  */
 export const getBoard = async (bid: Number, uid = -1) => {
-    
+
     const result = await axios.get('board/getBoard', {
         params: {
             bid: bid,
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getBoard error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getBoard error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -75,10 +74,10 @@ export const getBoardUrl = async (url: string, uid = -1) => {
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getBoardUrl error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getBoardUrl error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -93,7 +92,7 @@ export const getBoardUrl = async (url: string, uid = -1) => {
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
  * @returns 
  */
-export const getBoardList = async (count = 1, field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
+export const getBoardList = async (count = 1, field = 'title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
     const result = await axios.get('board/list', {
         params: {
@@ -106,10 +105,10 @@ export const getBoardList = async (count = 1, field='title', field2 = '', field3
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getBoardList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getBoardList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -121,31 +120,32 @@ export const getMyBoardList = async (uid) => {
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getMyBoardList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getMyBoardList error!');
+            console.log(error);
+        });
 
     return result;
 }
 
 export const getLikedBoardList = async (uid) => {
-
-    const result = await axios.get('board/likelist', {
-        params: {
-            uid: uid,
-        }
-    }).then((response) => response.data)
-    .catch(error => {
+    try {
+        const response = await axios.get('board/likelist', {
+            params: {
+                uid: uid,
+            }
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
         console.log('axiosget.js: likelist error!');
         console.log(error);
-    });
-
-    return result;
+        throw error; 
+    }
 }
- 
 
- 
+
+
 
 
 /** 댓글 리스트 받기
@@ -155,7 +155,7 @@ export const getLikedBoardList = async (uid) => {
  * @returns 
  */
 export const getReplyList = async (bid: Number, offset: Number, limit: number) => {
-    
+
     const result = await axios.get('reply/list', {
         params: {
             bid: bid,
@@ -163,10 +163,10 @@ export const getReplyList = async (bid: Number, offset: Number, limit: number) =
             limit: limit,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getReplyList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getReplyList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -182,10 +182,10 @@ export const getReReplyList = async (rid: number) => {
             rid: rid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getReplyList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getReplyList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -199,7 +199,7 @@ export const getReReplyList = async (rid: number) => {
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
  * @returns 
  */
-export const getBoardListCount = async (field='title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
+export const getBoardListCount = async (field = 'title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
 
     const result = await axios.get('board/listCount', {
         params: {
@@ -211,10 +211,10 @@ export const getBoardListCount = async (field='title', field2 = '', field3 = '',
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getBoardListCount error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getBoardListCount error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -232,10 +232,10 @@ export const getChat = async (cid: number, uid = -1) => {
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getChat error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getChat error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -255,10 +255,10 @@ export const getChatList = async (uid: number, count = 1, status = 0) => {
             status: status,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getChatList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getChatList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -276,10 +276,10 @@ export const getDmList = async (cid: number, count: 20) => {
             count: count,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getDmList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getDmList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -297,10 +297,10 @@ export const getDmListUid = async (uid: number, count: 20) => {
             count: count,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getDmListUid error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getDmListUid error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -316,10 +316,10 @@ export const getFollowList = async (uid: number) => {
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getFollowList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getFollowList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -335,10 +335,10 @@ export const getFollowMeList = async (fuid: number) => {
             fuid: fuid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getFollowMeList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getFollowMeList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -356,10 +356,10 @@ export const getLikeUid = async (fuid: number, type = 1) => {
             type: type,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getLikeUid error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getLikeUid error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -377,10 +377,10 @@ export const getLikeList = async (type: number, oid: number) => {
             oid: oid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getLikeList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getLikeList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -395,17 +395,17 @@ export const getLikeList = async (type: number, oid: number) => {
  * @returns 
  */
 export const getNoticeList = async (uid: number, type = 0) => {
- 
+
     const result = await axios.get('notice/list', {
         params: {
             uid: uid,
             type: type,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getNoticeList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getNoticeList error!');
+            console.log(error);
+        });
 
     return result;
 }
@@ -419,16 +419,16 @@ export const getNoticeList = async (uid: number, type = 0) => {
  * @returns 
  */
 export const getTodoList = async (uid: number) => {
- 
+
     const result = await axios.get('todo/list', {
         params: {
             uid: uid,
         }
     }).then((response) => response.data)
-    .catch(error => {
-        console.log('axiosget.js: getNoticeList error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiosget.js: getNoticeList error!');
+            console.log(error);
+        });
 
     return result;
 }

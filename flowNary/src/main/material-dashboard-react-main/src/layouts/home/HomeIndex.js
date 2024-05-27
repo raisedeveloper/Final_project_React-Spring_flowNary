@@ -90,7 +90,19 @@ export default function Home() {
 
   const location = useLocation();
   const path = location.pathname.split('/');
-  const path2 = path[path.length - 1];
+  const [path2, setPath2] = useState('');
+
+  useEffect(() => {
+    const getPath = async () => {
+      const path = location.pathname.split('/');
+      if (path.length > 0) {
+        const lastPath = path[path.length - 1];
+        setPath2(lastPath);
+      }
+    };
+
+    getPath();
+  }, [location.pathname]);
 
   const [count, setCount] = useState(10);
   const [page, setPage] = useState(1);
@@ -176,7 +188,7 @@ export default function Home() {
   }
   if (isLoading) {
     <div>로딩중...</div>
-  }  
+  }
 
 
   //popover
