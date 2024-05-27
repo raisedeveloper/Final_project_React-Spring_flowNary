@@ -199,7 +199,7 @@ export const like2 = async (sendData: {
     oid: Number,
     fuid: Number,
 }) => {
-    return axios('/like/update',
+    return axios.post('/like/update',
         sendData
     ).catch(error => {
         console.log("axiospost.js: like error!");
@@ -227,7 +227,7 @@ export const deleteBoard = async (bid: number) => {
  */
 export const deleteReply = async (rid: number) => {
 
-    return axios.post('/reply/delete', {
+    return axios.post('/reply/re_delete', {
         rid: rid,
     }).catch(error => {
         console.log('axiospost.js: deleteReply error!');
