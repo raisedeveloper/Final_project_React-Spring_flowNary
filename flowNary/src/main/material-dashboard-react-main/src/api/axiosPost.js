@@ -227,7 +227,7 @@ export const deleteBoard = async (bid: number) => {
  */
 export const deleteReply = async (rid: number) => {
 
-    return axios.post('/reply/re_delete', {
+    return axios.post('/reply/delete', {
         rid: rid,
     }).catch(error => {
         console.log('axiospost.js: deleteReply error!');
