@@ -95,14 +95,14 @@ export default function Home() {
     if (location.pathname) {
       const getPath = async () => {
         const path = location.pathname.split('/');
-        if (path.length > 0) {
-          const lastPath = path[path.length - 1];
+        if (path) {
+          const lastPath = path.slice(-1)[0];
           setPath2(lastPath);
         }
         getPath();
       }
     };
-  }, [location.pathname]);
+  }, [location]);
 
   const [count, setCount] = useState(10);
   const [page, setPage] = useState(1);
