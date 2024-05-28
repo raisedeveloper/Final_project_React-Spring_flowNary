@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
+@ToString
 public class Re_Reply {
 
 	int rrid;
@@ -24,10 +26,4 @@ public class Re_Reply {
 	String nickname;
 	int isDeleted;
 
-	@Override
-	public String toString() {
-		return "Re_Reply [rid=" + rid + ", rrid=" + rrid + ", uid=" + uid + ", rrContents=" + rrContents + ", modTime="
-				+ modTime + ", isDeleted=" + isDeleted + ", nickname=" + nickname + "]";
-	}
-	
 }

@@ -68,10 +68,10 @@ public interface BoardDao {
 	
 	@Insert("insert into board values(default, #{uid}, #{title}, #{bContents}, default, "
 			+ " default, default, default, #{image}, #{shareUrl}, "
-			+ " #{nickname}, #{hashTag}, default)")
+			+ " #{nickname}, #{hashTag}, #{isDeleted})")
 	void insertBoard(Board board);
 	
-	@Update("update board set title=#{title}, bContents=#{bContents}, image=#{image}"
+	@Update("update board set title=#{title}, bContents=#{bContents}, modTime=#{modTime}, image=#{image}"
 			+ ", hashTag=#{hashTag} where bid=#{bid}")
 	void updateBoard(Board board);
 	

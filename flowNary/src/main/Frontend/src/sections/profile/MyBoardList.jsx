@@ -319,6 +319,7 @@ function SettingModal({ open, handleClose }) {
 
 }
 
+
 export default function MyBoardList() {
   const navigate = useNavigate();
   //모달 관리

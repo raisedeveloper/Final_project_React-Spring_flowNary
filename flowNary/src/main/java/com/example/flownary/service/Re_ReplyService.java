@@ -8,6 +8,8 @@ public interface Re_ReplyService {
 
 	Re_Reply getReReply(int rrid);
 	
+	int getReReplyCount(int rid);
+	
 	List<Re_Reply> getReReplyList(int rid);
 	
 	List<Re_Reply> getReReplyListByUid(int uid);

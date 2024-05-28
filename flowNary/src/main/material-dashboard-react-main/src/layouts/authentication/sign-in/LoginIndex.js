@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+// 기본
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Card } from "@mui/material";
-import { SetWithExpiry } from "../../../api/LocalStorage";
+import { Card, Typography } from "@mui/material";
+import { SetWithExpiry, UserContext } from "../../../api/LocalStorage";
 
 // firebase 연결
 import { login } from "../../../api/firebase";
@@ -19,6 +20,7 @@ import Modal from 'react-modal';
 
 // RegisterIndex 컴포넌트 추가
 import Register from "../sign-up/RegisterIndex";
+import { userRegister } from "api/axiosPost";
 
 // 모달 element
 Modal.setAppElement('#app');
@@ -42,6 +44,7 @@ export default function Login() {
     const handleChange = e => {
         setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
     }
+    const { updateActiveUser } = useContext(UserContext);
 
     // 구글로 로그인
     const loginWithGoogle = async () => {
@@ -59,19 +62,18 @@ export default function Login() {
 
             // 사용자가 존재하지 않으면 회원가입 진행
             if (Object.keys(response.data).length === 0) {
-                await axios.get("/user/register", {
-                    params: {
-                        email: data.user.email,
-                        pwd: 'nn',
-                        hashuid: data.user.uid,
-                        provider: 1,
-                    }
-                });
+                const result = await axios.post("/user/register", {
+                    email: data.user.email,
+                    pwd: 'nn',
+                    hashuid: data.user.uid,
+                    provider: 1,
+                }).then(res => res.data);
                 // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
+                SetWithExpiry("uid", result, 180);
                 SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", res.data.profile, 180);
-                SetWithExpiry("nickname", res.data.nickname, 180);
-                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
+                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", response.data.nickname, 180);
+                SetWithExpiry("statusMessage", response.data.statusMessage, 180);
                 Swal.fire({
                     icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
@@ -91,11 +93,14 @@ export default function Login() {
                     }
                 });
                 console.log("구글 회원가입 성공!" + response.data);
+
             } else {
+                SetWithExpiry("uid", response.data.id, 180);
                 SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", res.data.profile, 180);
-                SetWithExpiry("nickname", res.data.nickname, 180);
-                SetWithExpiry("statusMessage", res.data.statusMessage, 180);
+                SetWithExpiry("profile", response.data.profile, 180);
+                SetWithExpiry("nickname", response.data.nickname, 180);
+                SetWithExpiry("statusMessage", response.data.statusMessage, 180);
+                updateActiveUser({uid: response.data.id, email: data.user.email, nickname: response.data.nickname});
                 Swal.fire({
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
@@ -115,6 +120,7 @@ export default function Login() {
                     }
                 });
                 console.log("구글 로그인 성공!" + response.data);
+
             }
             setAnimationClass('fade-exit');
             setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
@@ -162,12 +168,16 @@ export default function Login() {
                     SetWithExpiry("uid", user.uid, 180); // 올바른 uid 설정
                     login(userInfo);
                     Swal.fire({ position: "center", icon: "success", title: "로그인에 성공하였습니다!", showConfirmButton: false, timer: 1200 });
-                    const res = await axios.get('/user/getUserByEmail', { params: { email: userInfo.email } });
+                    const res = await axios.get('/user/getUserByEmail', { params: { email: userInfo.email } })
+                    .catch(error => console.log(error));
                     SetWithExpiry("uid", res.data.id, 180);
                     SetWithExpiry("email", res.data.email, 180);
                     SetWithExpiry("profile", res.data.profile, 180);
                     SetWithExpiry("nickname", res.data.nickname, 180);
                     SetWithExpiry("statusMessage", res.data.statusMessage, 180);
+                    updateActiveUser({uid: res.data.id, email: res.data.email, nickname: res.data.nickname});
+
+                    navigate('/home');
                     setAnimationClass('fade-exit');
                     setTimeout(() => navigate('/home'), 500);
                 }
@@ -215,19 +225,19 @@ export default function Login() {
                         onChange={handleChange} onKeyUp={handleKeyPress} />
                     <br />
                     <input type="password" name='password' placeholder="비밀번호" className="commonInputStyle"
-                        onChange={handleChange} onKeyUp={handleKeyPress} />
+                        onChange={handleChange} onKeyUp={handleKeyPress} style={{marginBottom:'1rem'}}/>
                     <br />
-                    <button className="fill" onClick={handleSubmit} >로그인</button>
-                    <p style={{
-                        marginTop: '3px', marginBottom: '10px',
+                    <button className="fill" onClick={handleSubmit}><img style={{ paddingRight: '10px', margin: '-5px', width: '1.5em' }} src="/images/favicon.png" alt="f" />로그인</button>
+                    <Typography style={{
+                        marginTop: '10px', marginBottom: '8px',fontSize:'small',
                         color: theme === 'light' ? '#dca3e7' : '#ffffff'
-                    }}>또는</p>
+                    }}>또는</Typography>
                     <Link to="#" onClick={loginWithGoogle} className={`custom-button ${theme}`}>
                         <img style={{ paddingRight: '5px', margin: '-5px', width: '1.55em' }} src="/images/icons/Google.png" alt="Google" />
                         <span>       로그인</span>
                     </Link>
                     <br /><br />
-                    <p style={{ color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</p>
+                    <Typography style={{ fontSize:'small', marginBottom: '1rem', color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</Typography>
                     <div>
                         <Link to="#" onClick={openModal} className={`custom-button ${theme}`}>가입하기</Link>
                     </div>
@@ -246,17 +256,16 @@ export default function Login() {
                 <div className="modal-content">
                     <div className={`welcome-message-Modal`}>
                         <img src={logoImage_Modal} alt='LOGO'
-                            style={{                                
-                                width:'10vw',
-                                height:'10vh',
-                                marginTop: '-3rem',
+                            style={{
+                                width: '10rem',
+                                height: '3em',
                                 marginBottom: '-1rem'
                             }} />
+                        
                     </div>
-                    <h2>환영합니다!</h2>
-                    <p style={{ fontSize: '16px' }}>아래 가입양식에 따라 회원가입을 진행해주세요</p>
+                    <Typography sx={{ mb: 2, mt: 1, fontSize: 'large' }}>환영합니다!</Typography>
+                    <Typography style={{ fontSize: 'small' }}>아래 가입양식에 따라 회원가입을 진행해주세요</Typography>
                     <Register closeModal={closeModal} /> {/* closeModal 전달 */}
-                    <button onClick={closeModal} className="close-modal-button">닫기</button>
                 </div>
             </Modal>
         </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { SetWithExpiry } from "../../../api/LocalStorage";
-import { initializeApp } from 'firebase/app';
+import { getApp, getApps, initializeApp } from 'firebase/app';
 import { GoogleAuthProvider, getAuth, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
 import '../theme.css';
 import Swal from "sweetalert2";
@@ -18,6 +18,19 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { wrong, correct } from "api/alert";
 import { userRegister } from "api/axiosPost";
 import SmsLogin from './SmsLogin';
+
+const firebaseConfig = {
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SEMDER_ID,
+    appId: process.env.REACT_APP_FIREBASE_APP_ID,
+};
+
+// Firebase 앱 초기화 (이미 초기화된 경우 재사용)
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const auth = getAuth(app);
 
 const LightTooltip = styled(({ className, ...props }) => (
     <Tooltip placement='left' {...props} classes={{ popper: className }} />
@@ -179,7 +192,7 @@ export default function Register({ closeModal }) {
                     setCheckingTel(0);
                     return;
                 }
-                correct("전화번호 사용 가능합니다!");
+                correct("전화번호 인증 해주세요!");
                 setCheckingTel(0);
                 setVerify(1);
                 return;
@@ -189,36 +202,36 @@ export default function Register({ closeModal }) {
             });
     }
 
-    useEffect(() => {
-        const firebaseConfig = {
-            apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-            authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-            projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-            storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-            messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-            appId: process.env.REACT_APP_APP_ID,
-        };
-        initializeApp(firebaseConfig);
-    }, []);
-
     const auth = getAuth();
 
     const RegisterWithGoogle = async () => {
         try {
+            const auth = getAuth();
             const provider = new GoogleAuthProvider();
             const data = await signInWithPopup(auth, provider);
 
+            // 이메일로 사용자 조회
             const response = await axios.get('/user/getUserByEmail', {
-                params: { email: data.user.email }
+                params: {
+                    email: data.user.email
+                }
             });
 
+            // 사용자가 존재하지 않으면 회원가입 진행
             if (Object.keys(response.data).length === 0) {
-                await axios.post("/user/register", {
+                var sendData = {
                     email: data.user.email,
                     pwd: 'nn',
                     hashuid: data.user.uid,
                     provider: 1,
-                });
+                    birth: null,
+                    uname: null,
+                    nickname: null,
+                    tel: null
+                }
+                userRegister(sendData);
+
+                // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
                 SetWithExpiry("nickname", response.data.nickname, 180);
@@ -227,13 +240,22 @@ export default function Register({ closeModal }) {
                     icon: 'success',
                     title: "구글 회원가입에 성공했습니다.",
                     showClass: {
-                        popup: `animate__animated animate__fadeInUp animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeInUp
+                                    animate__faster
+                                `
                     },
                     hideClass: {
-                        popup: `animate__animated animate__fadeOutDown animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeOutDown
+                                    animate__faster
+                                `
                     }
                 });
                 console.log("구글 회원가입 성공!" + response.data);
+
             } else {
                 SetWithExpiry("email", data.user.email, 180);
                 SetWithExpiry("profile", response.data.profile, 180);
@@ -243,15 +265,25 @@ export default function Register({ closeModal }) {
                     icon: 'success',
                     title: "구글 로그인에 성공했습니다.",
                     showClass: {
-                        popup: `animate__animated animate__fadeInUp animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeInUp
+                                    animate__faster
+                                `
                     },
                     hideClass: {
-                        popup: `animate__animated animate__fadeOutDown animate__faster`
+                        popup: `
+                                    animate__animated
+                                    animate__fadeOutDown
+                                    animate__faster
+                                `
                     }
                 });
                 console.log("구글 로그인 성공!" + response.data);
+
             }
-            setTimeout(() => navigate('/'), 150);
+            setAnimationClass('fade-exit');
+            setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
         } catch (error) {
             console.error("구글 로그인 오류:", error);
         }
@@ -300,7 +332,7 @@ export default function Register({ closeModal }) {
 
         if (uname === '') { wrong("이름을 입력하세요"); return; }
         if (checkingNickname === 0) { wrong("닉네임 중복 확인을 해주세요"); return; }
-        if (checkingTel === 0) { wrong("전화번호 중복 확인을 해주세요"); return; }
+        if (checkingTel === 0) { wrong("전화번호 인증을 해주세요"); return; }
         if (checkingBirth === 0) { wrong("생년월일 확인을 해주세요."); return; }
 
         await createUserWithEmailAndPassword(auth, userInfo.email, userInfo.pwd)
@@ -439,7 +471,7 @@ export default function Register({ closeModal }) {
                     <Grid item xs={1.8}><div></div></Grid>
                 </Grid>
                 {verify === 1 ? <div className="input-container">
-                    <SmsLogin handleKeyPress={handleKeyPress} tel={tel}/>
+                    <SmsLogin handleKeyPress={handleKeyPress} tel={tel} setCheckingTel={setCheckingTel} />
                 </div> : <></>}
 
             </div>
@@ -482,7 +514,7 @@ export default function Register({ closeModal }) {
 }
 
 Register.propTypes = {
-    closeModal: PropTypes.func.isRequired,
-    nickname: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
+    closeModal: PropTypes.func,
+    nickname: PropTypes.string,
+    email: PropTypes.string,
 };

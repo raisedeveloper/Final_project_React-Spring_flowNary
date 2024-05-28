@@ -8,33 +8,15 @@ import { insertBoard, insertReReply, insertReply, like, like2, userUpdate } from
  * @param {*} uid 
  * @returns 
  */
-export function useGetUser(uid) {
-    const [user, setUser] = useState({
-        id: uid,
-        email: '',
-        profile: '',
-        uname: '',
-        nickname: '',
-        statusMessage: '',
-        snsDomain: '',
-        status: 0,
-        regDate: null,
-        gender: -1,
-        provider: 0,
-        birth: null,
-        tel: '',
-        hashUid: '',
-    });
-
-    axios.get('/user/getUser', {
+export const useGetUser = async (uid) => {
+    const result = await axios.get('/user/getUser', {
         params: {
             uid: uid
         }
-    }).then(res => {
-        setUser(res.data);
-    }).catch(error => console.log(error));
-
-    return user;
+    }).then(res => res.data
+    ).catch(error => console.log(error));
+    console.log('유저' + result);
+    return result;
 }
 
 /** Localstorage에 저장된 uid(현재 접속한 유저 번호) 값을 이용해서 nickname 불러오기
@@ -48,7 +30,7 @@ export function useGetUserNicknameLS() {
         queryFn: async () => {
             const res = await axios.get('/user/getUser', {
                 params: {
-                  uid: uid,
+                    uid: uid,
                 }
             });
 
@@ -58,12 +40,10 @@ export function useGetUserNicknameLS() {
         refetchOnMount: false,
     })
 
-    if (!isLoading && data != null && (data.nickname == null || data.nickname == '' ))
-    {
+    if (!isLoading && data != null && (data.nickname == null || data.nickname == '')) {
         return data.email;
     }
-    else if (!isLoading && data != null && (data.nickname != null && data.nickname != ''))
-    {
+    else if (!isLoading && data != null && (data.nickname != null && data.nickname != '')) {
         return data.nickname;
     }
 
@@ -136,5 +116,5 @@ export const useUpdateUser = () => {
         // },
     });
 
-    return mutate;  
+    return mutate;
 }
