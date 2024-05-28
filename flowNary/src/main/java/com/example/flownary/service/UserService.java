@@ -27,4 +27,8 @@ public interface UserService {
 	void deleteUser(int uid);
 	
 	int login(String email, String pwd);
+	
+	void updateUserStatus(User user);
+	
+	List<User> getUserList();
 }

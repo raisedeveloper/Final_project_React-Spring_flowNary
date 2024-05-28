@@ -47,7 +47,7 @@ public interface BoardDao {
 	List<Board> getBoardList3(String field1, String field2, String field3, String query, int count);
 	
 	@Select("select * from board"
-			+ " where isDeleted=0 and uid=${uid}"
+			+ " where isDeleted > -2 and uid=${uid}"
 			+ " order by modTime desc")
 	List<Board> getBoardList4(int uid);
 	
@@ -81,7 +81,10 @@ public interface BoardDao {
 	@Update("update board set nickname=#{nickname} where uid=#{uid}")
 	void updateBoardNickname(int uid, String nickname);
 	
-	@Update("update board set isDeleted=-1 where bid=#{bid}")
+	@Update("update board set isDeleted=#{isDeleted} where bid=#{bid}")
+	void disableBoard(int bid, int isDeleted);
+	
+	@Update("update board set isDeleted=-2 where bid=#{bid}")
 	void deleteBoard(int bid);
 	
 	@Update("update board set replyCount=#{replyCount}"

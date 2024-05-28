@@ -158,6 +158,12 @@ export default function TodoList() {
                     onClose={handleCloseMenu}
                     anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    PaperProps={{
+                      style: {
+                        marginLeft: 90,
+                        backgroundColor: 'white'
+                      },
+                    }}
                   >
                     <MenuItem onClick={() => updateItem(idx, item.contents)}>
                       <Iconify icon="solar:pen-bold" sx={{ mr: 2 }} />

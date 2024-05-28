@@ -23,9 +23,9 @@ import axios from 'axios';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getUserList } from 'api/axiosGet';
 import { Grid } from '@mui/material';
 import { MyLocation } from '@mui/icons-material';
+import { getUserList } from 'api/axiosGet';
 import { updateUserStatus } from 'api/axiosPost';
 // ----------------------------------------------------------------------
 

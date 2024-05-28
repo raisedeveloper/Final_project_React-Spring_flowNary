@@ -58,6 +58,17 @@ export const getUserNickEmail = async (uid: number) => {
     return result;
 }
 
+// 24/05/27 성한 - userList 추가(검토 필요!)
+export const getUserList = async () => {
+    try {
+        const response = await axios.get('user/getUserList');
+        return response.data;
+    } catch (error) {
+        console.error('axiosGet.js: getUser Error!', error);
+        return null;
+    }
+}
+
 /** 글 조회
  * @param {*} bid 글 번호
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)

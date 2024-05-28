@@ -1,6 +1,7 @@
 package com.example.flownary.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -37,48 +38,47 @@ public class ReplyController {
 	private final NoticeController nC;
 	private final BoardService bSvc;
 	private final LikeService lSvc;
-	
+
 	@GetMapping("/list")
-	public JSONArray replyList(@RequestParam int bid,
-			@RequestParam int offset, @RequestParam int limit, @RequestParam(defaultValue="-1", required=false) int uid) {
+	public JSONArray replyList(@RequestParam int bid, @RequestParam int offset, @RequestParam int limit,
+			@RequestParam(defaultValue = "-1", required = false) int uid) {
 		List<Reply> list = rSvc.getReplyList(bid, offset, limit);
 		JSONArray jArr = new JSONArray();
 		int totalCount = 0;
 //		JSONObject c = new JSONObject();
 //		c.put("count", rrSvc.getReReplyCount(r) + rSvc.getReplyCount(bid));
 //		jArr.add(c);
-		for (Reply reply :list) {
+		for (Reply reply : list) {
 			totalCount++;
 			totalCount += rrSvc.getReReplyCount(reply.getRid());
 		}
-		
-		for(Reply reply :list) {
+
+		for (Reply reply : list) {
 			JSONObject jreply = new JSONObject();
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(reply.getUid());
 			int like = lSvc.getLikeUidCount(uid, 2, reply.getRid());
- 			jreply.put("rid", reply.getRid());
- 			jreply.put("bid", reply.getBid());
- 			jreply.put("uid", reply.getUid());
- 			jreply.put("rContents", reply.getrContents());
- 			jreply.put("modTime", reply.getModTime());
- 			jreply.put("likeCount", reply.getLikeCount());
- 			jreply.put("nickname", reply.getNickname());
- 			jreply.put("profile", user.getProfile());
- 			jreply.put("replyCount", totalCount);
- 			jreply.put("liked", (like == 1) ? true : false);
- 			jreply.put("ReReplyCount", rrSvc.getReReplyCount(reply.getRid()));
+			jreply.put("rid", reply.getRid());
+			jreply.put("bid", reply.getBid());
+			jreply.put("uid", reply.getUid());
+			jreply.put("rContents", reply.getrContents());
+			jreply.put("modTime", reply.getModTime());
+			jreply.put("likeCount", reply.getLikeCount());
+			jreply.put("nickname", reply.getNickname());
+			jreply.put("profile", user.getProfile());
+			jreply.put("replyCount", totalCount);
+			jreply.put("liked", (like == 1) ? true : false);
+			jreply.put("ReReplyCount", rrSvc.getReReplyCount(reply.getRid()));
 			jArr.add(jreply);
 		}
 		return jArr;
 	}
-	
+
 	@GetMapping("/re_list")
-	public JSONArray re_ReplyList(@RequestParam int rid,
-			@RequestParam(defaultValue="-1", required=false) int uid) {
+	public JSONArray re_ReplyList(@RequestParam int rid, @RequestParam(defaultValue = "-1", required = false) int uid) {
 		List<Re_Reply> list = rrSvc.getReReplyList(rid);
 		JSONArray jArr = new JSONArray();
-		
-		for(Re_Reply re_Reply :list) {
+
+		for (Re_Reply re_Reply : list) {
 			JSONObject jre_Reply = new JSONObject();
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(re_Reply.getUid());
 			int like = lSvc.getLikeUidCount(uid, 3, re_Reply.getRrid());
@@ -95,44 +95,69 @@ public class ReplyController {
 		}
 		return jArr;
 	}
-	
+
 	@PostMapping("/insert")
 	public void reply(@RequestBody InsertReply dto) {
-		Reply reply = new Reply(dto.getBid(),dto.getUid(),dto.getrContents(),dto.getNickname());
+		Reply reply = new Reply(dto.getBid(), dto.getUid(), dto.getrContents(), dto.getNickname());
 		rSvc.insertReply(reply);
-		
-        // 댓글 조회수
+
+		// 댓글 조회수
 		Board board = bSvc.getBoard(dto.getBid());
 		int replyCount = board.getReplyCount();
 		bSvc.updateReplyCount(dto.getBid(), replyCount);
-		
+
 		nC.insertNotice(dto.getUid(), 2, dto.getBid(), board.getUid());
 	}
-	
+
 	@PostMapping("/re_insert")
 	public String Re_reply(@RequestBody InsertReReply dto) {
 		@SuppressWarnings("static-access")
-		Re_Reply re_Reply = new Re_Reply().builder().rid(dto.getRid()).uid(dto.getUid())
-				.rrContents(dto.getRrContents()).nickname(dto.getNickname()).build();
+		Re_Reply re_Reply = new Re_Reply().builder().rid(dto.getRid()).uid(dto.getUid()).rrContents(dto.getRrContents())
+				.nickname(dto.getNickname()).build();
 		rrSvc.insertReReply(re_Reply);
 		Reply reply = rSvc.getReply(dto.getRid());
-		
+
 		nC.insertNotice(dto.getUid(), 2, dto.getRid(), reply.getUid());
-		
+
 		return "대댓글이 입력되었습니다";
 	}
-	
+
 	@PostMapping("/delete")
-	public int deleteReply(@RequestBody JSONObject rid) {
-		rSvc.deleteReply(Integer.parseInt(rid.get("rid").toString()));
-		
-		return 0;
+	public void deleteReply(@RequestBody JSONObject sendData) {
+		Object bidObj = sendData.get("rid");
+
+		if (bidObj == null) {
+			System.err.println("Board ID is null in the request: " + sendData);
+			throw new IllegalArgumentException("Board ID cannot be null");
+		}
+
+		try {
+			int rid = Integer.parseInt(bidObj.toString());
+			System.out.println("Deleting rid with ID: " + rid);
+			rSvc.deleteReply(rid);
+		} catch (NumberFormatException e) {
+			System.err.println("Invalid rid ID format: " + bidObj);
+			throw new IllegalArgumentException("Invalid rid ID format");
+		}
 	}
-	
+
 	@PostMapping("/re_delete")
-	public int deleteReReply(@RequestBody JSONObject rrid) {
-		rrSvc.deleteReReply(Integer.parseInt(rrid.get("rrid").toString()));
-		
-		return 0;
+	public void deleteReReply(@RequestBody JSONObject sendData) {
+		Object bidObj = sendData.get("rrid");
+
+		if (bidObj == null) {
+			System.err.println("Board ID is null in the request: " + sendData);
+			throw new IllegalArgumentException("Board ID cannot be null");
+		}
+
+		try {
+			int rrid = Integer.parseInt(bidObj.toString());
+			System.out.println("Deleting rrid with ID: " + rrid);
+			rrSvc.deleteReReply(rrid);
+		} catch (NumberFormatException e) {
+			System.err.println("Invalid rrid ID format: " + bidObj);
+			throw new IllegalArgumentException("Invalid rrid ID format");
+		}
+
 	}
 }

@@ -1,5 +1,6 @@
 package com.example.flownary.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -255,4 +256,45 @@ public class UserController {
 		jObj.put("item", jArr);
 		return jArr.toString();
 	}
+	
+	@GetMapping("getUserList")
+	public JSONArray userList() {
+
+
+		List<User> userList = new ArrayList<>();
+		userList = userSvc.getUserList();
+
+
+		JSONArray jArr = new JSONArray();
+		for (User user : userList) {
+			HashMap<String, Object> hMap = new HashMap<String, Object>();
+			hMap.put("uid", user.getUid());
+			hMap.put("profile", user.getProfile());
+			hMap.put("uname", user.getUname());
+			hMap.put("nickname", user.getNickname());
+			hMap.put("status", user.getStatus());
+			hMap.put("regDate", user.getRegDate());
+			hMap.put("gender", user.getGender());
+			hMap.put("provider", user.getProvider());
+			hMap.put("birth", user.getBirth());
+			hMap.put("tel", user.getTel());
+
+
+			JSONObject jUser = new JSONObject(hMap);
+
+
+			jArr.add(jUser);
+		}
+		return jArr;
+	}
+	@PostMapping("updateUserStatus")
+	public int updateUserStatus(HttpServletRequest request, @RequestBody User dto) {
+		User user = userSvc.getUser(dto.getUid());
+		user.setUid(dto.getUid());
+		user.setStatus(dto.getStatus());
+		
+		userSvc.updateUserStatus(user);
+		return 0;		
+	}
+
 }

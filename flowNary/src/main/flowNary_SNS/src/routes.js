@@ -124,11 +124,12 @@ const createRoutes = (isLoggedIn) => [
     component: <Settings />,
   },
   {
+    type: "collapse",
     name: "TEAM",
     key: "team",
     icon: <Icon fontSize="large">connect_without_contact</Icon>,
     route: "/team",
-    component: <BoardList />,
+    component: <Team />,
     visible: true,
   },
   {

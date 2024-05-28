@@ -69,4 +69,16 @@ public class UserServiceImpl implements UserService {
 	public void updateUserPwd(User user) {
 		uDao.updateUserPwd(user);
 	}
+	
+
+	@Override
+	public List<User> getUserList() {
+		return uDao.getUserList2();
+	}
+	
+	@Override
+	public void updateUserStatus(User user) {
+		uDao.updateUserStatus(user);
+		
+	}
 }

@@ -17,6 +17,7 @@ import {
   CardHeader,
   Icon,
   Dialog,
+  Popper,
 } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -38,6 +39,7 @@ import Footer from "examples/Footer";
 import "./mypage.css";
 import { UserContext, GetWithExpiry } from "api/LocalStorage";
 
+import { AntSwitch } from '../home/postingStyle.jsx';
 import PostingModal from "../home/Board/PostingModal"
 import { useQuery } from "@tanstack/react-query";
 import { getMyBoardList } from "api/axiosGet";
@@ -48,6 +50,9 @@ import koreanStrings from '../home/Board/ko';
 import { useLocation } from "react-router-dom";
 import { getUser } from "api/axiosGet";
 import { getLikedBoardList } from "api/axiosGet";
+import { disableBoard } from "api/axiosPost";
+import { deleteBoard } from "api/axiosPost";
+import { deleteConfirm } from "api/alert";
 
 function mypage() {
 
@@ -71,7 +76,6 @@ function mypage() {
 
   // 게시물 사진 , 글영역
   const [showPhoto, setShowPhoto] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [expanded, setExpanded] = useState({});
 
   const board = useQuery({
@@ -93,7 +97,7 @@ function mypage() {
     setOpen(true);
     setBid(e);
   };
-  
+
   const handleClose = () => {
     setOpen(false);
     setBid(-1);
@@ -104,7 +108,10 @@ function mypage() {
     console.log(likes.data);
   }, [likes]);
 
-
+  const addLike = useAddLike();
+  const addLikeForm = (sendData) => {
+    addLike(sendData);
+  }
   // const nickname = GetWithExpiry('nickname');
   // const profile = GetWithExpiry('profile');
   function handleButtonLike(bid, uid2) {
@@ -145,11 +152,8 @@ function mypage() {
       oid: rrid,
       type: 3,
     }
+    addLikeForm(sendData);
 
-    const addLike = useAddLike();
-    const addLikeForm = (sendData) => {
-      addLike(sendData);
-    }
   }
   const alertContent = (name) => (
     <MDTypography variant="body2" color="white">
@@ -188,15 +192,47 @@ function mypage() {
     sessionStorage.setItem("bid", bid);
   }
 
+  //popper
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl2, setAnchorEl2] = useState(null);
+
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const handleClosePopover = () => {
     setAnchorEl(null);
   };
+
+  const handleClick2 = (event) => {
+    setAnchorEl2(anchorEl2 ? null : event.currentTarget);
+  };
+
+  const handleClosePopover2 = () => {
+    setAnchorEl2(null);
+  };
+
   const openPopover = Boolean(anchorEl);
-  const id = openPopover ? 'simple-popover' : undefined;
+  const openPopover2 = Boolean(anchorEl2);
+  const id = openPopover ? 'simple-popper' : undefined;
+  const id2 = openPopover ? 'simple-popper' : undefined;
+
+  const handlePublicButton = (bid, isDeleted) => {
+    const d = isDeleted === -1 ? 0 : -1;
+    disableBoard(bid, d).then(() => {
+      board.refetch();
+    });
+    console.log(d);
+  };
+
+  const handleDelete = async (bid) => {
+    const confirm = await deleteConfirm();
+    console.log(confirm);
+    if (confirm) {
+      await deleteBoard(bid);
+      queryClient.invalidateQueries(['boardList', uid]); // 쿼리 무효화
+    }
+  }
 
   if (board.isLoading || user.isLoading) {
     return (
@@ -272,17 +308,16 @@ function mypage() {
       </Stack>
       <Divider sx={{ marginTop: '20px', marginBottom: '10px' }}></Divider>
       {/* 게시물과 태그 넣는 거 생성 */}
-      {/* 게시물과 태그 넣는 거 생성 */}
       <Stack direction="row" justifyContent="center" alignItems='center' spacing={5} sx={{ mt: 2 }}>
         <Stack direction="row" sx={{ cursor: 'pointer' }}>
           <SubjectIcon sx={{ fontSize: 'large' }} style={{ color: showBoard ? 'red' : 'rgb(0,0,0)' }} />
           <Typography onClick={toggleBoard} sx={{ fontSize: 'large' }}>게시물</Typography>
         </Stack>
-        <Stack direction="row" sx={{ cursor: 'pointer' }}
-        >
-          <Icon sx={{ fontSize: 'large' }} style={{ color: showLikes ? 'red' : 'rgb(0,0,0)' }}>favorite</Icon>
-          <Typography onClick={toggleLikes} sx={{ fontSize: 'large' }} >좋아요</Typography>
-        </Stack>
+        {uid === activeUser.uid &&
+          <Stack direction="row" sx={{ cursor: 'pointer' }}        >
+            <Icon sx={{ fontSize: 'large' }} style={{ color: showLikes ? 'red' : 'rgb(0,0,0)' }}>favorite</Icon>
+            <Typography onClick={toggleLikes} sx={{ fontSize: 'large' }} >좋아요</Typography>
+          </Stack>}
       </Stack>
       <br />
       {/* 게시물 표시하는 Grid */}
@@ -311,8 +346,8 @@ function mypage() {
                       }
                     }}>
                       <MDBox padding="1rem">
-                        {data.image ?
-                          <MDBox
+                        {data.image &&
+                          <MDBox onClick={handleOpen.bind(null, data.bid)}
                             variant="gradient"
                             borderRadius="lg"
                             py={2}
@@ -331,43 +366,11 @@ function mypage() {
                               }
                             }}
                           >
-                            <button onClick={handleOpen.bind(null, data.bid)}>
-                              <img
-                                src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
-                                alt="Paella dish"
-                                style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                              />
-                            </button>
-                          </MDBox>
-                          :
-                          <MDBox>
-                            <MDBox
-                              variant="gradient"
-                              borderRadius="lg"
-                              py={2}
-                              pr={0.5}
-                              sx={{
-                                position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                                height: "12.5rem",
-                                overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                                transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                  transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                  transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                },
-                                '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                  boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                                }
-                              }}
-                            >
-                              <button onClick={handleOpen.bind(null, data.bid)}>
-                                <img
-                                  src="images/LightLogo.png"
-                                  alt="Paella dish"
-                                  style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                />
-                              </button>
-                            </MDBox>
+                            <img
+                              src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                              alt="Paella dish"
+                              style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                            />
                           </MDBox>
                         }
                       </MDBox>
@@ -395,49 +398,44 @@ function mypage() {
                           src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                         />
                       }
-                      action={
-                        <div>
-                          <IconButton aria-label="settings" onClick={handleClick}>
-                            <MoreVertIcon />
-                          </IconButton>
-                          <Popover
-                            id={id}
-                            open={openPopover}
-                            anchorEl={anchorEl}
-                            onClose={handleClosePopover}
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'left',
-                            }}
-                            transformOrigin={{
-                              vertical: 'top',
-                              horizontal: 'right',
-                            }}
-                            PaperProps={{
-                              style: {
-                                marginLeft: 90, // 이 값을 조정하여 팝오버의 가로 위치를 미세하게 조정
-                              },
-                            }}
-                          >
-                            {data.uid === activeUser.uid && (
-                              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-
-                                <Button onClick={handleUpdate}>수정</Button>
-                                <Button sx={{ padding: 0 }}>공유 하기</Button>
-                                <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
-                                <Button sx={{ padding: 0 }}>삭제 하기</Button>
-
+                      action={<>
+                        {
+                          data.uid === activeUser.uid ? (<>
+                            <IconButton aria-label="settings" onClick={handleClick}>
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Popper
+                              id={id}
+                              open={openPopover}
+                              anchorEl={anchorEl}
+                            >
+                              <Box sx={{ bgcolor: 'background.paper' }}>
+                                <Button sx={{ padding: 0, cursor: 'pointer' }} onClick={() => handleUpdate}>수정</Button>
+                                <Button sx={{ padding: 0, cursor: 'pointer' }} onClick={() => handleDelete(data.bid)}> 삭제</Button>
                               </Box>
-                            )}
-                          </Popover>
-                        </div>
+                            </Popper >
+                          </>) : <>
+                            <IconButton aria-label="settings" onClick={handleClick2}>
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Popper
+                              id={id2}
+                              open={openPopover2}
+                              anchorEl={anchorEl2}
+                            >
+                              <Box sx={{ bgcolor: 'background.paper' }}>
+                                <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
+                              </Box>
+                            </Popper >
+                          </>
+                        }</>
                       }
                       title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
                     />
 
                     <MDBox padding="1rem">
-                      {data.image ?
-                        <MDBox
+                      {data.image &&
+                        <MDBox onClick={handleOpen.bind(null, data.bid)}
                           variant="gradient"
                           borderRadius="lg"
                           py={2}
@@ -456,43 +454,11 @@ function mypage() {
                             }
                           }}
                         >
-                          <button onClick={handleOpen.bind(null, data.bid)}>
-                            <img
-                              src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
-                              alt="Paella dish"
-                              style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                            />
-                          </button>
-                        </MDBox>
-                        :
-                        <MDBox>
-                          <MDBox
-                            variant="gradient"
-                            borderRadius="lg"
-                            py={2}
-                            pr={0.5}
-                            sx={{
-                              position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                              height: "12.5rem",
-                              overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                              transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                              '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                              },
-                              '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                              }
-                            }}
-                          >
-                            <button onClick={handleOpen.bind(null, data.bid)}>
-                              <img
-                                src="images/LightLogo.png"
-                                alt="Paella dish"
-                                style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                              />
-                            </button>
-                          </MDBox>
+                          <img
+                            src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                            alt="Paella dish"
+                            style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                          />
                         </MDBox>
                       }
                       <MDBox pt={3} pb={1} px={1}>
@@ -521,6 +487,12 @@ function mypage() {
                           </MDTypography>
                         </MDBox>
                       </MDBox>
+                      <Button onClick={() => handlePublicButton(data.bid, data.isDeleted)}>
+                        <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>
+                          {data.isDeleted == 0 ? '공개' : '비공개'}{console.log('버튼', data.bid, data.isDeleted)}
+                        </Typography>
+                        <AntSwitch sx={{ marginTop: '0.25em' }} checked={data.isDeleted == 0} inputProps={{ 'aria-label': 'ant design' }} />
+                      </Button>
                     </MDBox>
                   </Card>
                 </MDBox>
@@ -529,7 +501,7 @@ function mypage() {
         </Grid>
       }
 
-      {showLikes &&
+      {uid === activeUser.uid && showLikes &&
         <Grid container spacing={1} sx={{ position: 'relative' }}>
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1, mr: 3 }}>
             <GridViewIcon onClick={hanldlePhotoButton} sx={{ cursor: 'pointer', mr: 2 }} />
@@ -554,7 +526,7 @@ function mypage() {
                       }
                     }}>
                       <MDBox padding="1rem">
-                        {data.image ?
+                        {data.image &&
                           <MDBox
                             variant="gradient"
                             borderRadius="lg"
@@ -582,36 +554,6 @@ function mypage() {
                               />
                             </button>
                           </MDBox>
-                          :
-                          <MDBox>
-                            <MDBox
-                              variant="gradient"
-                              borderRadius="lg"
-                              py={2}
-                              pr={0.5}
-                              sx={{
-                                position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                                height: "12.5rem",
-                                overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                                transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                  transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                  transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                },
-                                '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                  boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                                }
-                              }}
-                            >
-                              <button onClick={handleOpen.bind(null, data.bid)}>
-                                <img
-                                  src="images/LightLogo.png"
-                                  alt="Paella dish"
-                                  style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                />
-                              </button>
-                            </MDBox>
-                          </MDBox>
                         }
                       </MDBox>
                     </Card>
@@ -638,49 +580,44 @@ function mypage() {
                           src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                         />
                       }
-                      action={
-                        <div>
-                          <IconButton aria-label="settings" onClick={handleClick}>
-                            <MoreVertIcon />
-                          </IconButton>
-                          <Popover
-                            id={id}
-                            open={openPopover}
-                            anchorEl={anchorEl}
-                            onClose={handleClosePopover}
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'left',
-                            }}
-                            transformOrigin={{
-                              vertical: 'top',
-                              horizontal: 'right',
-                            }}
-                            PaperProps={{
-                              style: {
-                                marginLeft: 90, // 이 값을 조정하여 팝오버의 가로 위치를 미세하게 조정
-                              },
-                            }}
-                          >
-                            {data.uid === activeUser.uid && (
-                              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-
-                                <Button onClick={handleUpdate}>수정</Button>
-                                <Button sx={{ padding: 0 }}>공유 하기</Button>
-                                <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
-                                <Button sx={{ padding: 0 }}>삭제 하기</Button>
-
+                      action={<>
+                        {
+                          data.uid === activeUser.uid ? (<>
+                            <IconButton aria-label="settings" onClick={handleClick}>
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Popper
+                              id={id}
+                              open={openPopover}
+                              anchorEl={anchorEl}
+                            >
+                              <Box sx={{ bgcolor: 'background.paper' }}>
+                                <Button sx={{ padding: 0, cursor: 'pointer' }} onClick={() => handleUpdate}>수정</Button>
+                                <Button sx={{ padding: 0, cursor: 'pointer' }} onClick={() => handleDelete(data.bid)}> 삭제</Button>
                               </Box>
-                            )}
-                          </Popover>
-                        </div>
+                            </Popper >
+                          </>) : <>
+                            <IconButton aria-label="settings" onClick={handleClick2}>
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Popper
+                              id={id2}
+                              open={openPopover2}
+                              anchorEl={anchorEl2}
+                            >
+                              <Box sx={{ bgcolor: 'background.paper' }}>
+                                <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
+                              </Box>
+                            </Popper >
+                          </>
+                        }</>
                       }
                       title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
                     />
 
                     <MDBox padding="1rem">
-                      {data.image ?
-                        <MDBox
+                      {data.image &&
+                        <MDBox onClick={handleOpen.bind(null, data.bid)}
                           variant="gradient"
                           borderRadius="lg"
                           py={2}
@@ -699,45 +636,12 @@ function mypage() {
                             }
                           }}
                         >
-                          <button onClick={handleOpen.bind(null, data.bid)}>
-                            <img
-                              src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
-                              alt="Paella dish"
-                              style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                            />
-                          </button>
-                        </MDBox>
-                        :
-                        <MDBox>
-                          <MDBox
-                            variant="gradient"
-                            borderRadius="lg"
-                            py={2}
-                            pr={0.5}
-                            sx={{
-                              position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                              height: "12.5rem",
-                              overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                              transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                              '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                              },
-                              '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                              }
-                            }}
-                          >
-                            <button onClick={handleOpen.bind(null, data.bid)}>
-                              <img
-                                src="images/LightLogo.png"
-                                alt="Paella dish"
-                                style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                              />
-                            </button>
-                          </MDBox>
-                        </MDBox>
-                      }
+                          <img
+                            src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                            alt="Paella dish"
+                            style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                          />
+                        </MDBox>}
                       <MDBox pt={3} pb={1} px={1}>
                         <button onClick={handleOpen.bind(null, data.bid)} style={{ border: 'none', backgroundColor: 'transparent', padding: 0, margin: 0 }}>
                           <MDTypography variant="h6" textTransform="capitalize">

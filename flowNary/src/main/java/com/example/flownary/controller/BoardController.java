@@ -3,6 +3,7 @@ package com.example.flownary.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.simple.JSONArray;
@@ -348,11 +349,7 @@ public class BoardController {
 		return "수정되었습니다";
 	}
 	
-	@GetMapping("/delete")
-	public void delete(int bid) {
-		bSvc.deleteBoard(bid);
-	}
-	
+
 	@GetMapping("/modCount")
 	public JSONArray boardRegList(@RequestParam int uid) {
 
@@ -390,5 +387,30 @@ public class BoardController {
 		return jArr;
 	}
 	
-		
+	@PostMapping("/disable")
+	public int boardDisable(@RequestBody JSONObject board) {
+		System.out.println(board);
+		System.out.println(Integer.parseInt(board.get("isDeleted").toString()));
+		bSvc.disableBoard(Integer.parseInt(board.get("bid").toString()), Integer.parseInt(board.get("isDeleted").toString()));
+		return 0;
+	}
+	
+	@PostMapping("/delete")
+	public void delete(@RequestBody Map<String, Object> board) {
+	    Object bidObj = board.get("bid");
+
+	    if (bidObj == null) {
+	        System.err.println("Board ID is null in the request: " + board);
+	        throw new IllegalArgumentException("Board ID cannot be null");
+	    }
+
+	    try {
+	        int bid = Integer.parseInt(bidObj.toString());
+	        System.out.println("Deleting board with ID: " + bid);
+	        bSvc.deleteBoard(bid);
+	    } catch (NumberFormatException e) {
+	        System.err.println("Invalid Board ID format: " + bidObj);
+	        throw new IllegalArgumentException("Invalid Board ID format");
+	    }
+	}
 }

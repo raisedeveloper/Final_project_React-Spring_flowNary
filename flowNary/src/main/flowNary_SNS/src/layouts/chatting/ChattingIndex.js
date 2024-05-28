@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { Avatar, Box, Stack, TextField, InputAdornment } from "@mui/material";
+import { Avatar, Box, Stack, TextField, InputAdornment, Icon } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EastIcon from '@mui/icons-material/East';
 import { GetWithExpiry } from 'api/LocalStorage';
@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { useWebSocket } from 'api/webSocketContext';
 import { getDmList } from 'api/axiosGet';
 import { getChat } from 'api/axiosGet';
+import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
 
 export default function Chat() {
     const [messages, setMessages] = useState([]);
@@ -68,7 +69,7 @@ export default function Chat() {
                 console.log('chatting room connected');
                 stompClient.publish({
                     destination: '/app/page',
-                    body: JSON.stringify({userId: activeUser.uid, page: 'chatroom' + cid, action: 'enter'}),
+                    body: JSON.stringify({ userId: activeUser.uid, page: 'chatroom' + cid, action: 'enter' }),
                 });
 
                 chatconnect = stompClient.subscribe(`/user/chat/` + cid, (message) => {
@@ -83,12 +84,12 @@ export default function Chat() {
                     });
                 });
             }
-            
+
             return () => {
                 if (stompClient && stompClient.connected) {
                     stompClient.publish({
                         destination: '/app/page',
-                        body: JSON.stringify({userId: activeUser.uid, page: 'chatroom' + cid, action: 'leave'}),
+                        body: JSON.stringify({ userId: activeUser.uid, page: 'chatroom' + cid, action: 'leave' }),
                     });
                     console.log('chatting room disconnected');
                 }
@@ -102,6 +103,16 @@ export default function Chat() {
         }
     }, [messages]);
 
+    const rippleRef = useRef(null);
+
+    const handleMouseDown = (event) => {
+        rippleRef.current.start(event);
+    };
+
+    const handleMouseUp = () => {
+        rippleRef.current.stop();
+    };
+
     if (cid === -1) {
         return (
             <div>채팅방 정보가 없습니다.</div>
@@ -111,6 +122,7 @@ export default function Chat() {
     return (
         <DashboardLayout>
             <DashboardNavbar />
+            <IconButton sx={{ fontSize: '3rem', cursor: 'pointer' }} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}><Icon>arrow_back</Icon><TouchRipple ref={rippleRef} center /></IconButton>
             <Box
                 sx={{
                     top: '10%',

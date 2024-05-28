@@ -83,6 +83,13 @@ export const userUpdate = async (sendData: {
     });
 }
 
+// 24/05/27 성한 - updateUserStatus 추가
+export const updateUserStatus = async userData => {
+    // const response = await axios.post('/user/updateUserStatus', {uid: userId, status,});
+    const response = await axios.post('/user/updateUserStatus', userData);
+    return response.data;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////보드/////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -202,7 +209,7 @@ export const like = async (sendData: {
 export const deleteBoard = async (bid: number) => {
 
     return axios.post('/board/delete', {
-        bid: bid,
+        bid: bid
     }).catch(error => {
         console.log('axiospost.js: deleteBoard error!');
         console.log(error);
@@ -229,7 +236,7 @@ export const deleteReply = async (rid: number) => {
  */
 export const deleteReReply = async (rrid: number) => {
 
-    return axios.post('/reply/delete', {
+    return axios.post('/reply/re_delete', {
         rrid: rrid,
     }).catch(error => {
         console.log('axiospost.js: deleteReReply error!');
@@ -237,6 +244,21 @@ export const deleteReReply = async (rrid: number) => {
     });
 }
 
+/** 내 글 활성화/비활성화
+ * @param {*} bid 글 번호
+ * @param {*} isDeleted 비활성화 여부 
+ * @returns 
+ */
+export const disableBoard = async (bid: number, isDeleted: number) => {
+
+    return axios.post('/board/disable', {
+        bid: bid,
+        isDeleted: isDeleted,
+    }).catch(error => {
+        console.log('axiospost.js: disableBoard error!');
+        console.log(error);
+    });
+}
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////할일/////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -303,10 +325,10 @@ export const insertChat = async (name: string, uid: number, fuid: number, conten
         fuid: fuid,
         contents: contents,
     }).then(res => res.data)
-    .catch(error => {
-        console.log('axiospost.js: insertChat error!');
-        console.log(error);
-    });
+        .catch(error => {
+            console.log('axiospost.js: insertChat error!');
+            console.log(error);
+        });
 
     return result;
 }

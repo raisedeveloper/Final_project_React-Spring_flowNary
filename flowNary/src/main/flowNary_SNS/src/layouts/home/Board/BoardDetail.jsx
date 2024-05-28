@@ -15,16 +15,20 @@ import ClearIcon from '@mui/icons-material/Clear';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import TimeAgo from "timeago-react";
-import koreanStrings from './ko';
 import { GetWithExpiry } from "api/LocalStorage";
 import { UserContext } from "api/LocalStorage";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
+import * as timeago from 'timeago.js';
+import ko from 'timeago.js/lib/lang/ko';
 
 
-const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handleButtonLike,handleButtonLikeReply,handleButtonLikeReReply }, ref) => {
+
+const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handleButtonLike, handleButtonLikeReply, handleButtonLikeReReply }, ref) => {
+
+  timeago.register('ko', ko);
 
   // useQuery는 항상 실행되어야 합니다.
   const { data: board, isLoading, isError, refetch } = useQuery({
@@ -44,7 +48,10 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
   }
 
   const { activeUser } = useContext(UserContext);
-
+  // 클릭 시 마이페이지 이동 이벤트
+  const handleMyPage = (uid) => {
+    navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
+  }
   if (isLoading) {
     return <div>로딩 중...</div>;
   }
@@ -60,16 +67,16 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
       <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
         <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
           {/* 컨텐츠 부분 */}
-          <Card sx={{ padding: 3, display: 'flex', flexDirection: 'column',}}>
+          <Card sx={{ padding: 3, display: 'flex', flexDirection: 'column', }}>
             <CardHeader
               avatar={
-                <Avatar
-                  sx={{ bgcolor: 'red'[500] }}
+                <Avatar onClick={() => handleMyPage(board.uid)}
+                  sx={{ bgcolor: 'red'[500], cursor: 'pointer' }}
                   aria-label="recipe"
                   src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.profile}`}
                 />
               }
-              title={board.nickname}
+              title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(board.uid)}>{board.nickname}</Typography>}
               subheader={board.title}
             />
             <Box sx={{ flexGrow: 1 }}>
@@ -119,12 +126,12 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
               </Typography>
             </Box>
             <Typography variant="body2" color="text.primary" sx={{ marginTop: 5 }}>
-              {<TimeAgo datetime={board.modTime} locale={koreanStrings} />}
+              {<TimeAgo datetime={board.modTime} locale='ko' />}
             </Typography>
           </Card>
 
           {/* Reply 컴포넌트는 항상 렌더링 */}
-          <Reply bid={bid} uid={uid} index={index} nickname={nickname} handleButtonLike={handleButtonLike} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLikeReply={handleButtonLikeReply}/>
+          <Reply bid={bid} uid={uid} index={index} nickname={nickname} handleButtonLike={handleButtonLike} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLikeReply={handleButtonLikeReply} handleMyPage={handleMyPage} />
         </Stack>
       </Stack>
     </Box>
