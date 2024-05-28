@@ -17,5 +17,6 @@ public class FamilyUser {
 	int uid;
 	int status;
 	LocalDateTime regTime;
+	String name;
 	String message;
 }

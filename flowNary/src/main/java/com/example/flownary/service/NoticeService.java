@@ -10,6 +10,8 @@ public interface NoticeService {
 	
 	List<Notice> getNoticeList(int uid, int type);
 	
+	int getNoticeCount(int uid);
+	
 	List<Notice> getNoticeListAll(int uid);
 	
 	void insertNotice(Notice notice);

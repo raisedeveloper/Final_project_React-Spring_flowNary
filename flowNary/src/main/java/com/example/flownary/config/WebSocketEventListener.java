@@ -1,20 +1,15 @@
 package com.example.flownary.config;
 
-import com.example.flownary.dto.User.GetUserNickEmailDto;
-import com.example.flownary.entity.Notice;
-import com.example.flownary.service.NoticeService;
-import com.example.flownary.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,21 +19,23 @@ import java.util.Set;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Controller
 public class WebSocketEventListener {
 
     private static final Set<String> SESSION_IDS = new HashSet<>();
     private static final Map<String, String> USER_SESSIONS = new HashMap<>(); // <sessionId, userId>
     private static final Map<String, String> USER_PAGE = new HashMap<>(); // <userId, page>
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final NoticeService noticeService;
-    private final UserService userService;
-    private final SimpMessagingTemplate messagingTemplate;
 
     @EventListener
     public void onConnect(SessionConnectEvent event) {
         String sessionId = event.getMessage().getHeaders().get("simpSessionId").toString();
         SESSION_IDS.add(sessionId);
         log.info("[connect] connections : {}", SESSION_IDS.size());
+        
+        String userId = USER_PAGE.getOrDefault(sessionId, null);
+        if (userId != null) {
+            USER_SESSIONS.put(sessionId, userId);
+        }
     }
 
     @EventListener
@@ -46,32 +43,51 @@ public class WebSocketEventListener {
         String sessionId = event.getSessionId();
         SESSION_IDS.remove(sessionId);
         USER_SESSIONS.remove(sessionId);
-        USER_PAGE.values().removeIf(page -> USER_SESSIONS.get(sessionId).equals(page));
+        USER_PAGE.entrySet().removeIf(entry -> entry.getValue().equals(sessionId));
         log.info("[disconnect] connections : {}", SESSION_IDS.size());
     }
 
-    @EventListener
-    public void handleWebSocketMessage(Message<?> message) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+	@MessageMapping("/userset")
+    public void handleWebSocketMessage(@Payload Map<String, Object> payload, StompHeaderAccessor headerAccessor) {
         String sessionId = headerAccessor.getSessionId();
-        Map<String, Object> payload = (Map<String, Object>) message.getPayload();
+        log.info("Received sessionId: {}", sessionId);
+        log.info("Received message: {}", payload);
         
-        String userId = (String) payload.get("userId");
+        int userId = (Integer) payload.get("userId");
+        String action = (String) payload.get("action");
+
+        if ("enter".equals(action)) {
+            USER_SESSIONS.put(sessionId, Integer.toString(userId));
+        } else if ("leave".equals(action)) {
+            USER_SESSIONS.remove(sessionId);
+        }
+
+        log.info("User {} WebSocket {}", userId, action);
+    }
+	
+	@MessageMapping("/page")
+	public void handleWebSocketMessagePage(@Payload Map<String, Object> payload) {
+        log.info("Received message: {}", payload);
+        
+        int userId = (Integer) payload.get("userId");
         String page = (String) payload.get("page");
         String action = (String) payload.get("action");
 
         if ("enter".equals(action)) {
-            USER_SESSIONS.put(sessionId, userId);
-            USER_PAGE.put(userId, page);
+            USER_PAGE.put(Integer.toString(userId), page);
         } else if ("leave".equals(action)) {
-            USER_SESSIONS.remove(sessionId);
-            USER_PAGE.remove(userId);
+            USER_PAGE.remove(Integer.toString(userId));
         }
 
         log.info("User {} {} page {}", userId, action, page);
     }
 
-    public boolean isUserOnPage(String userId, String page) {
-        return page.equals(USER_PAGE.get(userId));
+    public boolean isUserOnPage(int userId, String page) {
+        return page.equals(USER_PAGE.get(Integer.toString(userId)));
+    }
+    
+    public boolean isUserOnConnected(int userId) {
+//    	return USER_PAGE.containsKey(Integer.toString(userId));
+    	return USER_SESSIONS.containsValue(Integer.toString(userId));
     }
 }

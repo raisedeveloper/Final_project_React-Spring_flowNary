@@ -28,6 +28,11 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<Notice> getNoticeList(int uid, int type) {
 		return nDao.getNoticeList(uid, type);
 	}
+	
+	@Override
+	public int getNoticeCount(int uid) {
+		return nDao.getNoticeCount(uid);
+	}
 
 	@Override
 	public List<Notice> getNoticeListAll(int uid) {

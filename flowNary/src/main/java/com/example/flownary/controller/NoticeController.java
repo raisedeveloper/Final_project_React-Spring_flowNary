@@ -3,14 +3,10 @@ package com.example.flownary.controller;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.Notice;
@@ -40,7 +34,6 @@ public class NoticeController {
 	private final NoticeService nSvc;
 	private final UserService uSvc;
 	
-	private static final Set<String> SESSION_IDS = new HashSet<>();
 	private final SimpMessagingTemplate noticeTemplate;
 	
 	public void insertNotice(int suid, int type, int oid, int uid) {
@@ -153,28 +146,22 @@ public class NoticeController {
 	}
 	
 	
-    @MessageMapping("/notice") // "/pub/notice"
+    @MessageMapping("/notice") // "/app/notice"
     public void publishNotice(Notice notice) {
     	
         log.info("publishChat : {}", notice);
 
-        noticeTemplate.convertAndSend("/sub/notice/" + notice.getUid(), notice);
+        noticeTemplate.convertAndSend("/user/notice/" + notice.getUid(), notice);
+    }
+    
+    @MessageMapping("/noticeAll") // "/app/noticeAll"
+    public void publishNoticeAll(int uid) {
+    	
+        log.info("publishChat : {}", uid);
+
+        noticeTemplate.convertAndSend("/user/noticeAll/" + uid, uid);
     }
 
-    @EventListener(SessionConnectEvent.class)
-    public void onConnect(SessionConnectEvent event) {
-        String sessionId = event.getMessage().getHeaders().get("simpSessionId").toString();
-        SESSION_IDS.add(sessionId);
-        log.info("[connect] connections : {}", SESSION_IDS.size());
-    }
-
-    @EventListener(SessionDisconnectEvent.class)
-    public void onDisconnect(SessionDisconnectEvent event) {
-        String sessionId = event.getSessionId();
-        SESSION_IDS.remove(sessionId);
-        log.info("[disconnect] connections : {}", SESSION_IDS.size());
-    }
-	
 	@GetMapping("/list")
 	public JSONArray getNoticeUid(@RequestParam int uid,
 			@RequestParam(defaultValue="0", required=false) int type) {
@@ -218,9 +205,18 @@ public class NoticeController {
 		return jArr;
 	}
 	
+	@GetMapping("/count")
+	public int getNoticeCount(@RequestParam int uid) {
+		if (uid == -1)
+			return 0;
+		
+		return nSvc.getNoticeCount(uid);
+	}
+	
 	@PostMapping("/remove")
-	public int removeNotice(@RequestBody int nid) {
-		Notice notice = nSvc.getNotice(nid);
+	public int removeNotice(@RequestBody JSONObject nid) {
+		int inid = Integer.parseInt(nid.get("nid").toString());
+		Notice notice = nSvc.getNotice(inid);
 		
 		if (notice == null)
 		{
@@ -228,7 +224,27 @@ public class NoticeController {
 		}
 		else
 		{
-			nSvc.removeNotice(nid);
+			nSvc.removeNotice(inid);
+		}
+		
+		return 0;
+	}
+	
+	@PostMapping("/removeAll")
+	public int removeNoticeAll(@RequestBody JSONObject uid) {
+		int iuid = Integer.parseInt(uid.get("uid").toString());
+		if (iuid == -1)
+			return -1;
+		
+		nSvc.removeNoticeAll(iuid);
+		
+		if (nSvc.getNoticeCount(iuid) != 0)
+		{
+			return -1;
+		}
+		else
+		{
+			publishNoticeAll(iuid);
 		}
 		
 		return 0;
