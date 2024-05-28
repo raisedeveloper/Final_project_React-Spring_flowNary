@@ -88,8 +88,6 @@ export default function Home() {
     setOpen(false);
   };
 
-
-
   const location = useLocation();
   const [path2, setPath2] = useState('');
 
@@ -117,10 +115,14 @@ export default function Home() {
     queryKey: ['boardList', uid],
     queryFn: ({ pageParam = 1 }) => getBoardList(pageParam * count, uid),
     getNextPageParam: (lastPage) => {
-      if (lastPage && lastPage.nextCursor !== undefined) {
-        return lastPage.nextCursor;
+      if (lastPage) {
+        if (lastPage.nextCursor !== undefined) {
+          return lastPage.nextCursor;
+        }
+      } else {
+        console.warn('Last page is undefined');
+        return undefined;
       }
-      return undefined;
     },
   });
 
@@ -254,7 +256,6 @@ export default function Home() {
                       <Grid key={idx} item xs={12} md={6} lg={6} >
                         <MDBox mb={3}>
                           <Card sx={{
-                            height: "100%",
                             transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
                             '&:hover': {
                               boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과

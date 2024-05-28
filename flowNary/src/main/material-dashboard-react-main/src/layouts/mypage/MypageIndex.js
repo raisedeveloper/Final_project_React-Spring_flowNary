@@ -64,8 +64,9 @@ import TimeAgo from "timeago-react";
 import koreanStrings from '../home/Board/ko';
 import { useLocation } from "react-router-dom";
 import { getUser } from "api/axiosGet";
+import { getLikedBoardList } from "api/axiosGet";
 
-function mypage(props) {
+function mypage() {
 
   // useLocation으로 state 받기
   const { state } = useLocation();
@@ -91,12 +92,12 @@ function mypage(props) {
   const [expanded, setExpanded] = useState({});
 
   const board = useQuery({
-    queryKey: ['board', uid],
+    queryKey: ['boardmypage', uid],
     queryFn: () => getMyBoardList(uid),
   });
 
   const likes = useQuery({
-    queryKey: ['boardList', uid],
+    queryKey: ['boardLikeList', uid],
     queryFn: () => getLikedBoardList(uid),
   });
 

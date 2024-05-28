@@ -11,7 +11,6 @@ import { getTodoList } from "api/axiosGet";
 import { wrong } from "api/alert";
 import { updateTodoList, updateTodo, deleteTodo, insertTodo } from "api/axiosPost";
 import Iconify from "components/iconify";
-import PropTypes from 'prop-types';
 
 export default function TodoList() {
   const uid = GetWithExpiry("uid");
@@ -150,8 +149,8 @@ export default function TodoList() {
               </Grid>
               <Grid>
                 <div style={{ flexGrow: 1 }}>
-                  <IconButton color={anchorEl && currentEditIdx === idx ? 'inherit' : 'default'} onClick={(e) => handleOpenMenu(e, idx)}>
-                    <Iconify icon="eva:more-vertical-fill" />
+                  <IconButton width={20} color={anchorEl && currentEditIdx === idx ? 'inherit' : 'default'} onClick={(e) => handleOpenMenu(e, idx)}>
+                    <Iconify icon="eva:more-vertical-fill" width={20} sx={{textDecoration:'none'}}/>
                   </IconButton>
                   <Popover
                     open={Boolean(anchorEl && currentEditIdx === idx)}

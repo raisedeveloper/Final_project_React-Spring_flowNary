@@ -88,7 +88,7 @@ export default function statistics() {
               icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
             />
           </Grid> */}
-          <Grid xs={12} md={6} lg={8} sx={{ mb: 5 }}>
+          <Grid item xs={12} md={6} lg={8} sx={{ mb: 5 }}>
             <AppWebsiteVisits
               title="사이트 정보"
               chart={{
@@ -124,7 +124,7 @@ export default function statistics() {
             />
           </Grid>
 
-          <Grid xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="가입자 연령"
               chart={{

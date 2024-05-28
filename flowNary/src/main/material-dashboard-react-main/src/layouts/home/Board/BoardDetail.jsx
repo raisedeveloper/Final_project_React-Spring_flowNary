@@ -122,41 +122,6 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
               {<TimeAgo datetime={board.modTime} locale={koreanStrings} />}
             </Typography>
           </Card>
-          {/* 이미지 없을때
-          {image == null ? (
-            <Card sx={{ height: "100vh", padding: 3, border: '3px solid purple' }}>
-              <CardHeader
-                avatar={
-                  <Avatar sx={{ bgcolor: 'red'[500] }} aria-label="recipe"
-                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.profile}`}
-                  />
-                }
-                title={board.nickname}
-                subheader={board.title}
-              />
-              <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '62%', overflowY: 'auto' }}>
-                <Stack direction="row" spacing={1} padding={'10px 0 25px 0'}>
-                  <Button sx={{ padding: 0, width: 0 }} onClick={() => handleButtonLike(board.bid, board.uid)}>
-                    <FavoriteIcon sx={board.liked ? { color: 'red' } : { color: 'blue' }} />{board.likeCount}
-                  </Button>
-                  <Button sx={{ padding: 0, width: 0 }}>
-                    <ShareIcon />
-                  </Button>
-                  <Button sx={{ padding: 0, width: 0 }}>
-                    <BookmarkIcon />
-                  </Button>
-                </Stack>
-                <Stack direction="row" spacing={1}>
-                  <Typography variant="body2" color="text.secondary" >
-                    {board.bContents}
-                  </Typography>
-                </Stack>
-                <Typography variant="body2" color="text.fisrt" sx={{ marginTop: 5 }} >
-                  {<TimeAgo datetime={board.modTime} locale={koreanStrings} />}
-                </Typography>
-              </CardContent>
-            </Card>
-          ) : null} */}
 
           {/* Reply 컴포넌트는 항상 렌더링 */}
           <Reply bid={bid} uid={uid} index={index} nickname={nickname} handleButtonLike={handleButtonLike} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLikeReply={handleButtonLikeReply}/>
@@ -167,13 +132,13 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
 });
 
 BoardDetail.propTypes = {
-  bid: PropTypes.number.isRequired,
-  uid: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  nickname: PropTypes.string.isRequired,
-  handleButtonLike: PropTypes.func.isRequired,
-  handleButtonLikeReply: PropTypes.func.isRequired,
-  handleButtonLikeReReply: PropTypes.func.isRequired,
+  bid: PropTypes.number,
+  uid: PropTypes.number,
+  index: PropTypes.number,
+  handleClose: PropTypes.func,
+  nickname: PropTypes.string,
+  handleButtonLike: PropTypes.func,
+  handleButtonLikeReply: PropTypes.func,
+  handleButtonLikeReReply: PropTypes.func,
 };
 export default BoardDetail;
