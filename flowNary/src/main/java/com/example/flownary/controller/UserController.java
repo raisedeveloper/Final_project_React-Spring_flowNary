@@ -97,8 +97,11 @@ public class UserController {
 		user.setNickname(dto.getNickname());
 		user.setProfile(dto.getProfile());
 		user.setStatusMessage(dto.getStatusMessage());
+		user.setGender(dto.getGender());
 		user.setSnsDomain(dto.getSnsDomain());
 		user.setTel(dto.getTel());
+		user.setBirth(dto.getBirth());
+		user.setLocation(dto.getLocation());
 		
 		userSvc.updateUser(user);
 		return 0;
@@ -144,7 +147,6 @@ public class UserController {
 	public JSONObject getUser(@RequestParam int uid)
 	{
 		User user = userSvc.getUser(uid);
-		
 		if (user == null)
 			return null;
 		
@@ -163,6 +165,8 @@ public class UserController {
 		hMap.put("birth", user.getBirth());
 		hMap.put("tel", user.getTel());
 		hMap.put("hashUid", user.getHashUid());
+		hMap.put("location", user.getLocation());
+		
 		
 		JSONObject userOut = new JSONObject(hMap);
 		
@@ -259,8 +263,6 @@ public class UserController {
 	
 	@GetMapping("getUserList")
 	public JSONArray userList() {
-
-
 		List<User> userList = new ArrayList<>();
 		userList = userSvc.getUserList();
 

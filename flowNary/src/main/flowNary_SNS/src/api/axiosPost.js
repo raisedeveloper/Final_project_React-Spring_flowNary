@@ -73,6 +73,8 @@ export const userUpdate = async (sendData: {
     statusMessage: string,
     snsDomain: string,
     tel: string,
+    location: stringOrNumber,
+    gender: number
 }) => {
 
     return axios.post('/user/update',
@@ -207,7 +209,7 @@ export const like = async (sendData: {
  * @returns 
  */
 export const deleteBoard = async (bid: number) => {
-
+    console.log('tlqkf');
     return axios.post('/board/delete', {
         bid: bid
     }).catch(error => {

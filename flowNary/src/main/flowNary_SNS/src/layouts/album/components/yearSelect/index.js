@@ -10,21 +10,24 @@ function YearSelect({ selectedYear, onChange }) {
 
   return (
     <>
-      <MDTypography mt={5} id="year-select-label">  보고싶은 연도를 선택하세요.     </MDTypography>
-      <FormControl>
-        <Select
-          labelId="year-select-label"
-          id="year-select"
-          value={selectedYear}
-          onChange={onChange}
-          sx={{ width: "10vw", height: "5%", fontSize: 'large' }}
-        >
-          {years.map(year => (
-            <MenuItem key={year} value={year}>
-              {year > 2022 ? year : "전체"} 년
-            </MenuItem>
-          ))}
-        </Select>
+      <FormControl sx={{ display: 'flex', justifyContent: 'center' }}>
+        <MDTypography mt={3} id="year-select-label">
+          Year  
+          <Select
+            labelId="year-select-label"
+            id="year-select"
+            value={selectedYear}
+            onChange={onChange}
+            sx={{ width: "8vw", fontSize: 'large', mx:3, p:0.5 }}
+          >
+            {years.map(year => (
+              <MenuItem key={year} value={year} >
+                {year > 2022 ? year : "전체"} 년
+              </MenuItem>
+            ))}
+          </Select>
+        </MDTypography>
+
       </FormControl>
     </>
   );

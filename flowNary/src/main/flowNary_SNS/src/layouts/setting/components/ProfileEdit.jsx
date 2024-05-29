@@ -56,6 +56,21 @@ function ProfileEdit({ uid, email }) {
     queryFn: () => useGetUser(uid),
   });
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'F5') {
+        event.preventDefault();
+        navigate(-1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [navigate]);
+
   const [uname, setUname] = useState('');
   const [nickname, setNickname] = useState('');
   const [statusMessage, setStat] = useState('');
@@ -98,7 +113,7 @@ function ProfileEdit({ uid, email }) {
   const handleUname = (e) => { setUname(e.target.value); };
   const handleNickname = (e) => { setNickname(e.target.value); };
   const handleStat = (e) => { setStat(e.target.value); };
-  const handleGender = (e) => { setGender(e.target.value === 'man' ? 0 : (e.target.value === 'woman' ? 1 : 2)); };
+  const handleGender = (e) => { setGender(e.target.value); console.log(gender);};
   const handleSnsDomain = (e) => { setSnsDomain(e.target.value); };
   const handleTel = (e) => { setTel(e) };
   const handleBirthChange = (e) => { const formattedDate = dayjs(e).format('YYYY-MM-DD'); setBirth(formattedDate); }
@@ -170,16 +185,16 @@ function ProfileEdit({ uid, email }) {
                 <MDBox fullWidth id="gender_select" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                   <Select
                     id="gender_select"
-                    value={(gender === 0 ? 'man' : (gender === 1 ? 'woman' : 'none'))}
+                    value={gender}
                     onChange={handleGender}
                     sx={{
                       width: '100%', height: '70%',
                       textAlign: 'center', border: '0'
                     }}
                   >
-                    <MenuItem value={"man"}>남자</MenuItem>
-                    <MenuItem value={"woman"}>여자</MenuItem>
-                    <MenuItem value={"none"}>성별 설정 안함</MenuItem>
+                    <MenuItem value={0}>남자</MenuItem>
+                    <MenuItem value={1}>여자</MenuItem>
+                    <MenuItem value={2}>성별 설정 안함</MenuItem>
                   </Select>
                 </MDBox>
               </Grid>

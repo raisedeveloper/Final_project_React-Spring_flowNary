@@ -117,20 +117,6 @@ export default function ReReply(props) {
     }
   }
 
-  // // 버튼 클릭 시 ReReply 컴포넌트의 가시성 토글
-  // const handleButtonClick = (rrid) => {
-  //   setRridtext(rrid);
-  //   setFormChange((prev) => ({
-  //     ...prev,
-  //     [rrid]: !prev[rrid],
-  //   }));
-  //   setFormInputs((prev) => ({
-  //     ...prev,
-  //     [rrid]: '',
-  //   }));
-  // };
-
-
   return (
     <>
       {/* 댓글 내용 List */}
@@ -179,29 +165,7 @@ export default function ReReply(props) {
                     <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
                     <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} >좋아요 {data.likeCount}개 {data.liked ?
                       <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
-                    {formChange[data.rrid] ?
-                      <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '50%' }}>
-                        <input
-                          value={formInputs[data.rrid] || ''}
-                          onChange={(e) => {
-                            setFormInputs((prev) => ({
-                              ...prev,
-                              [data.rid]: e.target.value,
-                            }));
-                          }}
-                          placeholder="댓글입력.."
-                          className="custom-input"
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <Button onClick={(e) => { handleFormSubmit2(e, formInputs[data.rrid]); formChange[data.rrid] = false; }} sx={{ color: 'lightcoral', padding: 0 }}>게시</Button>
-                        <Button onClick={() => handleButtonClick(data.rrid)} sx={{ color: 'lightcoral', padding: 0 }}>취소</Button>
-                      </MDBox>
-                      :
-                      <>
-                        {/* <Button onClick={() => handleButtonClick(data.rrid)} sx={{ color: 'lightcoral', padding: 0 }}>답글</Button> */}
-                        {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rrid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
-                      </>
-                    }
+                    {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rrid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
                   </div>
 
                   {/* 답글 목록 */}

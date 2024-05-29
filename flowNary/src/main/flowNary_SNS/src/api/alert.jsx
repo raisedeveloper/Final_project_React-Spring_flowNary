@@ -58,6 +58,28 @@ export async function deleteConfirm() {
       title: "성공적으로 삭제되었습니다.",
       icon: "success"
     });
+    return 1;
+  }
+
+  return 2;
+}
+
+export async function Declaration(bid) {
+  const result = await Swal.fire({
+    title: "정말로 신고하시겠습니까?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "확인",
+    cancelButtonText: '취소'
+  });
+
+  if (result.isConfirmed) {
+    await Swal.fire({
+      title: "성공적으로 삭제되었습니다.",
+      icon: "success"
+    });
     return true;
   }
 

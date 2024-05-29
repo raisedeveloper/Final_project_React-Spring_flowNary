@@ -158,9 +158,9 @@ public class BoardController {
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		
 		List<Board> list = new ArrayList<>();
-		
+		System.out.println(field);
 		switch(type) {
-		case 1, 5:
+		case 1:
 			list = bSvc.getBoardList(count, field, query);			
 			break;
 		case 2:
@@ -396,7 +396,7 @@ public class BoardController {
 	}
 	
 	@PostMapping("/delete")
-	public void delete(@RequestBody Map<String, Object> board) {
+	public void delete(@RequestBody JSONObject board) {
 	    Object bidObj = board.get("bid");
 
 	    if (bidObj == null) {

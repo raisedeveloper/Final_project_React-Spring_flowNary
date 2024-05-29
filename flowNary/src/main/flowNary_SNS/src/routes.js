@@ -161,7 +161,7 @@ const createRoutes = (isLoggedIn) => [
     name: "글쓰기수정",
     key: "write",
     icon: <Icon fontSize="xx-large">history_edu</Icon>,
-    route: "/home/Update",
+    route: "/home/update",
     component: <UpdateIndex />,
     visible: false,
   },

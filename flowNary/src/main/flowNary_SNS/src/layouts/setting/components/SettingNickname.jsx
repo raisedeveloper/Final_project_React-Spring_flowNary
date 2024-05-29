@@ -34,8 +34,8 @@ export default function SettingNickname(props) {
     return () => clearInterval(interval);
   }, [props.nickname, nickname]);
 
-  const checkNickname = () => {
-    axios.get('/user/nickname',
+  const checkNickname = async () => {
+    await axios.get('/user/nickname',
       {
         params: {
           email: props.email
@@ -108,8 +108,8 @@ export default function SettingNickname(props) {
 
 
 SettingNickname.propTypes = {
-  nickname: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  changeCheckingNickname: PropTypes.func.isRequired,
-  onNicknameChange: PropTypes.func.isRequired,
+  nickname: PropTypes.string,
+  email: PropTypes.string,
+  changeCheckingNickname: PropTypes.func,
+  onNicknameChange: PropTypes.func,
 };

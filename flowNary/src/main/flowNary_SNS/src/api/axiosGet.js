@@ -175,7 +175,6 @@ export const getLikedBoardList = async (uid) => {
                 uid: uid,
             }
         });
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.log('axiosget.js: likelist error!');

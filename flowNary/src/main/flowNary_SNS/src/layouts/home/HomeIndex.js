@@ -11,7 +11,7 @@ import Footer from "examples/Footer";
 
 // Dashboard components
 import TodoList from "./todoList/TodoListIndex";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, List, ListItem, Popper, } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, List, ListItem, Popper, Paper, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
@@ -35,6 +35,7 @@ import AppTasks from '../admin/statistics/app-tasks';
 import { UserContext } from "api/LocalStorage";
 import { deleteBoard } from "api/axiosPost";
 import { deleteConfirm } from "api/alert";
+import Iconify from "components/iconify/iconify";
 
 export default function Home() {
   timeago.register('ko', ko);
@@ -71,13 +72,6 @@ export default function Home() {
   //   navigate("/login");
   // }
   const nickname = useGetUserNicknameLS();
-
-
-  //수정 페이지 이동
-  const handleUpdate = () => {
-    navigate("../home/Update")
-    sessionStorage.setItem("bid", bid);
-  }
 
   const { activeUser } = useContext(UserContext);
 
@@ -226,29 +220,44 @@ export default function Home() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorEl2, setAnchorEl2] = useState(null);
 
+  const openPopover = Boolean(anchorEl);
+  const openPopover2 = Boolean(anchorEl2);
+  const id = openPopover ? 'simple-popper' : undefined;
+  const id2 = openPopover ? 'simple-popper' : undefined;
+  const popperRef = useRef(null);
+
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const handleClosePopover = () => {
     setAnchorEl(null);
+    setAnchorEl2(null);
   };
-
 
   const handleClick2 = (event) => {
     setAnchorEl2(anchorEl2 ? null : event.currentTarget);
   };
 
-  const handleClosePopover2 = () => {
-    setAnchorEl2(null);
+
+  const handleClickOutside = (event) => {
+    if (popperRef.current && !popperRef.current.contains(event.target)) {
+      handleClosePopover();
+    }
   };
 
-  const openPopover = Boolean(anchorEl);
-  const openPopover2 = Boolean(anchorEl2);
-  const id = openPopover ? 'simple-popper' : undefined;
-  const id2 = openPopover ? 'simple-popper' : undefined;
+  const handleUpdate = () => {
+    setAnchorEl(!anchorEl);
+    sessionStorage.setItem("bid", bid);
+    navigate("../home/Update");
+  }
+
+  const handleSiren = () => {
+    setAnchorEl(!anchorEl);
+  }
 
   const handleDelete = async (bid) => {
+    setAnchorEl(!anchorEl);
     const confirm = await deleteConfirm();
     console.log(confirm);
     if (confirm) {
@@ -256,6 +265,13 @@ export default function Home() {
       queryClient.invalidateQueries(['boardList', uid]); // 쿼리 무효화
     }
   }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
 
   // 클릭 시 마이페이지 이동 이벤트
@@ -285,9 +301,9 @@ export default function Home() {
                               }
                             }}>
                               <CardHeader
-                                sx={{ padding: 1}}
+                                sx={{ padding: 1 }}
                                 avatar={
-                                  <Avatar sx={{cursor: 'pointer' }}
+                                  <Avatar sx={{ cursor: 'pointer' }}
                                     aria-label="recipe" onClick={() => handleMyPage(data.uid)}
                                     src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                                   />
@@ -295,36 +311,72 @@ export default function Home() {
                                 action={<>
                                   {
                                     data.uid === activeUser.uid ? (<>
-                                      <IconButton aria-label="settings" onClick={handleClick}>
+                                      <IconButton aria-label="settings" onClick={handleClick} ref={popperRef} disabled={Boolean(anchorEl)}>
                                         <MoreVertIcon />
                                       </IconButton>
                                       <Popper
                                         id={id}
                                         open={openPopover}
                                         anchorEl={anchorEl}
+                                        onClose={handleClosePopover}
+                                        onClickOutside={handleClickOutside}
+                                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                                        placement="bottom-end"
+                                        modifiers={[
+                                          {
+                                            name: 'offset',
+                                            options: {
+                                              offset: [0, 10],
+                                            },
+                                          },
+                                        ]}
                                       >
-                                        <Box sx={{ bgcolor: 'background.paper' }}>
-                                          <Button sx={{ padding: 0, cursor: 'pointer' }} onClick={() => handleUpdate}>수정</Button>
-                                          <Button sx={{ padding: 0, cursor: 'pointer' }} onClick={() => handleDelete(data.bid)}> 삭제</Button>
-                                        </Box>
+                                        <Paper style={{
+                                          padding: '0.3rem',
+                                          backgroundColor: 'white',
+                                          boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
+                                          borderRadius: '8px',
+                                        }}>
+                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'blue', '&:hover': { color: 'blue' } }} onClick={() => handleUpdate}><Iconify style={{ marginRight: '0.1rem' }} icon="lucide:edit" />수정</Button>
+                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }} onClick={() => handleDelete(data.bid)}><Iconify style={{ marginRight: '0.1rem' }} icon="solar:trash-bin-trash-bold" />삭제</Button>
+                                        </Paper>
                                       </Popper >
                                     </>) : <>
-                                      <IconButton aria-label="settings" onClick={handleClick2}>
+                                      <IconButton aria-label="settings" onClick={handleClick2} ref={popperRef} disabled={Boolean(anchorEl2)}>
                                         <MoreVertIcon />
                                       </IconButton>
                                       <Popper
                                         id={id2}
                                         open={openPopover2}
                                         anchorEl={anchorEl2}
+                                        onClose={handleClosePopover}
+                                        onClickOutside={handleClickOutside}
+                                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                                        placement="bottom-end"
+                                        modifiers={[
+                                          {
+                                            name: 'offset',
+                                            options: {
+                                              offset: [0, 10],
+                                            },
+                                          },
+                                        ]}
                                       >
-                                        <Box sx={{ bgcolor: 'background.paper' }}>
-                                          <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
-                                        </Box>
+                                        <Paper style={{
+                                          padding: '0.3rem',
+                                          backgroundColor: 'white',
+                                          boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
+                                          borderRadius: '8px',
+                                        }}>
+                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button>
+                                        </Paper>
                                       </Popper >
                                     </>
                                   }</>
                                 }
-                                title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer'  }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                                title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                               />
 
                               <MDBox padding="1rem">
