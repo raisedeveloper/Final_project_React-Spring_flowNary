@@ -1,14 +1,12 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Card, CardHeader, CardMedia, CardActions, CardContent, Avatar, Typography,
-  ListItemAvatar, ListItem, List, Button, Box, Modal, Paper,
+  ListItemAvatar, ListItem, List, Button, Box,
   ListItemText,
-  Grid,
-  IconButton,
-  Link
+  Stack,
+  IconButton
 } from '@mui/material';
 import { red } from '@mui/material/colors';
-import { Stack } from '@mui/system';
 import PropTypes from 'prop-types';
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
@@ -16,7 +14,7 @@ import ko from 'timeago.js/lib/lang/ko';
 import { GetWithExpiry, SetWithExpiry } from "api/LocalStorage";
 import axios from 'axios';
 import ReReply from "./ReReply";
-import Carousel from 'react-material-ui-carousel'
+import Carousel from 'react-material-ui-carousel';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAddReply, useGetUserNicknameLS, useAddReReply } from 'api/customHook.jsx';
 import { useGetBoard, useGetBoardByUrl, useGetBoardList, useGetReplyList } from './BoardJS.js';
@@ -170,7 +168,7 @@ export default function Reply(props) {
     }
   };
 
-  const handleSearchs = (tag) => {
+  const handleSearch = (tag) => {
     sessionStorage.setItem("search", tag);
     sessionStorage.setItem("tag", tag);
     if (location.pathname !== 'search') {
@@ -185,7 +183,7 @@ export default function Reply(props) {
       </Stack>
       <MDBox>
         <MDBox sx={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between' }}>
-          {/* 하트 아이콘? */}
+          {/* 하트 아이콘 */}
           <IconButton sx={{ ml: 5, width: 0, fontSize: '2rem' }}
             onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
             {board.data.liked ?
@@ -198,31 +196,24 @@ export default function Reply(props) {
               board.data.hashTag.split(",").map((tag, index) => {
                 const trimmedTag = tag.trim(); // 좌우 공백 제거
                 return (
-                  <span key={index}>
-                    {index > 0 && null}
-                    <Button
-                      key={index}
-                      variant="outlined"
-                      style={{ color: 'lightcoral' }}
-                      color='warning'
-                      onClick={() => handleSearchs(trimmedTag)}
-                    >
-                      #{trimmedTag}
-                    </Button>
-                  </span>
+                  <Typography
+                    key={index}
+                    fontSize={14}                    
+                    style={{ color: 'lightcoral', cursor: 'pointer', margin:'0px', marginRight: '15px' }}
+                    onClick={() => handleSearch(trimmedTag)}
+                  >
+                    #{trimmedTag}
+                  </Typography>
                 );
               })
             ) : (
-              <Button
-                variant="outlined"
-                style={{ color: 'lightcoral' }}
-                color='warning'
-                onClick={() =>
-                  handleSearch(board.data.hashTag)
-                }
+              <Typography
+                variant="subtitle1"
+                style={{ color: 'lightcoral', cursor: 'pointer', marginRight: '5px' }}
+                onClick={() => handleSearch(board.data.hashTag)}
               >
                 #{board.data.hashTag}
-              </Button>
+              </Typography>
             )
           ) : null}
           <Typography sx={{ fontSize: 'small', mr: 2, color: 'coral' }}>
