@@ -29,7 +29,6 @@ public class User {
 	String tel;
 	String hashUid;
 	String location;
-	String bookmark;
 
 	@Override
 	public String toString() {

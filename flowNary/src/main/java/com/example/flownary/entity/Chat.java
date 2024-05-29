@@ -16,8 +16,7 @@ import lombok.ToString;
 public class Chat {
 
 	int cid;
-	int uid1;
-	int uid2;
 	int status;
-	LocalDateTime regTime;
+	LocalDateTime statusTime;
+	String name;
 }

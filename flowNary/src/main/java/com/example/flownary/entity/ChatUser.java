@@ -19,4 +19,6 @@ public class ChatUser {
 	int uid;
 	int status;
 	LocalDateTime statusTime;
+	String name;
+	int userrank;
 }

@@ -36,13 +36,19 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
-	public void insertChat(Chat chat) {
+	public int insertChat(Chat chat) {
 		cDao.insertChat(chat);
+		return chat.getCid();
 	}
 
 	@Override
-	public void updateChat(int status, int cid) {
-		cDao.updateChat(status, cid);
+	public void updateChat(int status, String name, int cid) {
+		cDao.updateChat(status, name, cid);
+	}
+	
+	@Override
+	public void updateChatTime(int cid) {
+		cDao.updateChatTime(cid);
 	}
 
 	@Override

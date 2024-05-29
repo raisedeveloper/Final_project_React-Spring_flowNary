@@ -19,6 +19,11 @@ public class ReplyServiceImpl implements ReplyService{
 	public Reply getReply(int rid) {
 		return rDao.getReply(rid);
 	}
+	
+	@Override
+	public int getReplyCount(int bid) {
+		return rDao.getReplyCount(bid);
+	} 
 
 	@Override
 	public List<Reply> getReplyList(int bid, int offset, int limit) {

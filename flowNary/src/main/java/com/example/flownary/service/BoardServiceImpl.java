@@ -107,6 +107,11 @@ public class BoardServiceImpl implements BoardService{
 	public void updateBoardNickname(int uid, String nickname) {
 		boardDao.updateBoardNickname(uid, nickname);
 	}
+	
+	@Override
+	public void disableBoard(int bid, int isDeleted) {
+		boardDao.disableBoard(bid, isDeleted);
+	}
 
 	@Override
 	public void deleteBoard(int bid) {

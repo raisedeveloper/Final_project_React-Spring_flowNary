@@ -10,8 +10,8 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 // Dashboard components
-import TodoList from "layouts/todoList/TodoListIndex";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, } from "@mui/material";
+import TodoList from "./todoList/TodoListIndex";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, List, ListItem, Popper, Paper, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
@@ -28,11 +28,17 @@ import { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-quer
 import { getBoardList, getBoardListCount } from "api/axiosGet";
 import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
-import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
+import * as timeago from 'timeago.js';
+import ko from 'timeago.js/lib/lang/ko';
+
 import AppTasks from '../admin/statistics/app-tasks';
 import { UserContext } from "api/LocalStorage";
+import { deleteBoard } from "api/axiosPost";
+import { deleteConfirm } from "api/alert";
+import Iconify from "components/iconify/iconify";
 
 export default function Home() {
+  timeago.register('ko', ko);
   const queryClient = useQueryClient()
   const [expanded, setExpanded] = useState({});
 
@@ -57,40 +63,41 @@ export default function Home() {
   const profile = GetWithExpiry("profile");
 
   const [bid, setBid] = useState(0);
+  const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
+
 
   // if (uid == -1) {
   //   navigate("/login");
   // }
   const nickname = useGetUserNicknameLS();
 
-
-  //수정 페이지 이동
-  const handleUpdate = () => {
-    navigate("../home/Update")
-    sessionStorage.setItem("bid", bid);
-  }
-
   const { activeUser } = useContext(UserContext);
 
 
   // 창 열고 닫기
   const handleOpen = (e) => {
-
     setOpen(true);
     setBid(e);
-
   }
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-
+  const handleClose = () => { setOpen(false); };
 
   const location = useLocation();
-  const path = location.pathname.split('/');
-  const path2 = path[path.length - 1];
+  const [path2, setPath2] = useState('');
+
+  useEffect(() => {
+    if (location.pathname) {
+      const getPath = async () => {
+        const path = location.pathname.split('/');
+        if (path) {
+          const lastPath = path.slice(-1)[0];
+          setPath2(lastPath);
+        }
+        getPath();
+      }
+    };
+  }, [location]);
 
   const [count, setCount] = useState(10);
   const [page, setPage] = useState(1);
@@ -103,10 +110,14 @@ export default function Home() {
     queryKey: ['boardList', uid],
     queryFn: ({ pageParam = 1 }) => getBoardList(pageParam * count, uid),
     getNextPageParam: (lastPage) => {
-      if (lastPage && lastPage.nextCursor !== undefined) {
-        return lastPage.nextCursor;
+      if (lastPage) {
+        if (lastPage.nextCursor !== undefined) {
+          return lastPage.nextCursor;
+        }
+      } else {
+        console.warn('Last page is undefined');
+        return undefined;
       }
-      return undefined;
     },
   });
 
@@ -174,25 +185,99 @@ export default function Home() {
 
     addLikeForm(sendData);
   }
+  // 댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReply(rid, uid2) {
+    if (uid == -1)
+      return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rid,
+      type: 2,
+    }
+
+    addLikeForm(sendData);
+  }
+  // 대댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReReply(rrid, uid2) {
+    if (uid === -1) return;
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rrid,
+      type: 3,
+    }
+
+    addLikeForm(sendData);
+  }
   if (isLoading) {
     <div>로딩중...</div>
-  }  
-
+  }
 
   //popover
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl2, setAnchorEl2] = useState(null);
+
+  const openPopover = Boolean(anchorEl);
+  const openPopover2 = Boolean(anchorEl2);
+  const id = openPopover ? 'simple-popper' : undefined;
+  const id2 = openPopover ? 'simple-popper' : undefined;
+  const popperRef = useRef(null);
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const handleClosePopover = () => {
     setAnchorEl(null);
+    setAnchorEl2(null);
   };
 
-  const openPopover = Boolean(anchorEl);
-  const id = openPopover ? 'simple-popover' : undefined;
+  const handleClick2 = (event) => {
+    setAnchorEl2(anchorEl2 ? null : event.currentTarget);
+  };
 
+
+  const handleClickOutside = (event) => {
+    if (popperRef.current && !popperRef.current.contains(event.target)) {
+      handleClosePopover();
+    }
+  };
+
+  const handleUpdate = () => {
+    setAnchorEl(!anchorEl);
+    sessionStorage.setItem("bid", bid);
+    navigate("../home/Update");
+  }
+
+  const handleSiren = () => {
+    setAnchorEl(!anchorEl);
+  }
+
+  const handleDelete = async (bid) => {
+    setAnchorEl(!anchorEl);
+    const confirm = await deleteConfirm();
+    console.log(confirm);
+    if (confirm) {
+      await deleteBoard(bid);
+      queryClient.invalidateQueries(['boardList', uid]); // 쿼리 무효화
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
+  // 클릭 시 마이페이지 이동 이벤트
+  const handleMyPage = (uid) => {
+    navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
+  }
 
   return (
     <DashboardLayout>
@@ -203,159 +288,191 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
               <Write />
               <Grid container spacing={3}>
-                {(boardList && allcount && !isLoading) ? (boardList.pages.map((page, index) => (
-                  <React.Fragment key={index}>
-                    {page.map((data, idx) => (
-                      <Grid key={idx} item xs={12} md={6} lg={6} >
-                        <MDBox mb={3}>
-                          <Card sx={{
-                            height: "100%",
-                            transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
-                            '&:hover': {
-                              boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
-                            }
-                          }}>
-                            <CardHeader
-                              sx={{ padding: 1 }}
-                              avatar={
-                                <Avatar
-                                  aria-label="recipe"
-                                  src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                                />
+                {(boardList && allcount && !isLoading) ? (
+                  boardList.pages.map((page, index) => (
+                    <React.Fragment key={index}>
+                      {page && page.map((data, idx) => (
+                        <Grid key={idx} item xs={12} md={6} lg={6}>
+                          <MDBox mb={3}>
+                            <Card sx={{
+                              transition: 'box-shadow 0.3s',
+                              '&:hover': {
+                                boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
                               }
-                              action={
-                                <div>
-                                  <IconButton aria-label="settings" onClick={handleClick}>
-                                    <MoreVertIcon />
-                                  </IconButton>
-                                  <Popover
-                                    id={id}
-                                    open={openPopover}
-                                    anchorEl={anchorEl}
-                                    onClose={handleClosePopover}
-                                    anchorOrigin={{
-                                      vertical: 'bottom',
-                                      horizontal: 'left',
-                                    }}
-                                    transformOrigin={{
-                                      vertical: 'top',
-                                      horizontal: 'right',
-                                    }}
-                                    PaperProps={{
-                                      style: {
-                                        marginLeft: 90, // 이 값을 조정하여 팝오버의 가로 위치를 미세하게 조정
-                                      },
-                                    }}
-                                  >
-                                    {data.uid === activeUser.uid && (
-                                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            }}>
+                              <CardHeader
+                                sx={{ padding: 1 }}
+                                avatar={
+                                  <Avatar sx={{ cursor: 'pointer' }}
+                                    aria-label="recipe" onClick={() => handleMyPage(data.uid)}
+                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
+                                  />
+                                }
+                                action={<>
+                                  {
+                                    data.uid === activeUser.uid ? (<>
+                                      <IconButton aria-label="settings" onClick={handleClick} ref={popperRef} disabled={Boolean(anchorEl)}>
+                                        <MoreVertIcon />
+                                      </IconButton>
+                                      <Popper
+                                        id={id}
+                                        open={openPopover}
+                                        anchorEl={anchorEl}
+                                        onClose={handleClosePopover}
+                                        onClickOutside={handleClickOutside}
+                                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                                        placement="bottom-end"
+                                        modifiers={[
+                                          {
+                                            name: 'offset',
+                                            options: {
+                                              offset: [0, 10],
+                                            },
+                                          },
+                                        ]}
+                                      >
+                                        <Paper style={{
+                                          padding: '0.3rem',
+                                          backgroundColor: 'white',
+                                          boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
+                                          borderRadius: '8px',
+                                        }}>
+                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'blue', '&:hover': { color: 'blue' } }} onClick={() => handleUpdate}><Iconify style={{ marginRight: '0.1rem' }} icon="lucide:edit" />수정</Button>
+                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }} onClick={() => handleDelete(data.bid)}><Iconify style={{ marginRight: '0.1rem' }} icon="solar:trash-bin-trash-bold" />삭제</Button>
+                                        </Paper>
+                                      </Popper >
+                                    </>) : <>
+                                      <IconButton aria-label="settings" onClick={handleClick2} ref={popperRef} disabled={Boolean(anchorEl2)}>
+                                        <MoreVertIcon />
+                                      </IconButton>
+                                      <Popper
+                                        id={id2}
+                                        open={openPopover2}
+                                        anchorEl={anchorEl2}
+                                        onClose={handleClosePopover}
+                                        onClickOutside={handleClickOutside}
+                                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                                        placement="bottom-end"
+                                        modifiers={[
+                                          {
+                                            name: 'offset',
+                                            options: {
+                                              offset: [0, 10],
+                                            },
+                                          },
+                                        ]}
+                                      >
+                                        <Paper style={{
+                                          padding: '0.3rem',
+                                          backgroundColor: 'white',
+                                          boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
+                                          borderRadius: '8px',
+                                        }}>
+                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button>
+                                        </Paper>
+                                      </Popper >
+                                    </>
+                                  }</>
+                                }
+                                title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                              />
 
-                                        <Button onClick={handleUpdate}>수정</Button>
-                                        <Button sx={{ padding: 0 }}>공유 하기</Button>
-                                        <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
-                                        <Button sx={{ padding: 0 }}>삭제 하기</Button>
-
-                                      </Box>
-                                    )}
-                                  </Popover>
-                                </div>
-                              }
-                              title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
-                            />
-
-                            <MDBox padding="1rem">
-                              {data.image ?
-                                <MDBox
-                                  variant="gradient"
-                                  borderRadius="lg"
-                                  py={2}
-                                  pr={0.5}
-                                  sx={{
-                                    position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                                    height: "12.5rem",
-                                    overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                                    transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                    '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                      transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                      transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                    },
-                                    '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                      boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                                    }
-                                  }}
-                                >
-                                  <button onClick={handleOpen.bind(null, data.bid)}>
-                                    <img
-                                      src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
-                                      alt="Paella dish"
-                                      style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                    />
-                                  </button>
-                                </MDBox>
-                                :
-                                <MDBox>
+                              <MDBox padding="1rem">
+                                {data.image ?
                                   <MDBox
                                     variant="gradient"
                                     borderRadius="lg"
                                     py={2}
                                     pr={0.5}
                                     sx={{
-                                      position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                                      position: "relative",
                                       height: "12.5rem",
-                                      overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                                      transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                      '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                        transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                        transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                                      overflow: "visible",
+                                      transition: 'box-shadow 0.3s',
+                                      '&:hover img': {
+                                        transform: 'scale(1.05)',
+                                        transition: 'transform 0.35s ease-in-out',
                                       },
-                                      '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                                      '&:hover': {
+                                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
                                       }
                                     }}
                                   >
                                     <button onClick={handleOpen.bind(null, data.bid)}>
                                       <img
-                                        src="images/LightLogo.png"
+                                        src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
                                         alt="Paella dish"
-                                        style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                        style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                                       />
                                     </button>
                                   </MDBox>
-                                </MDBox>
-                              }
-                              <MDBox pt={3} pb={1} px={1}>
-                                <button onClick={handleOpen.bind(null, data.bid)} style={{ border: 'none', backgroundColor: 'transparent', padding: 0, margin: 0 }}>
-                                  <MDTypography variant="h6" textTransform="capitalize">
-                                    {data.title}
-                                  </MDTypography>
-                                  {expanded[data.bid] ? (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light">
-                                      {data.bContents}
+                                  :
+                                  <MDBox>
+                                    <MDBox
+                                      variant="gradient"
+                                      borderRadius="lg"
+                                      py={2}
+                                      pr={0.5}
+                                      sx={{
+                                        position: "relative",
+                                        height: "12.5rem",
+                                        overflow: "visible",
+                                        transition: 'box-shadow 0.3s',
+                                        '&:hover img': {
+                                          transform: 'scale(1.05)',
+                                          transition: 'transform 0.35s ease-in-out',
+                                        },
+                                        '&:hover': {
+                                          boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
+                                        }
+                                      }}
+                                    >
+                                      <button onClick={handleOpen.bind(null, data.bid)}>
+                                        <img
+                                          src="images/LightLogo.png"
+                                          alt="Paella dish"
+                                          style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                        />
+                                      </button>
+                                    </MDBox>
+                                  </MDBox>
+                                }
+                                <MDBox pt={3} pb={1} px={1}>
+                                  <button onClick={handleOpen.bind(null, data.bid)} style={{ border: 'none', backgroundColor: 'transparent', padding: 0, margin: 0 }}>
+                                    <MDTypography variant="h6" textTransform="capitalize">
+                                      {data.title}
                                     </MDTypography>
-                                  ) : (
-                                    <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                      {data.bContents}
+                                    {expanded[data.bid] ? (
+                                      <MDTypography component="div" variant="button" color="text" fontWeight="light">
+                                        {data.bContents}
+                                      </MDTypography>
+                                    ) : (
+                                      <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                        {data.bContents}
+                                      </MDTypography>
+                                    )}
+                                  </button>
+                                  <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '...' : '...'}</Button>
+                                  <Divider />
+                                  <MDBox display="flex" alignItems="center">
+                                    <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
+                                      <Icon>schedule</Icon>
                                     </MDTypography>
-                                  )}
-                                </button>
-                                <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '...' : '...'}</Button>
-                                <Divider />
-                                <MDBox display="flex" alignItems="center">
-                                  <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
-                                    <Icon>schedule</Icon>
-                                  </MDTypography>
-                                  <MDTypography variant="button" color="text" fontWeight="light">
-                                    <TimeAgo datetime={data.modTime} locale={koreanStrings} />
-                                  </MDTypography>
+                                    <MDTypography variant="button" color="text" fontWeight="light">
+                                      <TimeAgo datetime={data.modTime} locale='ko' />
+                                    </MDTypography>
+                                  </MDBox>
                                 </MDBox>
                               </MDBox>
-                            </MDBox>
-                          </Card>
-                        </MDBox>
-                      </Grid>
-                    ))}
-                  </React.Fragment>
-                ))) : <></>}
+                            </Card>
+                          </MDBox>
+                        </Grid>
+                      ))}
+                    </React.Fragment>
+                  ))
+                ) : <></>}
               </Grid>
 
             </Stack>
@@ -384,6 +501,7 @@ export default function Home() {
             width: '60%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
+            zIndex: 0
           },
         }}
       >
@@ -395,7 +513,7 @@ export default function Home() {
           }} >
           <CloseIcon />
         </IconButton>
-        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
+        <BoardDetail bid={bid} uid={uid} index={index} handleClose={handleClose} nickname={nickname} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
       </Dialog>
 
       <Footer />

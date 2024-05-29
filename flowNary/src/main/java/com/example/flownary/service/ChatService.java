@@ -14,9 +14,11 @@ public interface ChatService {
 	
 	List<Chat> getChatListImportant(int uid, int count);
 	
-	void insertChat(Chat chat);
+	int insertChat(Chat chat);
 	
-	void updateChat(int status, int cid);
+	void updateChat(int status, String name, int cid);
+	
+	void updateChatTime(int cid);
 	
 	void deleteChat(int cid);
 }
