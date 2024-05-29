@@ -303,10 +303,23 @@ export default function Home() {
                               <CardHeader
                                 sx={{ padding: 1 }}
                                 avatar={
-                                  <Avatar sx={{ cursor: 'pointer' }}
+                                  <Avatar
+                                    sx={{ cursor: 'pointer' }}
                                     aria-label="recipe" onClick={() => handleMyPage(data.uid)}
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                                  />
+                                  >
+                                    <div
+                                      style={{
+                                        width: '3rem',
+                                        height: '3rem',
+                                        borderRadius: '50%',
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile})`
+                                      }}
+                                    >
+                                    </div>
+                                  </Avatar>
+
                                 }
                                 action={<>
                                   {
