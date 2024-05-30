@@ -10,7 +10,8 @@ import { red } from '@mui/material/colors';
 import { Stack } from '@mui/system';
 import PropTypes from 'prop-types';
 import TimeAgo from 'timeago-react';
-
+import * as timeago from 'timeago.js';
+import ko from 'timeago.js/lib/lang/ko';
 
 // 이모티콘
 // 아이콘
@@ -26,7 +27,7 @@ import Carousel from 'react-material-ui-carousel'
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAddReReply, useGetUserNicknameLS } from 'api/customHook.jsx';
 import { useGetBoard, useGetBoardByUrl, useGetBoardList, useGetReplyList } from './BoardJS.js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getBoard, getBoardList, getBoardUrl, getReplyList } from 'api/axiosGet.js';
 import BoardDetail from './BoardDetail.jsx';
 import MDBox from 'components/MDBox/index.js';
@@ -37,41 +38,54 @@ import { getReReplyList } from 'api/axiosGet.js';
 import { deleteReReply } from 'api/axiosPost.js';
 import { useAddLike } from 'api/customHook.jsx';
 import { UserContext } from 'api/LocalStorage.js';
+import { deleteConfirm } from 'api/alert.jsx';
 
 export default function ReReply(props) {
+  timeago.register('ko', ko);
   const rid = props.rid;
   const nickname = props.nickname;
   const [text, setText] = useState('');
   const uid = props.uid;
   const [expandedContents, setExpandedContents] = useState({});
   const { activeUser } = useContext(UserContext);
+  const [formChange, setFormChange] = useState({});
   const handleButtonLikeReReply = props.handleButtonLikeReReply;
+  const handleMyPage = props.handleMyPage;
+  const queryClient = useQueryClient();
 
   const ReReplyList = useQuery({
     queryKey: ['re-reply', props.rid, activeUser.uid],
     queryFn: () => getReReplyList(props.rid, activeUser.uid),
   });
 
-
   const addReReply = useAddReReply();
   const addReReplyForm = (sendData) => {
     addReReply(sendData);
   }
 
-  const handleFormSubmit2 = (e) => {
+  const handleFormSubmit3 = (e, text3) => {
     e.preventDefault();
-
+    if (text3 === '') {
+      wrong('내용을 입력하세요');
+      return;
+    }
     var sendData = JSON.stringify({
-      rid: props.rid,
+      rid: ridtext,
       uid: props.uid,
-      rrContents: text,
+      rrContents: formInputs[ridtext],
       nickname: props.nickname,
     })
+    console.log(ridtext)
 
     addReReply(sendData);
 
-    setText('');
+    setFormInputs((prev) => ({
+      ...prev,
+      [ridtext]: '',
+    }));
   };
+
+
 
   const handleDeleteButton = (rrid) => {
     deleteReReply(rrid);
@@ -94,7 +108,14 @@ export default function ReReply(props) {
       <div>로딩 중...</div>
     )
   }
-
+  const handleDelete = async (rrid) => {
+    const confirm = await deleteConfirm();
+    console.log(confirm);
+    if (confirm) {
+      await deleteReReply(rrid);
+      queryClient.invalidateQueries(['ReReplyList', uid]); // 쿼리 무효화
+    }
+  }
 
   return (
     <>
@@ -119,11 +140,11 @@ export default function ReReply(props) {
                       marginTop: 0.25,
                       marginLeft: 2.5,
                     }}>
-                    <Avatar
-                      src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
+                    <Avatar sx={{ cursor: 'pointer' }}
+                      onClick={() => handleMyPage(data.uid)} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                     />
                     <ListItemText sx={{ paddingLeft: 1 }}
-                      primary={data.nickname}
+                      primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                       secondary={
                         // 댓글 내용
                         <Typography variant="body1" color="text.primary" sx={{ overflowWrap: 'break-word', }}>
@@ -139,17 +160,13 @@ export default function ReReply(props) {
                     >
                     </ListItemText>
 
-                    <Button sx={{ color: 'grey', alignSelf: 'center', marginLeft: 'auto', paddingTop: 4 }}>
-                      {data.liked ?
-                        <FavoriteIcon sx={{ color: 'lightcoral' }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} /> 
-                        : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} />}
-                    </Button>
                   </ListItem>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
-                    <Button sx={{ color: 'grey', padding: 0 }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} >좋아요 {data.likeCount}개</Button>
-                    <Button sx={{ color: 'grey', padding: 0 }}>답글 달기</Button>
-                    <Button onClick={() => handleDeleteButton(data.rrid)}>삭제</Button>
+                    <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} >좋아요 {data.likeCount}개 {data.liked ?
+                      <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
+
+                    {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rrid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
                   </div>
 
                   {/* 답글 목록 */}
@@ -179,8 +196,9 @@ export default function ReReply(props) {
 }
 
 ReReply.propTypes = {
-  rid: PropTypes.number.isRequired,
-  nickname: PropTypes.string.isRequired,
-  uid: PropTypes.number.isRequired,
-  handleButtonLikeReReply: PropTypes.func.isRequired,
+  rid: PropTypes.number,
+  nickname: PropTypes.string,
+  uid: PropTypes.number,
+  handleButtonLikeReReply: PropTypes.func,
+  handleMyPage: PropTypes.func,
 };

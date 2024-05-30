@@ -11,24 +11,24 @@ public interface UserService {
 	public final int PASSWORD_WRONG = 2;
 
 	User getUser(int uid);
-
+	
 	User getUserEmail(String email);
-
+	
 	List<User> getOthersUserList(String email);
-
-	List<User> getUserList();
-
+	
 	GetUserNickEmailDto getUserNicknameEmail(int uid);
-
+	
 	void insertUser(User user);
-
+	
 	void updateUser(User user);
-
+	
 	void updateUserPwd(User user);
-
+	
 	void deleteUser(int uid);
-
+	
 	int login(String email, String pwd);
 	
 	void updateUserStatus(User user);
+	
+	List<User> getUserList();
 }

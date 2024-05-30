@@ -48,13 +48,18 @@ export default function TodoList() {
   if (error) return <div>Error: {error.message}</div>;
 
   const addItem = async () => {
-    if (!newItemText) return;
-
+    if (!newItemText) {
+      wrong('내용을 입력하세요.');
+      return;
+    }
+    if (newItemText.length > 30) {
+      wrong('30글자 이하로 적어주세요!');
+      return;
+    }
     const newItem = {
       uid: uid,
       contents: newItemText,
     };
-
     await insertTodo(newItem);
     queryClient.invalidateQueries(['todoList', uid]);
     setNewItemText('');
@@ -64,6 +69,7 @@ export default function TodoList() {
     setNewItemText(e.target.value);
   }
   const handleCheckboxChange = async (idx) => {
+
     const updatedItem = {
       tid: dataList[idx].tid,
       contents: dataList[idx].contents,
@@ -78,6 +84,7 @@ export default function TodoList() {
     }
   };
   const removeItem = async (tid) => {
+    setAnchorEl(!anchorEl);
     try {
       await deleteTodo(tid);
       queryClient.invalidateQueries(['todoList', uid]);
@@ -87,12 +94,14 @@ export default function TodoList() {
   };
 
   const updateItem = (idx, contents) => {
+    setAnchorEl(!anchorEl);
     setUpdateStates(updateStates.map((state, index) => index === idx ? true : false));
     setUpdateText(contents);
   }
 
 
   const handleUpdateConfirm = async (idx, tid, pri) => {
+
     const updatedItem = {
       tid: tid,
       contents: updateText,
@@ -114,43 +123,56 @@ export default function TodoList() {
 
   function handleKeyPress(event) {
     if (event && event.key === 'Enter') {
-        event.preventDefault();
-        addItem();
+      event.preventDefault();
+      addItem();
     }
-}
-  
+  }
+
+  const formatTextWithLineBreaks = (text, maxLength) => {
+    let result = '';
+    for (let i = 0; i < text.length; i += maxLength) {
+      result += text.slice(i, i + maxLength) + '\n\n';
+    }
+    return result.trim();
+  };
+
   return (
     <>
       <MDBox px={3}>
         <MDTypography variant="h6" fontWeight="medium">
-          해야할 일!!
+          To do
         </MDTypography>
       </MDBox>
 
       <MDBox pt={3} px={3}>
         <FormGroup>
           {dataList && dataList.map((item, idx) => (
-            <Grid key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: '5rem' }} >
-              <Grid>
+            <Grid container key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: '5rem' }} >
+              <Grid item xs={11}>
                 {!updateStates[idx] ? (
                   <>
                     <FormControlLabel
                       control={<Checkbox checked={item.pri === 1} onChange={() => handleCheckboxChange(idx)} />}
-                      label={item.contents}
-
+                      label={<pre style={{ display: 'flex', alignItems: 'center', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{formatTextWithLineBreaks(item.contents, 16)}</pre>}
                     />
                   </>
                 ) : (
                   <>
-                    <TextField value={updateText} onChange={(e) => handleUpdateText(idx, e)} />
-                    <Button onClick={() => handleUpdateConfirm(idx, item.tid, item.pri)}> 확인 </Button>
+                    <TextField
+                      value={updateText}
+                      onChange={(e) => handleUpdateText(idx, e)}
+                      sx={{ width: '60%' }}
+                      variant="outlined"
+                      fullWidth
+                    />
+                    <Button color='info' sx={{ ml: 2, mt: 0.3 }} onClick={() => handleUpdateConfirm(idx, item.tid, item.pri)} style={{ color: 'lightcoral' }}> 확인 </Button>
                   </>
                 )}
               </Grid>
-              <Grid>
+              <Grid xs={1}>
                 <div style={{ flexGrow: 1 }}>
                   <IconButton width={20} color={anchorEl && currentEditIdx === idx ? 'inherit' : 'default'} onClick={(e) => handleOpenMenu(e, idx)}>
-                    <Iconify icon="eva:more-vertical-fill" width={20} sx={{textDecoration:'none'}}/>
+                    <Iconify icon="eva:more-vertical-fill" width={20} sx={{ textDecoration: 'none' }} />
                   </IconButton>
                   <Popover
                     open={Boolean(anchorEl && currentEditIdx === idx)}
@@ -158,9 +180,16 @@ export default function TodoList() {
                     onClose={handleCloseMenu}
                     anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    PaperProps={{
+                      style: {
+                        marginRight: 90,
+                        backgroundColor: 'white',
+                        width: '8rem'
+                      },
+                    }}
                   >
                     <MenuItem onClick={() => updateItem(idx, item.contents)}>
-                      <Iconify icon="solar:pen-bold" sx={{ mr: 2 }} />
+                      <Iconify icon="lucide:edit" sx={{ mr: 2 }} />
                       수정
                     </MenuItem>
                     <MenuItem onClick={() => removeItem(item.tid)} sx={{ color: 'error.main' }}>
@@ -186,7 +215,7 @@ export default function TodoList() {
           />
         </Grid>
         <Grid>
-          <Button onClick={addItem} >추가</Button>
+          <Button onClick={addItem} style={{ color: 'lightcoral' }} >추가</Button>
         </Grid>
       </Grid>
     </>

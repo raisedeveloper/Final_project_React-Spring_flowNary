@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
@@ -27,13 +27,24 @@ import { getUserList } from 'api/axiosGet';
 import { Grid } from '@mui/material';
 import { MyLocation } from '@mui/icons-material';
 import { updateUserStatus } from 'api/axiosPost';
+import Modal from 'react-modal';
+import { useLocation } from 'react-router-dom';
+
 // ----------------------------------------------------------------------
+
+Modal.setAppElement('#app'); // Modal 접근성을 위한 설정
 
 export default function UserTableRow({ selected, handleClick }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(null);
   const [page, setPage] = useState(1);
-  const [ currentUserId, setCurrentUserId ] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalUser, setModalUser] = useState(null);
+
+  // 유저 정보 불러오기
+  const location = useLocation();
+
   const rowsPerPage = 10;
   // 메뉴 열기 핸들러
   const handleOpenMenu = (event, userId) => {
@@ -43,8 +54,27 @@ export default function UserTableRow({ selected, handleClick }) {
 
   // 유저 정보 변경
   const handleUpdateStatus = (event) => {
-    mutate({uid: currentUserId, status: 1});
+    mutate({ uid: currentUserId, status: 1 });
   }
+
+  // 유저 정보 수정
+  const handleUserProfileEdit = () => {
+    const user = users.find((user) => user.uid === currentUserId);
+    setModalUser(user);
+    setIsModalOpen(true);
+    handleCloseMenu();
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setModalUser(null);
+  };
+
+  const handleProfileSave = () => {
+    // 추후에 프로필 저장 후 변경 될 로직 작성
+    setIsModalOpen(false);
+  };
+
 
   // 메뉴 닫기 핸들러
   const handleCloseMenu = () => {
@@ -56,6 +86,19 @@ export default function UserTableRow({ selected, handleClick }) {
     setPage(newPage);
   };
 
+  // location을 이용한 사용자 정보 가져오기
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const uid = searchParams.get('uid');
+    if (uid) {
+      // Firestore 또는 API를 통해 해당 uid의 사용자 정보 가져오기
+      axios.get(`/api/user/${uid}`).then((response) => {
+        setUserData(response.data);
+      }).catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+    }
+  }, [location]);
 
   const { data: users, isLoading, isError } = useQuery({
     queryKey: ['users'],
@@ -66,11 +109,11 @@ export default function UserTableRow({ selected, handleClick }) {
     mutationFn: userData => { // {userId: userId, status: status}
       updateUserStatus(userData)
     },
-    onSuccess: () => { 
-      alert('성공ㅊㅊ');
+    onSuccess: () => {
+      alert('유저 정보를 삭제했습니다');
       queryClient.refetchQueries(['users']);
-     },
-    onError: () => { alert('실패ㅠ') },
+    },
+    onError: () => { alert('유저 삭제에 실패했습니다.') },
   });
   // users 데이터가 없거나 로딩 중일 때 처리
   if (isLoading) {
@@ -88,6 +131,7 @@ export default function UserTableRow({ selected, handleClick }) {
       </TableRow>
     );
   }
+
 
   const paginatedUsers = users.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
@@ -155,7 +199,7 @@ export default function UserTableRow({ selected, handleClick }) {
                 sx: { width: 200 },
               }}
             >
-              <MenuItem onClick={handleCloseMenu} style={{ width: '100%' }}>
+              <MenuItem onClick={handleUserProfileEdit} style={{ width: '100%' }}>
                 <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
                 유저프로필 수정
               </MenuItem>
@@ -175,6 +219,34 @@ export default function UserTableRow({ selected, handleClick }) {
           </Stack>
         </Container>
       </DashboardLayout>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={handleModalClose}
+        contentLabel="User Profile Edit"
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+          },
+        }}
+      >
+        {modalUser && (
+          <div>
+            <h2>프로필 수정</h2>
+            <label>
+              이름:
+              <input type="text" defaultValue={modalUser.uname} />
+            </label>
+            <button onClick={handleProfileSave}>저장</button>
+            <button onClick={handleModalClose}>취소</button>
+          </div>
+        )}
+      </Modal>
     </>
   );
 }

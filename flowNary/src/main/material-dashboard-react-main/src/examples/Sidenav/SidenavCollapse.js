@@ -58,6 +58,7 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
 
     if (name === '알림' && activeUser.uid != -1)
     {
+      console.log('inside if statement for 알림');
       const getCount = async () => {
         const count = await getNoticeCount(activeUser.uid);
         setAlertCount(count);

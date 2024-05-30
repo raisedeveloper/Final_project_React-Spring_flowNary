@@ -17,6 +17,7 @@ import { initializeApp } from "firebase/app";
 
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
+import { ContextProvider } from "api/LocalStorage";
 
 export default function App() {
   const brandDark = "../public/images/LightLogo.png";
@@ -72,6 +73,33 @@ export default function App() {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
+
+  // 서버 종료 시 처리 (beforeunload 이벤트 리스너 추가)
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     // 파이어베이스 로그아웃
+  //     auth.signOut().then(() => {
+  //       console.log('User signed out.');
+  //     }).catch((error) => {
+  //       console.error('Sign out error:', error);
+  //     });
+
+  //     // localStorage.clear();
+
+  //     // 기본 동작 방지
+  //     event.preventDefault();
+  //     event.returnValue = ''; // Chrome에서는 이 설정이 필요합니다.
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //   };
+  // }, []);
+
+
+
 
   if (loading) {
     return <div>Loading...</div>;
