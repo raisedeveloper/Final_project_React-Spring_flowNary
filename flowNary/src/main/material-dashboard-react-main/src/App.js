@@ -18,6 +18,7 @@ import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 import { ContextProvider } from "api/LocalStorage";
 import { getUserEmail } from "api/axiosGet";
+import { GetWithExpiry } from "api/LocalStorage";
 
 export default function App() {
   const brandDark = "../public/images/LightLogo.png";
@@ -38,37 +39,8 @@ export default function App() {
   const auth = getAuth();
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [user, loading, error] = useAuthState(auth);  // 로그인 상태 훅
-  const [isAdmin, setIsAdmin] = useState(false); // 어드민 상태 훅
   const [isLoading, setIsLoading] = useState(false);
   const { pathname } = useLocation();
-
-  // 어드민 상태
-  useEffect(() => {
-    console.log('호출함?')
-    const fetchUser = async () => {
-      setIsLoading(true);
-      if (user) {
-        console.log('사용자 있음:', user.email);
-        try {
-          const userData = await getUserEmail(user.email);
-          console.log('사용자 데이터:', userData);
-          if (userData && userData.role === 1) {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
-          }
-        } catch (err) {
-          console.error('API 호출 오류:', err);
-          setIsAdmin(false);
-        }
-        setIsLoading(false);
-      } else {
-        console.log('사용자 없음');
-        setIsLoading(false);
-      }
-    };
-    fetchUser();
-  }, [user]);
 
   // 로그인 및 회원가입 사이드바 확인
   const isLoginPage = pathname === "/authentication/sign-in";
@@ -111,7 +83,7 @@ export default function App() {
     return <div>Error: {error.message}</div>;
   }
 
-  const dynamicRoutes = createRoutes(!!user, isAdmin);  // 로그인 상태와 어드민 여부에 따라 라우트 동적 생성
+  const dynamicRoutes = createRoutes(!!user, (GetWithExpiry('role') && GetWithExpiry('role')===1) ? true : false);  // 로그인 상태와 어드민 여부에 따라 라우트 동적 생성
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
