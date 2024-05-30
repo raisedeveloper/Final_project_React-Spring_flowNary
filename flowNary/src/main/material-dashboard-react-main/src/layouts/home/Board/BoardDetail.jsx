@@ -24,7 +24,7 @@ import IconButton from '@mui/material/IconButton';
 
 
 
-const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonLike }, ref) => {
+const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handleButtonLike,handleButtonLikeReply,handleButtonLikeReReply }, ref) => {
 
   // useQuery는 항상 실행되어야 합니다.
   const { data: board, isLoading, isError, refetch } = useQuery({
@@ -52,7 +52,6 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
   if (isError) {
     return <div>오류가 발생했습니다.</div>;
   }
-
   // board 데이터가 있을 때만 image를 설정합니다.
   const image = board?.image ? board.image.split(',') : null;
 
@@ -61,105 +60,71 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
       <Stack direction="row" justifyContent="space-between" sx={{ height: '100%' }}>
         <Stack direction="column" sx={{ flex: 1, height: '100%' }}>
           {/* 컨텐츠 부분 */}
-          <Card sx={{ height: "100vh", padding: 3, }}>
+          <Card sx={{ padding: 3, display: 'flex', flexDirection: 'column',}}>
             <CardHeader
               avatar={
-                <Avatar sx={{ bgcolor: 'red'[500] }} aria-label="recipe"
+                <Avatar
+                  sx={{ bgcolor: 'red'[500] }}
+                  aria-label="recipe"
                   src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.profile}`}
                 />
               }
               title={board.nickname}
               subheader={board.title}
             />
-            <Carousel
-                indicators={false} 
+            <Box sx={{ flexGrow: 1 }}>
+              <Carousel
+                indicators={false}
                 animation="slide"
                 autoPlay={false}
-              sx={{
-                border: '1px solid red',
-                maxWidth: '100vw',
-              }}>
-              {image && image.map((image, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    width: '100%',
-                    height: '60%',
-                    '@media (min-width: 500px)': {
-                      height: '200px',
-                    },
-                    '@media (min-width: 768px)': {
-                      height: '200px',
-                    },
-                    '@media (min-width: 1024px)': {
-                      height: '400px',
-                    },
-                  }}
-                >
-                  <div
-                    style={{ width: '100vw', height: '100%' }}
+                sx={{
+                  maxWidth: '100vw',
+                }}
+              >
+                {image && image.map((image, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      width: '100%',
+                      height: '100%',
+                      '@media (min-width: 500px)': {
+                        height: '200px',
+                      },
+                      '@media (min-width: 768px)': {
+                        height: '200px',
+                      },
+                      '@media (min-width: 1024px)': {
+                        height: '400px',
+                      },
+                    }}
                   >
-                    <img
-                      style={{ width: '100%', height: '100%', objectFit: 'fill' }}
-                      src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
-                      alt={`Image ${index + 1}`}
-                    />
-                  </div>
-                </Box>
-              ))}
-            </Carousel>
-            <Stack direction="row" spacing={1} sx={{ height: 'auto', alignItems: 'center' }}>
-              <Box sx={{ flexGrow: 1, maxHeight: '200px', overflow: 'auto' }}> {/* 타이포그래피 영역 높이 늘리기 */}
-                <Typography variant="body2" color="text.secondary">
-                  {board.bContents}
-                </Typography>
-              </Box>
-            </Stack>
-            <Typography variant="body2" color="text.fisrt" sx={{ marginTop: 5 }} >
+                    <div
+                      style={{ width: '100vw', height: '100%' }}
+                    >
+                      <img
+                        style={{ width: '100%', height: '100%', objectFit: 'fill' }}
+                        src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
+                        alt={`Image ${index + 1}`}
+                      />
+                    </div>
+                  </Box>
+                ))}
+              </Carousel>
+            </Box>
+            <Box sx={{ marginTop: 2 }}> {/* 텍스트 영역 아래로 확장 */}
+              <Typography variant="body2" color="text.secondary">
+                {board.bContents}
+              </Typography>
+            </Box>
+            <Typography variant="body2" color="text.primary" sx={{ marginTop: 5 }}>
               {<TimeAgo datetime={board.modTime} locale={koreanStrings} />}
             </Typography>
           </Card>
 
-          {/* 이미지 없을때
-          {image == null ? (
-            <Card sx={{ height: "100vh", padding: 3, border: '3px solid purple' }}>
-              <CardHeader
-                avatar={
-                  <Avatar sx={{ bgcolor: 'red'[500] }} aria-label="recipe"
-                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.profile}`}
-                  />
-                }
-                title={board.nickname}
-                subheader={board.title}
-              />
-              <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '62%', overflowY: 'auto' }}>
-                <Stack direction="row" spacing={1} padding={'10px 0 25px 0'}>
-                  <Button sx={{ padding: 0, width: 0 }} onClick={() => handleButtonLike(board.bid, board.uid)}>
-                    <FavoriteIcon sx={board.liked ? { color: 'red' } : { color: 'blue' }} />{board.likeCount}
-                  </Button>
-                  <Button sx={{ padding: 0, width: 0 }}>
-                    <ShareIcon />
-                  </Button>
-                  <Button sx={{ padding: 0, width: 0 }}>
-                    <BookmarkIcon />
-                  </Button>
-                </Stack>
-                <Stack direction="row" spacing={1}>
-                  <Typography variant="body2" color="text.secondary" >
-                    {board.bContents}
-                  </Typography>
-                </Stack>
-                <Typography variant="body2" color="text.fisrt" sx={{ marginTop: 5 }} >
-                  {<TimeAgo datetime={board.modTime} locale={koreanStrings} />}
-                </Typography>
-              </CardContent>
-            </Card>
-          ) : null} */}
-
           {/* Reply 컴포넌트는 항상 렌더링 */}
-          <Reply bid={bid} uid={uid} nickname={nickname} handleButtonLike={handleButtonLike} />
+          <Reply bid={bid} uid={uid} index={index} nickname={nickname} handleButtonLike={handleButtonLike} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLikeReply={handleButtonLikeReply}/>
         </Stack>
       </Stack>
     </Box>
@@ -167,10 +132,13 @@ const BoardDetail = forwardRef(({ bid, uid, handleClose, nickname, handleButtonL
 });
 
 BoardDetail.propTypes = {
-  bid: PropTypes.number.isRequired,
-  uid: PropTypes.number.isRequired,
-  handleClose: PropTypes.func.isRequired,
-  nickname: PropTypes.string.isRequired,
-  handleButtonLike: PropTypes.func.isRequired,
+  bid: PropTypes.number,
+  uid: PropTypes.number,
+  index: PropTypes.number,
+  handleClose: PropTypes.func,
+  nickname: PropTypes.string,
+  handleButtonLike: PropTypes.func,
+  handleButtonLikeReply: PropTypes.func,
+  handleButtonLikeReReply: PropTypes.func,
 };
 export default BoardDetail;

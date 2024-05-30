@@ -1,5 +1,9 @@
 import axios from "axios"
-const API_BASE_URL = "/";
+import { name } from "dayjs/locale/ko";
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////유저/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 /** 유저 등록
  * @param {*} hashuid google 로그인에서만 만들어지는 hash형태의 uid
@@ -79,12 +83,9 @@ export const userUpdate = async (sendData: {
     });
 }
 
-// 24/05/27 성한 - updateUserStatus 추가
-export const updateUserStatus = async userData => {
-    // const response = await axios.post('/user/updateUserStatus', {uid: userId, status,});
-    const response = await axios.post('/user/updateUserStatus', userData);
-    return response.data;
-};
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////보드/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 /** 글 작성 후 서버에 전송
  * @param {*} sendData 보내줄 정보의 Json String 데이터, 이하는 sendData에 넣어야 할 정보
@@ -180,27 +181,7 @@ export const insertReReply = async (sendData: string) => {
  * @param {*} fuid 좋아요를 한 대상이 되는 유저번호
  * @returns 
  */
-export const like = async (sendData: string) => {
-    return axios({
-        method: "POST",
-        url: '/like/update',
-        data: sendData,
-        headers: { 'Content-Type': 'application/json' }
-    }).catch(error => {
-        console.log("axiospost.js: like error!");
-        console.log(error);
-    });
-}
-
-/** 좋아요 / 좋아요 해제
- * @param {*} sendData 보내줄 정보의 Json String 데이터, 이하는 sendData에 넣어야 할 정보
- * @param {*} uid 좋아요를 한 사람의 유저번호
- * @param {*} type 좋아요를 한 대상물의 유형 (1: 게시글, 2: 댓글, 3: 대댓글)
- * @param {*} oid 대상물의 번호(글이면 bid, 댓글이면 rid 등)
- * @param {*} fuid 좋아요를 한 대상이 되는 유저번호
- * @returns 
- */
-export const like2 = async (sendData: {
+export const like = async (sendData: {
     uid: number,
     type: Number,
     oid: Number,
@@ -242,7 +223,7 @@ export const deleteReply = async (rid: number) => {
     });
 }
 
-/** 댓글 삭제
+/** 내댓글 삭제
  * @param {*} rid 댓글 번호 
  * @returns 
  */
@@ -256,20 +237,87 @@ export const deleteReReply = async (rrid: number) => {
     });
 }
 
-export const insertChat = async (uid1: number, uid2: number) => {
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////할일/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
-    return axios.post('/chat/insert', {
-        uid1: uid1,
-        uid2: uid2,
+/** Todo 내용 수정
+ * @param {*} tid todo 번호
+ * @param {*} contents todo 내용
+ * @returns 
+ */
+export const updateTodo = async (sendData: { tid: number, contents: string }) => {
+    return axios.post('/todo/update', {
+        sendData
     }).catch(error => {
-        console.log('axiospost.js: insertChat error!');
+        console.log('axiospost.js: updateTodo error!');
         console.log(error);
     });
 }
 
+/** Todo 내용 추가
+ * @param {*} uid 접속한 유저 번호
+ * @param {*} contents todo 내용
+ * @returns 
+ * */
+export const insertTodo = async (sendData: { uid: number, contents: string }) => {
+    return axios.post('/todo/insert', {
+        sendData
+    }).catch(error => {
+        console.log('axiospost.js: insertTodo error!');
+        console.log(error);
+    });
+}
+
+/** Todo 내용 삭제
+ * @param {*} tid todo 번호
+ * @returns 
+ * 
+ * */
+export const deleteTodo = async (tid: number) => {
+    return axios.post('/todo/delete', {
+        tid: tid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteTodo error!');
+        console.log(error);
+    });
+}
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////채팅/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+/** 채팅방 생성
+ * @param {*} name 채팅방 이름
+ * @param {*} uid 채팅방 개설자
+ * @param {*} fuid 채팅방 피개설자
+ * @param {*} contents 첫 메세지 내용
+ * @returns 
+ */
+
+export const insertChat = async (name: string, uid: number, fuid: number, contents: string) => {
+
+    const result = axios.post('/chat/insert', {
+        name: name,
+        uid: uid,
+        fuid: fuid,
+        contents: contents,
+    }).then(res => res.data)
+    .catch(error => {
+        console.log('axiospost.js: insertChat error!');
+        console.log(error);
+    });
+
+    return result;
+}
+/** 채팅방 내용 수정
+ * @param {*} cid 채팅방 번호
+ * @param {*} uid 유저 번호
+ * @returns 
+ */
 export const updateChat = async (cid: number, uid: number) => {
 
-    return axios.post('/chat/update', {
+    return axios.post('chat/update', {
         cid: cid,
         uid: uid,
     }).catch(error => {
@@ -309,40 +357,16 @@ export const deleteDm = async (did: number) => {
     });
 }
 
-/// todo List
-export const updateTodo = async (sendData: { tid: number, contents: string }) => {
-    return axios.post('/todo/update', {
-        sendData
-    }).catch(error => {
-        console.log('axiospost.js: updateTodo error!');
-        console.log(error);
-    });
-}
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////알림/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
-export const insertTodo = async (sendData: { uid: number, contents: string }) => {
-    return axios.post('/todo/insert', {
-        sendData
-    }).catch(error => {
-        console.log('axiospost.js: insertTodo error!');
-        console.log(error);
-    });
-}
+export const deleteNoticeAll = async (uid: number) => {
 
-export const deleteTodo = async (tid: number) => {
-    return axios.post('/todo/delete', {
-        tid: tid,
+    return axios.post(`${API_BASE_URL}notice/removeAll`, {
+        uid: uid,
     }).catch(error => {
-        console.log('axiospost.js: deleteTodo error!');
-        console.log(error);
-    });
-}
-
-// bookmark
-export const updateBookmark = async (bookmarks) => {
-    return axios.post('/user/bookmark', {
-        bookmarks
-    }).catch(error => {
-        console.log('axiospost.js: updatebookmark error!');
+        console.log('axiospost.js: deleteNoticeAll error!');
         console.log(error);
     });
 }

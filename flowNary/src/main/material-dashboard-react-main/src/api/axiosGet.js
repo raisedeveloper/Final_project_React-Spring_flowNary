@@ -1,6 +1,5 @@
 import axios from "axios"
 import { UploadImage } from "./image";
-const API_BASE_URL = "/";
 
 /** 유저번호로 유저 조회
  * @param {*} uid 유저번호 
@@ -40,15 +39,23 @@ export const getUserEmail = async (email: string) => {
     return result;
 }
 
-// 24/05/27 성한 - userList 추가(검토 필요!)
-export const getUserList = async () => {
-    try {
-        const response = await axios.get('user/getUserList');
-        return response.data;
-    } catch (error) {
-        console.error('axiosGet.js: getUser Error!', error);
-        return null;
-    }
+/** uid로 닉네임과 이메일, 프로필만 가지는 유저 정보 조회
+ * @param {*} uid 유저 번호
+ * @returns 
+ */
+export const getUserNickEmail = async (uid: number) => {
+
+    const result = await axios.get(`${API_BASE_URL}user/getUserNickEmail`, {
+        params: {
+            uid: uid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getUserNickEmail error!');
+        console.log(error);
+    });
+
+    return result;
 }
 
 /** 글 조회
@@ -125,6 +132,11 @@ export const getBoardList = async (count = 1, field = 'title', field2 = '', fiel
     return result;
 }
 
+/** 마이페이지 내 글 리스트 받기
+ * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
+ * @returns 
+ */
+
 export const getMyBoardList = async (uid) => {
 
     const result = await axios.get('board/mylist', {
@@ -140,63 +152,69 @@ export const getMyBoardList = async (uid) => {
     return result;
 }
 
+/** 마이페이지 내가 좋아요 한 글 리스트 받기
+ * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
+ * @returns 
+ */
+
 export const getLikedBoardList = async (uid) => {
-
-    const result = await axios.get('board/likelist', {
-        params: {
-            uid: uid,
-        }
-    }).then((response) => response.data)
-        .catch(error => {
-            console.log('axiosget.js: likelist error!');
-            console.log(error);
+    try {
+        const response = await axios.get('board/likelist', {
+            params: {
+                uid: uid,
+            }
         });
-
-    return result;
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.log('axiosget.js: likelist error!');
+        console.log(error);
+        throw error; 
+    }
 }
-
-
-
-
 
 /** 댓글 리스트 받기
  * @param {*} bid 글 번호
  * @param {*} offset 맨 처음부터 보여주지 않을 개수 (ex: limit 20에 offset 10이면 11~20번째 글만 리턴)
  * @param {*} limit 개수 제한
- * @returns 
- */
-export const getReplyList = async (bid: Number, offset: Number, limit: number) => {
-
+ * @param {*} uid 현재 접속한 유저 번호
+ * @returns  
+*/
+export const getReplyList = async (bid: Number, offset: Number, limit: Number, uid = Number) => {
+    
     const result = await axios.get('reply/list', {
         params: {
             bid: bid,
             offset: offset,
             limit: limit,
+            uid: uid,
         }
     }).then((response) => response.data)
-        .catch(error => {
-            console.log('axiosget.js: getReplyList error!');
-            console.log(error);
-        });
-
+    .catch(error => {
+        console.log('axiosget.js: getReplyList error!');
+        console.log(error);
+    });
+    
     return result;
 }
 
-/** 대댓글 리스트
+/** 대댓글 리스트 받기
  * @param {*} rid 댓글번호
+ * @param {*} uid 현재 접속한 유저 번호
  * @returns 
  */
-export const getReReplyList = async (rid: number) => {
+export const getReReplyList = async (rid: number, uid = -1) => {
 
     const result = await axios.get('reply/re_list', {
         params: {
             rid: rid,
+            uid: uid,
         }
     }).then((response) => response.data)
-        .catch(error => {
-            console.log('axiosget.js: getReplyList error!');
-            console.log(error);
-        });
+    .catch(error => {
+        console.log('axiosget.js: getReplyList error!');
+        console.log(error);
+    });
 
     return result;
 }
@@ -421,12 +439,31 @@ export const getNoticeList = async (uid: number, type = 0) => {
     return result;
 }
 
+/** 활성화 된 알림 개수
+ * @param {*} uid 유저 번호
+ * 
+ * */
+export const getNoticeCount = async (uid: number) => {
+
+    const result = await axios.get('notice/count', {
+        params: {
+            uid: uid,
+        }
+    }).then((response) => response.data)
+    .catch(error => {
+        console.log('axiosget.js: getNoticeCount error!');
+        console.log(error);
+    });
+
+    return result;
+}
+
 
 /** Todo 목록 보기
  * @param {*} tid todo 번호
  * @param {*} uid 접속한 유저 번호
  * @param {*} contents 내용
- * @param {*} pri 우선 순우;
+ * @param {*} pri 우선 순위;
  * @returns 
  */
 export const getTodoList = async (uid: number) => {

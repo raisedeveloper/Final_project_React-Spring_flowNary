@@ -64,6 +64,7 @@ function ProfileEdit({ uid, email }) {
   const [tel, setTel] = useState('');
   const [gender, setGender] = useState(2);
   const [profile, setProfile] = useState('');
+  const [location, setLocation] = useState('');
   // 활성화, 비활성화
   // const [status, setStatus] = useState('0');
 
@@ -77,6 +78,7 @@ function ProfileEdit({ uid, email }) {
       setBirth(user.birth);
       setGender(user.gender);
       setProfile(user.profile);
+      setLocation(user.location);
     }
   }, [user]);
 
@@ -100,7 +102,8 @@ function ProfileEdit({ uid, email }) {
   const handleSnsDomain = (e) => { setSnsDomain(e.target.value); };
   const handleTel = (e) => { setTel(e) };
   const handleBirthChange = (e) => { const formattedDate = dayjs(e).format('YYYY-MM-DD'); setBirth(formattedDate); }
-  const handlePicture = (e) => { setImage(e); setProfile(e); }
+  const handlePicture = (e) => { setImage(e); setProfile(e); };
+  const handleLocation = (e) => { setLocation(e.target.value) };
 
   const handleCheckingBirth = (e) => { setCheckingBirth(e) };
   const handleCheckingTel = (e) => { setCheckingTel(e) };
@@ -126,6 +129,7 @@ function ProfileEdit({ uid, email }) {
         snsDomain: snsDomain,
         gender: gender,
         tel: tel,
+        location: location
       }).catch(error => console.log(error));
 
     } else { // 이미지 변경 O 
@@ -140,6 +144,7 @@ function ProfileEdit({ uid, email }) {
         snsDomain: snsDomain,
         gender: gender,
         tel: tel,
+        location: location
       }).catch(error => console.log(error));
     }
     correct("설정 변경에 성공했습니다.");
@@ -204,6 +209,10 @@ function ProfileEdit({ uid, email }) {
               <Grid item xs={12} sm={6}>
                 <SettingTel tel={tel} email={email} checkingTel={checkingTel}
                   onTelChange={handleTel} changeCheckingTel={handleCheckingTel} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth label="주소" required variant="standard"
+                  value={location} onChange={handleLocation} sx={{ mt: 2, width: '100%', }} />
               </Grid>
               <Grid item xs={15}>
 

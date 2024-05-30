@@ -155,7 +155,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
         {/* title 크기 조정 */}
         <MDBox component={NavLink} to="/" sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="8rem" />}
+          <MDBox component="img" src='/images/DarkLogo.png' alt="Brand" width="8rem" />
         </MDBox>
 
         {/* 로그인 상태에 따라 아바타 또는 로그인 요청 메시지 표시 */}

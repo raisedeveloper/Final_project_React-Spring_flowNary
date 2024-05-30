@@ -33,12 +33,21 @@ export function GetWithExpiry(key) {
             return -1;
         if (key == "nickname")
             return "";
-
+        
         return null;
     }
-
+    
     const item = JSON.parse(itemStr);
     const now = new Date();
+    
+    if (!item.value) {
+        localStorage.removeItem(key);
+        if (key == "uid")
+            return -1;
+        if (key == "nickname")
+            return "";
+        return null;
+    }
 
     if (now.getTime() > parseInt(item.expiry)) {
         localStorage.removeItem(key);
@@ -57,6 +66,11 @@ export function GetWithExpiry(key) {
     return item.value;
 }
 
+/** 로그인 한 정보를 어디서든 사용할 수 있음
+ * GetWithExpiry로 미리지정해둠
+ * @param {*} activeUser - uid, email, nickname 
+ * @returns 
+ */
 const ContextProvider = ({children}) => {
     const [activeUser, setActiveUser] = useState({
         uid: -1,

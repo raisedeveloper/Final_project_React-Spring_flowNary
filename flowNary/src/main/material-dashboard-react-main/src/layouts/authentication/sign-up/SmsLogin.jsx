@@ -99,8 +99,7 @@ export default function SmsLogin({ handleKeyPress, tel, setCheckingTel }) {
 
     return (
         <>
-            <div id="recaptcha-container">
-            </div>
+            <div id="recaptcha-container">            </div>
             <input
                 name="confirmPassword"
                 placeholder="인증번호를 입력하세요"

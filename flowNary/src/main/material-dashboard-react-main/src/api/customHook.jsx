@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { GetWithExpiry } from "./LocalStorage";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertBoard, insertReReply, insertReply, like, like2, userUpdate } from "./axiosPost";
+import { insertBoard, insertReReply, insertReply, like, userUpdate } from "./axiosPost";
 
 /** 미사용 함수
  * @param {*} uid 
@@ -15,8 +15,7 @@ export const useGetUser = async (uid) => {
         }
     }).then(res => res.data
     ).catch(error => console.log(error));
-    console.log('유저' + result);
-    return result;
+    return result.data;
 }
 
 /** Localstorage에 저장된 uid(현재 접속한 유저 번호) 값을 이용해서 nickname 불러오기
@@ -55,7 +54,7 @@ export const useAddLike = () => {
     const queryClient = useQueryClient();
 
     const { mutate } = useMutation({
-        mutationFn: like2,
+        mutationFn: like,
         onSuccess: () => {
             queryClient.invalidateQueries('board'); // 갱신하고자 하는 queryKey를 넣어야 함
         },

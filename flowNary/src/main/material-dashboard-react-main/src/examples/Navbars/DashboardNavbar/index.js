@@ -15,7 +15,6 @@ import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React 컴포넌트
 import MDBox from "components/MDBox";
-import MDInput from "components/MDInput";
 
 // Material Dashboard 2 React 예제 컴포넌트
 import Breadcrumbs from "examples/Breadcrumbs";
@@ -47,6 +46,9 @@ import { wrong } from "api/alert";
 import MDTypography from "components/MDTypography";
 import axios from "axios";
 import { SetWithExpiry } from "api/LocalStorage";
+import { useQuery } from "@tanstack/react-query";
+import { useGetUser } from "api/customHook";
+import MapComponent from "./mapComponent";
 
 // 헤더 부분
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -135,58 +137,50 @@ function DashboardNavbar({ absolute, light, isMini }) {
     962: '허리케인'
   };
 
-  const [weather, setWeather] = useState('');
-
-  // 위치 뽑아내기
-  const getCurrentLocation = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      let lat = position.coords.latitude;
-      let lon = position.coords.longitude;
-      getWeatherByCurrentLocation(37.30101111, 127.0122222);
-    });
-  };
-
-  // API 가져오기
-  const getWeatherByCurrentLocation = async (lat, lon) => {
-    try {
-      const res = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lang=kr&lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
-      );
-      console.log(res);
-      // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
-      const weatherId = res.data.weather[0].id;
-      const weatherKo = weatherDescKo[weatherId];
-      // 날씨 아이콘 가져오기
-      const weatherIcon = res.data.weather[0].icon;
-      const weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
-      // 소수점 버리기
-      const temp = Math.round(res.data.main.temp);
-      const cityName = res.data.name;
-      setWeather({
-        description: weatherKo,
-        name: cityName,
-        temp: temp,
-        links: weatherIconAdrs,
-      });
-      console.log(weather);
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
-
   // 유저 불러오기
   const uid = parseInt(GetWithExpiry("uid"));
   const email = GetWithExpiry("email");
   const nickname = GetWithExpiry("nickname");
   const uname = GetWithExpiry("uname");
   const profile = GetWithExpiry("profile");
+  const [location, setLocation] = useState('');
 
+  // const user = useQuery({
+  //   queryKey: ['user', uid],
+  //   queryFn: () => getUser(uid),
+  // });
 
+  // useEffect(() => {
+  //   if (user && user.data && user.data.location) {
+  //     setLocation(user.data.location);
+  //   }
+  // }, [user])
+
+  // const [weather, setWeather] = useState('');
+
+  // // API 가져오기
+  // const getWeatherByCoordinates = async (lat, lon) => {
+  //   try {
+  //     const res = await axios.get(
+  //       `https://api.openweathermap.org/data/2.5/weather?lang=kr&lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
+  //     );
+  //     // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
+  //     const weatherId = res.data.weather[0].id;
+  //     const weatherKo = weatherDescKo[weatherId];
+  //     // 날씨 아이콘 가져오기
+  //     const weatherIcon = res.data.weather[0].icon;
+  //     const weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+  //     // 소수점 버리기
+  //     const temp = Math.round(res.data.main.temp);
+  //     setWeather({
+  //       description: weatherKo,
+  //       temp: temp,
+  //       links: weatherIconAdrs,
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   useEffect(() => {
     // 네비바 타입 설정
@@ -366,12 +360,13 @@ function DashboardNavbar({ absolute, light, isMini }) {
       color="inherit"
       sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
     >
+      {/* <MapComponent location={location} onLocationChange={(lat, lon) => getWeatherByCoordinates(lat, lon)} /> */}
       <Toolbar sx={(theme) => navbarContainer(theme)}>
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="yard" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
         {/* 헤더 박스 및 계정, 설정, 알림 아이콘 모양 */}
-        {isMini ? null : (
+        {/* {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mt={1} mr={2} sx={{ position: 'sticky', top: "8%" }}>
@@ -389,7 +384,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     </Grid>
                   </Grid>
                 </Box>
-                {/* 날씨 정보 */}
                 <Popover
                   id="mouse-over-popover"
                   sx={{
@@ -416,7 +410,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                         </MDTypography>
                         <Avatar sx={{ width: 100, height: 100 }} src={weather.links} alt="날씨 아이콘" />
                         <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
-                          {weather.name}:  {weather.temp}℃  {/* user의 location으로 따오기*/}
+                          {location}:  {weather.temp}℃  
                           <br />
                           {weather.description}
                         </CardContent>
@@ -469,7 +463,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               {renderProfileMenu()}
             </MDBox>
           </MDBox>
-        )}
+        )} */}
       </Toolbar>
     </AppBar >
   );

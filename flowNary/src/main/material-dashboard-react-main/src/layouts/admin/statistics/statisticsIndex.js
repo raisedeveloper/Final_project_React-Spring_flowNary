@@ -13,9 +13,39 @@ import AppTrafficBySite from './app-traffic-by-site';
 
 import Iconify from '../../../components/iconify';
 import { Container, Grid, Typography } from "@mui/material";
+import { getBoardList } from 'api/axiosGet';
+import { GetWithExpiry } from 'api/LocalStorage';
+import { useQuery } from '@tanstack/react-query';
+import { format, parseISO } from 'date-fns';
+import { useEffect, useState } from 'react';
 
 export default function statistics() {
+  const uid = parseInt(GetWithExpiry('uid'));
+  const [monthlyStatistics, setMonthlyStatistics] = useState({});
 
+  const { data: dataList, isLoading, error } = useQuery({
+    queryKey: ['board', uid],
+    queryFn: () => getBoardList(),
+  }); 
+
+  useEffect(() => {
+    if (dataList && Array.isArray(dataList)) {
+      const statistics = dataList.reduce((acc, item) => {
+        const date = parseISO(item.modTime);
+        const month = format(date, 'yyyy-MM');
+        if (!acc[month]) {
+          acc[month] = {
+            '게시물 업데이트': 0,
+            // 다른 통계 항목을 여기에 추가할 수 있습니다.
+          };
+        }
+        acc[month]['게시물 업데이트']++; // 통계 항목을 적절하게 업데이트합니다.
+        return acc;
+      }, {});
+      console.log(statistics);
+      setMonthlyStatistics(statistics);
+    }
+  }, [dataList]);
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -24,7 +54,7 @@ export default function statistics() {
           반가워요, 돌아오셨군요! 👋
         </Typography>
         <Grid container spacing={3}>
-          <Grid xs={12} sm={6} md={2} lg={2} sx={{ mb: 5, mr: 5 }}>
+          {/* <Grid xs={12} sm={6} md={2} lg={2} sx={{ mb: 5, mr: 5 }}>
             <AppWidgetSummary
               title="이번 주 게시물 수"
               total={714000}
@@ -57,53 +87,46 @@ export default function statistics() {
               color="error"
               icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
             />
-          </Grid>
-          <Grid xs={12} md={6} lg={8} sx={{ mb: 5 }}>
+          </Grid> */}
+          <Grid item xs={12} md={6} lg={8} sx={{ mb: 5 }}>
             <AppWebsiteVisits
-              title="웹 사이트 방문자 수"
-              subheader="(+43%) 작년 대비"
+              title="사이트 정보"
               chart={{
                 labels: [
-                  '01/01/2024',
-                  '02/01/2024',
-                  '03/01/2024',
-                  '04/01/2024',
-                  '05/01/2024',
-                  '06/01/2024',
-                  '07/01/2024',
-                  '08/01/2024',
-                  '09/01/2024',
-                  '10/01/2024',
-                  '11/01/2024',
-                  '12/01/2024',
+                  '2023/12',
+                  '2024/01',
+                  '2024/02',
+                  '2024/03',
+                  '2024/04',
+                  '2024/05',
                 ],
                 series: [
                   {
                     name: '게시물 업데이트',
                     type: 'column',
                     fill: 'solid',
-                    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                    data: Object.values(monthlyStatistics).map(stat => stat['게시물 업데이트']),
                   },
-                  {
-                    name: '방문자 수',
-                    type: 'area',
-                    fill: 'gradient',
-                    data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                  },
-                  {
-                    name: '공유자 수',
-                    type: 'line',
-                    fill: 'solid',
-                    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
-                  },
+                  // {
+                  //   name: '방문자 수',
+                  //   type: 'area',
+                  //   fill: 'gradient',
+                  //   data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  // },
+                  // {
+                  //   name: '공유자 수',
+                  //   type: 'line',
+                  //   fill: 'solid',
+                  //   data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  // },
                 ],
               }}
             />
           </Grid>
 
-          <Grid xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="최근 방문자"
+              title="가입자 연령"
               chart={{
                 series: [
                   { label: '8-20세', value: 4525 },
@@ -124,5 +147,3 @@ export default function statistics() {
     </DashboardLayout >
   );
 }
-
-

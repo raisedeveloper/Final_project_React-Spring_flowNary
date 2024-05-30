@@ -1,7 +1,7 @@
 import { Box, Button, Grid, Icon, IconButton, InputAdornment, Modal, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { GetWithExpiry } from "api/LocalStorage";
-import { useGetUser } from "api/customHook";
+import { getUser } from "api/axiosGet";
 import axios from "axios";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -33,13 +33,19 @@ export default function SettingModal() {
 
   const { data: user, isLoading, error } = useQuery({
     queryKey: ['user', uid],
-    queryFn: () => useGetUser(uid),
+    queryFn: () => getUser(uid),
   });
+
+  function handleKeyPress(event) {
+    if (event && event.key === 'Enter') {
+      event.preventDefault(); // 기본 동작 방지
+      confirmPWd();
+    }
+  }
 
   const auth = getAuth();
   const handleClose = () => { navigate(-1); }
-  const confirmPWd = async e => {
-    e.preventDefault();
+  const confirmPWd = async () => {
 
     // Firebase Authentication을 통해 사용자를 인증합니다.
     try {
@@ -123,7 +129,7 @@ export default function SettingModal() {
     <>
       <DashboardLayout>
         <DashboardNavbar />
-        {user && user.provider === 0 ?
+        {user && user.provider === 0 &&
           <Box sx={{ mx: '19rem', mt: '12rem' }}>
             {/* 비밀번호 입력 */}
             <TextField
@@ -133,6 +139,7 @@ export default function SettingModal() {
               variant="standard"
               type={showPassword ? 'text' : 'password'}
               sx={{ width: '100%' }}
+              onKeyPress={handleKeyPress}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -169,18 +176,18 @@ export default function SettingModal() {
                 </Button>
               </Grid>
             </Grid>
-          </Box>
-          :
-          <Box sx={{ border:'1px solid white', backgroundColor:'rgb(236, 241, 253)', p:'3rem', m:'10rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          </Box>}
+        {user && user.provider === 1 &&
+          <Box sx={{ border: '1px solid white', backgroundColor: 'rgb(236, 241, 253)', p: '3rem', m: '10rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Box>
-              <Link to="#"  onClick={loginWithGoogle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+              <Link to="#" onClick={loginWithGoogle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
                 <img
                   style={{ paddingRight: '5px', margin: '-5px', width: '3.2em' }}
                   src="/images/icons/Google.png"
                   alt="Google"
                 />
               </Link>
-              <Typography style={{ fontSize: '1em', marginTop:'3rem'}}> 구글 로그인 후 설정 가능합니다.</Typography>
+              <Typography style={{ fontSize: '1em', marginTop: '3rem' }}> 구글 로그인 후 설정 가능합니다.</Typography>
             </Box>
           </Box>
         }

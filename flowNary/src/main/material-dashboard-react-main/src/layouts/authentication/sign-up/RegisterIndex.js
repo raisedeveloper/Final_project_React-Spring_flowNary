@@ -517,7 +517,7 @@ export default function Register({ closeModal }) {
 }
 
 Register.propTypes = {
-    closeModal: PropTypes.func.isRequired,
-    nickname: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
+    closeModal: PropTypes.func,
+    nickname: PropTypes.string,
+    email: PropTypes.string,
 };

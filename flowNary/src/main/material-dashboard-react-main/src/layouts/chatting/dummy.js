@@ -10,16 +10,15 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 // Dashboard components
-import TodoList from "./todoList/TodoListIndex";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, } from "@mui/material";
+import TodoList from "layouts/home/components/todoList";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Typography, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { Bar } from "react-chartjs-2";
 import MDTypography from "components/MDTypography";
-import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BoardDetail from "./Board/BoardDetail";
 import Write from './write';
-import CloseIcon from '@mui/icons-material/Close';
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetWithExpiry } from "api/LocalStorage";
@@ -29,16 +28,10 @@ import { getBoardList, getBoardListCount } from "api/axiosGet";
 import { getBoard } from "api/axiosGet";
 import TimeAgo from "timeago-react";
 import koreanStrings from './Board/ko'; // 한글 로케일 파일 경로
-import AppTasks from '../admin/statistics/app-tasks';
-import { UserContext } from "api/LocalStorage";
 
-export default function Home() {
+export default function Dummy() {
   const queryClient = useQueryClient()
   const [expanded, setExpanded] = useState({});
-
-  // const Transition = React.forwardRef(function Transition(props, ref) {
-  //   return <Slide direction="right" ref={ref} {...props} />;
-  // });
 
   const handleToggle = (bid) => {
     setExpanded((prevExpanded) => ({
@@ -46,6 +39,126 @@ export default function Home() {
       [bid]: !prevExpanded[bid]
     }));
   };
+
+  const weatherDescKo = {
+    201: '가벼운 비를 동반한 천둥구름',
+    200: '비를 동반한 천둥구름',
+    202: '폭우를 동반한 천둥구름',
+    210: '약한 천둥구름',
+    211: '천둥구름',
+    212: '강한 천둥구름',
+    221: '불규칙적 천둥구름',
+    230: '약한 연무를 동반한 천둥구름',
+    231: '연무를 동반한 천둥구름',
+    232: '강한 안개비를 동반한 천둥구름',
+    300: '가벼운 안개비',
+    301: '안개비',
+    302: '강한 안개비',
+    310: '가벼운 적은비',
+    311: '적은비',
+    312: '강한 적은비',
+    313: '소나기와 안개비',
+    314: '강한 소나기와 안개비',
+    321: '소나기',
+    500: '악한 비',
+    501: '중간 비',
+    502: '강한 비',
+    503: '매우 강한 비',
+    504: '극심한 비',
+    511: '우박',
+    520: '약한 소나기 비',
+    521: '소나기 비',
+    522: '강한 소나기 비',
+    531: '불규칙적 소나기 비',
+    600: '가벼운 눈',
+    601: '눈',
+    602: '강한 눈',
+    611: '진눈깨비',
+    612: '소나기 진눈깨비',
+    615: '약한 비와 눈',
+    616: '비와 눈',
+    620: '약한 소나기 눈',
+    621: '소나기 눈',
+    622: '강한 소나기 눈',
+    701: '박무',
+    711: '연기',
+    721: '연무',
+    731: '모래 먼지',
+    741: '안개',
+    751: '모래',
+    761: '먼지',
+    762: '화산재',
+    771: '돌풍',
+    781: '토네이도',
+    800: '구름 한 점 없는 맑은 하늘',
+    801: '약간의 구름이 낀 하늘',
+    802: '드문드문 구름이 낀 하늘',
+    803: '구름이 거의 없는 하늘',
+    804: '구름으로 뒤덮인 흐린 하늘',
+    900: '토네이도',
+    901: '태풍',
+    902: '허리케인',
+    903: '한랭',
+    904: '고온',
+    905: '바람부는',
+    906: '우박',
+    951: '바람이 거의 없는',
+    952: '약한 바람',
+    953: '부드러운 바람',
+    954: '중간 세기 바람',
+    955: '신선한 바람',
+    956: '센 바람',
+    957: '돌풍에 가까운 센 바람',
+    958: '돌풍',
+    959: '심각한 돌풍',
+    960: '폭풍',
+    961: '강한 폭풍',
+    962: '허리케인'
+  };
+
+  const [weather, setWeather] = useState('');
+
+  // 위치 뽑아내기
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      let lat = position.coords.latitude;
+      let lon = position.coords.longitude;
+      getWeatherByCurrentLocation(37.30101111, 127.0122222);
+    });
+  };
+
+  // API 가져오기
+  const getWeatherByCurrentLocation = async (lat, lon) => {
+    try {
+      const res = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lang=kr&lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
+      );
+      console.log(res);
+      // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
+      const weatherId = res.data.weather[0].id;
+      const weatherKo = weatherDescKo[weatherId];
+      // 날씨 아이콘 가져오기
+      const weatherIcon = res.data.weather[0].icon;
+      const weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+      // 소수점 버리기
+      const temp = Math.round(res.data.main.temp);
+      const cityName = res.data.name;
+      setWeather({
+        description: weatherKo,
+        name: cityName,
+        temp: temp,
+        links: weatherIconAdrs,
+      });
+      console.log(weather);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
   /////////////////////////////////////////////////////////////////////
   // 유저 정보 받아오기
@@ -57,52 +170,27 @@ export default function Home() {
   const profile = GetWithExpiry("profile");
 
   const [bid, setBid] = useState(0);
-  const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
-
 
   // if (uid == -1) {
   //   navigate("/login");
   // }
   const nickname = useGetUserNicknameLS();
 
-
-  //수정 페이지 이동
-  const handleUpdate = () => {
-    navigate("../home/Update")
-    sessionStorage.setItem("bid", bid);
-  }
-
-  const { activeUser } = useContext(UserContext);
-
-
   // 창 열고 닫기
   const handleOpen = (e) => {
-
     setOpen(true);
     setBid(e);
-
   }
   const handleClose = () => {
     setOpen(false);
+    setBid(-1);
   };
 
   const location = useLocation();
-  const [path2, setPath2] = useState('');
-
-  useEffect(() => {
-    if (location.pathname) {
-      const getPath = async () => {
-        const path = location.pathname.split('/');
-        if (path) {
-          const lastPath = path.slice(-1)[0];
-          setPath2(lastPath);
-        }
-        getPath();
-      }
-    };
-  }, [location]);
+  const path = location.pathname.split('/');
+  const path2 = path[path.length - 1];
 
   const [count, setCount] = useState(10);
   const [page, setPage] = useState(1);
@@ -111,20 +199,34 @@ export default function Home() {
 
   /////////////////// useQuery로 BoardList 받기 ///////////////////
 
-  const { data: boardList, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+  const { data: dataList, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['boardList', uid],
     queryFn: ({ pageParam = 1 }) => getBoardList(pageParam * count, uid),
-    getNextPageParam: (lastPage) => {
-      if (lastPage) {
-        if (lastPage.nextCursor !== undefined) {
-          return lastPage.nextCursor;
-        }
-      } else {
-        console.warn('Last page is undefined');
-        return undefined;
-      }
-    },
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   });
+
+  // const observerRef = useRef(null);
+
+  //   useEffect(() => {
+  //     // IntersectionObserver 생성
+  //     const observer = new IntersectionObserver((entries) => {
+  //         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+  //             fetchNextPage();
+  //         }
+  //     });
+
+  //     // 감시할 요소에 대한 참조(observerRef.current)가 있으면
+  //     if (observerRef.current) {
+  //         // IntersectionObserver를 사용하여 해당 요소를 감시합니다.
+  //         observer.observe(observerRef.current);
+
+  //         // 컴포넌트가 언마운트되거나 새로운 페이지가 불려질 때, Observer를 해제합니다.
+  //         return () => {
+  //             observer.disconnect();
+  //         };
+  //     }
+  // }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
 
 
   const { data: allcount } = useQuery({
@@ -132,6 +234,7 @@ export default function Home() {
     queryFn: () => getBoardListCount(),
     placeholderData: (p) => p,
   })
+
 
   useEffect(() => {
     if (count >= allcount && allcount !== undefined)
@@ -150,6 +253,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    console.log("useeffect!")
     setTimeout(() => {
       const observer = new IntersectionObserver(callback, {
         rootMargin: '0px 0px 0px 0px',
@@ -157,6 +261,7 @@ export default function Home() {
       })
 
       const observerTarget = document.getElementById("observe"); // id가 observe인 태그를 사용
+      console.log(observerTarget);
       queryClient.refetchQueries(['boardList']);
       if (observerTarget) {
         observer.observe(observerTarget);
@@ -190,55 +295,9 @@ export default function Home() {
 
     addLikeForm(sendData);
   }
-  // 댓글 좋아요 버튼 누를 때 넘기기
-  function handleButtonLikeReply(rid, uid2) {
-    if (uid == -1)
-      return;
 
-    const sendData = {
-      uid: activeUser.uid,
-      fuid: uid2,
-      oid: rid,
-      type: 2,
-    }
-
-    addLikeForm(sendData);
-  }
-  // 대댓글 좋아요 버튼 누를 때 넘기기
-  function handleButtonLikeReReply(rrid, uid2) {
-    if (uid === -1) return;
-
-    const sendData = {
-      uid: activeUser.uid,
-      fuid: uid2,
-      oid: rrid,
-      type: 3,
-    }
-
-    addLikeForm(sendData);
-  }
   if (isLoading) {
-    <div>로딩중...</div>
-  }
-
-
-  //popover
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClosePopover = () => {
-    setAnchorEl(null);
-  };
-
-  const openPopover = Boolean(anchorEl);
-  const id = openPopover ? 'simple-popover' : undefined;
-
-  // 클릭 시 마이페이지 이동 이벤트
-  const handleMyPage = (uid) => {
-    navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
+    return (<div>로딩 중...</div>)
   }
 
   return (
@@ -250,12 +309,13 @@ export default function Home() {
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
               <Write />
               <Grid container spacing={3}>
-                {(boardList && allcount && !isLoading) ? (boardList.pages.map((page, index) => (
+                {dataList.pages.map((page, index) => (
                   <React.Fragment key={index}>
-                    {page && page.map((data, idx) => (
-                      <Grid key={idx} item xs={12} md={6} lg={6} >
+                    {page.map((data, idx) => (
+                      <Grid key={idx} item xs={12} md={6} lg={6}>
                         <MDBox mb={3}>
                           <Card sx={{
+                            height: "100%",
                             transition: 'box-shadow 0.3s', // 추가: 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션
                             '&:hover': {
                               boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
@@ -270,48 +330,15 @@ export default function Home() {
                                 />
                               }
                               action={
-                                <div>
-                                  <IconButton aria-label="settings" onClick={handleClick}>
-                                    <MoreVertIcon />
-                                  </IconButton>
-                                  <Popover
-                                    id={id}
-                                    open={openPopover}
-                                    anchorEl={anchorEl}
-                                    onClose={handleClosePopover}
-                                    anchorOrigin={{
-                                      vertical: 'bottom',
-                                      horizontal: 'left',
-                                    }}
-                                    transformOrigin={{
-                                      vertical: 'top',
-                                      horizontal: 'right',
-                                    }}
-                                    PaperProps={{
-                                      style: {
-                                        marginLeft: 90, // 이 값을 조정하여 팝오버의 가로 위치를 미세하게 조정
-                                      },
-                                    }}
-                                  >
-                                    {data.uid === activeUser.uid && (
-                                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-
-                                        <Button onClick={handleUpdate}>수정</Button>
-                                        <Button sx={{ padding: 0 }}>공유 하기</Button>
-                                        <Button sx={{ padding: 0, color: 'red' }}>신고 하기</Button>
-                                        <Button sx={{ padding: 0 }}>삭제 하기</Button>
-
-                                      </Box>
-                                    )}
-                                  </Popover>
-                                </div>
+                                <IconButton aria-label="settings">
+                                  <MoreVertIcon />
+                                </IconButton>
                               }
                               title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple' }}>{data.nickname}</Typography>}
-                              onClick={() => handleMyPage(data.uid)}
                             />
 
                             <MDBox padding="1rem">
-                              {data.image ?
+                              {data.image ? 
                                 <MDBox
                                   variant="gradient"
                                   borderRadius="lg"
@@ -342,32 +369,32 @@ export default function Home() {
                                 :
                                 <MDBox>
                                   <MDBox
-                                    variant="gradient"
-                                    borderRadius="lg"
-                                    py={2}
-                                    pr={0.5}
-                                    sx={{
-                                      position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
-                                      height: "12.5rem",
-                                      overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
-                                      transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                      '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
-                                        transform: 'scale(1.05)', // 이미지를 확대합니다.
-                                        transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
-                                      },
-                                      '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
-                                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
-                                      }
-                                    }}
-                                  >
-                                    <button onClick={handleOpen.bind(null, data.bid)}>
-                                      <img
-                                        src="images/LightLogo.png"
-                                        alt="Paella dish"
-                                        style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
-                                      />
-                                    </button>
-                                  </MDBox>
+                                  variant="gradient"
+                                  borderRadius="lg"
+                                  py={2}
+                                  pr={0.5}
+                                  sx={{
+                                    position: "relative", // 이미지를 부모 요소에 상대적으로 위치하도록 설정합니다.
+                                    height: "12.5rem",
+                                    overflow: "visible", // 이미지가 부모 요소를 넘어가지 않도록 설정합니다.
+                                    transition: 'box-shadow 0.3s', // 호버 시 그림자 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                                    '&:hover img': { // 이미지가 호버될 때의 스타일을 지정합니다.
+                                      transform: 'scale(1.05)', // 이미지를 확대합니다.
+                                      transition: 'transform 0.35s ease-in-out', // 확대 효과를 부드럽게 만들기 위한 트랜지션을 설정합니다.
+                                    },
+                                    '&:hover': { // MDBox가 호버될 때의 스타일을 지정합니다.
+                                      boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 그림자 효과를 추가합니다.
+                                    }
+                                  }}
+                                >
+                                  <button onClick={handleOpen.bind(null, data.bid)}>
+                                    <img
+                                      src="images/LightLogo.png"
+                                      alt="Paella dish"
+                                      style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'fill', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
+                                    />
+                                  </button>
+                                </MDBox>
                                 </MDBox>
                               }
                               <MDBox pt={3} pb={1} px={1}>
@@ -385,7 +412,7 @@ export default function Home() {
                                     </MDTypography>
                                   )}
                                 </button>
-                                <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '...' : '...'}</Button>
+                                <Button onClick={() => handleToggle(data.bid)}>{expanded[data.bid] ? '접기' : '더 보기'}</Button>
                                 <Divider />
                                 <MDBox display="flex" alignItems="center">
                                   <MDTypography variant="button" color="text" lineHeight={1} sx={{ mt: 0.15, mr: 0.5 }}>
@@ -402,49 +429,44 @@ export default function Home() {
                       </Grid>
                     ))}
                   </React.Fragment>
-                ))) : <></>}
+                ))}
               </Grid>
 
             </Stack>
 
-
+            {/* 날씨 정보 */}
             <Stack direction="column" sx={{ flex: 0.5 }}>
               <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
+                <MDBox>
+                  <Card sx={{ height: "100%" }}>
+                    <MDBox pt={3} px={3}>
+                      <MDTypography variant="h6" fontWeight="medium">
+                        Weather 정보
+                      </MDTypography>
+                      <Avatar sx={{ width: 200, height: 200 }} src={weather.links} alt="날씨 아이콘" />
+                      <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
+                        {weather.name}:  {weather.temp}℃
+                        <br />
+                        {weather.description}
+                      </CardContent>
+                    </MDBox>
+                  </Card>
+                </MDBox>
+                <br />
                 <TodoList />
               </MDBox>
             </Stack>
           </Stack>
         </MDBox >
+        
       </MDBox >
       {/* <div ref={observerRef}></div> */}
-      <div id="observe" ref={observerRef} style={{ display: 'flex', height: '1rem' }}></div>
+      <div id="observe" ref={observerRef} style={{ display: 'flex', height: '10px' }}></div>
 
       {/* 게시글 모달 */}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        // TransitionComponent={Transition}
-        aria-labelledby="customized-dialog-title"
-        keepMounted
-        PaperProps={{
-          sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
-            height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
-            maxWidth: 'none', // 최대 너비 제한 제거
-          },
-        }}
-      >
-        <IconButton aria-label="close" onClick={handleClose}
-          sx={{
-            position: 'absolute', right: 8, top: 8,
-            color: (theme) => theme.palette.grey[500],
-            zIndex: 2
-          }} >
-          <CloseIcon />
-        </IconButton>
-        <BoardDetail bid={bid} uid={uid} index={index} handleClose={handleClose} nickname={nickname} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
-      </Dialog>
-
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
+      </Modal>
       <Footer />
     </DashboardLayout >
   );
