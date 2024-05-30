@@ -51,22 +51,19 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
   const [alertCount, setAlertCount] = useState(0);
   const { activeUser } = useContext(UserContext);
   const { stompClient, isConnect } = useWebSocket();
-  
+
   useEffect(() => {
     let noticeincrease;
     let noticereset;
 
-    if (name === '알림' && activeUser.uid != -1)
-    {
-      console.log('inside if statement for 알림');
+    if (name === '알림' && activeUser.uid != -1) {
       const getCount = async () => {
         const count = await getNoticeCount(activeUser.uid);
         setAlertCount(count);
       }
       getCount();
-      
-      if (stompClient && isConnect)
-      {
+
+      if (stompClient && isConnect) {
         noticeincrease = stompClient.subscribe(`/user/notice/` + activeUser.uid, (data) => {
           setAlertCount(prevCount => prevCount + 1);
         });
@@ -76,8 +73,7 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
         console.log('Subscribed to notice');
       }
     }
-    else if (name === '알림' && activeUser.uid === -1)
-    {
+    else if (name === '알림' && activeUser.uid === -1) {
       console.log(stompClient);
       console.log(noticeincrease);
       console.log(noticereset);

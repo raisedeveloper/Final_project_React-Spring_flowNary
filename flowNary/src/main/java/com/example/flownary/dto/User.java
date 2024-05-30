@@ -24,6 +24,7 @@ public class User {
 		String tel;
 		int gender;
 		String location;
+		int role;
 	}
 	
 	@Getter

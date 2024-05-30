@@ -7,7 +7,6 @@ const API_BASE_URL = "/";
  * @returns 
  */
 export const getUser = async (uid: number) => {
-
   const result = await axios.get('user/getUser', {
     params: {
       uid: uid,
@@ -18,7 +17,7 @@ export const getUser = async (uid: number) => {
       console.log(error);
     });
 
-  return result;
+  return await result;
 }
 
 // 24/05/27 성한 - userList 추가(검토 필요!)
@@ -28,7 +27,7 @@ export const getUserList = async () => {
     return response.data;
   } catch (error) {
     console.error('axiosGet.js: getUser Error!', error);
-    return null;
+    return await null;
   }
 }
 
@@ -44,11 +43,14 @@ export const getUserEmail = async (email: string) => {
     }
   }).then((response) => response.data)
     .catch(error => {
-      console.log('axiosget.js: getUserEmail error!');
-      console.log(error);
+      console.error('axiosget.js: getUserEmail error!');
+      console.error('Error message:', error.message);
+      console.error('Request config:', error.config);
+      console.error('Response:', error.response ? error.response.data : 'No response data');
+      throw error;  // 오류를 던져서 상위 코드에서 처리할 수 있도록 함
     });
 
-  return result;
+  return await result;
 }
 
 /** uid로 닉네임과 이메일, 프로필만 가지는 유저 정보 조회
@@ -67,7 +69,7 @@ export const getUserNickEmail = async (uid: number) => {
       console.log(error);
     });
 
-  return result;
+  return await result;
 }
 
 /** 글 조회
@@ -88,7 +90,7 @@ export const getBoard = async (bid: Number, uid = -1) => {
       console.log(error);
     });
 
-  return result;
+  return await result;
 }
 
 /** shareUrl을 통해 글 조회
@@ -109,7 +111,7 @@ export const getBoardUrl = async (url: string, uid = -1) => {
       console.log(error);
     });
 
-  return result;
+  return await result;
 }
 
 /** 글 리스트 받기
@@ -140,7 +142,7 @@ export const getBoardList = async (count = 1, field = 'title', field2 = '', fiel
       console.log(error);
     });
 
-  return result;
+  return await result;
 }
 
 /** 글 리스트 받기
@@ -159,7 +161,7 @@ export const getMyBoardList = async (uid = -1) => {
       console.log(error);
     });
 
-  return result;
+  return await result;
 }
 
 export const getLikedBoardList = async (uid) => {
@@ -174,7 +176,7 @@ export const getLikedBoardList = async (uid) => {
       console.log(error);
     });
 
-  return result;
+  return await result;
 }
 
 

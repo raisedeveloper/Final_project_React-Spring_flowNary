@@ -74,6 +74,7 @@ export default function Login() {
         SetWithExpiry("profile", response.data.profile, 180);
         SetWithExpiry("nickname", response.data.nickname, 180);
         SetWithExpiry("statusMessage", response.data.statusMessage, 180);
+        SetWithExpiry("role", response.data.role, 180);
         Swal.fire({
           icon: 'success',
           title: "구글 회원가입에 성공했습니다.",
@@ -100,23 +101,23 @@ export default function Login() {
         SetWithExpiry("profile", response.data.profile, 180);
         SetWithExpiry("nickname", response.data.nickname, 180);
         SetWithExpiry("statusMessage", response.data.statusMessage, 180);
-        updateActiveUser({ uid: response.data.id, email: data.user.email, nickname: response.data.nickname });
+        SetWithExpiry("role", response.data.role, 180);
+        updateActiveUser({
+          uid: response.data.id, email: data.user.email, nickname: response.data.nickname,
+          role: response.data.role,
+        });
         Swal.fire({
           icon: 'success',
           title: "구글 로그인에 성공했습니다.",
           showClass: {
-            popup: `
-                                    animate__animated
-                                    animate__fadeInUp
-                                    animate__faster
-                                `
+            popup: ` animate__animated 
+            animate__fadeInUp
+            animate__faster `
           },
           hideClass: {
-            popup: `
-                                    animate__animated
-                                    animate__fadeOutDown
-                                    animate__faster
-                                `
+            popup: ` animate__animated
+            animate__fadeOutDown
+            animate__faster `
           }
         });
         console.log("구글 로그인 성공!" + response.data);
@@ -175,7 +176,9 @@ export default function Login() {
           SetWithExpiry("profile", res.data.profile, 180);
           SetWithExpiry("nickname", res.data.nickname, 180);
           SetWithExpiry("statusMessage", res.data.statusMessage, 180);
-          updateActiveUser({ uid: res.data.id, email: res.data.email, nickname: res.data.nickname });
+          SetWithExpiry("role", res.data.role, 180);
+          updateActiveUser({ uid: res.data.id, email: res.data.email, nickname: res.data.nickname, 
+            role: res.data.role });
 
           navigate('/home');
           setAnimationClass('fade-exit');

@@ -1,4 +1,3 @@
-// routes.js
 import React from 'react';
 import Icon from '@mui/material/Icon';
 
@@ -19,13 +18,12 @@ import Search from "layouts/Search/SearchIndex.js";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
-import { FlashOnOutlined } from '@mui/icons-material';
-import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
+import UpdateIndex from "layouts/home/Update/UpdateIndex.js";
 import Statistics from 'layouts/admin/statistics/statisticsIndex';
-import UserList from 'layouts/admin/userList/userListIndex';
+import UserList from 'layouts/admin/AdminUserList/AdminUserList';
 import BoardList from 'layouts/admin/boardList/boardListIndex';
 
-const createRoutes = (isLoggedIn) => [
+const createRoutes = (isLoggedIn, isAdmin) => [
   {
     type: "collapse",
     name: "홈",
@@ -133,20 +131,11 @@ const createRoutes = (isLoggedIn) => [
   },
   {
     type: "collapse",
-    name: "로그인",
-    key: "sign-in",
-    icon: <Icon fontSize="xx-large">login</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
-    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
-  },
-  {
-    type: "collapse",
     name: "회원가입",
     key: "sign-up",
     icon: <Icon fontSize="xx-large">assignment</Icon>,
     component: <SignUp />,
-    visible: false, // 로그인되지 않았을 때만 보임
+    visible: false, // 회원가입은 별도로 표시하지 않음
   },
   {
     type: "bottom",
@@ -171,7 +160,7 @@ const createRoutes = (isLoggedIn) => [
     icon: <Icon fontSize="xx-large">donut_small</Icon>,
     route: "/statistics",
     component: <Statistics />,
-    visible: true,
+    visible: isAdmin
   },
   {
     type: "collapse",
@@ -180,7 +169,7 @@ const createRoutes = (isLoggedIn) => [
     icon: <Icon fontSize="xx-large">manage_accounts</Icon>,
     route: "/userList",
     component: <UserList />,
-    visible: true,
+    visible: isAdmin
   },
   {
     type: "collapse",
@@ -189,7 +178,16 @@ const createRoutes = (isLoggedIn) => [
     icon: <Icon fontSize="xx-large">manage_search</Icon>,
     route: "/boardList",
     component: <BoardList />,
-    visible: true,
+    visible: isAdmin
+  },
+  {
+    type: "collapse",
+    name: "로그인",
+    key: "sign-in",
+    icon: <Icon fontSize="xx-large">login</Icon>,
+    route: "/authentication/sign-in",
+    component: <SignIn />,
+    visible: !isLoggedIn, // 로그인되지 않았을 때만 보임
   },
   {
     type: "collapse",

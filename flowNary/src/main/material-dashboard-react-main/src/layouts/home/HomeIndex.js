@@ -383,7 +383,7 @@ export default function Home() {
                                           boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
                                           borderRadius: '8px',
                                         }}>
-                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button>
+                                          {/* <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button> */}
                                         </Paper>
                                       </Popper >
                                     </>

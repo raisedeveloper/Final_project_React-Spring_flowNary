@@ -57,6 +57,7 @@ export function GetWithExpiry(key) {
             localStorage.removeItem("profile");
             localStorage.removeItem("nickname");
             localStorage.removeItem("statusMessage");
+            localStorage.removeItem("role");
             window.location.reload();
             return -1;
         }
@@ -86,7 +87,8 @@ const ContextProvider = ({children}) => {
         const uid = GetWithExpiry("uid");
         const email = GetWithExpiry("email");
         const nickname = GetWithExpiry("nickname");
-        setActiveUser({uid, email, nickname});
+        const role = GetWithExpiry("role");
+        setActiveUser({uid, email, nickname, role});
     }, []);
 
     return (

@@ -57,6 +57,7 @@ public class UserController {
 		user.setHashUid(hashuid);
 		user.setEmail(dto.getEmail());
 		user.setPwd(hashedPwd);
+		user.setRole(0);
 		user.setProvider(dto.getProvider());
 		if (dto.getProvider() == 0) {
 			user.setBirth(dto.getBirth());
@@ -166,6 +167,7 @@ public class UserController {
 		hMap.put("tel", user.getTel());
 		hMap.put("hashUid", user.getHashUid());
 		hMap.put("location", user.getLocation());
+		hMap.put("role", user.getRole());
 		
 		
 		JSONObject userOut = new JSONObject(hMap);
@@ -183,7 +185,7 @@ public class UserController {
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		hMap.put("id", uid);
 		hMap.put("email", user.getEmail());
-		hMap.put("profile", user.getProfile());
+		hMap.put("profile", user.getProfile());			
 		if (user.getNickname() != null && user.getNickname() != "")
 		{
 			hMap.put("nickname", user.getNickname());    			
@@ -221,6 +223,7 @@ public class UserController {
 		hMap.put("birth", user.getBirth());
 		hMap.put("tel", user.getTel());
 		hMap.put("hashUid", user.getHashUid());
+		hMap.put("role", user.getRole());
 		
 		JSONObject userOut = new JSONObject(hMap);
 		
