@@ -74,9 +74,9 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
       }
     }
     else if (name === '알림' && activeUser.uid === -1) {
-      console.log(stompClient);
-      console.log(noticeincrease);
-      console.log(noticereset);
+      // console.log(stompClient);
+      // console.log(noticeincrease);
+      // console.log(noticereset);
       setAlertCount(0);
     }
 

@@ -91,7 +91,7 @@ public class UserController {
 	@PostMapping(value = "/update")
 	public int userUpdate2(HttpServletRequest request, @RequestBody User dto)
 	{
-		System.out.println(dto);
+//		System.out.println(dto);
 		User user = new User();
 		user.setUid(dto.getUid());
 		user.setUname(dto.getUname());
