@@ -19,6 +19,7 @@ import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 import { UserContext } from "api/LocalStorage";
 import BoardUrl from "layouts/home/Board/BoardUrl";
+import lodingCircleBar from "api/lodingCircleBar";
 
 export default function App() {
   const brandDark = "../public/images/LightLogo.png";
@@ -77,7 +78,7 @@ export default function App() {
   }, [pathname]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{lodingCircleBar}</div>;
   }
   if (error) {
     return <div>Error: {error.message}</div>;

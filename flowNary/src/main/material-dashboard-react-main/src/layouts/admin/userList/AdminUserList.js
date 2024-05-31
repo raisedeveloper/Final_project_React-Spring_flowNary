@@ -156,11 +156,11 @@ export default function UserTableRow({ selected, handleClick }) {
                     <TableRow hover tabIndex={-1} role="checkbox" selected={selected} key={user.id}>
                       <TableCell component="th" scope="row" padding="none" align="center">
                         <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
-                          <Avatar sx={{ width: '3rem', height: '3rem' }}>
+                          <Avatar sx={{ width: '2rem', height: '2rem' }}>
                             <div
                               style={{
-                                width: '3rem',
-                                height: '3rem',
+                                width: '2rem',
+                                height: '2rem',
                                 borderRadius: '50%',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
