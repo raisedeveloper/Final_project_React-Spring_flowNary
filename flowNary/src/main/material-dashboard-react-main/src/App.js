@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+// app.js
+import { useState, useEffect, useMemo, useContext } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -16,17 +17,17 @@ import { initializeApp } from "firebase/app";
 
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
-import { ContextProvider } from "api/LocalStorage";
-import { getUserEmail } from "api/axiosGet";
-import { GetWithExpiry } from "api/LocalStorage";
+import { UserContext } from "api/LocalStorage";
+import BoardUrl from "layouts/home/Board/BoardUrl";
 
 export default function App() {
   const brandDark = "../public/images/LightLogo.png";
   const brandWhite = "../public/images/DarkLogo.png";
 
+  const { activeUser } = useContext(UserContext);
+
   const [controller, dispatch] = useMaterialUIController();
-  const {
-    miniSidenav,
+  const { miniSidenav,
     direction,
     layout,
     openConfigurator,
@@ -39,14 +40,13 @@ export default function App() {
   const auth = getAuth();
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [user, loading, error] = useAuthState(auth);  // 로그인 상태 훅
-  const [isLoading, setIsLoading] = useState(false);
   const { pathname } = useLocation();
 
-  // 로그인 및 회원가입 사이드바 확인
+  // 로그인 및 회원가입 사이드바
   const isLoginPage = pathname === "/authentication/sign-in";
   const isRegisterPage = pathname === "/authentication/sign-up";
 
-  // 미니 사이드바에 마우스가 들어올 때 사이드바 열기
+  // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
     if (miniSidenav && !onMouseEnter) {
       setMiniSidenav(dispatch, false);
@@ -54,7 +54,7 @@ export default function App() {
     }
   };
 
-  // 미니 사이드바에서 마우스가 나갈 때 사이드바 닫기
+  // Close sidenav when mouse leave mini sidenav
   const handleOnMouseLeave = () => {
     if (onMouseEnter) {
       setMiniSidenav(dispatch, true);
@@ -62,15 +62,15 @@ export default function App() {
     }
   };
 
-  // 설정창 열기 상태 변경
+  // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
 
-  // body 요소의 dir 속성 설정
+  // Setting the dir attribute for the body element
   useEffect(() => {
     document.body.setAttribute("dir", "ltr");  // 'ltr'로 고정
   }, []);
 
-  // 라우트 변경 시 페이지 스크롤을 0으로 설정
+  // Setting page scroll to 0 when changing the route
   useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
@@ -83,13 +83,12 @@ export default function App() {
     return <div>Error: {error.message}</div>;
   }
 
-  const dynamicRoutes = createRoutes(!!user, (GetWithExpiry('role') && GetWithExpiry('role')===1) ? true : false);  // 로그인 상태와 어드민 여부에 따라 라우트 동적 생성
+  const dynamicRoutes = createRoutes(!!user, (activeUser && activeUser.role === 1) ? true : false);  // 로그인 상태와 어드민 여부에 따라 라우트 동적 생성
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {isLoading && <div>로딩 중 </div>}
-      {!isLoading && !isLoginPage && !isRegisterPage && layout === "dashboard" && (
+      {!isLoginPage && !isRegisterPage && layout === "dashboard" && (
         <>
           <Sidenav
             color={'primary'}
@@ -99,6 +98,7 @@ export default function App() {
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
+          {activeUser && console.log("왜 안나옴?>" + activeUser.role)}
           <Configurator />
         </>
       )}
@@ -107,6 +107,7 @@ export default function App() {
         {dynamicRoutes.map((route) => (
           <Route path={route.route} element={route.component} key={route.key} />
         ))}
+        <Route path="/url/*" element={<BoardUrl />} />
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </ThemeProvider>

@@ -6,7 +6,7 @@
 //
 //@Configuration
 //public class MVCConfig implements WebMvcConfigurer {
-//
+//	
 //	@Override
 //	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 //		registry.addResourceHandler("/static/**")

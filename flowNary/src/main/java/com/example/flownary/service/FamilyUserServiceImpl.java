@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.flownary.dao.FamilyUserDao;
+import com.example.flownary.dto.Family.FamilyLeaderUserDto;
+import com.example.flownary.dto.Family.FamilyUserInsertDto;
+import com.example.flownary.dto.Family.FamilyUserUpdateDto;
 import com.example.flownary.entity.FamilyUser;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,16 @@ public class FamilyUserServiceImpl implements FamilyUserService {
 	public List<FamilyUser> getFamilyUserList(int faid) {
 		return fuDao.getFamilyUserList(faid);
 	}
+	
+	@Override
+	public int getFamilyUserListCount(int faid) {
+		return fuDao.getFamilyUserListCount(faid);
+	}
+	
+	@Override
+	public FamilyLeaderUserDto getFamilyLeader(int faid) {
+		return fuDao.getFamilyLeader(faid);
+	}
 
 	@Override
 	public List<FamilyUser> getFamilyUserListActive(int faid) {
@@ -31,8 +44,8 @@ public class FamilyUserServiceImpl implements FamilyUserService {
 	}
 
 	@Override
-	public void insertFamilyUser(int faid, int uid, String message) {
-		fuDao.insertFamilyUser(faid, uid, message);
+	public void insertFamilyUser(FamilyUserInsertDto familyUser) {
+		fuDao.insertFamilyUser(familyUser);
 	}
 
 	@Override
@@ -41,7 +54,7 @@ public class FamilyUserServiceImpl implements FamilyUserService {
 	}
 
 	@Override
-	public void updateFamilyUserMessage(String message, int faid, int uid) {
-		fuDao.updateFamilyUserMessage(message, faid, uid);
+	public void updateFamilyUserMessage(FamilyUserUpdateDto familyUser) {
+		fuDao.updateFamilyUserMessage(familyUser);
 	}
 }

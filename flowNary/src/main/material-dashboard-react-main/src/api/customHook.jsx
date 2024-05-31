@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { GetWithExpiry } from "./LocalStorage";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertBoard, insertReReply, insertReply, like, userUpdate } from "./axiosPost";
+import { deleteFollow, insertBoard, insertReReply, insertReply, like, userUpdate } from "./axiosPost";
 
 /** 미사용 함수
  * @param {*} uid 
@@ -113,6 +113,25 @@ export const useUpdateUser = () => {
         // onSuccess: () => {
         //     queryClient.invalidateQueries('replyList');
         // },
+    });
+
+    return mutate;
+}
+
+/** 팔로우 해제
+ * @returns mutate
+ */
+export const useRemoveFollow = () => {
+    const queryClient = useQueryClient();
+
+    const { mutate } = useMutation({
+        mutationFn: deleteFollow,
+        onSuccess: (data, variables) => {
+            queryClient.setQueryData('followlist', (oldData) =>
+                oldData ? oldData.filter(follow => follow.id !== variables) : []);
+            queryClient.setQueryData('followmelist', (oldData) =>
+                oldData ? oldData.filter(follow => follow.id !== variables) : []);
+        },
     });
 
     return mutate;

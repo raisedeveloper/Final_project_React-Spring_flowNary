@@ -22,7 +22,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.example.flownary.dto.DmList.insertDmList;
 import com.example.flownary.dto.User.GetUserNickEmailDto;
-import com.example.flownary.entity.ChatUser;
+import com.example.flownary.entity.Chat;
 import com.example.flownary.entity.DmList;
 import com.example.flownary.service.ChatService;
 import com.example.flownary.service.ChatUserService;
@@ -73,9 +73,36 @@ public class DmListController {
         JSONObject jObj = new JSONObject();
         jObj.put("cid", idmList.getCid());
         jObj.put("lastMessage", idmList.getdContents());
+        jObj.put("status", idmList.getStatus());
         
         messagingTemplate.convertAndSend("/user/chat/" + dmList.getCid(), dmList);
         messagingTemplate.convertAndSend("/topic/chatlist", jObj);
+    }
+    
+    public void publishChat2(insertDmList idmList, Chat chat) {
+    	log.info("publishChat : {}", idmList.toString());
+    	
+        DmList dmList = new DmList();
+        dmList.setCid(idmList.getCid());
+        dmList.setUid(idmList.getUid());
+        dmList.setdContents(idmList.getdContents());
+        dmList.setdFile(idmList.getdFile());
+        dmList.setNickname(idmList.getNickname());
+        dmList.setdTime(LocalDateTime.now());
+        dmList.setProfile(idmList.getProfile());
+        
+        int did = dSvc.insertDmList(dmList);
+        List<Integer> list = cuSvc.getChatUserListExInt(idmList.getCid(), idmList.getUid());
+        nC.insertNoticeList(list, 4, did, idmList.getUid());
+        
+        JSONObject jObj = new JSONObject();
+        jObj.put("cid", idmList.getCid());
+        jObj.put("lastMessage", idmList.getdContents());
+        jObj.put("status", chat.getStatus());
+        jObj.put("statusTime", chat.getStatusTime());
+        jObj.put("name", chat.getName());
+        jObj.put("userCount", cuSvc.getChatUserCount(chat.getCid()));
+        messagingTemplate.convertAndSend("/topic/chatlistnew", jObj);
     }
 
     @EventListener(SessionConnectEvent.class)

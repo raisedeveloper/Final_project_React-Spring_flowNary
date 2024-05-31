@@ -3,7 +3,6 @@ package com.example.flownary.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.simple.JSONArray;
@@ -158,7 +157,6 @@ public class BoardController {
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		
 		List<Board> list = new ArrayList<>();
-		System.out.println(field);
 		switch(type) {
 		case 1:
 			list = bSvc.getBoardList(count, field, query);			
@@ -396,21 +394,19 @@ public class BoardController {
 	}
 	
 	@PostMapping("/delete")
-	public void delete(@RequestBody Map<String, Object> board) {
+	public void delete(@RequestBody JSONObject board) {
 	    Object bidObj = board.get("bid");
 
 	    if (bidObj == null) {
-	        System.err.println("Board ID is null in the request: " + board);
 	        throw new IllegalArgumentException("Board ID cannot be null");
 	    }
 
 	    try {
 	        int bid = Integer.parseInt(bidObj.toString());
-	        System.out.println("Deleting board with ID: " + bid);
 	        bSvc.deleteBoard(bid);
 	    } catch (NumberFormatException e) {
-	        System.err.println("Invalid Board ID format: " + bidObj);
 	        throw new IllegalArgumentException("Invalid Board ID format");
 	    }
 	}
+	
 }

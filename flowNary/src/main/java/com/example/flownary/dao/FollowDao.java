@@ -15,6 +15,9 @@ public interface FollowDao {
 	@Select("select * from follow where fid=#{fid}")
 	Follow getFollow(int fid);
 	
+	@Select("select * from follow where uid=#{uid} and fuid=#{fuid}")
+	Follow getFollowUid(int uid, int fuid);
+	
 	@Select("select * from follow where uid=#{uid}")
 	List<Follow> getFollowList(int uid);
 	

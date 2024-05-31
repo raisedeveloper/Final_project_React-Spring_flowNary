@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { Avatar, Box, Stack, TextField, InputAdornment } from "@mui/material";
+import { Avatar, Box, Stack, TextField, InputAdornment, Typography } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import EastIcon from '@mui/icons-material/East';
 import { GetWithExpiry } from 'api/LocalStorage';
@@ -71,9 +71,9 @@ export default function ChatTemp() {
             >
                 <Stack sx={{ fontSize: 'xx-large', fontWeight: 'bold', mx: 'auto' }}>
                     <div style={{ color: 'rgb(88, 67, 135)' }}>
-                        {/* <Avatar alt="User" src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
-                        {email} */}
-                        {name}와의 채팅방
+                        <Avatar alt="User" src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
+                        {activeUser.email}
+                        <Typography>{name}와의 채팅방</Typography>
                         <hr style={{ opacity: '0.4', marginTop: 20 }} />
                     </div>
                 </Stack>
@@ -83,16 +83,15 @@ export default function ChatTemp() {
                 </Stack>
                 <Stack
                     sx={{
-                        position: 'fixed',
-                        bottom: '5px',
-                        width: { xs: '60%', sm: '70%', md: '80%' },
+                        // position: 'fixed',
+                        // bottom: '5px',
+                        width: '100%',
                     }}
                 >
                     <TextField
                         sx={{
                             marginBottom: '1.5em',
                             height: `${inputFieldHeight}px`, // 입력 필드의 높이 설정
-                            width: '70.5%',
                         }}
                         fullWidth
                         placeholder="메시지를 입력하세요..."

@@ -34,12 +34,12 @@ public interface DmListDao {
 	List<DmList> getDmListListByUid(int uid, int count);
 	
 	@Insert("insert into dmlist values(default, #{uid}, #{cid}, #{dContents}"
-			+ ", #{dTime}, #{dFile}, default)")
+			+ ", #{dTime}, #{dFile}, #{isDeleted})")
 	@Options(useGeneratedKeys = true, keyProperty = "did", keyColumn = "did")
 	void insertDmList(DmList dmList);
 	
 	@Insert("insert into dmlist values(default, #{uid}, #{cid}, #{dContents}"
-			+ ", default, #{dFile}, default")
+			+ ", default, #{dFile}, #{isDeleted}")
 	void insertDmListNoTime(DmList dmList);
 	
 	@Update("update dmlist set isDeleted=-1 where did=#{did}")

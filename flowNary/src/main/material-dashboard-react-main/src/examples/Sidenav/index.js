@@ -80,12 +80,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           rel="noreferrer"
           sx={{ textDecoration: "none" }}
         >
-          <SidenavCollapse
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
+          <SidenavCollapse name={name} icon={icon} active={key === collapseName} noCollapse={noCollapse} />
         </Link>
       ) : (
         <NavLink key={key} to={route}>
@@ -166,8 +161,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
               borderRadius: '15px', display: 'flex', alignItems: 'center'
             }}
           >
-            <Avatar              
-              sx={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', overflow:'hidden' }}
+            <Avatar
+              sx={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', overflow: 'hidden' }}
               onClick={goMypage}
             >
               <div

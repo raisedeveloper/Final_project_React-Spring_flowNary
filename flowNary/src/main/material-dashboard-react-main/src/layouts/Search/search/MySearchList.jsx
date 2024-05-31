@@ -97,7 +97,10 @@ export default function MySearchList() {
     placeholderData: (p) => p,
   })
 
-
+  useEffect (() => {
+    setField("hashTag");
+  },[sessionStorage.getItem('tag')])
+  
   useEffect(() => {
     if (count >= allcount && allcount !== undefined)
       setPageLoading(false);
@@ -167,32 +170,35 @@ export default function MySearchList() {
       setType(1);
       setCount(12);
       setResearch(false);
-    }
-    else if (i === 2) {
+    } else if (i === 2) {
       setField('bContents');
       setField2('');
       setField3('');
       setType(1);
       setCount(12);
       setResearch(false);
-    }
-    else if (i === 3) {
+    } else if (i === 3) {
+      setField('hashTag');
+      setField2('');
+      setField3('');
+      setType(1);
+      setCount(12);
+      setResearch(false);
+    } else if (i === 4) {
       setField('title');
       setField2('bContents');
       setField3('');
       setType(2);
       setCount(12);
       setResearch(false);
-    }
-    else if (i === 4) {
+    } else if (i === 5) {
       setField('nickname');
       setField2('');
       setField3('');
       setType(1);
       setCount(12);
       setResearch(false);
-    }
-    else if (i === 5) {
+    } else if (i === 6) {
       setField('title');
       setField2('bContents');
       setField3('nickname');
@@ -227,6 +233,7 @@ export default function MySearchList() {
   const handleSearchText = (e) => {
     setSearchtext(e.target.value);
   }
+
   function handleKeyPress(event) {
     if (event && event.key === 'Enter') {
       event.preventDefault();
@@ -238,9 +245,10 @@ export default function MySearchList() {
     switch (value) {
       case 1: return "제목";
       case 2: return "내용";
-      case 3: return "제목+내용";
-      case 4: return "아이디";
-      case 5: return "제목+내용+아이디";
+      case 3: return "#해시태그";
+      case 4: return "제목+내용";
+      case 5: return "아이디";
+      case 6: return "제목+내용+아이디";
     }
   };
 
@@ -257,7 +265,7 @@ export default function MySearchList() {
               }}>
               <Select
                 style={{ height: '2.5rem' }}
-                defaultValue={1}
+                defaultValue={!sessionStorage.getItem("tag") ? 1 : 3}
                 value={renderPlaceholder(field)}
                 onChange={(e) => handleSearch(e.target.value)}
                 inputProps={{ 'aria-label': 'Without label' }}
@@ -270,9 +278,10 @@ export default function MySearchList() {
               >
                 <MenuItem value={1}>제목</MenuItem>
                 <MenuItem value={2}>내용</MenuItem>
-                <MenuItem value={3}>제목+내용</MenuItem>
-                <MenuItem value={4}>아이디</MenuItem>
-                <MenuItem value={5}>제목+내용+아이디</MenuItem>
+                <MenuItem value={3}>#해시태그</MenuItem>
+                <MenuItem value={4}>제목+내용</MenuItem>
+                <MenuItem value={5}>아이디</MenuItem>
+                <MenuItem value={6}>제목+내용+아이디</MenuItem>
               </Select>
 
               <TextField

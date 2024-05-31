@@ -165,7 +165,6 @@ export default function ReReply(props) {
                     <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
                     <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReReply(data.rrid, data.uid)} >좋아요 {data.likeCount}개 {data.liked ?
                       <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
-
                     {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rrid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
                   </div>
 
