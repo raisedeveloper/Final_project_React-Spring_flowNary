@@ -50,8 +50,8 @@ export default function SettingTel(props) {
     }
   }, [props, tel]);
 
-  const checkTel = () => {
-    axios.get('/user/tel', {
+  const checkTel = async () => {
+    await axios.get('/user/tel', {
       params: {
         email: props.email
       }
@@ -125,8 +125,8 @@ export default function SettingTel(props) {
 }
 
 SettingTel.propTypes = {
-  tel: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  changeCheckingTel: PropTypes.func.isRequired,
-  onTelChange: PropTypes.func.isRequired,
+  tel: PropTypes.string,
+  email: PropTypes.string,
+  changeCheckingTel: PropTypes.func,
+  onTelChange: PropTypes.func,
 };

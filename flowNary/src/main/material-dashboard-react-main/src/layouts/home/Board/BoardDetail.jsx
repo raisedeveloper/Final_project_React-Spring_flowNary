@@ -1,14 +1,11 @@
 import React, { forwardRef, useContext, useState } from "react";
 import PropTypes from 'prop-types';
-import { Box, Stack, Modal, IconButton, Button, TextField, Divider } from "@mui/material";
+import { Box, Modal, IconButton, Typography, Avatar, Divider, CardHeader, Card } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import Reply from "./Reply";
 import { getBoard } from "api/axiosGet";
 import { useQuery } from "@tanstack/react-query";
 import './board.css';
-import {
-  Card, CardHeader, Typography, Avatar,
-} from '@mui/material';
 import TimeAgo from "timeago-react";
 import { UserContext } from "api/LocalStorage";
 import { useNavigate } from "react-router-dom";
@@ -53,29 +50,57 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
   const image = board?.image ? board.image.split(',') : null;
 
   return (
-    <Box ref={ref} sx={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+    <Box ref={ref}
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        height: '54vw',
+      }}>
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        }}>
         <Carousel
           indicators={false}
           animation="slide"
           autoPlay={false}
-          sx={{ maxWidth: '100%', height: '100%' }}
+          sx={{ maxWidth: '100%', maxHeight: '100%' }}
         >
           {image && image.map((image, index) => (
             <Box
               key={index}
-              sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', }}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+
+              }}
               onClick={handleOpen} // 클릭 시 모달 열기
             >
-              <img
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain'
-                }}
-                src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
-                alt={`Image ${index + 1}`}
-              />
+              <div style={{
+                width: '100%',
+                height: '750px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden', // 이미지가 컨테이너를 벗어나지 않도록 함                
+              }}>
+                <img
+                  style={{
+                    objectFit: 'cover', // 이미지가 컨테이너에 맞게 조절됨
+                    width: '100%',
+                    height: '100%',
+                    margin: '0',
+                    padding: '0',
+                  }}
+                  src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
+                  alt={`Image ${index + 1}`}
+                />
+              </div>
             </Box>
           ))}
         </Carousel>
@@ -121,58 +146,68 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '70vw', // 모달 창의 너비 조정
-            height: '70vh', // 모달 창의 높이 조정
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            overflow: 'hidden', // 내부 여백을 줄이기 위해 overflow를 hidden으로 설정
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Carousel
-            indicators={false}
-            animation="slide"
-            autoPlay={false}
+        <>
+          <Box
             sx={{
-              width: '100%',
-              height: '100%',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '500px', // 모달 창의 너비 조정
+              height: '500px', // 모달 창의 높이 조정
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              overflow: 'hidden', // 내부 여백을 줄이기 위해 overflow를 hidden으로 설정
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: 0,
+              margin: 0,
             }}
           >
-            {image && image.map((image, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
-                <img
-                  style={{
-                    objectFit: 'cover', // 모달 창에서도 동일한 크기로 설정
+            <Carousel
+              indicators={false}
+              animation="slide"
+              autoPlay={false}
+              sx={{
+                width: '100%',
+                height: '100%',
+              }}
+            >
+              {image && image.map((image, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'hidden', // 이미지가 컨테이너를 벗어나지 않도록 함
                   }}
-                  src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
-                  alt={`Image ${index + 1}`}
-                />
-              </Box>
-            ))}
-          </Carousel>
-          <IconButton
-            sx={{ position: 'absolute', top: 10, right: 10 }}
-            onClick={handleCloseModal}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Box>
+                >
+                  <img
+                    style={{
+                      objectFit: 'contain', // 모달 창에서도 동일한 크기로 설정
+                      margin: '0',
+                      padding: '0',
+                      width: '500px', // 부모 요소의 크기에 맞추어 설정
+                      height: '500px',
+                    }}
+                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
+                    alt={`Image ${index + 1}`}
+                  />
+                </Box>
+              ))}
+            </Carousel>
+            <IconButton
+              sx={{ position: 'absolute', top: 10, right: 10 }}
+              onClick={handleCloseModal}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </>
       </Modal>
     </Box>
   );
@@ -190,3 +225,4 @@ BoardDetail.propTypes = {
 };
 
 export default BoardDetail;
+

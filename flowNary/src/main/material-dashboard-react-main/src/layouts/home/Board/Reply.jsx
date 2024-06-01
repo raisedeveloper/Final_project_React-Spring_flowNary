@@ -1,12 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   Card, CardHeader, CardMedia, CardActions, CardContent, Avatar, Typography,
-  ListItemAvatar, ListItem, List, Button, Box,
+  ListItemAvatar, ListItem, List, Button, Box, Modal, Paper,
   ListItemText,
-  Stack,
-  IconButton
+  Grid,
+  IconButton,
+  Link,
+  Dialog,
+  DialogTitle
 } from '@mui/material';
 import { red } from '@mui/material/colors';
+import { Stack } from '@mui/system';
 import PropTypes from 'prop-types';
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
@@ -14,7 +18,7 @@ import ko from 'timeago.js/lib/lang/ko';
 import { GetWithExpiry, SetWithExpiry } from "api/LocalStorage";
 import axios from 'axios';
 import ReReply from "./ReReply";
-import Carousel from 'react-material-ui-carousel';
+import Carousel from 'react-material-ui-carousel'
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAddReply, useGetUserNicknameLS, useAddReReply } from 'api/customHook.jsx';
 import { useGetBoard, useGetBoardByUrl, useGetBoardList, useGetReplyList } from './BoardJS.js';
@@ -104,7 +108,7 @@ export default function Reply(props) {
     setFormChange(false);
   };
 
-  const handleFormSubmit2 = (e, text2) => {
+  const handleFormSubmit2 = (e, text2, rid) => {
     e.preventDefault();
     if (text2 === '') {
       wrong('내용을 입력하세요');
@@ -123,6 +127,9 @@ export default function Reply(props) {
       ...prev,
       [ridtext]: '',
     }));
+    if (!showReReply[rid]) {
+      handleMoreReply(rid);
+    }
   };
 
   const handleOnEnter = (text) => {
@@ -160,6 +167,18 @@ export default function Reply(props) {
     }));
   };
 
+  // 공유하기 URL 클립보드
+  const handleShareButton = (bid) => {
+    if (navigator.clipboard && board.data.shareUrl) {
+      navigator.clipboard.writeText(`${process.env.REACT_APP_ADDRESS}/url/${board.data.shareUrl}`)
+        .then(() => {
+          alert('URL이 클립보드에 복사되었습니다!');
+        })
+        .catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+      }
+    }
   const handleDelete = async (rid) => {
     const confirm = await deleteConfirm();
     if (confirm) {
@@ -168,7 +187,7 @@ export default function Reply(props) {
     }
   };
 
-  const handleSearch = (tag) => {
+  const handleSearchs = (tag) => {
     sessionStorage.setItem("search", tag);
     sessionStorage.setItem("tag", tag);
     if (location.pathname !== 'search') {
@@ -179,128 +198,143 @@ export default function Reply(props) {
   return (
     <>
       {/* 댓글 내용 List */}
-      <Stack direction="column" sx={{ overflowY: 'auto' }}>
-      </Stack>
-      <MDBox>
-        <MDBox sx={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between' }}>
-          {/* 하트 아이콘 */}
-          <IconButton sx={{ ml: 5, width: 0, fontSize: '2rem' }}
-            onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
-            {board.data.liked ?
-              <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}
-            {board.data.likeCount}
-          </IconButton>
-
-          {board ? (
-            board.data.hashTag && board.data.hashTag.includes(",") ? (
-              board.data.hashTag.split(",").map((tag, index) => {
-                const trimmedTag = tag.trim(); // 좌우 공백 제거
-                return (
-                  <Typography
-                    key={index}
-                    fontSize={14}                    
-                    style={{ color: 'lightcoral', cursor: 'pointer', margin:'0px', marginRight: '15px' }}
-                    onClick={() => handleSearch(trimmedTag)}
-                  >
-                    #{trimmedTag}
-                  </Typography>
-                );
-              })
-            ) : (
-              <Typography
-                variant="subtitle1"
-                style={{ color: 'lightcoral', cursor: 'pointer', marginRight: '5px' }}
-                onClick={() => handleSearch(board.data.hashTag)}
-              >
-                #{board.data.hashTag}
-              </Typography>
-            )
-          ) : null}
-          <Typography sx={{ fontSize: 'small', mr: 2, color: 'coral' }}>
-            {replyList && replyList.data && replyList.data[index] ? '댓글 수 ' + replyList.data[index].replyCount + '개' : ''}
-          </Typography>
+      <MDBox sx={{ display: { xs: 'none', lg: 'flex' }, flexDirection: 'column', height: '100%' }}>
+        <Stack direction="column" sx={{ padding: 1, overflowY: 'auto' }}>
+        </Stack>
+        <MDBox>
+          <MDBox sx={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between' }}>
+            <IconButton sx={{ ml: 5, width: 0, fontSize: '2rem' }} onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
+              {board.data.liked ?
+                <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}
+              {board.data.likeCount}
+            </IconButton>
+            <Button onClick={handleShareButton.bind(null,board.data.bid)}>share</Button>
+            {board ? (
+              board.data.hashTag && board.data.hashTag.includes(",") ? (
+                board.data.hashTag.split(",").map((tag, index) => {
+                  const trimmedTag = tag.trim(); // 좌우 공백 제거
+                  return (
+                    <span key={index}>
+                      {index > 0 && null}
+                      <Button
+                        key={index}
+                        variant="outlined"
+                        style={{ color: 'lightcoral' }}
+                        color='warning'
+                        onClick={() => handleSearchs(trimmedTag)}
+                      >
+                        #{trimmedTag}
+                      </Button>
+                    </span>
+                  );
+                })
+              ) : (
+                <Button
+                  variant="outlined"
+                  style={{ color: 'lightcoral' }}
+                  color='warning'
+                  onClick={() =>
+                    handleSearch(board.data.hashTag)
+                  }
+                >
+                  #{board.data.hashTag}
+                </Button>
+              )
+            ) : null}
+            <Typography sx={{ fontSize: 'small', mr: 2, color: 'coral' }}>
+              {replyList && replyList.data && replyList.data[index] ? '댓글 수 ' + replyList.data[index].replyCount + '개' : ''}
+            </Typography>
+          </MDBox>
+          <MDBox sx={{ p: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            {user && user.data && <Avatar
+              sx={{ bgcolor: 'red'[500] }}
+              aria-label="recipe"
+              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}`}
+            />}
+            <input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="입력..."
+              className="custom-input"
+            />
+            <Button onClick={(e) => handleFormSubmit(e, text)} sx={{ padding: 0 }} style={{ color: 'coral' }}>게시</Button>
+          </MDBox>
         </MDBox>
-        <MDBox sx={{ p: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-          {user && user.data && <Avatar
-            sx={{ bgcolor: 'red'[500] }}
-            aria-label="recipe"
-            src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}`}
-          />}
-          <input
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="입력..."
-            className="custom-input"
-          />
-          <Button onClick={(e) => handleFormSubmit(e, text)} sx={{ padding: 0 }} style={{ color: 'coral' }}>게시</Button>
-        </MDBox>
-      </MDBox>
 
-      {/* 댓글표시 영역 */}
-      <Stack direction="column" sx={{ width: "100%", overflowX: 'hidden', p: 3 }}>
-        {replyList && replyList.data && replyList.data.map((data, index) => (
-          <List key={index} sx={{ width: '100%', paddingRight: 0 }}>
-            <ListItem alignItems="flex-start" sx={{ padding: 0, marginBottom: 1 }}>
-              <Avatar onClick={() => handleMyPage(data.uid)} sx={{ cursor: 'pointer', marginRight: 1 }}
-                src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-              />
-              <ListItemText
-                primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
-                secondary={
-                  <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'break-word' }}>
-                    {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 28))}
-                    {data.rContents != null && data.rContents.length > 30 && !expandedContents[index] && (
-                      <button className='replyOpen' onClick={() => toggleExpand(index)}>...더보기</button>
-                    )}
-                    {expandedContents[index] && (
-                      <button className='replyClose' onClick={() => toggleExpand(index)}>접기</button>
-                    )}
-                  </Typography>
-                }
-              />
-            </ListItem>
-            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 5 }}>
-              <TimeAgo datetime={data.modTime} locale='ko' style={{ color: 'grey', fontSize: '14px' }} />ㆍ
-              <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReply(data.rid, data.uid)}>좋아요 {data.likeCount}개  {data.liked ?
-                <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
-              {formChange[data.rid] ?
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '50%', marginLeft: 1 }}>
-                  <input
-                    value={formInputs[data.rid] || ''}
-                    onChange={(e) => {
-                      setFormInputs((prev) => ({
-                        ...prev,
-                        [data.rid]: e.target.value,
-                      }));
-                    }}
-                    placeholder="댓글입력.."
-                    className="custom-input"
-                    onClick={(e) => e.stopPropagation()}
+        {/* 댓글표시 영역 */}
+        <Stack direction="column" sx={{ width: "100%", overflowX: 'hidden', p: 3 }}>
+          {replyList && replyList.data && replyList.data.map((data, index) => (
+            <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0 }}>
+              {/* List랑 paper 영역 비슷함 */}
+              <Paper sx={{ border: 'none', }}>
+                <ListItem alignItems="flex-start" sx={{ marginTop: 0.5, marginLeft: 0.5 }}>
+                  <Avatar onClick={() => handleMyPage(data.uid)} sx={{ cursor: 'pointer' }}
+                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                   />
-                  <Button onClick={(e) => { handleFormSubmit2(e, formInputs[data.rid]); formChange[data.rid] = false; }} sx={{ color: 'lightcoral', padding: 0 }}>게시</Button>
-                  <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>취소</Button>
-                </Box>
-                :
-                <>
-                  <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>답글</Button>
-                  {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
-                </>
-              }
-            </Box>
-            <Button onClick={() => handleMoreReply(data.rid)} sx={{ marginLeft: 3, paddingTop: 0 }} style={{ color: 'lightcoral' }}>
-              {data.ReReplyCount > 0 && (
-                <>
-                  <KeyboardArrowDownIcon />
-                  {`${data.ReReplyCount}개의 댓글 보기`}
-                </>
-              )}
-            </Button>
-            {showReReply[data.rid] && (
-              <ReReply rid={data.rid} uid={uid} nickname={nickname} handleButtonLikeReReply={handleButtonLikeReReply} handleMyPage={handleMyPage} />
-            )}
-          </List>
-        ))}
-      </Stack>
+                  <ListItemText sx={{ paddingLeft: 1 }}
+                    primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                    secondary={
+                      <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'break-word', }}>
+                        {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 28))}
+                        {data.rContents != null && data.rContents.length > 30 && !expandedContents[index] && (
+                          <button className='replyOpen' onClick={() => toggleExpand(index)}>...더보기</button>
+                        )}
+                        {expandedContents[index] && (
+                          <button className='replyClose' onClick={() => toggleExpand(index)}>접기</button>
+                        )}
+                      </Typography>
+                    }
+                  >
+                  </ListItemText>
+
+
+                </ListItem>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
+                  <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReply(data.rid, data.uid)}>좋아요 {data.likeCount}개  {data.liked ?
+                    <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
+
+                  {formChange[data.rid] ?
+                    <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '50%' }}>
+                      <input
+                        value={formInputs[data.rid] || ''}
+                        onChange={(e) => {
+                          setFormInputs((prev) => ({
+                            ...prev,
+                            [data.rid]: e.target.value,
+                          }));
+                        }}
+                        placeholder="댓글입력.."
+                        className="custom-input"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <Button onClick={(e) => { handleFormSubmit2(e, formInputs[data.rid], data.rid); formChange[data.rid] = false; }} sx={{ color: 'lightcoral', padding: 0 }}>게시</Button>
+                      <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>취소</Button>
+                    </MDBox>
+                    :
+                    <>
+                      <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>답글</Button>
+                      {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
+                    </>
+                  }
+
+                </div>
+                <Button onClick={() => handleMoreReply(data.rid)} sx={{ marginLeft: 3, paddingTop: 0 }} style={{ color: 'lightcoral' }}>
+                  {data.ReReplyCount > 0 && (
+                    <>
+                      <KeyboardArrowDownIcon />
+                      {`${data.ReReplyCount}개의 댓글 보기`}
+                    </>
+                  )}
+                </Button>
+                {showReReply[data.rid] && (
+                  <ReReply rid={data.rid} uid={uid} nickname={nickname} handleButtonLikeReReply={handleButtonLikeReReply} handleMyPage={handleMyPage} />
+                )}
+              </Paper>
+            </List>
+          ))}
+        </Stack>
+      </MDBox>
     </>
   );
 }

@@ -1,3 +1,4 @@
+// routes.js
 import React from 'react';
 import Icon from '@mui/material/Icon';
 
@@ -18,10 +19,12 @@ import Search from "layouts/Search/SearchIndex.js";
 import SignIn from "layouts/authentication/sign-in/LoginIndex.js";
 import SignUp from "layouts/authentication/sign-up/RegisterIndex.js";
 import Logout from "layouts/authentication/logout";
-import UpdateIndex from "layouts/home/Update/UpdateIndex.js";
+import { FlashOnOutlined } from '@mui/icons-material';
+import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
 import Statistics from 'layouts/admin/statistics/statisticsIndex';
-import UserList from 'layouts/admin/AdminUserList/AdminUserList';
-import BoardList from 'layouts/admin/boardList/boardListIndex';
+import UserList from 'layouts/admin/userList/AdminUserList';
+import BoardList from 'layouts/admin/boardList/AdminBoardList';
+import Follow from 'layouts/follow/Follow';
 
 const createRoutes = (isLoggedIn, isAdmin) => [
   {
@@ -58,7 +61,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
     component: <Chatting />,
-    visible: false,
+    visible: true,
   },
   {
     type: "collapse",
@@ -85,6 +88,15 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
     route: "/family",
     component: <Family />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "팔로우",
+    key: "follow",
+    icon: <Icon fontSize="xx-large">people</Icon>,
+    route: "/follow",
+    component: <Follow />,
     visible: true,
   },
   {
@@ -122,20 +134,13 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     component: <Settings />,
   },
   {
+    type: "collapse",
     name: "TEAM",
     key: "team",
     icon: <Icon fontSize="large">connect_without_contact</Icon>,
     route: "/team",
-    component: <BoardList />,
-    visible: true,
-  },
-  {
-    type: "collapse",
-    name: "회원가입",
-    key: "sign-up",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,
-    component: <SignUp />,
-    visible: false, // 회원가입은 별도로 표시하지 않음
+    component: <Team />,
+    visible: false,
   },
   {
     type: "bottom",
@@ -143,13 +148,14 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     key: "search",
     route: "/search",
     component: <Search />,
+    visible: false, // 로그인되지 않았을 때만 보임
   },
   {
     type: "collapse",
     name: "글쓰기수정",
     key: "write",
     icon: <Icon fontSize="xx-large">history_edu</Icon>,
-    route: "/home/Update",
+    route: "/home/update",
     component: <UpdateIndex />,
     visible: false,
   },
@@ -160,7 +166,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">donut_small</Icon>,
     route: "/statistics",
     component: <Statistics />,
-    visible: isAdmin
+    visible: isAdmin && isLoggedIn
   },
   {
     type: "collapse",
@@ -169,7 +175,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">manage_accounts</Icon>,
     route: "/userList",
     component: <UserList />,
-    visible: isAdmin
+    visible: isAdmin && isLoggedIn
   },
   {
     type: "collapse",
@@ -178,7 +184,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">manage_search</Icon>,
     route: "/boardList",
     component: <BoardList />,
-    visible: isAdmin
+    visible: isAdmin && isLoggedIn
   },
   {
     type: "collapse",
@@ -198,6 +204,15 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     component: <Logout />,
     visible: isLoggedIn, // 로그인되었을 때만 보임
   },
+  {
+    type: "collapse",
+    name: "회원가입",
+    key: "sign-up",
+    icon: <Icon fontSize="xx-large">assignment</Icon>,
+    component: <SignUp />,
+    visible: false, // 로그인되지 않았을 때만 보임
+  },
+
 ];
 
 export default createRoutes;

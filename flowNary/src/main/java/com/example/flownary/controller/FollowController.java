@@ -65,6 +65,15 @@ public class FollowController {
 		return hMap;
 	}
 	
+	// 특정 유저의 팔로우 여부를 검사하기 위한 매핑
+	@GetMapping("/get")
+	public int getFollow(@RequestParam int uid, @RequestParam int fuid) {
+		int fid = -1;
+		
+		
+		return fid;
+	}
+	
 	// 내가 팔로우한 사람 목록
 	@GetMapping("/getList")
 	public JSONArray getFollowList(@RequestParam int uid) {
@@ -107,18 +116,29 @@ public class FollowController {
 	
 	@PostMapping("/insert")
 	public int insertFollow(@RequestBody insertFollowDto dto) {
-		Follow follow = new Follow();
-		follow.setUid(dto.getUid());
-		follow.setFuid(dto.getFuid());
+		if (dto.getUid() == dto.getFuid()) {
+			return 0;
+		}
 		
-		fSvc.insertFollow(follow);
+		Follow follow = fSvc.getFollowUid(dto.getUid(), dto.getFuid());
 		
-		return 0;
+		if (follow == null) {
+			follow = new Follow();
+			follow.setUid(dto.getUid());
+			follow.setFuid(dto.getFuid());
+			
+			fSvc.insertFollow(follow);
+			return 1;
+		}
+		else {
+			fSvc.deleteFollow(follow.getFid());
+			return 2;
+		}
 	}
 	
 	@PostMapping("/delete")
-	public int deleteFollow(@RequestBody int fid) {
-		fSvc.deleteFollow(fid);
+	public int deleteFollow(@RequestBody JSONObject fid) {
+		fSvc.deleteFollow(Integer.parseInt(fid.get("fid").toString()));
 		
 		return 0;
 	}

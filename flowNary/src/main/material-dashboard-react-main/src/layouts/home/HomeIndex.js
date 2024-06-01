@@ -36,6 +36,8 @@ import { UserContext } from "api/LocalStorage";
 import { deleteBoard } from "api/axiosPost";
 import { deleteConfirm } from "api/alert";
 import Iconify from "components/iconify/iconify";
+import { Declaration } from "api/alert";
+import { insertDeclaration } from "api/axiosPost";
 
 export default function Home() {
   timeago.register('ko', ko);
@@ -66,7 +68,7 @@ export default function Home() {
   const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
-
+  const [currentBid, setCurrentBid] = useState(null);
 
   // if (uid == -1) {
   //   navigate("/login");
@@ -222,12 +224,17 @@ export default function Home() {
 
   const openPopover = Boolean(anchorEl);
   const openPopover2 = Boolean(anchorEl2);
-  const id = openPopover ? 'simple-popper' : undefined;
-  const id2 = openPopover ? 'simple-popper' : undefined;
   const popperRef = useRef(null);
+  const [confirm, setConfirm] = useState('');
 
-  const handleClick = (event) => {
+  const handleClick = (event, bid) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
+    setCurrentBid(bid);
+  };
+
+  const handleClick2 = (event, bid) => {
+    setAnchorEl2(anchorEl2 ? null : event.currentTarget);
+    setCurrentBid(bid);
   };
 
   const handleClosePopover = () => {
@@ -235,45 +242,44 @@ export default function Home() {
     setAnchorEl2(null);
   };
 
-  const handleClick2 = (event) => {
-    setAnchorEl2(anchorEl2 ? null : event.currentTarget);
+  const handleClickInside = (event) => {
+    event.stopPropagation(); // 팝오버 내부의 이벤트 전파를 중지합니다.
   };
 
 
-  const handleClickOutside = (event) => {
-    if (popperRef.current && !popperRef.current.contains(event.target)) {
-      handleClosePopover();
+  // 삭제
+  const handleDelete = async () => {
+    handleClosePopover();
+    const check = await deleteConfirm();
+
+    if (check === 1) {
+      await deleteBoard(currentBid);
+      if (uid !== undefined) {
+        queryClient.invalidateQueries(['boardmypage', uid]);
+      }
+      board.refetch();
     }
   };
 
+  // 수정
   const handleUpdate = () => {
-    setAnchorEl(!anchorEl);
+    handleClosePopover();
     sessionStorage.setItem("bid", bid);
     navigate("../home/Update");
   }
 
-  const handleSiren = () => {
-    setAnchorEl(!anchorEl);
-  }
-
-  const handleDelete = async (bid) => {
-    setAnchorEl(!anchorEl);
-    const confirm = await deleteConfirm();
-    console.log(confirm);
-    if (confirm) {
-      await deleteBoard(bid);
-      queryClient.invalidateQueries(['boardList', uid]); // 쿼리 무효화
+  // 신고
+  const handleSiren = async () => {
+    handleClosePopover();
+    console.log('있음?' + activeUser.uid);
+    const check = await Declaration(activeUser.uid);
+    if (check !== 0) {
+      const sendData = {
+        bid: currentBid, uid: activeUser.uid, dTitle: check[0], dContents: check[1]
+      }
+      await insertDeclaration(sendData);
     }
   }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-
   // 클릭 시 마이페이지 이동 이벤트
   const handleMyPage = (uid) => {
     navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
@@ -303,38 +309,22 @@ export default function Home() {
                               <CardHeader
                                 sx={{ padding: 1 }}
                                 avatar={
-                                  <Avatar
-                                    sx={{ cursor: 'pointer' }}
+                                  <Avatar sx={{ cursor: 'pointer' }}
                                     aria-label="recipe" onClick={() => handleMyPage(data.uid)}
-                                  >
-                                    <div
-                                      style={{
-                                        width: '3rem',
-                                        height: '3rem',
-                                        borderRadius: '50%',
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
-                                        backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile})`
-                                      }}
-                                    >
-                                    </div>
-                                  </Avatar>
-
+                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
+                                  />
                                 }
                                 action={<>
                                   {
                                     data.uid === activeUser.uid ? (<>
-                                      <IconButton aria-label="settings" onClick={handleClick} ref={popperRef} disabled={Boolean(anchorEl)}>
+                                      <IconButton aria-label="settings" onClick={(event) => handleClick(event, data.bid)} ref={popperRef}>
                                         <MoreVertIcon />
                                       </IconButton>
                                       <Popper
-                                        id={id}
+                                        id={openPopover ? 'simple-popper' : 'close'}
+                                        onClose={handleClosePopover}
                                         open={openPopover}
                                         anchorEl={anchorEl}
-                                        onClose={handleClosePopover}
-                                        onClickOutside={handleClickOutside}
-                                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                                         placement="bottom-end"
                                         modifiers={[
                                           {
@@ -345,28 +335,50 @@ export default function Home() {
                                           },
                                         ]}
                                       >
-                                        <Paper style={{
-                                          padding: '0.3rem',
-                                          backgroundColor: 'white',
-                                          boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
-                                          borderRadius: '8px',
-                                        }}>
-                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'blue', '&:hover': { color: 'blue' } }} onClick={() => handleUpdate}><Iconify style={{ marginRight: '0.1rem' }} icon="lucide:edit" />수정</Button>
-                                          <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }} onClick={() => handleDelete(data.bid)}><Iconify style={{ marginRight: '0.1rem' }} icon="solar:trash-bin-trash-bold" />삭제</Button>
+                                        <Paper
+                                          style={{
+                                            padding: '0.3rem',
+                                            backgroundColor: 'white',
+                                            boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
+                                            borderRadius: '8px',
+                                          }}
+                                          onClick={(e) => e.stopPropagation()} // 팝오버 내부 클릭 시 이벤트 전파 막기
+                                        >
+                                          <Button
+                                            sx={{
+                                              py: 0,
+                                              pl: 1,
+                                              pr: 1,
+                                              color: 'blue',
+                                              '&:hover': { color: 'blue' },
+                                            }}
+                                            onClick={handleUpdate}
+                                          >
+                                            <Iconify style={{ marginRight: '0.1rem' }} icon="lucide:edit" />수정
+                                          </Button>
+                                          <Button
+                                            sx={{
+                                              py: 0,
+                                              pl: 1,
+                                              pr: 1,
+                                              color: 'red',
+                                              '&:hover': { color: 'red' },
+                                            }}
+                                            onClick={() => handleDelete()}
+                                          >
+                                            <Iconify style={{ marginRight: '0.1rem' }} icon="solar:trash-bin-trash-bold" />삭제
+                                          </Button>
                                         </Paper>
-                                      </Popper >
+                                      </Popper>
                                     </>) : <>
-                                      <IconButton aria-label="settings" onClick={handleClick2} ref={popperRef} disabled={Boolean(anchorEl2)}>
+                                      <IconButton aria-label="settings" onClick={(event) => handleClick2(event, data.bid)} ref={popperRef} >
                                         <MoreVertIcon />
                                       </IconButton>
                                       <Popper
-                                        id={id2}
+                                        id={openPopover2 ? 'simple-popper' : 'close'}
+                                        onClose={handleClosePopover}
                                         open={openPopover2}
                                         anchorEl={anchorEl2}
-                                        onClose={handleClosePopover}
-                                        onClickOutside={handleClickOutside}
-                                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                                         placement="bottom-end"
                                         modifiers={[
                                           {
@@ -382,8 +394,9 @@ export default function Home() {
                                           backgroundColor: 'white',
                                           boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
                                           borderRadius: '8px',
-                                        }}>
-                                          {/* <Button sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button> */}
+                                        }}
+                                          onClick={handleClickInside}>
+                                          <Button onClick={() => handleSiren(data.bid)} sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button>
                                         </Paper>
                                       </Popper >
                                     </>
@@ -462,7 +475,7 @@ export default function Home() {
                                         {data.bContents}
                                       </MDTypography>
                                     ) : (
-                                      <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                      <MDTypography component="div" variant="button" color="text" fontWeight="light" sx={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                                         {data.bContents}
                                       </MDTypography>
                                     )}
@@ -511,7 +524,7 @@ export default function Home() {
         keepMounted
         PaperProps={{
           sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
+            width: '90%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
             zIndex: 0

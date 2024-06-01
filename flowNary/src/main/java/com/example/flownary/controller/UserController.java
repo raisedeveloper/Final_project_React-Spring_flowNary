@@ -57,7 +57,6 @@ public class UserController {
 		user.setHashUid(hashuid);
 		user.setEmail(dto.getEmail());
 		user.setPwd(hashedPwd);
-		user.setRole(0);
 		user.setProvider(dto.getProvider());
 		if (dto.getProvider() == 0) {
 			user.setBirth(dto.getBirth());
@@ -91,13 +90,13 @@ public class UserController {
 	@PostMapping(value = "/update")
 	public int userUpdate2(HttpServletRequest request, @RequestBody User dto)
 	{
-//		System.out.println(dto);
 		User user = new User();
 		user.setUid(dto.getUid());
 		user.setUname(dto.getUname());
 		user.setNickname(dto.getNickname());
 		user.setProfile(dto.getProfile());
 		user.setStatusMessage(dto.getStatusMessage());
+		user.setGender(dto.getGender());
 		user.setSnsDomain(dto.getSnsDomain());
 		user.setTel(dto.getTel());
 		user.setBirth(dto.getBirth());
@@ -107,6 +106,7 @@ public class UserController {
 		return 0;
 	}
 	
+	// 비밀번호 수정 ((미구현)
 	@PostMapping("/updatepwd")
 	public int userUpdate(@RequestBody UpdateUserDtoPwd dto)
 	{
@@ -143,11 +143,11 @@ public class UserController {
 		return 0;
 	}
 	
+	// 유저 1명의 정보 불러오기
 	@GetMapping("/getUser")
 	public JSONObject getUser(@RequestParam int uid)
 	{
 		User user = userSvc.getUser(uid);
-		
 		if (user == null)
 			return null;
 		
@@ -168,13 +168,13 @@ public class UserController {
 		hMap.put("hashUid", user.getHashUid());
 		hMap.put("location", user.getLocation());
 		hMap.put("role", user.getRole());
-		
-		
+		System.out.println("역할" + user.getRole());
 		JSONObject userOut = new JSONObject(hMap);
 		
 		return userOut;
 	}
 	
+	// 유저의 닉네임과 이메일 정보만 불러오기
 	@GetMapping("/getUserNickEmail")
 	public JSONObject getUserNickname(@RequestParam int uid) {
 		if (uid == -1)
@@ -185,7 +185,7 @@ public class UserController {
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		hMap.put("id", uid);
 		hMap.put("email", user.getEmail());
-		hMap.put("profile", user.getProfile());			
+		hMap.put("profile", user.getProfile());
 		if (user.getNickname() != null && user.getNickname() != "")
 		{
 			hMap.put("nickname", user.getNickname());    			
@@ -200,6 +200,7 @@ public class UserController {
 		return jObj;
 	}
 	
+	// 이메일로 유저 정보 불러오기
 	@GetMapping("/getUserByEmail")
 	public JSONObject getUserEmail(@RequestParam String email)
 	{
@@ -230,6 +231,7 @@ public class UserController {
 		return userOut;
 	}
 	
+	// 닉네임 리스트 불러오기 - 설정/회원가입 확인
 	@GetMapping("/nickname")
 	public String nickname(@RequestParam String email, String nickname) {
 		List<User> userList = userSvc.getOthersUserList(email);
@@ -247,6 +249,7 @@ public class UserController {
 		return jArr.toString();
 	}
 
+	// 전화번호 리스트 불러오기 - 설정/회원가입 확인
 	@GetMapping("/tel")
 	public String tel(@RequestParam String email, String tel) {
 		List<User> userList = userSvc.getOthersUserList(email);
@@ -264,6 +267,7 @@ public class UserController {
 		return jArr.toString();
 	}
 	
+	// 유저 리스트 불러오기 - 관리자 페이지
 	@GetMapping("getUserList")
 	public JSONArray userList() {
 		List<User> userList = new ArrayList<>();
@@ -283,7 +287,7 @@ public class UserController {
 			hMap.put("provider", user.getProvider());
 			hMap.put("birth", user.getBirth());
 			hMap.put("tel", user.getTel());
-
+			hMap.put("role", user.getRole());
 
 			JSONObject jUser = new JSONObject(hMap);
 
@@ -292,6 +296,8 @@ public class UserController {
 		}
 		return jArr;
 	}
+	
+	// 유저 상태 변환 - 활성화 비활성화 - 추가 수정 필요
 	@PostMapping("updateUserStatus")
 	public int updateUserStatus(HttpServletRequest request, @RequestBody User dto) {
 		User user = userSvc.getUser(dto.getUid());

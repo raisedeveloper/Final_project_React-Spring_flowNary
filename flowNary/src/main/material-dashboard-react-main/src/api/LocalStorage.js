@@ -77,6 +77,7 @@ const ContextProvider = ({children}) => {
         uid: -1,
         email: '',
         nickname: '',
+        role: 0,
     })
 
     const updateActiveUser = (user) => {
@@ -88,7 +89,7 @@ const ContextProvider = ({children}) => {
         const email = GetWithExpiry("email");
         const nickname = GetWithExpiry("nickname");
         const role = GetWithExpiry("role");
-        setActiveUser({uid, email, nickname, role});
+        setActiveUser({uid, email, nickname});
     }, []);
 
     return (

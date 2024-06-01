@@ -134,7 +134,7 @@ export default function SettingModal() {
             {/* 비밀번호 입력 */}
             <TextField
               fullWidth
-              label='비밀번호 입력 후 설정할 수 있습니다'
+              label='비밀번호 확인'
               required
               variant="standard"
               type={showPassword ? 'text' : 'password'}
@@ -164,7 +164,7 @@ export default function SettingModal() {
                   onClick={confirmPWd}
                   style={{ margin: '1em', width: '30%', backgroundColor: 'rgb(54, 11, 92)', color: 'white', fontSize: 'small' }}
                 >
-                  완료
+                  확인
                 </Button>
 
                 <Button
