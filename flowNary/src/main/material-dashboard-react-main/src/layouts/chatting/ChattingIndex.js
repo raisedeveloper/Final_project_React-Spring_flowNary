@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { Avatar, Box, Stack, TextField, InputAdornment, Icon } from "@mui/material";
-import IconButton from '@mui/material/IconButton';
+import { Avatar, Box, Stack, TextField, InputAdornment, Icon, IconButton, Paper, Typography } from "@mui/material";
 import EastIcon from '@mui/icons-material/East';
 import { GetWithExpiry } from 'api/LocalStorage';
 import './components/chat.css';
@@ -9,28 +8,28 @@ import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import { UserContext } from 'api/LocalStorage';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWebSocket } from 'api/webSocketContext';
-import { getDmList } from 'api/axiosGet';
-import { getChat } from 'api/axiosGet';
+import { getDmList, getChat } from 'api/axiosGet';
 import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
 
 export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const messageEndRef = useRef(null);
-    const inputFieldHeight = 65; // 입력 필드의 높이를 고정값
+    const inputFieldHeight = 70; // 입력 필드의 높이를 고정값
     const { activeUser } = useContext(UserContext);
     const { state } = useLocation() || null;
     const { cid } = state != null ? state : { cid: -1 };
     const { stompClient } = useWebSocket();
     const [count, setCount] = useState(20);
-    const [list, setList] = useState([]);
     const [chatroom, setChatroom] = useState(null);
     const profile = GetWithExpiry("profile");
     const navigate = useNavigate();
+
     const handleMessageSend = () => {
-    
         if (inputMessage.trim() !== '' && stompClient && stompClient.connected) {
-            const newMessage = { text: inputMessage, sender: 'user' };
+            console.log('Sending message:', inputMessage); // 메시지 전송 확인
+            const newMessage = { text: inputMessage, sender: 'user', uid: activeUser.uid, dContents: inputMessage };
+            setMessages(prevMessages => [newMessage, ...prevMessages]); // 새로운 메시지를 바로 추가
             setInputMessage('');
 
             stompClient.publish({
@@ -44,17 +43,15 @@ export default function Chat() {
                     profile: profile,
                     status: chatroom.status,
                 }),
-            })
+            });
         }
     };
 
-    const handleKeyPress = (event) => {
+    const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-            // event.preventDefault(); // 기본 엔터 기능 비활성화
             handleMessageSend(); // 메시지 전송 함수 호출
         }
     };
-
 
     useEffect(() => {
         if (activeUser.uid !== -1 && cid !== -1) {
@@ -77,7 +74,7 @@ export default function Chat() {
 
                 chatconnect = stompClient.subscribe(`/user/chat/` + cid, (message) => {
                     const data = JSON.parse(message.body);
-                    // console.log(data);
+                    console.log('Received message:', data); // 받은 메시지 확인
                     setMessages(prevMessages => {
                         const messageExists = prevMessages.some(msg => msg.did === data.did);
                         if (!messageExists) {
@@ -98,7 +95,7 @@ export default function Chat() {
                 }
             }
         }
-    }, [activeUser.uid, stompClient]);
+    }, [activeUser.uid, stompClient, cid]);
 
     useEffect(() => {
         if (messageEndRef.current) {
@@ -118,125 +115,130 @@ export default function Chat() {
 
     const handleBack = () => {
         navigate(-1);
-    }
+    };
 
     if (cid === -1) {
         return (
             <div>채팅방 정보가 없습니다.</div>
-        )
+        );
     }
 
     return (
         <DashboardLayout>
             <DashboardNavbar />
-            <IconButton sx={{ fontSize: '3rem', cursor: 'pointer' }}
-                onClick={handleBack}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}>
-                <Icon>arrow_back</Icon>
-                <TouchRipple ref={rippleRef} center />
-            </IconButton>
             <Box
                 sx={{
-                    marginTop: '-70px',
-                    padding: '0px 15px 10px 10px',
-                    minHeight: '200px',
-                    // height: 'calc(180vh - 200px)',
-                    width: '80%',
-                    mx: 'auto',
-                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#fafafa',
                 }}
             >
-                <Stack sx={{ fontSize: 'x-large', fontWeight: 'bold', mx: 'auto' }}>
-                    <div style={{ color: 'rgb(88, 67, 135)' }}>
-                        {/* <Avatar alt="User" src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
-                        {email} */}
-                        {chatroom && chatroom.name}
-                        <hr style={{ opacity: '0.4' }} />
-                    </div>
-                </Stack>
-                {/* maxHeight를 사용 스크롤 활성 */}
-                <Stack sx={{ mt:2, maxHeight: `calc(100vh - ${inputFieldHeight + 385}px)`, overflowY: 'auto', flexDirection: 'column-reverse' }}> {/* 메시지 영역의 최대 높이를 조정 */}
-                    <br />
-                    <div ref={messageEndRef} />
-                    {messages && messages.map((message, index) => (
-                        <Stack
-                            key={index}
-                            direction='row'
-                            justifyContent={message.uid === activeUser.uid ? 'flex-end' : 'flex-start'} sx={{mb:0}}
-                        >
-                            {message.uid !== activeUser.uid &&
-                                <Avatar sx={{ width: 50, height: 50 }}
-
-                                >R</Avatar>}
-                            <div style={{borderRadius: { xs: '1%', sm: '1%', md: '80%', lg: '10%' }}} className={message.uid === activeUser.uid ? "message" : "othermessage"}>{message.dContents}</div>
-                            {message.uid === activeUser.uid &&
-                                <Avatar style={{ marginTop: '10px', marginLeft: '5px', marginBottom: '-10px' }}
-                                    sx={{ width: 50, height: 50, marginRight: '.75rem' }}
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${message.profile}`}
-
-                                >U</Avatar>}
-                        </Stack>
-                    ))}
-                </Stack>
-                <Stack
+                <Paper
+                    elevation={3}
                     sx={{
-                        position: 'fixed',
-                        bottom: '10px',
-                        width: { xs: '60%', sm: '70%', md: '80%' },
+                        width: '100%',
+                        maxWidth: '1500px',
+                        minHeight: '80vh',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        borderRadius: '15px',
+                        overflow: 'hidden',
+                        backgroundColor: '#fff',
                     }}
                 >
-                    <TextField //원래 이랬음
+                    <Box sx={{ display: 'flex', alignItems: 'center', padding: '16px', borderBottom: '1px solid #ddd', backgroundColor: '#f8f8f8' }}>
+                        <IconButton
+                            sx={{ fontSize: '2rem', color: 'lightcoral' }}
+                            onClick={handleBack}
+                            onMouseDown={handleMouseDown}
+                            onMouseUp={handleMouseUp}
+                        >
+                            <Icon>arrow_back</Icon>
+                            <TouchRipple ref={rippleRef} center />
+                        </IconButton>
+                        <Typography variant="h3" sx={{ flexGrow: 1, color: 'lightcoral', fontWeight: 'bold', textAlign: 'center' }}>
+                            {chatroom && chatroom.name}
+                        </Typography>
+                    </Box>
+                    <Box
                         sx={{
-                            marginBottom: '4em',
-                            height: `${inputFieldHeight}px`, // 입력 필드의 높이 설정
-                            width: '70.5%',
+                            flexGrow: 1,
+                            padding: '16px',
+                            overflowY: 'auto',
+                            display: 'flex',
+                            flexDirection: 'column-reverse',
+                            backgroundColor: '#fafafa',
                         }}
-                        fullWidth
-                        placeholder="메시지를 보내세요!"
-                        variant="outlined"
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end" >
-                                    <IconButton onClick={handleMessageSend}>
-                                        <EastIcon />
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    {/* {{chatGPT에게 물어본 코드}}
-                    <TextField
+                    >
+                        <div ref={messageEndRef} />
+                        {messages && messages.map((message, index) => (
+                            <Stack
+                                key={index}
+                                direction='row'
+                                justifyContent={message.uid === activeUser.uid ? 'flex-end' : 'flex-start'}
+                                sx={{ mb: 1 }}
+                            >
+                                {message.uid !== activeUser.uid && <Avatar sx={{ width: 50, height: 50, mr: 1 }}>R</Avatar>}
+                                <Box
+                                    sx={{
+                                        borderRadius: '20px',
+                                        padding: '12px 18px',
+                                        backgroundColor: message.uid === activeUser.uid ? 'lightcoral ' : '#fff',
+                                        color: message.uid === activeUser.uid ? '#ffffff' : '#000000',
+                                        boxShadow: '0px 1px 1px rgba(0,0,0,0.1)',
+                                        maxWidth: '70%',
+                                    }}
+                                >
+                                    {message.dContents}
+                                </Box>
+                                {message.uid === activeUser.uid && (
+                                    <Avatar
+                                        sx={{ width: 50, height: 50, ml: 1 }}
+                                        src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`}
+                                    >U</Avatar>
+                                )}
+                            </Stack>
+                        ))}
+                    </Box>
+                    <Box
                         sx={{
-                            marginBottom: '4em',
-                            height: `${inputFieldHeight}px`,
-                            width: '70.5%',
+                            padding: '16px',
+                            borderTop: '1px solid #ddd',
+                            backgroundColor: '#f8f8f8',
                         }}
-                        fullWidth
-                        placeholder="메시지를 보내세요!"
-                        variant="outlined"
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                // e.preventDefault(); // 기본 엔터 기능 비활성화
-                                handleMessageSend(); // 메시지 전송 함수 호출
-                            }
-                        }}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={handleMessageSend}>
-                                        <EastIcon />
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    /> */}
-                </Stack>
+                    >
+                        <TextField
+                            fullWidth
+                            placeholder="메시지를 보내세요!"
+                            variant="outlined"
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={handleMessageSend} sx={{ color: '#E1306C' }}>
+                                            <EastIcon />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                                sx: {
+                                    borderRadius: '30px',
+                                    backgroundColor: '#fff',
+                                    boxShadow: '0px 1px 1px rgba(0,0,0,0.1)',
+                                    padding: '10px',
+                                },
+                            }}
+                            sx={{
+                                height: `${inputFieldHeight}px`,
+                                fontSize: '1rem',
+                            }}
+                        />
+                    </Box>
+                </Paper>
             </Box>
         </DashboardLayout>
     );
