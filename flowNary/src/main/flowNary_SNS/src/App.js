@@ -1,5 +1,5 @@
 // app.js
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -17,14 +17,17 @@ import { initializeApp } from "firebase/app";
 
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
+import { UserContext } from "api/LocalStorage";
+import BoardUrl from "layouts/home/Board/BoardUrl";
 
 export default function App() {
   const brandDark = "../public/images/LightLogo.png";
-  const brandWhite =  "../public/images/DarkLogo.png";
+  const brandWhite = "../public/images/DarkLogo.png";
+
+  const { activeUser } = useContext(UserContext);
 
   const [controller, dispatch] = useMaterialUIController();
-  const {
-    miniSidenav,
+  const { miniSidenav,
     direction,
     layout,
     openConfigurator,
@@ -80,7 +83,7 @@ export default function App() {
     return <div>Error: {error.message}</div>;
   }
 
-  const dynamicRoutes = createRoutes(!!user);  // 로그인 상태에 따라 라우트 동적 생성
+  const dynamicRoutes = createRoutes(!!user, (activeUser && activeUser.role === 1) ? true : false);  // 로그인 상태와 어드민 여부에 따라 라우트 동적 생성
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
@@ -95,6 +98,7 @@ export default function App() {
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
+          {activeUser && console.log("왜 안나옴?>" + activeUser.role)}
           <Configurator />
         </>
       )}
@@ -103,6 +107,7 @@ export default function App() {
         {dynamicRoutes.map((route) => (
           <Route path={route.route} element={route.component} key={route.key} />
         ))}
+        <Route path="/url/*" element={<BoardUrl />} />
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </ThemeProvider>

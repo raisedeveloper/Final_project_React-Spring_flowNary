@@ -39,12 +39,10 @@ export default function ChatTemp() {
 
     const handleMessageSend = () => {
         if (inputMessage.trim() !== '' && stompClient && stompClient.connected) {
-            const cid = insertChat(name, uid1, uid2, inputMessage );
+            const cid = insertChat(name, uid1, uid2, inputMessage);
 
             setInputMessage('');
-            if (cid >= 0) {
-                navigate("/chatting", {state: {cid: cid}});
-            }
+            navigate("/chatlist", { state: { cid: cid } });
         }
     };
 
@@ -72,7 +70,7 @@ export default function ChatTemp() {
                 <Stack sx={{ fontSize: 'xx-large', fontWeight: 'bold', mx: 'auto' }}>
                     <div style={{ color: 'rgb(88, 67, 135)' }}>
                         <Avatar alt="User" src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
-                        {email}
+                        {activeUser.email}
                         <Typography>{name}와의 채팅방</Typography>
                         <hr style={{ opacity: '0.4', marginTop: 20 }} />
                     </div>

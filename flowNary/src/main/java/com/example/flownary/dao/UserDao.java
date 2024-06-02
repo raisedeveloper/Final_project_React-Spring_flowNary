@@ -30,7 +30,7 @@ public interface UserDao {
 
 	@Insert("insert into user values (default, #{email}, #{pwd}, default, #{uname}, #{nickname}"
 			+ ", default, default, default, default, #{gender}"
-			+ ", #{provider}, #{birth}, #{tel}, #{hashUid}, #{location})")
+			+ ", #{provider}, #{birth}, #{tel}, #{hashUid}, #{location}, default)")
 	void insertUser(User user);
 
 	@Update("update user set profile=#{profile}, uname=#{uname}, nickname=#{nickname}"

@@ -5,7 +5,9 @@ import {
   ListItemText,
   Grid,
   IconButton,
-  Link
+  Link,
+  Dialog,
+  DialogTitle
 } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { Stack } from '@mui/system';
@@ -34,12 +36,17 @@ import { deleteConfirm } from 'api/alert';
 import { deleteReply } from 'api/axiosPost';
 import { getUser } from 'api/axiosGet';
 
+
 // 아이콘
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import boxShadow from 'assets/theme/functions/boxShadow';
+import { color } from '@cloudinary/url-gen/qualifiers/background';
+
 
 timeago.register('ko', ko);
+
 
 export default function Reply(props) {
   const bid = props.bid;
@@ -54,12 +61,14 @@ export default function Reply(props) {
   const handleMyPage = props.handleMyPage;
   const queryClient = useQueryClient();
 
+
   const [expandedContents, setExpandedContents] = useState({});
   const [formChange, setFormChange] = useState({});
   const [showReReply, setShowReReply] = useState({});
   const [ridtext, setRidtext] = useState('');
   const [replyText, setReplyText] = useState('');
   const [formInputs, setFormInputs] = useState({});
+
 
   const user = useQuery({
     queryKey: ['boarduser', activeUser.uid],
@@ -76,6 +85,7 @@ export default function Reply(props) {
     queryFn: () => getReplyList(props.bid, 0, 20, activeUser.uid),
   });
 
+
   const addReply = useAddReply();
   const addReReply = useAddReReply();
 
@@ -85,7 +95,9 @@ export default function Reply(props) {
     }
   }, [replyList.isLoading]);
 
+
   const navigate = useNavigate();
+
 
   const handleFormSubmit = (e, text) => {
     e.preventDefault();
@@ -105,6 +117,7 @@ export default function Reply(props) {
     setText('');
     setFormChange(false);
   };
+
 
   const handleFormSubmit2 = (e, text2, rid) => {
     e.preventDefault();
@@ -130,6 +143,7 @@ export default function Reply(props) {
     }
   };
 
+
   const handleOnEnter = (text) => {
     console.log('enter', text);
   };
@@ -143,6 +157,10 @@ export default function Reply(props) {
   };
 
   const handleButtonClick = (rid) => {
+    if (activeUser.uid < 0) {
+      wrong('로그인 해주세요.');
+      return;
+    }
     setRidtext(rid);
     setFormChange((prev) => ({
       ...prev,
@@ -165,14 +183,6 @@ export default function Reply(props) {
     }));
   };
 
-  const handleDelete = async (rid) => {
-    const confirm = await deleteConfirm();
-    if (confirm) {
-      await deleteReply(rid);
-      queryClient.invalidateQueries(['reply', uid]);
-    }
-  };
-
   const handleSearchs = (tag) => {
     sessionStorage.setItem("search", tag);
     sessionStorage.setItem("tag", tag);
@@ -181,54 +191,70 @@ export default function Reply(props) {
     }
   };
 
+  const handleDelete = async (rid) => {
+    const confirm = await deleteConfirm();
+    if (confirm === 1) {
+      await deleteReply(rid);
+      queryClient.invalidateQueries(['reply', uid]);
+    }
+  };
+  function handleKeyPress(e, text) {
+    if (e && e.key === 'Enter') {
+      e.preventDefault(); // 기본 동작 방지
+      handleFormSubmit(e, text);
+    }
+  }
+  function handleKeyPress2(e, text2, rid) {
+    if (e && e.key === 'Enter') {
+      event.preventDefault(); // 기본 동작 방지
+      handleFormSubmit2(e, text2, rid);
+    }
+  }
   return (
     <>
       {/* 댓글 내용 List */}
-      <MDBox sx={{ display: { xs: 'none', lg: 'flex' }, flexDirection: 'column', height: '100%' }}>
-        <Stack direction="column" sx={{ padding: 1, overflowY: 'auto' }}>
-        </Stack>
+      <MDBox sx={{ display: { xs: 'none', md: 'flex', lg: 'flex' }, flexDirection: 'column', height: '100%', mt: 3 }}>
         <MDBox>
           <MDBox sx={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between' }}>
-            <IconButton sx={{ ml: 5, width: 0, fontSize: '2rem' }} onClick={() => handleButtonLike(board.data.bid, board.data.uid)}>
-              {board.data.liked ?
-                <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}
-              {board.data.likeCount}
-            </IconButton>
-            {board ? (
-              board.data.hashTag && board.data.hashTag.includes(",") ? (
-                board.data.hashTag.split(",").map((tag, index) => {
-                  const trimmedTag = tag.trim(); // 좌우 공백 제거
-                  return (
-                    <span key={index}>
-                      {index > 0 && null}
-                      <Button
-                        key={index}
-                        variant="outlined"
-                        style={{ color: 'lightcoral' }}
-                        color='warning'
-                        onClick={() => handleSearchs(trimmedTag)}
-                      >
-                        #{trimmedTag}
-                      </Button>
-                    </span>
-                  );
-                })
-              ) : (
-                <Button
-                  variant="outlined"
-                  style={{ color: 'lightcoral' }}
-                  color='warning'
-                  onClick={() =>
-                    handleSearch(board.data.hashTag)
-                  }
-                >
-                  #{board.data.hashTag}
-                </Button>
-              )
-            ) : null}
-            <Typography sx={{ fontSize: 'small', mr: 2, color: 'coral' }}>
-              {replyList && replyList.data && replyList.data[index] ? '댓글 수 ' + replyList.data[index].replyCount + '개' : ''}
-            </Typography>
+            <MDBox sx={{ display: 'flex', alignItems: 'end', justifyContent: 'start' }}>
+              {board ? (
+                board.data.hashTag && board.data.hashTag.includes(",") ? (
+                  board.data.hashTag.split(",").map((tag, index) => {
+                    const trimmedTag = tag.trim(); // 좌우 공백 제거
+                    return (
+                      <span key={index}>
+                        {index > 0 && null}
+                        <Button
+                          key={index}
+                          variant="outlined"
+                          style={{ color: 'lightcoral' }}
+                          color='warning'
+                          onClick={() => handleSearchs(trimmedTag)}
+                        >
+                          #{trimmedTag}
+                        </Button>
+                      </span>
+                    );
+                  })
+                ) : (
+                  <Button
+                    variant="outlined"
+                    style={{ color: 'lightcoral' }}
+                    color='warning'
+                    onClick={() =>
+                      handleSearch(board.data.hashTag)
+                    }
+                  >
+                    #{board.data.hashTag}
+                  </Button>
+                )
+              ) : null}
+            </MDBox>
+            <MDBox>
+              <Typography sx={{ fontSize: 'small', mr: 5, color: 'coral' }}>
+                {replyList && replyList.data && replyList.data[index] ? '댓글 수 ' + replyList.data[index].replyCount + '개' : ''}
+              </Typography>
+            </MDBox>
           </MDBox>
           <MDBox sx={{ p: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             {user && user.data && <Avatar
@@ -239,83 +265,98 @@ export default function Reply(props) {
             <input
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="입력..."
+              placeholder="댓글을 입력 하세요."
               className="custom-input"
+              style={{
+                border: 'none',
+                borderBottom: '1px solid rgba(0,0,0,0.1)' // 아래쪽에만 연한 선 추가
+              }}
+              onKeyUp={(e) => handleKeyPress(e, text)}
             />
             <Button onClick={(e) => handleFormSubmit(e, text)} sx={{ padding: 0 }} style={{ color: 'coral' }}>게시</Button>
           </MDBox>
         </MDBox>
 
+
         {/* 댓글표시 영역 */}
-        <Stack direction="column" sx={{ width: "100%", overflowX: 'hidden', p: 3 }}>
+        <Stack direction="column" sx={{ width: "100%", overflowX: 'hidden', p: 3, border: 'none', boxShadow: 'none' }}>
           {replyList && replyList.data && replyList.data.map((data, index) => (
             <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0 }}>
               {/* List랑 paper 영역 비슷함 */}
-              <Paper sx={{ border: 'none', }}>
+              <Box sx={{ border: 'none', }}>
                 <ListItem alignItems="flex-start" sx={{ marginTop: 0.5, marginLeft: 0.5 }}>
                   <Avatar onClick={() => handleMyPage(data.uid)} sx={{ cursor: 'pointer' }}
                     src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                   />
                   <ListItemText sx={{ paddingLeft: 1 }}
-                    primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                    primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                     secondary={
                       <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'break-word', }}>
                         {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 28))}
                         {data.rContents != null && data.rContents.length > 30 && !expandedContents[index] && (
-                          <button className='replyOpen' onClick={() => toggleExpand(index)}>...더보기</button>
+                          <button className='replyOpen' style={{ color: 'gray', fontSize: 'small', marginLeft: 10 }} onClick={() => toggleExpand(index)}>...더보기</button>
                         )}
                         {expandedContents[index] && (
-                          <button className='replyClose' onClick={() => toggleExpand(index)}>접기</button>
+                          <button className='replyClose' style={{ color: 'gray', fontSize: 'small', marginLeft: 10 }} onClick={() => toggleExpand(index)}>접기</button>
                         )}
                       </Typography>
                     }
                   >
                   </ListItemText>
-
-
                 </ListItem>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
-                  <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReply(data.rid, data.uid)}>좋아요 {data.likeCount}개  {data.liked ?
-                    <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
+                <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                  <Grid item xs={12} md={6} lg={4} style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ flex: 1, color: 'gray', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
+                    <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReply(data.rid, data.uid)}>좋아요 {data.likeCount}개  {data.liked ?
+                      <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
 
-                  {formChange[data.rid] ?
-                    <MDBox className='board_div_style_1' sx={{ display: 'flex', justifyContent: 'space-between', width: '50%' }}>
-                      <input
-                        value={formInputs[data.rid] || ''}
-                        onChange={(e) => {
-                          setFormInputs((prev) => ({
-                            ...prev,
-                            [data.rid]: e.target.value,
-                          }));
-                        }}
-                        placeholder="댓글입력.."
-                        className="custom-input"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <Button onClick={(e) => { handleFormSubmit2(e, formInputs[data.rid], data.rid); formChange[data.rid] = false; }} sx={{ color: 'lightcoral', padding: 0 }}>게시</Button>
-                      <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>취소</Button>
-                    </MDBox>
-                    :
-                    <>
-                      <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>답글</Button>
-                      {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
-                    </>
-                  }
-
-                </div>
+                    {!formChange[data.rid] &&
+                      <>
+                        <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>답글</Button>
+                        {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
+                      </>
+                    }
+                  </Grid>
+                </Grid>
+                {formChange[data.rid] &&
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '90%', border: 'none', ml: 3 }}>
+                    <input
+                      value={formInputs[data.rid] || ''}
+                      onChange={(e) => {
+                        setFormInputs((prev) => ({
+                          ...prev,
+                          [data.rid]: e.target.value,
+                        }));
+                      }}
+                      placeholder="댓글입력.."
+                      className="custom-input"
+                      onClick={(e) => e.stopPropagation()}
+                      onKeyUp={(e) => { handleKeyPress2(e, formInputs[data.rid], data.rid); if (e && e.key === 'Enter') { formChange[data.rid] = false } }}
+                    />
+                    <Button onClick={(e) => { handleFormSubmit2(e, formInputs[data.rid], data.rid); formChange[data.rid] = false; }} sx={{ color: 'lightcoral', padding: 0 }}>게시</Button>
+                    <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>취소</Button>
+                  </Box>
+                }
                 <Button onClick={() => handleMoreReply(data.rid)} sx={{ marginLeft: 3, paddingTop: 0 }} style={{ color: 'lightcoral' }}>
                   {data.ReReplyCount > 0 && (
                     <>
-                      <KeyboardArrowDownIcon />
-                      {`${data.ReReplyCount}개의 댓글 보기`}
+                      {!showReReply[data.rid] ?
+                        <>
+                          <KeyboardArrowDownIcon />
+                          {`${data.ReReplyCount}개의 댓글 보기`}
+                        </> :
+                        <>
+                          <KeyboardArrowDownIcon />
+                          닫기
+                        </>
+                      }
                     </>
                   )}
                 </Button>
                 {showReReply[data.rid] && (
                   <ReReply rid={data.rid} uid={uid} nickname={nickname} handleButtonLikeReReply={handleButtonLikeReReply} handleMyPage={handleMyPage} />
                 )}
-              </Paper>
+              </Box>
             </List>
           ))}
         </Stack>
@@ -323,6 +364,7 @@ export default function Reply(props) {
     </>
   );
 }
+
 
 Reply.propTypes = {
   bid: PropTypes.number,

@@ -2,6 +2,9 @@ package com.example.flownary.service;
 
 import java.util.List;
 
+import com.example.flownary.dto.Family.FamilyLeaderUserDto;
+import com.example.flownary.dto.Family.FamilyUserInsertDto;
+import com.example.flownary.dto.Family.FamilyUserUpdateDto;
 import com.example.flownary.entity.FamilyUser;
 
 public interface FamilyUserService {
@@ -10,11 +13,15 @@ public interface FamilyUserService {
 	
 	List<FamilyUser> getFamilyUserList(int faid);
 	
+	int getFamilyUserListCount(int faid);
+	
+	FamilyLeaderUserDto getFamilyLeader(int faid);
+	
 	List<FamilyUser> getFamilyUserListActive(int faid);
 	
-	void insertFamilyUser(int faid, int uid, String message);
+	void insertFamilyUser(FamilyUserInsertDto familyUser);
 	
 	void updateFamilyUserStatus(int status, int faid, int uid);
 	
-	void updateFamilyUserMessage(String message, int faid, int uid);
+	void updateFamilyUserMessage(FamilyUserUpdateDto familyUser);
 }

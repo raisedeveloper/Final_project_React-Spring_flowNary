@@ -146,11 +146,11 @@ public class ChatController {
     	chat.setStatus(0);
     	
     	Setting setting = sSvc.getSetting(dto.getFuid());
-    	if (setting.getAccountEnableUnable() == 0)
-    	{
-    		return -2;
-    	}	
-    	
+//    	if (setting.getAccountEnableUnable() == 0)
+//    	{
+//    		return -2;
+//    	}	
+//    	
     	int cid = cSvc.insertChat(chat);
     	chat = cSvc.getChat(cid);
     	
@@ -179,8 +179,9 @@ public class ChatController {
     		idmList.setUid(dto.getUid());
     		idmList.setdContents(dto.getContents());
     		idmList.setdFile("");
+    		idmList.setStatus(2);
 
-    		dC.publishChat(idmList);
+    		dC.publishChat2(idmList, chat);
     	}
     	
     	

@@ -13,13 +13,18 @@ import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
 import ko from 'timeago.js/lib/lang/ko';
 
+
 // 이모티콘
 // 아이콘
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
+
 import { GetWithExpiry, SetWithExpiry } from "api/LocalStorage";
 import axios from 'axios';
+
+
+
 
 
 
@@ -40,6 +45,7 @@ import { useAddLike } from 'api/customHook.jsx';
 import { UserContext } from 'api/LocalStorage.js';
 import { deleteConfirm } from 'api/alert.jsx';
 
+
 export default function ReReply(props) {
   timeago.register('ko', ko);
   const rid = props.rid;
@@ -53,15 +59,18 @@ export default function ReReply(props) {
   const handleMyPage = props.handleMyPage;
   const queryClient = useQueryClient();
 
+
   const ReReplyList = useQuery({
     queryKey: ['re-reply', props.rid, activeUser.uid],
     queryFn: () => getReReplyList(props.rid, activeUser.uid),
   });
 
+
   const addReReply = useAddReReply();
   const addReReplyForm = (sendData) => {
     addReReply(sendData);
   }
+
 
   const handleFormSubmit3 = (e, text3) => {
     e.preventDefault();
@@ -77,7 +86,9 @@ export default function ReReply(props) {
     })
     console.log(ridtext)
 
+
     addReReply(sendData);
+
 
     setFormInputs((prev) => ({
       ...prev,
@@ -87,14 +98,20 @@ export default function ReReply(props) {
 
 
 
+
+
+
   const handleDeleteButton = (rrid) => {
     deleteReReply(rrid);
   }
 
 
+
+
   const handleOnEnter = (text) => {
     console.log('enter', text);
   }
+
 
   const toggleExpand = (index) => {
     setExpandedContents((prev) => ({
@@ -102,6 +119,7 @@ export default function ReReply(props) {
       [index]: !prev[index],
     }));
   };
+
 
   if (ReReplyList.isLoading) {
     return (
@@ -117,6 +135,7 @@ export default function ReReply(props) {
     }
   }
 
+
   return (
     <>
       {/* 댓글 내용 List */}
@@ -125,12 +144,14 @@ export default function ReReply(props) {
           <Stack direction="column" alignItems="center" sx={{ width: "100%", overflowX: 'hidden' }}>
             {ReReplyList.data && ReReplyList.data.map((data, index) => (
 
+
               <List key={index}
                 sx={{
                   width: '100%',
                   bgcolor: 'background.paper',
                   paddingRight: 0,
                 }}>
+
 
                 {/* List랑 paper 영역 비슷함 */}
                 <Paper sx={{ border: 'none', }}>
@@ -144,7 +165,7 @@ export default function ReReply(props) {
                       onClick={() => handleMyPage(data.uid)} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                     />
                     <ListItemText sx={{ paddingLeft: 1 }}
-                      primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                      primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                       secondary={
                         // 댓글 내용
                         <Typography variant="body1" color="text.primary" sx={{ overflowWrap: 'break-word', }}>
@@ -160,6 +181,7 @@ export default function ReReply(props) {
                     >
                     </ListItemText>
 
+
                   </ListItem>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ color: 'grey', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
@@ -167,6 +189,7 @@ export default function ReReply(props) {
                       <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
                     {data.uid === activeUser.uid && <Button onClick={() => handleDelete(data.rrid)} sx={{ color: 'lightcoral', padding: 0 }}>삭제</Button>}
                   </div>
+
 
                   {/* 답글 목록 */}
                   {data.replies && data.replies.map((reply, replyIndex) => (
@@ -194,6 +217,7 @@ export default function ReReply(props) {
   );
 }
 
+
 ReReply.propTypes = {
   rid: PropTypes.number,
   nickname: PropTypes.string,
@@ -201,3 +225,4 @@ ReReply.propTypes = {
   handleButtonLikeReReply: PropTypes.func,
   handleMyPage: PropTypes.func,
 };
+

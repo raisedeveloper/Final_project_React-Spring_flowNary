@@ -19,6 +19,11 @@ public class FamilyServiceImpl implements FamilyService {
 	public Family getFamily(int faid) {
 		return faDao.getFamily(faid);
 	}
+	
+	@Override
+	public int getFamilyLeaderCount(int uid) {
+		return faDao.getFamilyLeaderCount(uid);
+	}
 
 	@Override
 	public List<Family> getFamilyList(int uid) {
@@ -27,12 +32,18 @@ public class FamilyServiceImpl implements FamilyService {
 
 	@Override
 	public int insertFamily(Family family) {
-		return faDao.insertFamily(family);
+		faDao.insertFamily(family);
+		return family.getFaid();
 	}
 
 	@Override
 	public void updateFamily(String name, int fid) {
 		faDao.updateFamily(name, fid);
+	}
+	
+	@Override
+	public void updateFamilyStatus(int status, int faid) {
+		faDao.updateFamilyStatus(status, faid);
 	}
 
 	@Override
