@@ -1,6 +1,5 @@
 package com.example.flownary.dto;
 
-import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,11 +17,59 @@ public class Todo {
 		int uid;
 		String contents;
 		int pri;
-
-
-//		int gender;
-//		String location;
 	}
 	
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class TodoInsertDTO {
+	    private SendDataInsertDTO sendData;
+
+	    public SendDataInsertDTO getSendData() {
+	        return sendData;
+	    }
+
+	    public void setSendData(SendDataInsertDTO sendData) {
+	        this.sendData = sendData;
+	    }
+	}
+	
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class SendDataInsertDTO {
+	    private int uid;
+	    private String contents;
+	    
+	}
+	
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class TodoUpdateDTO {
+	    private SendDataUpdateDTO sendData;
+
+	    public SendDataUpdateDTO getSendData() {
+	        return sendData;
+	    }
+
+	    public void setSendData(SendDataUpdateDTO sendData) {
+	        this.sendData = sendData;
+	    }
+	}
+	
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class SendDataUpdateDTO {
+	    private int tid;
+	    private String contents;
+	    private int pri;
+	    
+	}
 	
 }

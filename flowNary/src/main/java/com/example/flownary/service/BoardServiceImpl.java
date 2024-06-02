@@ -47,7 +47,10 @@ public class BoardServiceImpl implements BoardService{
 	public List<Board> getMyBoardList(int uid) {
 		return boardDao.getBoardList4(uid);
 	}
-
+	@Override
+	public List<Board> getLikedBoardList(int uid) {
+		return boardDao.getLikedList(uid);
+	}
 	@Override
 	public List<Board> getBoardListSearch(int count, List<String> field, String query) {
 		query = "%" + query + "%";
@@ -104,6 +107,11 @@ public class BoardServiceImpl implements BoardService{
 	public void updateBoardNickname(int uid, String nickname) {
 		boardDao.updateBoardNickname(uid, nickname);
 	}
+	
+	@Override
+	public void disableBoard(int bid, int isDeleted) {
+		boardDao.disableBoard(bid, isDeleted);
+	}
 
 	@Override
 	public void deleteBoard(int bid) {
@@ -124,4 +132,6 @@ public class BoardServiceImpl implements BoardService{
 	public void updateViewCount(int bid) {
 		boardDao.updateViewCount(bid);
 	}
+
+
 }

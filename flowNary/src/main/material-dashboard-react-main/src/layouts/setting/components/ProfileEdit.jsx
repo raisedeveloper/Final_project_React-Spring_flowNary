@@ -56,6 +56,21 @@ function ProfileEdit({ uid, email }) {
     queryFn: () => useGetUser(uid),
   });
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'F5') {
+        event.preventDefault();
+        navigate(-1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [navigate]);
+
   const [uname, setUname] = useState('');
   const [nickname, setNickname] = useState('');
   const [statusMessage, setStat] = useState('');
@@ -64,6 +79,7 @@ function ProfileEdit({ uid, email }) {
   const [tel, setTel] = useState('');
   const [gender, setGender] = useState(2);
   const [profile, setProfile] = useState('');
+  const [location, setLocation] = useState('');
   // 활성화, 비활성화
   // const [status, setStatus] = useState('0');
 
@@ -77,6 +93,7 @@ function ProfileEdit({ uid, email }) {
       setBirth(user.birth);
       setGender(user.gender);
       setProfile(user.profile);
+      setLocation(user.location);
     }
   }, [user]);
 
@@ -96,11 +113,12 @@ function ProfileEdit({ uid, email }) {
   const handleUname = (e) => { setUname(e.target.value); };
   const handleNickname = (e) => { setNickname(e.target.value); };
   const handleStat = (e) => { setStat(e.target.value); };
-  const handleGender = (e) => { setGender(e.target.value === 'man' ? 0 : (e.target.value === 'woman' ? 1 : 2)); };
+  const handleGender = (e) => { setGender(e.target.value); console.log(gender);};
   const handleSnsDomain = (e) => { setSnsDomain(e.target.value); };
   const handleTel = (e) => { setTel(e) };
   const handleBirthChange = (e) => { const formattedDate = dayjs(e).format('YYYY-MM-DD'); setBirth(formattedDate); }
-  const handlePicture = (e) => { setImage(e); setProfile(e); }
+  const handlePicture = (e) => { setImage(e); setProfile(e); };
+  const handleLocation = (e) => { setLocation(e.target.value) };
 
   const handleCheckingBirth = (e) => { setCheckingBirth(e) };
   const handleCheckingTel = (e) => { setCheckingTel(e) };
@@ -126,6 +144,7 @@ function ProfileEdit({ uid, email }) {
         snsDomain: snsDomain,
         gender: gender,
         tel: tel,
+        location: location
       }).catch(error => console.log(error));
 
     } else { // 이미지 변경 O 
@@ -140,6 +159,7 @@ function ProfileEdit({ uid, email }) {
         snsDomain: snsDomain,
         gender: gender,
         tel: tel,
+        location: location
       }).catch(error => console.log(error));
     }
     correct("설정 변경에 성공했습니다.");
@@ -165,16 +185,16 @@ function ProfileEdit({ uid, email }) {
                 <MDBox fullWidth id="gender_select" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                   <Select
                     id="gender_select"
-                    value={(gender === 0 ? 'man' : (gender === 1 ? 'woman' : 'none'))}
+                    value={gender}
                     onChange={handleGender}
                     sx={{
                       width: '100%', height: '70%',
                       textAlign: 'center', border: '0'
                     }}
                   >
-                    <MenuItem value={"man"}>남자</MenuItem>
-                    <MenuItem value={"woman"}>여자</MenuItem>
-                    <MenuItem value={"none"}>성별 설정 안함</MenuItem>
+                    <MenuItem value={0}>남자</MenuItem>
+                    <MenuItem value={1}>여자</MenuItem>
+                    <MenuItem value={2}>성별 설정 안함</MenuItem>
                   </Select>
                 </MDBox>
               </Grid>
@@ -204,6 +224,10 @@ function ProfileEdit({ uid, email }) {
               <Grid item xs={12} sm={6}>
                 <SettingTel tel={tel} email={email} checkingTel={checkingTel}
                   onTelChange={handleTel} changeCheckingTel={handleCheckingTel} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth label="주소" required variant="standard"
+                  value={location} onChange={handleLocation} sx={{ mt: 2, width: '100%', }} />
               </Grid>
               <Grid item xs={15}>
 

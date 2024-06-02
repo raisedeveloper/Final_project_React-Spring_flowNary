@@ -6,11 +6,11 @@ import Icon from '@mui/material/Icon';
 import Home from "layouts/home/HomeIndex.js";
 import Album from "layouts/album/AlbumIndex.js";
 import Chatting from "layouts/chatting/ChattingIndex.js";
+import ChatList from "layouts/chatting/Chattinglist.js";
+import ChatTemp from 'layouts/chatting/Chattingtemp.js';
 import Mypage from "layouts/mypage/MypageIndex.js";
 import Family from "layouts/family/FamilyIndex.js";
 import Notifications from "layouts/notifications/NoticeIndex.js";
-import Chalendar from "layouts/schedule/ScheduleIndex.js";
-import TodoList from "layouts/todoList/TodoListIndex.js";
 import Write from "layouts/write/WriteIndex.js";
 import Settings from "layouts/setting/SettingIndex.js";
 import VerifySettings from 'layouts/setting/components/SettingCheckPwd';
@@ -22,10 +22,11 @@ import Logout from "layouts/authentication/logout";
 import { FlashOnOutlined } from '@mui/icons-material';
 import UpdateIndex from "layouts/home/Update/UpdateIndex.js"
 import Statistics from 'layouts/admin/statistics/statisticsIndex';
-import UserList from 'layouts/admin/userList/userListIndex';
-import BoardList from 'layouts/admin/boardList/boardListIndex';
+import UserList from 'layouts/admin/userList/AdminUserList';
+import BoardList from 'layouts/admin/boardList/AdminBoardList';
+import Follow from 'layouts/follow/Follow';
 
-const createRoutes = (isLoggedIn) => [
+const createRoutes = (isLoggedIn, isAdmin) => [
   {
     type: "collapse",
     name: "홈",
@@ -47,11 +48,29 @@ const createRoutes = (isLoggedIn) => [
   {
     type: "collapse",
     name: "채팅",
+    key: "chatlist",
+    icon: <Icon fontSize="xx-large">send</Icon>,
+    route: "/chatlist",
+    component: <ChatList />,
+    visible: true,
+  },
+  {
+    type: "collapse",
+    name: "채팅내부",
     key: "chatting",
     icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
     component: <Chatting />,
-    visible: true,
+    visible: false,
+  },
+  {
+    type: "collapse",
+    name: "임시채팅",
+    key: "chattingtemp",
+    icon: <Icon fontSize="xx-large">send</Icon>,
+    route: "/chattingtemp",
+    component: <ChatTemp />,
+    visible: false,
   },
   {
     type: "collapse",
@@ -73,29 +92,20 @@ const createRoutes = (isLoggedIn) => [
   },
   {
     type: "collapse",
+    name: "팔로우",
+    key: "follow",
+    icon: <Icon fontSize="xx-large">people</Icon>,
+    route: "/follow",
+    component: <Follow />,
+    visible: true,
+  },
+  {
+    type: "collapse",
     name: "알림",
     key: "notifications",
     icon: <Icon fontSize="xx-large">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
-    visible: true,
-  },
-  {
-    type: "collapse",
-    name: "일정관리",
-    key: "chalendar",
-    icon: <Icon fontSize="xx-large">calendar_month</Icon>,
-    route: "/chalendar",
-    component: <Chalendar />,
-    visible: true,
-  },
-  {
-    type: "collapse",
-    name: "To-Do 리스트",
-    key: "to-do",
-    icon: <Icon fontSize="xx-large">checklist</Icon>,
-    route: "/to-do",
-    component: <TodoList />,
     visible: true,
   },
   {
@@ -124,12 +134,57 @@ const createRoutes = (isLoggedIn) => [
     component: <Settings />,
   },
   {
+    type: "collapse",
     name: "TEAM",
     key: "team",
     icon: <Icon fontSize="large">connect_without_contact</Icon>,
     route: "/team",
-    component: <BoardList />,
+    component: <Team />,
     visible: true,
+  },
+  {
+    type: "bottom",
+    name: "검색",
+    key: "search",
+    route: "/search",
+    component: <Search />,
+    visible: false, // 로그인되지 않았을 때만 보임
+  },
+  {
+    type: "collapse",
+    name: "글쓰기수정",
+    key: "write",
+    icon: <Icon fontSize="xx-large">history_edu</Icon>,
+    route: "/home/update",
+    component: <UpdateIndex />,
+    visible: false,
+  },
+  {
+    type: "collapse",
+    name: "이용 통계",
+    key: "statistics",
+    icon: <Icon fontSize="xx-large">donut_small</Icon>,
+    route: "/statistics",
+    component: <Statistics />,
+    visible: isAdmin && isLoggedIn
+  },
+  {
+    type: "collapse",
+    name: "사용자 관리",
+    key: "userList",
+    icon: <Icon fontSize="xx-large">manage_accounts</Icon>,
+    route: "/userList",
+    component: <UserList />,
+    visible: isAdmin && isLoggedIn
+  },
+  {
+    type: "collapse",
+    name: "게시물 관리",
+    key: "boardList",
+    icon: <Icon fontSize="xx-large">manage_search</Icon>,
+    route: "/boardList",
+    component: <BoardList />,
+    visible: isAdmin && isLoggedIn
   },
   {
     type: "collapse",
@@ -142,57 +197,6 @@ const createRoutes = (isLoggedIn) => [
   },
   {
     type: "collapse",
-    name: "회원가입",
-    key: "sign-up",
-    icon: <Icon fontSize="xx-large">assignment</Icon>,
-    component: <SignUp />,
-    visible: false, // 로그인되지 않았을 때만 보임
-  },
-  {
-    type: "bottom",
-    name: "검색",
-    key: "search",
-    route: "/search",
-    component: <Search />,
-  },
-  {
-    type: "collapse",
-    name: "글쓰기수정",
-    key: "write",
-    icon: <Icon fontSize="xx-large">history_edu</Icon>,
-    route: "/home/Update",
-    component: <UpdateIndex />,
-    visible: false,
-  },
-  {
-    type: "collapse",
-    name: "통계",
-    key: "statistics",
-    icon: <Icon fontSize="xx-large">donut_small</Icon>,
-    route: "/statistics",
-    component: <Statistics />,
-    visible: true,
-  },
-  {
-    type: "collapse",
-    name: "사용자 목록",
-    key: "userList",
-    icon: <Icon fontSize="xx-large">manage_accounts</Icon>,
-    route: "/userList",
-    component: <UserList />,
-    visible: true,
-  },
-  {
-    type: "collapse",
-    name: "게시물 목록",
-    key: "boardList",
-    icon: <Icon fontSize="xx-large">manage_search</Icon>,
-    route: "/boardList",
-    component: <BoardList />,
-    visible: true,
-  },
-  {
-    type: "collapse",
     name: "로그아웃",
     key: "sign-out",
     icon: <Icon fontSize="xx-large">logout</Icon>,
@@ -200,6 +204,15 @@ const createRoutes = (isLoggedIn) => [
     component: <Logout />,
     visible: isLoggedIn, // 로그인되었을 때만 보임
   },
+  {
+    type: "collapse",
+    name: "회원가입",
+    key: "sign-up",
+    icon: <Icon fontSize="xx-large">assignment</Icon>,
+    component: <SignUp />,
+    visible: false, // 로그인되지 않았을 때만 보임
+  },
+
 ];
 
 export default createRoutes;

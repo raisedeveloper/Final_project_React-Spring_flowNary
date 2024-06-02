@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -17,7 +18,7 @@ public interface TodoDao {
 	Todo getTodo(int tid);
 	
 	@Select("select * from todo where uid=#{uid}"
-			+ " order by pri desc")
+			+ " order by pri")
 	List<Todo> getTodoList(int uid);
 	
 	@Select("select pri from todo where uid=#{uid}"
@@ -25,8 +26,8 @@ public interface TodoDao {
 			+ " limit 1")
 	int getTodoHighest(int uid);
 	
-	@Insert("insert into todo values(default, #{uid}, #{contents}, default)")
-	void insertTodo(int uid, String contents);
+	@Insert("insert into todo (uid, contents) values(#{uid}, #{contents})")
+	void insertTodo(@Param("uid") int uid, @Param("contents") String contents);
 	
 	@Update("update todo set contents=#{contents}, pri=#{pri} where tid=#{tid}")
 	void updateTodo(int tid, String contents, int pri);

@@ -6,25 +6,28 @@ import MDTypography from 'components/MDTypography';
 function YearSelect({ selectedYear, onChange }) {
   // 년도 목록 생성 (예: 2000년부터 현재 년도까지)
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 2019 }, (_, index) => 2020 + index).reverse();
+  const years = Array.from({ length: currentYear - 2021 }, (_, index) => 2022 + index).reverse();
 
   return (
     <>
-      <MDTypography mt={5} id="year-select-label">  보고싶은 연도를 선택하세요.     </MDTypography>
-      <FormControl>
-        <Select
-          labelId="year-select-label"
-          id="year-select"
-          value={selectedYear}
-          onChange={onChange}
-          sx={{ width: "10vw", height: "5%", fontSize: 'large' }}
-        >
-          {years.map(year => (
-            <MenuItem key={year} value={year}>
-              {year > 2020 ? year : "2020 이전"} 년
-            </MenuItem>
-          ))}
-        </Select>
+      <FormControl sx={{ display: 'flex', justifyContent: 'center' }}>
+        <MDTypography mt={3} id="year-select-label">
+          Year  
+          <Select
+            labelId="year-select-label"
+            id="year-select"
+            value={selectedYear}
+            onChange={onChange}
+            sx={{ width: "8vw", fontSize: 'large', mx:3, p:0.5 }}
+          >
+            {years.map(year => (
+              <MenuItem key={year} value={year} >
+                {year > 2022 ? year : "전체"} 년
+              </MenuItem>
+            ))}
+          </Select>
+        </MDTypography>
+
       </FormControl>
     </>
   );

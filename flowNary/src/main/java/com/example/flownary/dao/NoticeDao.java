@@ -17,8 +17,12 @@ public interface NoticeDao {
 	
 	@Select("select * from notice"
 			+ " where uid=#{uid} and onOff=1 and type=#{type}"
-			+ " order by regTime desc")
+			+ " order by  regTime desc")
 	List<Notice> getNoticeList(int uid, int type);
+	
+	@Select("select count(nid) from notice"
+			+ " where uid=#{uid} and onOff=1")
+	int getNoticeCount(int uid);
 	
 	@Select("select * from notice"
 			+ " where uid=#{uid} and onOff=1"

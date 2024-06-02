@@ -250,7 +250,7 @@ export default function Posting() {
             onKeyDown={handleKeyDown}
             onMouseUp={handleMouseUp}
             onBlur={handleMouseUp}
-            placeholder="신비로운 당신의 일상을 알려주세요!"
+            placeholder="당신의 일상을 공유하세요."
             // shouldReturn
             fontSize={15}
             language='kr'

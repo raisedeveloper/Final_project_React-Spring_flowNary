@@ -1,234 +1,167 @@
-// // Material Dashboard 2 React example components
-// import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-// import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-// import Footer from "examples/Footer";
 
-// import AppTasks from '../app-tasks';
-// import AppNewsUpdate from '../app-news-update';
-// import AppOrderTimeline from './app-order-timeline';
-// import AppCurrentVisits from './app-current-visits';
-// import AppWebsiteVisits from './app-website-visits';
-// import AppWidgetSummary from './app-widget-summary';
-// import AppTrafficBySite from './app-traffic-by-site';
-// import AppCurrentSubject from './app-current-subject';
-// import AppConversionRates from './app-conversion-rates';
+import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
+import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import Footer from 'layouts/authentication/components/Footer';
 
-// import Iconify from 'src/components/iconify';
-// import { Container, Grid, Typography } from "@mui/material";
+import { useState } from 'react';
 
-// export default function userListIndex() {
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Table from '@mui/material/Table';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import TableBody from '@mui/material/TableBody';
+import Typography from '@mui/material/Typography';
+import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 
-//   return (
-//     <DashboardLayout>
-//       <DashboardNavbar />
-//       <Container maxWidth="xl">
-//         <Typography variant="h4" sx={{ mb: 5 }}>
-//           Hi, Welcome back 👋
-//         </Typography>
-//         <Grid container spacing={3}>
-//           <Grid xs={12} sm={6} md={3}>
-//             <AppWidgetSummary
-//               title="Weekly Sales"
-//               total={714000}
-//               color="success"
-//               icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
-//             />
-//           </Grid>
+import { users } from '../../../_mock/user';
 
-//           <Grid xs={12} sm={6} md={3}>
-//             <AppWidgetSummary
-//               title="New Users"
-//               total={1352831}
-//               color="info"
-//               icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
-//             />
-//           </Grid>
+import Iconify from '../../../components/iconify';
+import Scrollbar from '../../../components/scrollbar';
 
-//           <Grid xs={12} sm={6} md={3}>
-//             <AppWidgetSummary
-//               title="Item Orders"
-//               total={1723315}
-//               color="warning"
-//               icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
-//             />
-//           </Grid>
+import TableNoData from './table-no-data';
+import UserTableRow from './user-table-row';
+import UserTableHead from './user-table-head';
+import TableEmptyRows from './table-empty-rows';
+import UserTableToolbar from './user-table-toolbar';
+import { emptyRows, applyFilter, getComparator } from './utils';
 
-//           <Grid xs={12} sm={6} md={3}>
-//             <AppWidgetSummary
-//               title="Bug Reports"
-//               total={234}
-//               color="error"
-//               icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
-//             />
-//           </Grid>
+// ----------------------------------------------------------------------
 
-//           <Grid xs={12} md={6} lg={8}>
-//             <AppWebsiteVisits
-//               title="Website Visits"
-//               subheader="(+43%) than last year"
-//               chart={{
-//                 labels: [
-//                   '01/01/2003',
-//                   '02/01/2003',
-//                   '03/01/2003',
-//                   '04/01/2003',
-//                   '05/01/2003',
-//                   '06/01/2003',
-//                   '07/01/2003',
-//                   '08/01/2003',
-//                   '09/01/2003',
-//                   '10/01/2003',
-//                   '11/01/2003',
-//                 ],
-//                 series: [
-//                   {
-//                     name: 'Team A',
-//                     type: 'column',
-//                     fill: 'solid',
-//                     data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-//                   },
-//                   {
-//                     name: 'Team B',
-//                     type: 'area',
-//                     fill: 'gradient',
-//                     data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-//                   },
-//                   {
-//                     name: 'Team C',
-//                     type: 'line',
-//                     fill: 'solid',
-//                     data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
-//                   },
-//                 ],
-//               }}
-//             />
-//           </Grid>
+export default function boardListIndex() {
+  const [page, setPage] = useState(0);
 
-//           <Grid xs={12} md={6} lg={4}>
-//             <AppCurrentVisits
-//               title="Current Visits"
-//               chart={{
-//                 series: [
-//                   { label: 'America', value: 4344 },
-//                   { label: 'Asia', value: 5435 },
-//                   { label: 'Europe', value: 1443 },
-//                   { label: 'Africa', value: 4443 },
-//                 ],
-//               }}
-//             />
-//           </Grid>
+  const [order, setOrder] = useState('asc');
 
-//           <Grid xs={12} md={6} lg={8}>
-//             <AppConversionRates
-//               title="Conversion Rates"
-//               subheader="(+43%) than last year"
-//               chart={{
-//                 series: [
-//                   { label: 'Italy', value: 400 },
-//                   { label: 'Japan', value: 430 },
-//                   { label: 'China', value: 448 },
-//                   { label: 'Canada', value: 470 },
-//                   { label: 'France', value: 540 },
-//                   { label: 'Germany', value: 580 },
-//                   { label: 'South Korea', value: 690 },
-//                   { label: 'Netherlands', value: 1100 },
-//                   { label: 'United States', value: 1200 },
-//                   { label: 'United Kingdom', value: 1380 },
-//                 ],
-//               }}
-//             />
-//           </Grid>
+  const [selected, setSelected] = useState([]);
 
-//           <Grid xs={12} md={6} lg={4}>
-//             <AppCurrentSubject
-//               title="Current Subject"
-//               chart={{
-//                 categories: ['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math'],
-//                 series: [
-//                   { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
-//                   { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
-//                   { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
-//                 ],
-//               }}
-//             />
-//           </Grid>
+  const [orderBy, setOrderBy] = useState('name');
 
-//           <Grid xs={12} md={6} lg={8}>
-//             <AppNewsUpdate
-//               title="News Update"
-//               list={[...Array(5)].map((_, index) => ({
-//                 id: faker.string.uuid(),
-//                 title: faker.person.jobTitle(),
-//                 description: faker.commerce.productDescription(),
-//                 image: `/assets/images/covers/cover_${index + 1}.jpg`,
-//                 postedAt: faker.date.recent(),
-//               }))}
-//             />
-//           </Grid>
+  const [filterName, setFilterName] = useState('');
 
-//           <Grid xs={12} md={6} lg={4}>
-//             <AppOrderTimeline
-//               title="Order Timeline"
-//               list={[...Array(5)].map((_, index) => ({
-//                 id: faker.string.uuid(),
-//                 title: [
-//                   '1983, orders, $4220',
-//                   '12 Invoices have been paid',
-//                   'Order #37745 from September',
-//                   'New order placed #XF-2356',
-//                   'New order placed #XF-2346',
-//                 ][index],
-//                 type: `order${index + 1}`,
-//                 time: faker.date.past(),
-//               }))}
-//             />
-//           </Grid>
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-//           <Grid xs={12} md={6} lg={4}>
-//             <AppTrafficBySite
-//               title="Traffic by Site"
-//               list={[
-//                 {
-//                   name: 'FaceBook',
-//                   value: 323234,
-//                   icon: <Iconify icon="eva:facebook-fill" color="#1877F2" width={32} />,
-//                 },
-//                 {
-//                   name: 'Google',
-//                   value: 341212,
-//                   icon: <Iconify icon="eva:google-fill" color="#DF3E30" width={32} />,
-//                 },
-//                 {
-//                   name: 'Linkedin',
-//                   value: 411213,
-//                   icon: <Iconify icon="eva:linkedin-fill" color="#006097" width={32} />,
-//                 },
-//                 {
-//                   name: 'Twitter',
-//                   value: 443232,
-//                   icon: <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={32} />,
-//                 },
-//               ]}
-//             />
-//           </Grid>
+  const handleSort = (event, id) => {
+    const isAsc = orderBy === id && order === 'asc';
+    if (id !== '') {
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(id);
+    }
+  };
 
-//           <Grid xs={12} md={6} lg={8}>
-//             <AppTasks
-//               title="Tasks"
-//               list={[
-//                 { id: '1', name: 'Create FireStone Logo' },
-//                 { id: '2', name: 'Add SCSS and JS files if required' },
-//                 { id: '3', name: 'Stakeholder Meeting' },
-//                 { id: '4', name: 'Scoping & Estimations' },
-//                 { id: '5', name: 'Sprint Showcase' },
-//               ]}
-//             />
-//           </Grid>
-//         </Grid>
-//       </Container>
-//       <Footer />
-//     </DashboardLayout>
-//   );
-// }
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = users.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
 
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+    setSelected(newSelected);
+  };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
+
+  const handleFilterByName = (event) => {
+    setPage(0);
+    setFilterName(event.target.value);
+  };
+
+  const dataFiltered = applyFilter({
+    inputData: users,
+    comparator: getComparator(order, orderBy),
+    filterName,
+  });
+
+  const notFound = !dataFiltered.length && !!filterName;
+
+  return (
+    <DashboardLayout>
+      <DashboardNavbar />
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4">사용자 관리</Typography>
+
+          <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+            유저 추가
+          </Button>
+        </Stack>
+
+        <Card>
+        
+
+          <Scrollbar> 
+            <TableContainer sx={{ overflow: 'unset' }}> <UserTableToolbar
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+          />
+              <Table sx={{ minWidth: 800 }}>
+
+                <TableBody>
+                  {dataFiltered
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => (
+                      <UserTableRow
+                        key={row.id}
+                        name={row.name}
+                        role={row.role}
+                        status={row.status}
+                        company={row.company}
+                        avatarUrl={row.avatarUrl}
+                        isVerified={row.isVerified}
+                        selected={selected.indexOf(row.name) !== -1}
+                        handleClick={(event) => handleClick(event, row.name)}
+                      />
+                    ))}
+
+                  <TableEmptyRows
+                    height={77}
+                    emptyRows={emptyRows(page, rowsPerPage, users.length)}
+                  />
+
+                  {notFound && <TableNoData query={filterName} />}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
+
+          <TablePagination
+            page={page}
+            component="div"
+            count={users.length}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handleChangePage}
+            rowsPerPageOptions={[5, 10, 25]}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Card>
+      </Container>
+      <Footer />
+    </DashboardLayout>
+  );
+}

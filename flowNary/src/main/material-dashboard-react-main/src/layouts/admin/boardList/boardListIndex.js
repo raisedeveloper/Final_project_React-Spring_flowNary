@@ -1,11 +1,8 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-
-import Box from '@mui/material/Box';
-
+import React from 'react';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import Footer from 'layouts/authentication/components/Footer';
+
 
 // ----------------------------------------------------------------------
 

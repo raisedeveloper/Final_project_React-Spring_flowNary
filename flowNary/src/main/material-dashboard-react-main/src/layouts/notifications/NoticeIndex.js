@@ -6,9 +6,7 @@ import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDTypography from "components/MDTypography";
-import MDAlert from "components/MDAlert";
 import MDButton from "components/MDButton";
-import MDSnackbar from "components/MDSnackbar";
 
 import {
   Avatar, Box, Button, Chip, Divider, List, ListItem, ListItemAvatar,

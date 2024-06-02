@@ -8,6 +8,8 @@ public interface FollowService {
 
 	Follow getFollow(int fid);
 	
+	Follow getFollowUid(int uid, int fuid);
+	
 	List<Follow> getFollowList(int uid);
 	
 	List<Follow> getFollowListByFuid(int fuid);

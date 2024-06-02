@@ -15,7 +15,7 @@ public interface Re_ReplyDao {
 	@Select("select * from re_reply where rrid=#{rrid}")
 	Re_Reply getReReply(int rrid);
 	
-	@Select("select count(rrid) from re_reply where rid=#{rid}")
+	@Select("select count(rrid) from re_reply where isDeleted=0 and rid=#{rid}")
 	int getReReplyCount(int rid);
 	
 	@Select("select * from re_reply"

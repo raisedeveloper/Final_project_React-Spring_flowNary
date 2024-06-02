@@ -80,12 +80,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           rel="noreferrer"
           sx={{ textDecoration: "none" }}
         >
-          <SidenavCollapse
-            name={name}
-            icon={icon}
-            active={key === collapseName}
-            noCollapse={noCollapse}
-          />
+          <SidenavCollapse name={name} icon={icon} active={key === collapseName} noCollapse={noCollapse} />
         </Link>
       ) : (
         <NavLink key={key} to={route}>
@@ -155,7 +150,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
         {/* title 크기 조정 */}
         <MDBox component={NavLink} to="/" sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="8rem" />}
+          <MDBox component="img" src='/images/DarkLogo.png' alt="Brand" width="8rem" />
         </MDBox>
 
         {/* 로그인 상태에 따라 아바타 또는 로그인 요청 메시지 표시 */}
@@ -166,8 +161,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
               borderRadius: '15px', display: 'flex', alignItems: 'center'
             }}
           >
-            <Avatar              
-              sx={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', overflow:'hidden' }}
+            <Avatar
+              sx={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', overflow: 'hidden' }}
               onClick={goMypage}
             >
               <div

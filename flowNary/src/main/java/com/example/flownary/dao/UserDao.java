@@ -22,16 +22,19 @@ public interface UserDao {
 	@Select("select * from user where isDeleted=0" + " order by regDate desc" + " limit #{count} offset #{offset}")
 	List<User> getUserList(int count, int offset);
 
+	@Select("select * from user where status=0" + " order by regDate")
+	List<User> getUserList2();
+	
 	@Select("select email, nickname, profile from user" + " where uid=#{uid}")
 	GetUserNickEmailDto getUserNicknameEmail(int uid);
 
 	@Insert("insert into user values (default, #{email}, #{pwd}, default, #{uname}, #{nickname}"
 			+ ", default, default, default, default, #{gender}"
-			+ ", #{provider}, #{birth}, #{tel}, #{hashUid}, #{location})")
+			+ ", #{provider}, #{birth}, #{tel}, #{hashUid}, #{location}, default)")
 	void insertUser(User user);
 
 	@Update("update user set profile=#{profile}, uname=#{uname}, nickname=#{nickname}"
-			+ ", statusMessage=#{statusMessage}, snsDomain=#{snsDomain}"
+			+ ", statusMessage=#{statusMessage}, snsDomain=#{snsDomain}, birth=#{birth}"
 			+ ", gender=#{gender}, tel=#{tel}, hashUid=#{hashUid}, location=#{location}" + " where uid=#{uid}")
 	void updateUser(User user);
 
@@ -46,4 +49,8 @@ public interface UserDao {
 
 	@Select("select * from user where status=0 and email!=#{email}" + " order by regDate desc")
 	List<User> getOthersUserList(String email);
+	
+	
+	@Update("update user set status=#{status}" + " where uid=#{uid}")
+	void updateUserStatus(User user);
 }
