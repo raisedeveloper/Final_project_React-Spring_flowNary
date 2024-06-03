@@ -147,6 +147,7 @@ public class BoardController {
 		return listcount;
 	}
 	
+	//수정 필요함 - 2024/06/03 : 성한
 	@GetMapping("/list")
 	public JSONArray boardList(@RequestParam(name="c", defaultValue="1", required=false) int count,
 			@RequestParam(name="f", defaultValue="title", required=false) String field,
@@ -159,20 +160,20 @@ public class BoardController {
 		List<Board> list = new ArrayList<>();
 		switch(type) {
 		case 1:
-			list = bSvc.getBoardList(count, field, query);			
+			list = bSvc.getBoardList(count <= 0 ? Integer.MAX_VALUE : count, field, query);			
 			break;
 		case 2:
 			List<String> fieldList = new ArrayList<>();
 			fieldList.add(field);
 			fieldList.add(field2);
-			list = bSvc.getBoardListSearch(count, fieldList, query);
+			list = bSvc.getBoardListSearch(count <= 0 ? Integer.MAX_VALUE : count, fieldList, query);
 			break;
 		case 3: 
 			List<String> fieldList1 = new ArrayList<>();
 			fieldList1.add(field);
 			fieldList1.add(field2);
 			fieldList1.add(field3);
-			list = bSvc.getBoardListSearch(count, fieldList1, query);
+			list = bSvc.getBoardListSearch(count <= 0 ? Integer.MAX_VALUE : count, fieldList1, query);
 			break;
 		default:
 			System.out.println("error!");

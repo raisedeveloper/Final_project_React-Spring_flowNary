@@ -6,7 +6,7 @@ import { useWebSocket } from 'api/webSocketContext';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ChattingIndex from './ChattingIndex';
 import TimeAgo from 'timeago-react';
 
@@ -16,7 +16,8 @@ export default function ChatList() {
     const { stompClient } = useWebSocket();
     const [count, setCount] = useState(20);
     const navigate = useNavigate();
-    const [cid, setCid] = useState('');
+    const { state } = useLocation();
+    const [cid, setCid] = useState(state != undefined ? state : 0);
 
     useEffect(() => {
         if (activeUser.uid !== -1) {
@@ -24,7 +25,9 @@ export default function ChatList() {
                 const chatlist = await getChatList(activeUser.uid, count, 0);
                 if (chatlist) {
                     setList(chatlist);
-                    setCid(chatlist[0].cid); // Assuming the correct structure is chatlist[0].cid
+                    console.log('cid' + cid);
+                    if (cid === 0)
+                        setCid(chatlist[0].cid); // Assuming the correct structure is chatlist[0].cid
                 } else {
                     console.error("Chat list is empty or not available");
                 }
