@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { Avatar, Box, Stack, TextField, InputAdornment, Icon, IconButton, Paper, Typography, Grid } from "@mui/material";
+import { Avatar, Box, Stack, TextField, InputAdornment, Icon, IconButton, Paper, Typography } from "@mui/material";
 import EastIcon from '@mui/icons-material/East';
 import { GetWithExpiry } from 'api/LocalStorage';
 import { UserContext } from 'api/LocalStorage';
@@ -24,7 +24,7 @@ export default function Chat({ cid, setCid }) {
 
     const handleMessageSend = () => {
         if (inputMessage.trim() !== '' && stompClient && stompClient.connected) {
-            // console.log('Sending message:', inputMessage);
+            console.log('Sending message:', inputMessage);
             const newMessage = { text: inputMessage, sender: 'user', uid: activeUser.uid, dContents: inputMessage };
             setInputMessage('');
 
@@ -62,7 +62,7 @@ export default function Chat({ cid, setCid }) {
             let chatconnect;
 
             if (stompClient && stompClient.connected) {
-                // console.log('chatting room connected');
+                console.log('chatting room connected');
                 stompClient.publish({
                     destination: '/app/page',
                     body: JSON.stringify({ userId: activeUser.uid, page: 'chatroom' + cid, action: 'enter' }),
@@ -70,7 +70,7 @@ export default function Chat({ cid, setCid }) {
 
                 chatconnect = stompClient.subscribe(`/user/chat/` + cid, (message) => {
                     const data = JSON.parse(message.body);
-                    // console.log('Received message:', data);
+                    console.log('Received message:', data);
                     setMessages(prevMessages => {
                         const messageExists = prevMessages.some(msg => msg.did === data.did);
                         if (!messageExists) {
@@ -87,7 +87,7 @@ export default function Chat({ cid, setCid }) {
                         destination: '/app/page',
                         body: JSON.stringify({ userId: activeUser.uid, page: 'chatroom' + cid, action: 'leave' }),
                     });
-                    // console.log('chatting room disconnected');
+                    console.log('chatting room disconnected');
                 }
 
                 if (chatconnect) {
@@ -187,22 +187,19 @@ export default function Chat({ cid, setCid }) {
                         // 이전 메시지의 날짜와 비교하기 위한 변수 초기화
                         let previousMessageDate = index > 0 ? new Date(messages[index - 1].dTime).toLocaleDateString() : null;
 
-                        // 각 날짜의 첫 번째 메시지 위에만 날짜 표시
-                        const showDate = index === 0 || messageDate !== previousMessageDate;
-
                         return (
                             <React.Fragment key={index}>
-                                {showDate && (
-                                    <Grid sx={{border:'1px solid red'}}>
+                                {messageDate !== previousMessageDate && (
+                                    <Stack direction='column'>
                                         <Typography sx={{ fontSize: 'small', textAlign: 'center', my: 1 }}>
                                             {messageDate}
                                         </Typography>
-                                    </Grid>
+                                    </Stack>
                                 )}
+                                {/* 날짜가 변경될 때마다 날짜 표시 */}
                                 <Stack
-                                    direction='row'
                                     justifyContent={message.uid === activeUser.uid ? 'flex-end' : 'flex-start'}
-                                    sx={{ mb: 1, border: '1px solid black' }}
+                                    sx={{ mb: 1 }}
                                 >
                                     {message.uid !== activeUser.uid && (
                                         <Stack direction='column'>
@@ -253,10 +250,13 @@ export default function Chat({ cid, setCid }) {
                                             </Typography>
                                         </Stack>
                                     )}
+
                                 </Stack>
                             </React.Fragment>
                         );
                     })}
+
+
                 </Box>
                 <Box
                     sx={{

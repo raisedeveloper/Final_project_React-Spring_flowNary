@@ -177,8 +177,10 @@ export default function Login() {
           SetWithExpiry("nickname", res.data.nickname, 180);
           SetWithExpiry("statusMessage", res.data.statusMessage, 180);
           SetWithExpiry("role", res.data.role, 180);
-          updateActiveUser({ uid: res.data.id, email: res.data.email, nickname: res.data.nickname, 
-            role: res.data.role });
+          updateActiveUser({
+            uid: res.data.id, email: res.data.email, nickname: res.data.nickname,
+            role: res.data.role
+          });
 
           navigate('/home');
           setAnimationClass('fade-exit');

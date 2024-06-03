@@ -64,6 +64,28 @@ export async function deleteConfirm() {
   return 2;
 }
 
+// 해결 필요?
+export async function changeStatusUser() {
+const result = await Swal.fire({
+    text: `${currentStatus === 0 ? "비활성화" : "활성화"}를 진행합니다.`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "네",
+    cancelButtonText: "아니오"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleUpdateStatus(userId, newStatus);
+      Swal.fire({
+        title: "비활성화 되었습니다!",
+      });
+    }
+  });
+
+  return result;
+}
+
 async function getDeclarationInputs() {
   const result = await Swal.fire({
     title: "정말로 신고하시겠습니까?",

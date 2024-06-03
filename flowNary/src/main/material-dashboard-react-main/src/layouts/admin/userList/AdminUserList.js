@@ -44,27 +44,24 @@ export default function UserTableRow({ selected, handleClick }) {
 
   // 유저 정보 변경
   const handleUpdateStatus = (userId, newStatus) => {
-    mutate({ uid: userId, status: newStatus });
+    mutate({ uid: userId, status: newStatus, });
   };
 
   const handleStatusChange = (userId, currentStatus) => {
     const newStatus = currentStatus === 0 ? 1 : 0;
-
     Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: `${currentStatus === 0 ? "비활성화" : "활성화"}를 진행합니다.`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, save it!"
+      confirmButtonText: "네",
+      cancelButtonText: "아니오"
     }).then((result) => {
       if (result.isConfirmed) {
         handleUpdateStatus(userId, newStatus);
         Swal.fire({
-          title: "Saved!",
-          text: "Your changes have been saved.",
-          icon: "success"
+          title: "비활성화 되었습니다!",
         });
       }
     });
@@ -77,13 +74,11 @@ export default function UserTableRow({ selected, handleClick }) {
     setIsModalOpen(true);
   };
 
+
+
   const handleModalClose = () => {
     setIsModalOpen(false);
     setModalUser(null);
-  };
-
-  const handleProfileSave = () => {
-    setIsModalOpen(false);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -113,7 +108,7 @@ export default function UserTableRow({ selected, handleClick }) {
     queryKey: ['users'],
     queryFn: getUserList,
     onSuccess: (data) => {
-      console.log('Fetched users:', data); // 데이터 구조 확인용 로그 추가
+
       setUserData(data);
     }
   });
@@ -147,9 +142,9 @@ export default function UserTableRow({ selected, handleClick }) {
 
   const filteredUsers = showInactive
     ? users.filter((user) => user.status === 1)
-    : users;
+    : users.filter((user) => user.status === 0);
 
-  console.log('Filtered users:', filteredUsers); // 필터링 후 데이터 확인용 로그 추가
+  // console.log('Filtered users:', filteredUsers); // 필터링 후 데이터 확인용 로그 추가
 
   const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
@@ -159,13 +154,20 @@ export default function UserTableRow({ selected, handleClick }) {
         <DashboardNavbar />
         <Container sx={{ padding: '1rem' }}>
           <Typography variant="h4">유저 목록</Typography>
-          <Typography variant="body2" onClick={handleShowInactive} sx={{ cursor: 'pointer', color: 'gray', textDecoration: 'underline' }}>
-            -비활성화 유저-
+          <Typography variant="body2" onClick={handleShowInactive} sx={{ cursor: 'pointer', color: 'rgb(24, 94, 224)', }}>
+            {showInactive ? '활성화 유저 목록' : '비활성화 유저 목록'} 페이지
           </Typography>
+          <Pagination
+            count={Math.ceil(filteredUsers.length / rowsPerPage)}
+            page={page}
+            onChange={handleChangePage}
+            shape="rounded"
+            sx={{ ml: 85, mb: 2, }}
+          />
           <Stack direction="column" alignItems="center" justifyContent="space-between" mb={5}>
-            <TableContainer component={Paper} sx={{ margin: '1.5rem' }}>
-              <Table>
-                <TableBody>
+            <TableContainer component={Paper} mt={3}>
+              <Table size='small'>
+                <TableBody >
                   {paginatedUsers && paginatedUsers.map((user) => (
                     <TableRow
                       hover
@@ -175,13 +177,14 @@ export default function UserTableRow({ selected, handleClick }) {
                       key={user.id}
                       sx={{ backgroundColor: 'inherit' }}
                     >
-                      <TableCell component="th" scope="row" padding="none" align="center">
+                      <TableCell size="small" component="th" scope="row"
+                        padding="none" align="center">
                         <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
-                          <Avatar sx={{ width: '3rem', height: '3rem' }}>
+                          <Avatar sx={{ width: '2rem', height: '2rem' }}>
                             <div
                               style={{
-                                width: '3rem',
-                                height: '3rem',
+                                width: '2rem',
+                                height: '2rem',
                                 borderRadius: '50%',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
@@ -197,10 +200,10 @@ export default function UserTableRow({ selected, handleClick }) {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        {user.provider === 'google' ? '구글유저' : '기본유저'}
+                        {user.provider === 'google' ? '구글가입' : 'Flow가입'}
                       </TableCell>
                       <TableCell align="center">
-                        {user.role === 1 ? '관리자' : '일반'}
+                        {user.role === 1 ? 'Admin' : 'User'}
                       </TableCell>
                       <TableCell align="center">
                         {user.regDate}
@@ -230,12 +233,6 @@ export default function UserTableRow({ selected, handleClick }) {
                 </TableBody>
               </Table>
             </TableContainer>
-            <Pagination
-              count={Math.ceil(filteredUsers.length / rowsPerPage)}
-              page={page}
-              onChange={handleChangePage}
-              shape="rounded"
-            />
           </Stack>
         </Container>
       </DashboardLayout>
@@ -274,7 +271,7 @@ export default function UserTableRow({ selected, handleClick }) {
             <div>
               <TextField
                 variant="outlined"
-                defaultValue={modalUser.uname}
+                defaultValue={modalUser.uname ? modalUser.uname : "미기재"}
                 margin="normal"
                 label="이름"
                 disabled
@@ -303,13 +300,13 @@ export default function UserTableRow({ selected, handleClick }) {
             <div>
               <TextField
                 variant="outlined"
-                defaultValue={modalUser.brith ? modalUser.brith : "미개재"}
+                defaultValue={modalUser.brith ? modalUser.brith : "미기재"}
                 margin="normal"
                 label="생년월일"
                 disabled
                 sx={{ width: '300px' }}
               />
-            </div>            
+            </div>
             <Button onClick={handleModalClose}>닫기</Button>
           </div>
         )}
