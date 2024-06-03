@@ -166,7 +166,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">donut_small</Icon>,
     route: "/statistics",
     component: <Statistics />,
-    visible: isAdmin && isLoggedIn
+    visible: isAdmin
   },
   {
     type: "collapse",
@@ -175,7 +175,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">manage_accounts</Icon>,
     route: "/userList",
     component: <UserList />,
-    visible: isAdmin && isLoggedIn
+    visible: isAdmin
   },
   {
     type: "collapse",
@@ -184,7 +184,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">manage_search</Icon>,
     route: "/boardList",
     component: <BoardList />,
-    visible: isAdmin && isLoggedIn
+    visible: isAdmin
   },
   {
     type: "collapse",

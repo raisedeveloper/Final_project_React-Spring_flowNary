@@ -18,6 +18,7 @@ import { initializeApp } from "firebase/app";
 import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 import { UserContext } from "api/LocalStorage";
+import { GetWithExpiry } from "api/LocalStorage";
 import BoardUrl from "layouts/home/Board/BoardUrl";
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [user, loading, error] = useAuthState(auth);  // 로그인 상태 훅
   const { pathname } = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
 
   // 로그인 및 회원가입 사이드바
   const isLoginPage = pathname === "/authentication/sign-in";
@@ -83,12 +85,13 @@ export default function App() {
     return <div>Error: {error.message}</div>;
   }
 
-  const dynamicRoutes = createRoutes(!!user, (activeUser && activeUser.role === 1) ? true : false);  // 로그인 상태와 어드민 여부에 따라 라우트 동적 생성
+  const dynamicRoutes = createRoutes(!!user, (GetWithExpiry('role') && GetWithExpiry('role') === 1) ? true : false);
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {!isLoginPage && !isRegisterPage && layout === "dashboard" && (
+      {isLoading && <div>로딩 중 </div>}
+      {!isLoading && !isLoginPage && !isRegisterPage && layout === "dashboard" && (
         <>
           <Sidenav
             color={'primary'}
@@ -98,7 +101,6 @@ export default function App() {
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
-          {activeUser && console.log("왜 안나옴?>" + activeUser.role)}
           <Configurator />
         </>
       )}
@@ -107,7 +109,6 @@ export default function App() {
         {dynamicRoutes.map((route) => (
           <Route path={route.route} element={route.component} key={route.key} />
         ))}
-        <Route path="/url/*" element={<BoardUrl />} />
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </ThemeProvider>
