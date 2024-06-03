@@ -71,7 +71,7 @@ public interface BoardDao {
 	
 	@Insert("insert into board values(default, #{uid}, #{title}, #{bContents}, default, "
 			+ " default, default, default, #{image}, #{shareUrl}, "
-			+ " #{nickname}, #{hashTag}, default, default)")
+			+ " #{nickname}, #{hashTag}, #{isDeleted}, default)")
 	void insertBoard(Board board);
 	
 	@Update("update board set title=#{title}, bContents=#{bContents}, modTime=#{modTime}, image=#{image}"

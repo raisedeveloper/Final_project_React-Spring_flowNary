@@ -819,7 +819,7 @@ function mypage() {
         keepMounted
         PaperProps={{
           sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
+            width: '90%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
           },
@@ -844,7 +844,7 @@ function mypage() {
         keepMounted
         PaperProps={{
           sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
+            width: '90%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
           },
@@ -869,7 +869,7 @@ function mypage() {
         keepMounted
         PaperProps={{
           sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
+            width: '90%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
           },

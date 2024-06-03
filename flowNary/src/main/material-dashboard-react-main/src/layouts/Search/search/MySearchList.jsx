@@ -97,10 +97,10 @@ export default function MySearchList() {
     placeholderData: (p) => p,
   })
 
-  useEffect (() => {
+  useEffect(() => {
     setField("hashTag");
-  },[sessionStorage.getItem('tag')])
-  
+  }, [sessionStorage.getItem('tag')])
+
   useEffect(() => {
     if (count >= allcount && allcount !== undefined)
       setPageLoading(false);
@@ -423,7 +423,12 @@ export default function MySearchList() {
         </Grid>
       </Box>
       <div id="observe" style={{ display: 'flex', height: '10px' }}></div>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Dialog open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description"
+        sx={{
+          width: '90%', // 원하는 너비 퍼센트로 설정
+          height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
+          maxWidth: 'none', // 최대 너비 제한 제거
+        }}>
         <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={nickname} handleButtonLike={handleButtonLike} />
       </Dialog>
       <Footer />
