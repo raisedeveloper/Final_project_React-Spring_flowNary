@@ -61,7 +61,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatting",
     component: <Chatting />,
-    visible: true,
+    visible: false,
   },
   {
     type: "collapse",
@@ -140,7 +140,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="large">connect_without_contact</Icon>,
     route: "/team",
     component: <Team />,
-    visible: false,
+    visible: true,
   },
   {
     type: "bottom",

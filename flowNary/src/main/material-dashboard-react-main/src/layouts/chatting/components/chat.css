@@ -1,7 +1,7 @@
 .message {
     font-size: 1rem;
     /* 글자 크기 설정*/
-    background-color: rgb(241, 159, 205);
+    background-color: rgb(240, 200, 222);
     /* 배경색 설정 */
     border-radius: 50px;
     /* 테두리를 둥글게 만듭니다. */
@@ -12,7 +12,7 @@
     max-width: 100%;
     /* 채팅 버블의 최대 너비 설정 */
     max-height: 100%;
-    color: white;
+    color: rgb(152, 57, 168);
     display:flex;
     align-items: center;
 }
@@ -20,7 +20,7 @@
 .othermessage {
     font-size: 1rem;
     /* 글자 크기 설정*/
-    background-color: rgb(137, 201, 218);
+    background-color: rgb(196, 231, 227);
     /* 배경색 설정 */
     border-radius: 50px;
     /* 테두리를 둥글게 만듭니다. */
@@ -31,7 +31,7 @@
     max-width: 100%;
     /* 채팅 버블의 최대 너비 설정 */
     max-height: 50px;
-    color: white;
+    color: rgb(144, 115, 224);
     display:flex;
     align-items: center;
 }

@@ -144,7 +144,7 @@ export default function ReReply(props) {
                       onClick={() => handleMyPage(data.uid)} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                     />
                     <ListItemText sx={{ paddingLeft: 1 }}
-                      primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                      primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                       secondary={
                         // 댓글 내용
                         <Typography variant="body1" color="text.primary" sx={{ overflowWrap: 'break-word', }}>

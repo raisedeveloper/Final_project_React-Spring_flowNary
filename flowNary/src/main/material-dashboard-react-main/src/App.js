@@ -19,7 +19,6 @@ import Login from "layouts/authentication/sign-in/LoginIndex.js";
 import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 import { UserContext } from "api/LocalStorage";
 import BoardUrl from "layouts/home/Board/BoardUrl";
-import lodingCircleBar from "api/lodingCircleBar";
 
 export default function App() {
   const brandDark = "../public/images/LightLogo.png";

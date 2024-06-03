@@ -285,6 +285,7 @@ export default function Home() {
     navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
   }
 
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -402,7 +403,7 @@ export default function Home() {
                                     </>
                                   }</>
                                 }
-                                title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                                title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                               />
 
                               <MDBox padding="1rem">
