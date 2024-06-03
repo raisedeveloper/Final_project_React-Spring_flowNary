@@ -86,13 +86,18 @@ export default function AdminBoardList({ selected, handleClick }) {
     )
     : declaration || [];
 
+    const formatDate = (dateString) => {
+      return dateString.replace('T', ' ');
+    };
+
+
   const rowsDeclaration = filteredDeclaration.map((data, index) => ({
     id: index,
     bid: data.bid ? (data.bid + "번") : null,
     uid: data.uid,
     dTitle: data.dTitle,
     dContents: data.dContents,
-    modTime: data.modTime,
+       modTime: formatDate(data.modTime),
     state: data.state,
   }));
 
@@ -111,16 +116,16 @@ export default function AdminBoardList({ selected, handleClick }) {
     nickname: data.nickname,
     title: data.title,
     bContents: data.bContents,
-    modTime: data.modTime,
+    modTime: formatDate(data.modTime),
   }));
 
 
   const columnsBoards = [
-    { field: 'bid', headerName: '게시글 번호', flex: 1 },
-    { field: 'nickname', headerName: '사용자 닉네임', flex: 1 },
-    { field: 'title', headerName: '제목', flex: 1 },
-    { field: 'bContents', headerName: '내용', flex: 1 },
-    { field: 'modTime', headerName: '등록 일자', flex: 1 },
+    { field: 'bid', headerName: '글번호', flex: 1 },
+    { field: 'nickname', headerName: '닉네임', flex: 1 },
+    { field: 'title', headerName: '제목', flex: 2 },
+    { field: 'bContents', headerName: '내용', flex: 3 },
+    { field: 'modTime', headerName: '등록 일자', flex: 3 },
   ];
 
 
@@ -158,7 +163,7 @@ export default function AdminBoardList({ selected, handleClick }) {
               <Stack direction="column" alignItems="center" justifyContent="space-between" mb={5}>
 
                 <div style={{ height: 450, width: '100%' }}>
-                  <DataGrid
+                  <DataGrid                    
                     rows={rowsDeclaration}
                     columns={columnsDeclaration}
                     initialState={{
@@ -201,7 +206,7 @@ export default function AdminBoardList({ selected, handleClick }) {
               <Stack direction="column" alignItems="center" justifyContent="space-between" mb={5}>
 
 
-                <div style={{ height: 400, width: '100%' }}>
+                <div style={{ height: 400, width: '75vw' }}>
                   <DataGrid
                     rows={rowsBoards}
                     columns={columnsBoards}
