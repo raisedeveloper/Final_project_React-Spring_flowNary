@@ -39,12 +39,10 @@ export default function ChatTemp() {
 
     const handleMessageSend = () => {
         if (inputMessage.trim() !== '' && stompClient && stompClient.connected) {
-            const cid = insertChat(name, uid1, uid2, inputMessage );
+            const cid = insertChat(name, uid1, uid2, inputMessage);
 
             setInputMessage('');
-            if (cid >= 0) {
-                navigate("/chatting", {state: {cid: cid}});
-            }
+            navigate("/chatlist", { state: { cid: cid } });
         }
     };
 

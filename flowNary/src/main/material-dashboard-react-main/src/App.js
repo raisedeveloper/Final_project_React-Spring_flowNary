@@ -77,7 +77,7 @@ export default function App() {
   }, [pathname]);
 
   if (loading) {
-    return <div>{lodingCircleBar}</div>;
+    return <div>로딩중..</div>;
   }
   if (error) {
     return <div>Error: {error.message}</div>;
