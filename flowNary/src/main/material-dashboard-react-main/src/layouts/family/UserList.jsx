@@ -6,18 +6,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
 import { getFamilyUserList } from 'api/axiosGet';
-import UserAvatar from 'api/userAvatar';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
-  {
+  { 
     field: 'profile', headerName: '프로필', width: 100,
     renderCell: (params) => (
       <Box>
-        {params.value &&
-          <Avatar sx={{ width: '1.75rem', height: '1.75rem', margin: ".55rem" }}>
-            <UserAvatar profileUrl={params.value} size={"x_small"} />
-          </Avatar>}
+        {params.value && <Avatar src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${params.value}`} />}
       </Box>
     ),
   },
@@ -62,7 +58,7 @@ const rows = [
 function FamilyUserList(props) {
   const faid = props.faid;
 
-  if (faid === -1) {
+  if (faid === -1)  {
     return (
       <Box sx={{ height: 400, width: '100%' }}>
         <Box>
@@ -77,7 +73,7 @@ function FamilyUserList(props) {
     queryFn: () => getFamilyUserList(faid),
   })
 
-  if (isLoading) {
+  if (isLoading)  {
     return (
       <Box sx={{ height: 400, width: '100%' }}>
         <Box>

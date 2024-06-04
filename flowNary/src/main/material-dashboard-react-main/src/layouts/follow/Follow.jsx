@@ -15,7 +15,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Message, Add, Close } from '@mui/icons-material';
 import { wrong } from "api/alert";
-import UserAvatar from "api/userAvatar";
+import { getNoticeCheck } from "api/axiosGet";
 
 
 export default function Follow() {
@@ -102,9 +102,14 @@ export default function Follow() {
     }
 
     const inviteFamily = async (faid) => {
-        await insertNotice(currentUid, activeUser.uid, 5, faid);
-
-        alert('패밀리 가입 요청을 보냈습니다');
+        const r = await getNoticeCheck(currentUid, activeUser.uid, 5, faid);
+        if (r === 0) {
+            await insertNotice(currentUid, activeUser.uid, 5, faid);
+            correct('패밀리 가입 요청을 보냈습니다');
+        }
+        else {
+            wrong('이미 요청을 보냈습니다');
+        }
     }
 
     const handleDelete = (fid) => {
@@ -115,32 +120,17 @@ export default function Follow() {
     return (
         <DashboardLayout>
             <DashboardNavbar />
-            <Button variant="contained" color="success" onClick={handleme}
-                sx={{ mb: 3, fontFamily: "'Noto Sans KR', sans-serif" }}>
-                {me ? '나를 플로우한 사람 보기' : '내가 플로우한 사람 보기'}</Button>
-
-            {me ? <Typography sx={{
-                color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem',
-                bgcolor: 'none', textAlign: 'center',
-                fontFamily: "'Noto Sans KR', sans-serif",
-            }}>
+            <Button variant="contained" color="success" onClick={handleme} sx={{ mb: 3 }}>{me ? '나를 플로우한 사람 보기' : '내가 플로우한 사람 보기'}</Button>
+            {me ? <Typography sx={{ color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem', bgcolor: 'none', textAlign: 'center' }}>
                 플로잉 리스트
-            </Typography> : <Typography sx={{
-                color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem',
-                bgcolor: 'none', textAlign: 'center',
-                fontFamily: "'Noto Sans KR', sans-serif",
-            }}>
+            </Typography> : <Typography sx={{ color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem', bgcolor: 'none', textAlign: 'center' }}>
                 플로워 리스트
             </Typography>}
             <TableContainer>
                 <Table>
                     {/* 팔로잉 : 내가 팔로우 한사람들 , 팔로워 : 사람들이 나를 팔로우 */}
                     {me ? (
-                        <TableRow
-                            sx={{
-                                backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc',
-                                fontFamily: "'Noto Sans KR', sans-serif",
-                            }}>
+                        <TableRow sx={{ backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc', }}>
                             <TableCell>프로필</TableCell>
                             <TableCell>닉네임</TableCell>
                             <TableCell>플로잉 날짜</TableCell>
@@ -148,23 +138,21 @@ export default function Follow() {
                         </TableRow>
                     )
                         : (
-                            <TableRow sx={{
-                                backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc',
-                                fontFamily: "'Noto Sans KR', sans-serif"
-                            }}>
+                            <TableRow sx={{ backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc', }}>
                                 <TableCell>프로필</TableCell>
                                 <TableCell>닉네임</TableCell>
                                 <TableCell>플로워 날짜</TableCell>
                                 <TableCell>기능</TableCell>
                             </TableRow>
                         )}
-                    {/* 팔로우? */}
                     {me && followlist && !isEmpty(followlist) && followlist.map((item, idx) => (
                         <TableRow key={idx}>
                             <TableCell>
-                                <Avatar alt="profile" onClick={() => handleMyPage(item.fuid)}>
-                                    <UserAvatar profileUrl={item.profile} />
-                                </Avatar>
+                                <Avatar
+                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
+                                    alt="profile"
+                                    onClick={() => handleMyPage(item.fuid)}
+                                />
                             </TableCell>
                             <TableCell onClick={() => handleMyPage(item.fuid)}>{item.nickname}</TableCell>
 
@@ -180,10 +168,7 @@ export default function Follow() {
                                     variant="contained"
                                     color="success"
                                     startIcon={<Message />}
-                                    sx={{
-                                        marginRight: '10px', color: 'blueviolet',
-                                        fontFamily: "'Noto Sans KR', sans-serif"
-                                    }}
+                                    sx={{ marginRight: '10px', color: 'blueviolet' }}
                                     onClick={() => findChatMake(item.fuid)}
                                 >
                                     메세지
@@ -192,7 +177,7 @@ export default function Follow() {
                                     variant="contained"
                                     color="success"
                                     startIcon={<Add />}
-                                    sx={{ marginRight: '10px', fontFamily: "'Noto Sans KR', sans-serif" }}
+                                    sx={{ marginRight: '10px' }}
                                     onClick={() => handleModalOpen(item.fuid)}
                                 >
                                     초대
@@ -201,7 +186,6 @@ export default function Follow() {
                                     variant="contained"
                                     color="success"
                                     startIcon={<Close />}
-                                    sx={{ fontFamily: "'Noto Sans KR', sans-serif" }}
                                     onClick={() => handleDelete(item.fid)}
                                 >
                                     해제
@@ -212,9 +196,11 @@ export default function Follow() {
                     {!me && followmelist && !isEmpty(followmelist) && followmelist.map((item, idx) => (
                         <TableRow key={idx}>
                             <TableCell>
-                                <Avatar alt="profile" onClick={() => handleMyPage(item.fuid)}>
-                                    <UserAvatar profileUrl={item.profile} />
-                                </Avatar>
+                                <Avatar
+                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
+                                    alt="profile"
+                                    onClick={() => handleMyPage(item.uid)}
+                                />
                             </TableCell>
                             <TableCell onClick={() => handleMyPage(item.uid)}>{item.nickname}</TableCell>
 

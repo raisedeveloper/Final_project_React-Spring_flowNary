@@ -4,6 +4,7 @@ import { Button, Card, CardContent, Avatar, Typography, Grid, Box } from "@mui/m
 import { styled } from "@mui/system";
 import './ProfileSetting.css';
 import UserAvatar from "api/userAvatar";
+import { SetWithExpiry } from "api/LocalStorage";
 
 // 배경 스타일 설정
 const Background = styled(Box)({
@@ -44,6 +45,7 @@ function ProfileCard(props) {
   const handleImageDelete = () => {
     setPreview('');
     props.onChangePicture(''); // 파일 삭제 시 null 전달
+    SetWithExpiry("profile", null);
   };
 
   return (

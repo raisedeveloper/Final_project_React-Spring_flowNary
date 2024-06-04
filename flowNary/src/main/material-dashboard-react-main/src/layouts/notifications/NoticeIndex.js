@@ -14,6 +14,7 @@ import {
   IconButton, Link,
   CardContent,
   Icon,
+  CardActions,
 } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -151,6 +152,16 @@ export default function Notifications() {
     }
   }
 
+  const handleClick2 = async (nid, oid, c, idx) => {
+    await deleteNotice(nid);
+    
+    const newArray = notice5.filter((_, index) => index !== idx);
+    setNotice5(newArray);
+    if (c === 1) {
+      await insertFamilyUser(oid, activeUser.uid, 0, activeUser.nickname, '초기 메세지');
+    }
+  }
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -207,6 +218,30 @@ export default function Notifications() {
                 <NotificationItem key={idx} onClick={() => handleClick(item.nid, item.type, item.oid)} icon={<Icon>send</Icon>} title={item.nContents} />
               ))}
             </CardContent>
+          </Box>
+        </Card>
+      </Box>
+      <Box m={3}>
+        <Card sx={{ height: "100%",  boxShadow: 'none', backgroundColor:'beige'  }}>
+          <Box mx={3} mt={3}>
+            <MDTypography variant="h6" fontWeight="medium" onClick={() => handleopen(3)}>
+              패밀리 알림 - {!isEmpty(notice5) ? notice5.length : 0}건
+            </MDTypography>
+            <Box>
+              {open[4] && notice5 && !isEmpty(notice5) && notice5.map((item, idx) => (
+                <Card key={idx} sx={{ maxWidth: 345 }}>
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
+                      {item.nContents}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => handleClick2(item.nid, item.oid, 1, idx)}>수락</Button>
+                    <Button size="small" onClick={() => handleClick2(item.nid, item.oid, 0, idx)}>거부</Button>
+                  </CardActions>
+                </Card>
+              ))}
+            </Box>
           </Box>
         </Card>
       </Box>

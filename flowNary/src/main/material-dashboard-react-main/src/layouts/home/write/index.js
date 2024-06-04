@@ -9,11 +9,12 @@ import MDBox from "components/MDBox";
 import { wrong } from "api/alert";
 import { correct } from "api/alert";
 import { insertBoard } from "api/axiosPost";
+import { QueryClient } from "@tanstack/react-query";
 
 export default function Posting() {
   const navigate = useNavigate();
   const uid = parseInt(GetWithExpiry("uid"));
-
+  const queryClient = new QueryClient();
   if (!uid) {
     navigate("/login");
   }
@@ -74,9 +75,7 @@ export default function Posting() {
       wrong('내용을 입력하세요.');
       return;
     }
-    // if (!imageList) {
-    //   wrong('1개 이상의 사진 파일이 필요합니다.');
-    // }
+
     correct('성공적으로 작성되었습니다.');
 
     var sendData = JSON.stringify({
@@ -91,7 +90,8 @@ export default function Posting() {
     });
 
     await insertBoard(sendData);
-
+    queryClient.invalidateQueries('boardList');
+    
     setImages([]);
     setPreviewUrls([]);
     setTitle('');

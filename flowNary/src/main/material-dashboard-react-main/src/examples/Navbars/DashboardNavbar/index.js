@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 // react-router 컴포넌트들
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -50,9 +50,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "api/customHook";
 import MapComponent from "./mapComponent";
 import UserAvatar from "api/userAvatar";
+import { UserContext } from "api/LocalStorage";
 
 // 헤더 부분
 function DashboardNavbar({ absolute, light, isMini }) {
+  const { activeUser } = useContext(UserContext);
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
@@ -360,58 +362,59 @@ function DashboardNavbar({ absolute, light, isMini }) {
         {/* 헤더 박스 및 계정, 설정, 알림 아이콘 모양 */}
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <Stack direction="column" sx={{ flex: 0.5 }}>
-              <MDBox mt={1} mr={2} sx={{ position: 'sticky', top: "8%" }}>
-                <Box aria-owns={open ? 'mouse-over-popover' : undefined}
-                  aria-haspopup="true"
-                  onMouseEnter={handlePopoverOpen}
-                  onMouseLeave={handlePopoverClose}>
-                  <Grid container
-                    sx={{ display: 'flex', justifyContent: 'center', mr: 5 }}>
-                    <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
-                      <Typography sx={{ fontSize: 'small', fontWeight: 'bold' }}>{weather.temp}℃ </Typography>
+            {weather && activeUser.uid !== -1 ?
+              <Stack direction="column" sx={{ flex: 0.5 }}>
+                <MDBox mt={1} mr={2} sx={{ position: 'sticky', top: "8%" }}>
+                  <Box aria-owns={open ? 'mouse-over-popover' : undefined}
+                    aria-haspopup="true"
+                    onMouseEnter={handlePopoverOpen}
+                    onMouseLeave={handlePopoverClose}>
+                    <Grid container
+                      sx={{ display: 'flex', justifyContent: 'center', mr: 5 }}>
+                      <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
+                        <Typography sx={{ fontSize: 'small', fontWeight: 'bold' }}>{weather.temp}℃ </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Avatar sx={{ width: 50, height: 50 }} src={weather.links} alt="날씨 아이콘" />
+                      </Grid>
                     </Grid>
-                    <Grid item xs={6}>
-                      <Avatar sx={{ width: 50, height: 50 }} src={weather.links} alt="날씨 아이콘" />
-                    </Grid>
-                  </Grid>
-                </Box>
-                <Popover
-                  id="mouse-over-popover"
-                  sx={{
-                    pointerEvents: 'none',
-                  }}
-                  open={open}
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                  }}
-                  onClose={handlePopoverClose}
-                  disableRestoreFocus
-                >
-                  <MDBox>
-                    <Card sx={{ height: "70%" }}>
-                      <MDBox pt={3} px={3}>
-                        <MDTypography variant="h6" fontWeight="medium">
-                          날씨 정보
-                        </MDTypography>
-                        <Avatar sx={{ width: 100, height: 100 }} src={weather.links} alt="날씨 아이콘" />
-                        <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
-                          {location}:  {weather.temp}℃
-                          <br />
-                          {weather.description}
-                        </CardContent>
-                      </MDBox>
-                    </Card>
-                  </MDBox>
-                </Popover>
-              </MDBox>
-            </Stack>
+                  </Box>
+                  <Popover
+                    id="mouse-over-popover"
+                    sx={{
+                      pointerEvents: 'none',
+                    }}
+                    open={open}
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                    }}
+                    onClose={handlePopoverClose}
+                    disableRestoreFocus
+                  >
+                    <MDBox>
+                      <Card sx={{ height: "70%" }}>
+                        <MDBox pt={3} px={3}>
+                          <MDTypography variant="h6" fontWeight="medium">
+                            날씨 정보
+                          </MDTypography>
+                          <Avatar sx={{ width: 100, height: 100 }} src={weather.links} alt="날씨 아이콘" />
+                          <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
+                            {location}:  {weather.temp}℃
+                            <br />
+                            {weather.description}
+                          </CardContent>
+                        </MDBox>
+                      </Card>
+                    </MDBox>
+                  </Popover>
+                </MDBox>
+              </Stack> : null}
             <MDBox color={light ? "white" : "inherit"} sx={{ display: { lg: 'flex', xs: 'none' } }}>
               <TextField
                 id="outlined-multiline-flexible"

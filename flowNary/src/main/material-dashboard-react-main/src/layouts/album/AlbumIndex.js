@@ -8,18 +8,28 @@ import Footer from "examples/Footer";
 
 // Dashboard components
 import ShowAlbumList from "./components/showAlbumList";
-import { Box, Card, CardMedia, Divider, Icon } from "@mui/material";
-import { Bar } from "react-chartjs-2";
+import { Box, Card, CardContent, Icon, Typography } from "@mui/material";
+import { GetWithExpiry } from "api/LocalStorage";
+import { useNavigate } from "react-router-dom";
+import UserLoginService from "ut/userLogin-Service";
 
-function album() {
+function Album() {
+  // 유저정보 불러오기
+  const uid = parseInt(GetWithExpiry("uid"));
+  const navigate = useNavigate();
+  const goLogin = () => navigate('/authentication/sign-in');
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <ShowAlbumList />
+      {uid > 0 ? (
+        <ShowAlbumList />
+      ) : (
+        <UserLoginService goLogin={goLogin}/>
+      )}
       <Footer />
-    </DashboardLayout >
+    </DashboardLayout>
   );
 }
 
-export default album;
+export default Album;

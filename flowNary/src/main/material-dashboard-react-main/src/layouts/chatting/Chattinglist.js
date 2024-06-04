@@ -6,7 +6,7 @@ import { useWebSocket } from 'api/webSocketContext';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ChattingIndex from './ChattingIndex';
 import TimeAgo from 'timeago-react';
 
@@ -16,8 +16,7 @@ export default function ChatList() {
     const { stompClient } = useWebSocket();
     const [count, setCount] = useState(20);
     const navigate = useNavigate();
-    const { state } = useLocation();
-    const [cid, setCid] = useState(state != undefined ? state.cid : 0);
+    const [cid, setCid] = useState('');
 
     useEffect(() => {
         if (activeUser.uid !== -1) {
@@ -25,7 +24,7 @@ export default function ChatList() {
                 const chatlist = await getChatList(activeUser.uid, count, 0);
                 if (chatlist) {
                     setList(chatlist);
-                    { cid && setCid(chatlist[0].cid) } // Assuming the correct structure is chatlist[0].cid
+                    setCid(chatlist[0].cid); // Assuming the correct structure is chatlist[0].cid
                 } else {
                     console.error("Chat list is empty or not available");
                 }
@@ -84,18 +83,6 @@ export default function ChatList() {
         setCid(cid);
     }
 
-    // function formatDate(dateString) {
-    //     const date = new Date(dateString);
-
-    //     const year = date.getFullYear();
-    //     const month = String(date.getMonth() + 1).padStart(2, '0');
-    //     const day = String(date.getDate()).padStart(2, '0');
-    //     const hours = String(date.getHours()).padStart(2, '0');
-    //     const minutes = String(date.getMinutes()).padStart(2, '0');
-
-    //     return `${year}/${month}/${day} ${hours}:${minutes}`;
-    // }
-
     return (
         <DashboardLayout>
             <DashboardNavbar />
@@ -117,15 +104,18 @@ export default function ChatList() {
                                 borderRadius: 4,
                                 overflow: 'hidden',
                                 px: 3,
+                                py: 1,
                             }}
                         >
                             <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: 'lightcoral' }}>채팅 목록</Typography>
                             <List sx={{ cursor: 'pointer' }}>
-                                {cid ? (list && list.map((data, idx) => (
+                                {list && list.map((data, idx) => (
                                     <React.Fragment key={idx}>
                                         <ListItem
                                             onClick={() => handleChatClick(data.cid)}
                                             sx={{
+                                                mb: 2,
+                                                p: 2,
                                                 borderRadius: 2,
                                                 transition: '0.3s',
                                                 '&:hover': {
@@ -174,24 +164,21 @@ export default function ChatList() {
                                                             variant="body2"
                                                             color="text.secondary"
                                                         >
-                                                            {/* {formatDate(data.statusTime)} */}
                                                             <TimeAgo datetime={data.statusTime} locale="ko" />
                                                         </Typography>
                                                     </React.Fragment>
                                                 }
                                             />
                                         </ListItem>
-                                        {idx < list.length - 1 && <Divider variant="middle" sx={{ m: 1 }} />}
+                                        {idx < list.length - 1 && <Divider variant="middle" />}
                                     </React.Fragment>
-                                ))) :
-                                    <Typography sx={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
-                                        채팅을 시작해보세요!</Typography>}
+                                ))}
                             </List>
                         </Box>
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={8} sx={{ padding: 1 }}>
-                    {cid ? <ChattingIndex cid={cid} setCid={setCid} /> : null}
+                    {cid ? <><ChattingIndex cid={cid} setCid={setCid} /></> : null}
                 </Grid>
             </Grid>
         </DashboardLayout>

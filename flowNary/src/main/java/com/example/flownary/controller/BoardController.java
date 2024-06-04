@@ -41,6 +41,7 @@ public class BoardController {
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		Board board = bSvc.getBoard(bid);
 		int liked = lSvc.getLikeUidCount(uid, 1, bid);		
+//		int followed = fSvc.getFollowUidCount(uid, board.getUid());
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		
 		if (board != null)
@@ -60,6 +61,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
+//			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", (user != null) ? user.getProfile() : null);
 			JSONObject jBoard = new JSONObject(hMap);
 			
@@ -78,7 +80,7 @@ public class BoardController {
 		if (board != null)
 		{
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
-//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
+			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 			hMap.put("bid", board.getBid());
 			hMap.put("uid", board.getUid());
@@ -103,7 +105,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
-//			hMap.put("followed", (followed == 1) ? true : false);
+			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			return jBoard;
@@ -185,7 +187,7 @@ public class BoardController {
 		for(Board board:list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
-//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
+			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 			
  			hMap.put("bid", board.getBid());
@@ -211,7 +213,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
-//			hMap.put("followed", (followed == 1) ? true : false);
+			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			
@@ -228,7 +230,7 @@ public class BoardController {
 		for (Board board : list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
-//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
+			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 
 			hMap.put("bid", board.getBid());
@@ -251,7 +253,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
-//			hMap.put("followed", (followed == 1) ? true : false);
+			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			jArr.add(jBoard);
@@ -268,7 +270,7 @@ public class BoardController {
 		for (Board board : list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
-//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
+			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 
 			hMap.put("bid", board.getBid());
@@ -291,7 +293,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
-//			hMap.put("followed", (followed == 1) ? true : false);
+			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			jArr.add(jBoard);

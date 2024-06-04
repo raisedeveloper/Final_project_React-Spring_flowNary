@@ -135,7 +135,7 @@ export async function Declaration(uid) {
 
 export async function noticeConfirm(notice) {
   const result = await Swal.fire({
-    title: notice.nContent,
+    title: notice.nContents,
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",

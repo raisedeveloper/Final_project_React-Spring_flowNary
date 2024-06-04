@@ -35,7 +35,7 @@ export default function FollowList(props) {
   }
 
   const deleteFollowButton = (fid) => {
-    wrong("플로우 취소되었습니다")
+    wrong("플로우 취소되었습니다");
     deleteFollowForm(fid);
   }
 

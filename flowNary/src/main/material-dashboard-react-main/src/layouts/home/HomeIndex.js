@@ -343,7 +343,7 @@ export default function Home() {
       if (uid !== undefined) {
         queryClient.invalidateQueries(['boardmypage', uid]);
       }
-      board.refetch();
+      queryClient.invalidateQueries('boardList');
     }
   };
 
