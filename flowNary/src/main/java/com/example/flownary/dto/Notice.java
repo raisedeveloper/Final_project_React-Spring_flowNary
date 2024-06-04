@@ -19,4 +19,15 @@ public class Notice {
 		int type;
 		int oid;
 	}
+	
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@ToString
+	public static class deleteNoticedto {
+		int uid;
+		int type;
+		int oid;
+	}
 }

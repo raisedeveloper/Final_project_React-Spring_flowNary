@@ -26,6 +26,11 @@ public class Notice {
 		return this.nContents;
 	}
 	
+	public void setnContents(String nContents) {
+		this.nContents = nContents; 
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "Notice [nid=" + nid + ", uid=" + uid + ", suid=" + suid + ", type=" + type + ", oid=" + oid + ", nContents=" + nContents

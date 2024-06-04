@@ -39,6 +39,7 @@ import { deleteReReply } from 'api/axiosPost.js';
 import { useAddLike } from 'api/customHook.jsx';
 import { UserContext } from 'api/LocalStorage.js';
 import { deleteConfirm } from 'api/alert.jsx';
+import UserAvatar from 'api/userAvatar.js';
 
 export default function ReReply(props) {
   timeago.register('ko', ko);
@@ -140,14 +141,15 @@ export default function ReReply(props) {
                       marginTop: 0.25,
                       marginLeft: 2.5,
                     }}>
-                    <Avatar sx={{ cursor: 'pointer' }}
-                      onClick={() => handleMyPage(data.uid)} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                    />
+                    <Avatar sx={{ cursor: 'pointer', width: '1.5rem', height: '1.5rem' }}
+                      onClick={() => handleMyPage(data.uid)} >
+                      <UserAvatar profileUrl={data.profile} />
+                    </Avatar>
                     <ListItemText sx={{ paddingLeft: 1 }}
-                      primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'purple', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
+                      primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                       secondary={
                         // 댓글 내용
-                        <Typography variant="body1" color="text.primary" sx={{ overflowWrap: 'break-word', }}>
+                        <Typography variant="body1" color="text.primary" sx={{ overflowWrap: 'break-word', fontSize: 'small' }}>
                           {data.rrContents != null && (expandedContents[index] ? data.rrContents : data.rrContents.slice(0, 28))}
                           {data.rrContents != null && data.rrContents.length > 30 && !expandedContents[index] && (
                             <button className='replyOpen' onClick={() => toggleExpand(index)}>...더보기</button>
@@ -171,9 +173,9 @@ export default function ReReply(props) {
                   {/* 답글 목록 */}
                   {data.replies && data.replies.map((reply, replyIndex) => (
                     <ListItem key={replyIndex} sx={{ paddingLeft: 4, marginLeft: 4, borderLeft: '1px solid #ccc' }} alignItems="flex-start">
-                      <Avatar
-                        src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${reply.profile}`}
-                      />
+                      <Avatar>
+                        <UserAvatar profileUrl={reply.profile} />
+                      </Avatar>
                       <ListItemText sx={{ paddingLeft: 1 }}
                         primary={reply.nickname}
                         secondary={

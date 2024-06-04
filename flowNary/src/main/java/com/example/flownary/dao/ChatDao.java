@@ -24,7 +24,7 @@ public interface ChatDao {
 			+ " limit 1")
 	Chat getChatUid(int uid1, int uid2);
 	
-	@Select("select c.* from chat c"
+	@Select("select c.*, u.* from chat c"
 			+ " join chatuser u on c.cid=u.cid and u.uid=#{uid}"
 			+ " where u.status>-1"
 			+ " order by u.status desc, c.statusTime desc"

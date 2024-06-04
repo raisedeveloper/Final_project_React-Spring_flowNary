@@ -13,7 +13,7 @@ import com.example.flownary.entity.Family;
 @Mapper
 public interface FamilyDao {
 
-	@Select("select * from family where fid=#{faid}")
+	@Select("select * from family where faid=#{faid}")
 	Family getFamily(int faid);
 	
 	@Select("select count(f.faid) from family f"

@@ -42,6 +42,11 @@ public class FamilyUserServiceImpl implements FamilyUserService {
 	public List<FamilyUser> getFamilyUserListActive(int faid) {
 		return fuDao.getFamilyUserListActive(faid);
 	}
+	
+	@Override
+	public List<Integer> getFamilyUserListActiveUid(int faid) {
+		return fuDao.getFamilyUserListActiveUid(faid);
+	}
 
 	@Override
 	public void insertFamilyUser(FamilyUserInsertDto familyUser) {

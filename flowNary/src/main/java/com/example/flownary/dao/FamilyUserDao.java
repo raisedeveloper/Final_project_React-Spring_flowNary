@@ -32,6 +32,9 @@ public interface FamilyUserDao {
 	@Select("select * from familyuser where faid=#{faid} and status>-1")
 	List<FamilyUser> getFamilyUserListActive(int faid);
 	
+	@Select("select uid from familyuser where faid=#{faid} and status>-1")
+	List<Integer> getFamilyUserListActiveUid(int faid);
+	
 	@Insert("insert into familyuser values(#{faid}, #{uid}, #{status}, default, #{name}, #{message})")
 	void insertFamilyUser(FamilyUserInsertDto familyUser);
 	

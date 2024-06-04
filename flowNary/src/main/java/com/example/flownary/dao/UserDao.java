@@ -22,9 +22,9 @@ public interface UserDao {
 	@Select("select * from user where isDeleted=0" + " order by regDate desc" + " limit #{count} offset #{offset}")
 	List<User> getUserList(int count, int offset);
 
-	@Select("select * from user where status=0" + " order by regDate")
+	@Select("SELECT * FROM user WHERE status IN (0, 1) ORDER BY regDate")
 	List<User> getUserList2();
-	
+
 	@Select("select email, nickname, profile from user" + " where uid=#{uid}")
 	GetUserNickEmailDto getUserNicknameEmail(int uid);
 
@@ -49,8 +49,7 @@ public interface UserDao {
 
 	@Select("select * from user where status=0 and email!=#{email}" + " order by regDate desc")
 	List<User> getOthersUserList(String email);
-	
-	
+
 	@Update("update user set status=#{status}" + " where uid=#{uid}")
 	void updateUserStatus(User user);
 }
