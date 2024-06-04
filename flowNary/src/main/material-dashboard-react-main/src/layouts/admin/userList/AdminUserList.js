@@ -28,6 +28,7 @@ import { updateUserStatus } from 'api/axiosPost';
 import Iconify from '../../../components/iconify';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import UserAvatar from 'api/userAvatar';
 
 // ----------------------------------------------------------------------
 
@@ -180,18 +181,7 @@ export default function UserTableRow({ selected, handleClick }) {
                       <TableCell size="small" component="th" scope="row"
                         padding="none" align="center">
                         <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
-                          <Avatar sx={{ width: '2rem', height: '2rem' }}>
-                            <div
-                              style={{
-                                width: '2rem',
-                                height: '2rem',
-                                borderRadius: '50%',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.profile})`,
-                              }}
-                            />
-                          </Avatar>
+                          <Avatar> <UserAvatar profileUrl={user.profile} /> </Avatar>
                         </Stack>
                       </TableCell>
                       <TableCell align="center">
