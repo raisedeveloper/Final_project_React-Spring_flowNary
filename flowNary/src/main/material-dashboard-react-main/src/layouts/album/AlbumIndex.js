@@ -25,7 +25,7 @@ function Album() {
       {uid > 0 ? (
         <ShowAlbumList />
       ) : (
-        <UserLoginService goLogin={goLogin}/>
+        <UserLoginService goLogin={goLogin} />
       )}
       <Footer />
     </DashboardLayout>
