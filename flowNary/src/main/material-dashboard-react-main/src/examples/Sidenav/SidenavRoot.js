@@ -40,7 +40,7 @@ export default styled(Drawer)(({ theme, ownerState }) => {
     paddingTop: '0',
     marginTop: '-0.5px',
     marginLeft: '0',
-    background: 'linear-gradient(135deg, #f9c8a3 0%, #f2a794 20%, #f4a8a8 40%, #e89492 60%, #dc7aa5 80%, #cf66b7 100%)',
+    background: 'linear-gradient(135deg, #fde0c8 0%, #f6c9b8 20%, #f8c9c9 40%, #f0b5b1 60%, #e89cb9 80%, #e08ac7 100%)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
 
