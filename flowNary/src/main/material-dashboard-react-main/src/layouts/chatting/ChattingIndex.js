@@ -180,23 +180,15 @@ export default function Chat({ cid, setCid }) {
                     }}
                 >
                     <div ref={messageEndRef} />
-                    {messages && messages.map((message, index) => {
+                    {messages && messages.reverse().map((message, index) => {
                         // 현재 메시지의 날짜를 가져오기
                         const messageDate = new Date(message.dTime).toLocaleDateString();
 
                         // 이전 메시지의 날짜와 비교하기 위한 변수 초기화
-                        let previousMessageDate = index > 0 ? new Date(messages[index - 1].dTime).toLocaleDateString() : null;
+                        let previousMessageDate = index < messages.length - 1 ? new Date(messages[index + 1].dTime).toLocaleDateString() : null;
 
                         return (
                             <React.Fragment key={index}>
-                                {messageDate !== previousMessageDate && (
-                                    <Stack direction='column'>
-                                        <Typography sx={{ fontSize: 'small', textAlign: 'center', my: 1 }}>
-                                            {messageDate}
-                                        </Typography>
-                                    </Stack>
-                                )}
-                                {/* 날짜가 변경될 때마다 날짜 표시 */}
                                 <Stack
                                     justifyContent={message.uid === activeUser.uid ? 'flex-end' : 'flex-start'}
                                     sx={{ mb: 1 }}
@@ -250,14 +242,20 @@ export default function Chat({ cid, setCid }) {
                                             </Typography>
                                         </Stack>
                                     )}
-
                                 </Stack>
+                                {messageDate !== previousMessageDate && (
+                                    <Typography sx={{ fontSize: 'small', textAlign: 'center', my: 1 }}>
+                                        {messageDate}
+                                    </Typography>
+                                )}
                             </React.Fragment>
                         );
                     })}
 
 
-                </Box>
+
+
+                </Box >
                 <Box
                     sx={{
                         padding: '16px',

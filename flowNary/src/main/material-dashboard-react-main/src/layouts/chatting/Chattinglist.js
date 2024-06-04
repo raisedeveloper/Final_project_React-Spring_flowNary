@@ -17,7 +17,7 @@ export default function ChatList() {
     const [count, setCount] = useState(20);
     const navigate = useNavigate();
     const { state } = useLocation();
-    const [cid, setCid] = useState(state != undefined ? state : 0);
+    const [cid, setCid] = useState(state != undefined ? state.cid : 0);
 
     useEffect(() => {
         if (activeUser.uid !== -1) {
@@ -25,9 +25,7 @@ export default function ChatList() {
                 const chatlist = await getChatList(activeUser.uid, count, 0);
                 if (chatlist) {
                     setList(chatlist);
-                    console.log('cid' + cid);
-                    if (cid === 0)
-                        setCid(chatlist[0].cid); // Assuming the correct structure is chatlist[0].cid
+                    { cid && setCid(chatlist[0].cid) } // Assuming the correct structure is chatlist[0].cid
                 } else {
                     console.error("Chat list is empty or not available");
                 }
@@ -119,21 +117,16 @@ export default function ChatList() {
                                 borderRadius: 4,
                                 overflow: 'hidden',
                                 px: 3,
-                                py: 1,
                             }}
                         >
                             <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: 'lightcoral' }}>채팅 목록</Typography>
                             <List sx={{ cursor: 'pointer' }}>
-                                {list && list.map((data, idx) => (
+                                {cid ? (list && list.map((data, idx) => (
                                     <React.Fragment key={idx}>
                                         <ListItem
                                             onClick={() => handleChatClick(data.cid)}
                                             sx={{
-                                                mb: 2,
-                                                p: 2,
                                                 borderRadius: 2,
-                                                // boxShadow: 1,
-                                                // backgroundColor: '#f5f8fa',
                                                 transition: '0.3s',
                                                 '&:hover': {
                                                     backgroundColor: '#e1e8ed',
@@ -188,15 +181,16 @@ export default function ChatList() {
                                                 }
                                             />
                                         </ListItem>
-                                        {idx < list.length - 1 && <Divider variant="middle" />}
+                                        {idx < list.length - 1 && <Divider variant="middle" sx={{ m: 1 }} />}
                                     </React.Fragment>
-                                ))}
+                                ))) :
+                                    <Typography>채팅을 시작해보세요!</Typography>}
                             </List>
                         </Box>
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={8} sx={{ padding: 1 }}>
-                    {cid && <ChattingIndex cid={cid} setCid={setCid} />}
+                    {cid ? <ChattingIndex cid={cid} setCid={setCid} /> : null}
                 </Grid>
             </Grid>
         </DashboardLayout>

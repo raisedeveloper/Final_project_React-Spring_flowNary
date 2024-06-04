@@ -78,6 +78,7 @@ public class BoardController {
 		if (board != null)
 		{
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
+//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 			hMap.put("bid", board.getBid());
 			hMap.put("uid", board.getUid());
@@ -102,6 +103,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
+//			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			return jBoard;
@@ -147,7 +149,6 @@ public class BoardController {
 		return listcount;
 	}
 	
-	//수정 필요함 - 2024/06/03 : 성한
 	@GetMapping("/list")
 	public JSONArray boardList(@RequestParam(name="c", defaultValue="1", required=false) int count,
 			@RequestParam(name="f", defaultValue="title", required=false) String field,
@@ -184,6 +185,7 @@ public class BoardController {
 		for(Board board:list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
+//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 			
  			hMap.put("bid", board.getBid());
@@ -209,6 +211,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
+//			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			
@@ -225,6 +228,7 @@ public class BoardController {
 		for (Board board : list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
+//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 
 			hMap.put("bid", board.getBid());
@@ -247,6 +251,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
+//			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			jArr.add(jBoard);
@@ -263,6 +268,7 @@ public class BoardController {
 		for (Board board : list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
 			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
+//			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 
 			hMap.put("bid", board.getBid());
@@ -285,6 +291,7 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
+//			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", user.getProfile());
 			JSONObject jBoard = new JSONObject(hMap);
 			jArr.add(jBoard);
@@ -333,63 +340,19 @@ public class BoardController {
 
 	@PostMapping("/update")
 	public String boardUpdate(@RequestBody UpdateBoardDto dto) {
-		System.out.println(dto.getTitle());
 		Board board = bSvc.getBoard(dto.getBid());
 		board.setTitle(dto.getTitle());
 		board.setbContents(dto.getbContents());
 		board.setImage(dto.getImage());
 		board.setHashTag(dto.getHashTag());
 		board.setModTime(dto.getModTime());
-		
-		System.out.println(dto.getImage());
-		System.out.println(dto.getModTime());
-		
+
 		bSvc.updateBoard(board);
 		return "수정되었습니다";
 	}
 	
-
-	@GetMapping("/modCount")
-	public JSONArray boardRegList(@RequestParam int uid) {
-
-		List<Board> list = bSvc.getMyBoardList(uid);
-		JSONArray jArr = new JSONArray();
-		for (Board board : list) {
-			HashMap<String, Object> hMap = new HashMap<String, Object>();
-			int liked = lSvc.getLikeUidCount(uid, 1, board.getBid());
-			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
-
-			hMap.put("bid", board.getBid());
-			hMap.put("uid", board.getUid());
-			hMap.put("title", board.getTitle());
-			hMap.put("bContents", board.getbContents());
-			hMap.put("modTime", board.getModTime());
-			hMap.put("viewCount", board.getViewCount());
-			hMap.put("likeCount", board.getLikeCount());
-			hMap.put("replyCount", board.getReplyCount());
-			hMap.put("image", board.getImage());
-			if (board.getImage() == null || board.getImage() == "") {
-				hMap.put("imagecount", 0);
-			} else {
-				int c = board.getImage().length() - board.getImage().replace(",", "").length();
-				hMap.put("iamgecount", c + 1);
-			}
-			hMap.put("shareUrl", board.getShareUrl());
-			hMap.put("isDeleted", board.getIsDeleted());
-			hMap.put("hashTag", board.getHashTag());
-			hMap.put("nickname", board.getNickname());
-			hMap.put("liked", (liked == 1) ? true : false);
-			hMap.put("profile", user.getProfile());
-			JSONObject jBoard = new JSONObject(hMap);
-			jArr.add(jBoard);
-		}
-		return jArr;
-	}
-	
 	@PostMapping("/disable")
 	public int boardDisable(@RequestBody JSONObject board) {
-		System.out.println(board);
-		System.out.println(Integer.parseInt(board.get("isDeleted").toString()));
 		bSvc.disableBoard(Integer.parseInt(board.get("bid").toString()), Integer.parseInt(board.get("isDeleted").toString()));
 		return 0;
 	}

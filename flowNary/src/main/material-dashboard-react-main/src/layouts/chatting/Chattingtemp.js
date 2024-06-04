@@ -13,6 +13,7 @@ import { getDmList } from 'api/axiosGet';
 import { getChat } from 'api/axiosGet';
 import { getUserNickEmail } from 'api/axiosGet';
 import { insertChat } from 'api/axiosPost';
+import { getUser } from 'api/axiosGet';
 
 export default function ChatTemp() {
     const navigate = useNavigate();
@@ -32,10 +33,11 @@ export default function ChatTemp() {
     const [user, setUser] = useState(null);
     const [name, setName] = useState('');
     useEffect(() => {
-        const user2 = getUserNickEmail(uid2);
+        console.log('채팅방생성' + uid2);
+        const user2 = getUser(uid2);
         setUser(user2);
-        setName(user2.nickname + ' 채팅방');
-    }, [])
+        setName(user2.nickname);
+    }, [uid1, uid2])
 
     const handleMessageSend = () => {
         if (inputMessage.trim() !== '' && stompClient && stompClient.connected) {
@@ -71,7 +73,7 @@ export default function ChatTemp() {
                     <div style={{ color: 'rgb(88, 67, 135)' }}>
                         <Avatar alt="User" src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
                         {activeUser.email}
-                        <Typography>{name}와의 채팅방</Typography>
+                        <Typography>채팅방 {name}</Typography>
                         <hr style={{ opacity: '0.4', marginTop: 20 }} />
                     </div>
                 </Stack>

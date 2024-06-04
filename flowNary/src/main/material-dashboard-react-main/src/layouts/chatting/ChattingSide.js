@@ -16,7 +16,7 @@ export default function ChatList() {
   const { stompClient } = useWebSocket();
   const [count, setCount] = useState(20);
   const navigate = useNavigate();
-  const [cid, setCid] = useState('');
+  const [cid, setCid] = useState(0);
 
   useEffect(() => {
     if (activeUser.uid !== -1) {
@@ -24,7 +24,7 @@ export default function ChatList() {
         const chatlist = await getChatList(activeUser.uid, count, 0);
         if (chatlist) {
           setList(chatlist);
-          setCid(chatlist[0].cid); // Assuming the correct structure is chatlist[0].cid
+          { cid && setCid(chatlist[0].cid) } // Assuming the correct structure is chatlist[0].cid
         } else {
           console.error("Chat list is empty or not available");
         }
@@ -84,14 +84,9 @@ export default function ChatList() {
     navigate("/chatlist", { state: { cid: cid } });
   }
 
-  const navigateChat = () => {
-
-    navigate('/chatlist');
-  }
-
   return (
     <Grid container>
-      <Grid item xs={12} sm={12} sx={{ padding: 1 }}>
+      <Grid item xs={12} sm={12}>
         <Box
           sx={{
             display: 'flex',
@@ -108,15 +103,10 @@ export default function ChatList() {
               borderRadius: 4,
               overflow: 'hidden',
               px: 3,
-              py: 1,
             }}
           >
-            <Grid container sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'space-between' }}>
-              <Typography variant="h5" sx={{ mb: 2, color: 'lightcoral' }}>채팅 목록</Typography>
-              <IconButton onClick={navigateChat} sx={{ mb: 2, pt: 0, color: 'lightcoral' }}><Icon>send</Icon></IconButton>
-            </Grid>
             <List sx={{ cursor: 'pointer' }}>
-              {list && list.map((data, idx) => (idx < 3 &&
+              {cid ? (list && list.map((data, idx) => (idx < 3 &&
                 <React.Fragment key={idx}>
                   <ListItem
                     onClick={() => handleChatClick(data.cid)}
@@ -174,9 +164,9 @@ export default function ChatList() {
                       }
                     />
                   </ListItem>
-                  {idx < list.length - 1 && <Divider variant="middle" />}
+                  {idx < list.length - 1 && <Divider variant="middle" sx={{ m: 0, p: 0 }} />}
                 </React.Fragment>
-              ))}
+              ))) : <Typography>채팅을 시작해보세요!</Typography>}
             </List>
           </Box>
         </Box>

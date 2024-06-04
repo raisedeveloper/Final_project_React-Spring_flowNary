@@ -66,7 +66,7 @@ public class DmListController {
         dmList.setProfile(idmList.getProfile());
         
         List<Integer> list = cuSvc.getChatUserListExInt(idmList.getCid(), idmList.getUid());
-        nC.insertNoticeList(list, 4, did, idmList.getUid());
+        nC.insertNoticeList(list, 4, idmList.getCid(), idmList.getUid());
         
         cSvc.updateChatTime(idmList.getCid());
         
@@ -91,9 +91,9 @@ public class DmListController {
         dmList.setdTime(LocalDateTime.now());
         dmList.setProfile(idmList.getProfile());
         
-        int did = dSvc.insertDmList(dmList);
+        dSvc.insertDmList(dmList);
         List<Integer> list = cuSvc.getChatUserListExInt(idmList.getCid(), idmList.getUid());
-        nC.insertNoticeList(list, 4, did, idmList.getUid());
+        nC.insertNoticeList(list, 4, idmList.getCid(), idmList.getUid());
         
         JSONObject jObj = new JSONObject();
         jObj.put("cid", idmList.getCid());

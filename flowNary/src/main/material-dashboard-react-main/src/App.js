@@ -42,7 +42,6 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [user, loading, error] = useAuthState(auth);  // 로그인 상태 훅
   const { pathname } = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
 
   // 로그인 및 회원가입 사이드바
   const isLoginPage = pathname === "/authentication/sign-in";
@@ -79,19 +78,18 @@ export default function App() {
   }, [pathname]);
 
   if (loading) {
-    return <div>로딩중..</div>;
+    return <div>Loading...</div>;
   }
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
-  const dynamicRoutes = createRoutes(!!user, (GetWithExpiry('role') && GetWithExpiry('role') === 1) ? true : false);
+  const dynamicRoutes = createRoutes(!!user, (GetWithExpiry('role') && GetWithExpiry('role') === 1) ? true : false); // 로그인 상태와 어드민 여부에 따라 라우트 동적 생성
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {isLoading && <div>로딩 중 </div>}
-      {!isLoading && !isLoginPage && !isRegisterPage && layout === "dashboard" && (
+      {!isLoginPage && !isRegisterPage && layout === "dashboard" && (
         <>
           <Sidenav
             color={'primary'}
@@ -109,6 +107,7 @@ export default function App() {
         {dynamicRoutes.map((route) => (
           <Route path={route.route} element={route.component} key={route.key} />
         ))}
+        <Route path="/url/*" element={<BoardUrl />} />
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </ThemeProvider>
