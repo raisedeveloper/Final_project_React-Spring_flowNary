@@ -18,6 +18,7 @@ function Album() {
   const uid = parseInt(GetWithExpiry("uid"));
   const navigate = useNavigate();
   const goLogin = () => navigate('/authentication/sign-in');
+  console.log("아이디: ", uid);
 
   return (
     <DashboardLayout>

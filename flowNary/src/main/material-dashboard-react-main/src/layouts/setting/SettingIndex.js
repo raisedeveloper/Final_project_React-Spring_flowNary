@@ -16,44 +16,33 @@ import { useGetUser } from "../../api/customHook.jsx";
 import { correct, wrong } from "../../api/alert.jsx";
 
 // api - axios
+
 import axiosGet from '../../api/axiosGet.js';
 
 // ProfileCard, ProfileEdit 컴포넌트 임포트
 // import ProfileCard from "./components/ProfileCard";
 import ProfileEdit from "./components/ProfileEdit.jsx";
 import Footer from "examples/Footer";
-import { useNavigate } from "react-router-dom";
-import UserLoginService from "ut/userLogin-Service";
 
 export default function Settings() {
   // localStorage를 이용해서 user 받아오기
   const uid = parseInt(GetWithExpiry("uid"));
   const email = GetWithExpiry("email");
-  const navigate = useNavigate();
-  const goLogin = () => navigate('/authentication/sign-in');
-
-  // 디버깅을 위해 콘솔 로그 추가
-  console.log("User ID:", uid);
-  console.log("Email:", email);
 
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <Box sx={{ flexGrow: 1, padding: '20px' }}>
-        <Grid container spacing={1}>
-          <Grid item xs={12} md={11}>
-            {uid > 0 ? (
+      <DashboardLayout>
+        <DashboardNavbar />
+        <Box sx={{ flexGrow: 1, padding: '20px' }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={11}>
               <ProfileEdit
                 email={email}
                 uid={uid}
               />
-            ) : (
-              <UserLoginService goLogin={goLogin} />
-            )}
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
       <Footer />
-    </DashboardLayout>
+      </DashboardLayout>
   );
 }

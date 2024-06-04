@@ -128,7 +128,7 @@ export default function SettingModal() {
   return (
     <>
       <DashboardLayout>
-        <DashboardNavbar />
+        <DashboardNavbar />        
         {user && user.provider === 0 &&
           <Box sx={{ mx: '19rem', mt: '12rem' }}>
             {/* 비밀번호 입력 */}
