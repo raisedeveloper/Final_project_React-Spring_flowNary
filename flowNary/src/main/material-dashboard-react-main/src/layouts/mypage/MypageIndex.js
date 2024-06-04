@@ -55,6 +55,7 @@ import { correct } from "api/alert.jsx";
 import { getFollowMeList } from "api/axiosGet.js";
 import { getFollowList } from "api/axiosGet.js";
 import UserAvatar from "api/userAvatar.js";
+import UserLoginService from "ut/userLogin-Service.jsx";
 
 function Mypage() {
 
@@ -86,6 +87,9 @@ function Mypage() {
   // 게시물 사진 , 글영역
   const [showPhoto, setShowPhoto] = useState(false);
   const [expanded, setExpanded] = useState({});
+
+  // 로그인 페이지
+  const goLogin = () => navigate('/authentication/sign-in');
 
   const board = useQuery({
     queryKey: ['boardmypage', uid],
@@ -319,8 +323,9 @@ function Mypage() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
+      <DashboardNavbar />      
       {/* 상단 정보 넣는 Stack 태그 */}
+      <UserLoginService goLogin={goLogin} />
       <Stack direction={'row'} sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}> {/* 방향을 row로 지정하면 가로 방향으로 배치됨 */}
         {/* Avatar 태그 : 유튜브 프사처럼 동그란 이미지 넣을 수 있는 것 */}
         <Stack direction={'column'}>
