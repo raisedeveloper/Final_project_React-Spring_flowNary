@@ -181,7 +181,8 @@ export default function Posting() {
             border: "1px solid #ddd",
             borderRadius: 4,
             padding: 8,
-            resize: "none"
+            resize: "none",
+            fontFamily: "'Noto Sans KR', sans-serif" // 폰트 적용
           }}
           maxLength={5000}
         />

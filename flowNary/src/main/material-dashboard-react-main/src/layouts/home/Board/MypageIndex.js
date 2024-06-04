@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useContext, useState } from "react";
 
 // @mui material components
@@ -62,6 +47,7 @@ import BoardDetail from "layouts/home/Board/BoardDetail";
 import { useAddLike } from "api/customHook";
 import TimeAgo from "timeago-react";
 import koreanStrings from '../home/Board/ko';
+import UserAvatar from "api/userAvatar";
 
 function Notifications() {
 
@@ -155,25 +141,12 @@ function Notifications() {
 
         {/* Avatar 태그 : 유튜브 프사처럼 동그란 이미지 넣을 수 있는 것 */}
         <Avatar
-          sx={{
-            width: '9rem',
-            height: '9rem',
+          sx={{          
             margin: '10px',
             fontSize: '60px',
             border: '2px solid primary.main', // 외곽선 색과 굵기 지정
           }} >
-
-          <div
-            style={{
-              width: '9rem',
-              height: '9rem',
-              borderRadius: '50%',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
-            }}
-          >
-          </div>
+          <UserAvatar profileUrl={profile} />
         </Avatar>
 
         {/* 프사 옆 정보와 팔로우 버튼 만드는 Stack 공간 */}

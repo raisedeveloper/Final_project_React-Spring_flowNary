@@ -42,6 +42,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import boxShadow from 'assets/theme/functions/boxShadow';
 import { color } from '@cloudinary/url-gen/qualifiers/background';
+import UserAvatar from 'api/userAvatar';
 
 timeago.register('ko', ko);
 
@@ -244,10 +245,10 @@ export default function Reply(props) {
           </MDBox>
           <MDBox sx={{ p: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             {user && user.data && <Avatar
-              sx={{ bgcolor: 'red'[500], width: '2rem', height: '2rem' }}
-              aria-label="recipe"
-              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}`}
-            />}
+              sx={{ bgcolor: 'red'[500], width: '2rem', height: '2rem' }} aria-label="recipe">
+              <UserAvatar profileUrl={user.data.profile} />
+            </Avatar>
+            }
             <input
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -270,9 +271,9 @@ export default function Reply(props) {
               {/* List랑 paper 영역 비슷함 */}
               <Box sx={{ border: 'none', }}>
                 <ListItem alignItems="flex-start" sx={{ marginTop: 0, marginLeft: 0.5 }}>
-                  <Avatar onClick={() => handleMyPage(data.uid)} sx={{ cursor: 'pointer', width: '1.5rem', height: '1.5rem' }}
-                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                  />
+                  <Avatar onClick={() => handleMyPage(data.uid)} sx={{ cursor: 'pointer', width: '1.5rem', height: '1.5rem' }}>
+                    <UserAvatar profileUrl={data.profile} />
+                  </Avatar>
                   <ListItemText sx={{ paddingLeft: 1 }}
                     primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                     secondary={

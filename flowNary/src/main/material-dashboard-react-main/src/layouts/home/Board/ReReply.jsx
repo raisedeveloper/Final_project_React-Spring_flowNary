@@ -39,6 +39,7 @@ import { deleteReReply } from 'api/axiosPost.js';
 import { useAddLike } from 'api/customHook.jsx';
 import { UserContext } from 'api/LocalStorage.js';
 import { deleteConfirm } from 'api/alert.jsx';
+import UserAvatar from 'api/userAvatar.js';
 
 export default function ReReply(props) {
   timeago.register('ko', ko);
@@ -141,8 +142,9 @@ export default function ReReply(props) {
                       marginLeft: 2.5,
                     }}>
                     <Avatar sx={{ cursor: 'pointer', width: '1.5rem', height: '1.5rem' }}
-                      onClick={() => handleMyPage(data.uid)} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                    />
+                      onClick={() => handleMyPage(data.uid)} >
+                      <UserAvatar profileUrl={data.profile} />
+                    </Avatar>
                     <ListItemText sx={{ paddingLeft: 1 }}
                       primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                       secondary={
@@ -171,9 +173,9 @@ export default function ReReply(props) {
                   {/* 답글 목록 */}
                   {data.replies && data.replies.map((reply, replyIndex) => (
                     <ListItem key={replyIndex} sx={{ paddingLeft: 4, marginLeft: 4, borderLeft: '1px solid #ccc' }} alignItems="flex-start">
-                      <Avatar
-                        src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${reply.profile}`}
-                      />
+                      <Avatar>
+                        <UserAvatar profileUrl={reply.profile} />
+                      </Avatar>
                       <ListItemText sx={{ paddingLeft: 1 }}
                         primary={reply.nickname}
                         secondary={

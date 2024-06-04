@@ -49,6 +49,7 @@ import { SetWithExpiry } from "api/LocalStorage";
 import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "api/customHook";
 import MapComponent from "./mapComponent";
+import UserAvatar from "api/userAvatar";
 
 // 헤더 부분
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -243,29 +244,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
           px={0.5} py={1}
         >
           {/* 프로필 사진*/}
-          {profile && <Avatar
-            alt="profile picture"
-            sx={{
-              width: '3rem',
-              height: '3rem',
-              borderRadius: '50%',
-              objectFit: 'cover'
-            }}
-          >
-            <div
-              style={{
-                width: '3rem',
-                height: '3rem',
-                borderRadius: '50%',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')`
-              }}
-            >
-            </div>
-
+          {profile && <Avatar alt="profile picture">
+            <div><UserAvatar profileUrl={profile} /></div>
           </Avatar>}
-          
+
           <MDBox ml={1.75}>
             <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{nickname}</div>
             <div style={{ marginLeft: '.125rem', fontSize: '12px' }}>{email}</div>

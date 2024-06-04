@@ -166,7 +166,7 @@ export default function ChatList() {
                   </ListItem>
                   {idx < list.length - 1 && <Divider variant="middle" sx={{ m: 0, p: 0 }} />}
                 </React.Fragment>
-              ))) : <Typography>채팅을 시작해보세요!</Typography>}
+              ))) : <Typography sx={{ fontFamily: "'Noto Sans KR', sans-serif" }}>채팅을 시작해보세요!</Typography>}
             </List>
           </Box>
         </Box>

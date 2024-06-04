@@ -24,6 +24,7 @@ import { deleteConfirm } from "api/alert";
 import { deleteBoard } from "api/axiosPost";
 import { Declaration } from "api/alert";
 import { insertDeclaration } from "api/axiosPost";
+import UserAvatar from "api/userAvatar";
 
 export default function MySearchList() {
   const queryClient = useQueryClient();
@@ -400,8 +401,9 @@ export default function MySearchList() {
                           avatar={
                             <Avatar sx={{ cursor: 'pointer' }}
                               aria-label="recipe" onClick={() => handleMyPage(data.uid)}
-                              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                            />
+                            >
+                              <div><UserAvatar profileUrl={data.profile} /></div>
+                            </Avatar>
                           }
                           action={<>
                             {

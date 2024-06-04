@@ -16,6 +16,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
+import UserAvatar from "api/userAvatar";
 
 
 const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handleButtonLike, handleButtonLikeReply, handleButtonLikeReReply }, ref) => {
@@ -133,17 +134,8 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
               avatar={
                 <Avatar onClick={() => handleMyPage(board.uid)}
                   sx={{ bgcolor: 'red'[500], cursor: 'pointer' }}
-                  aria-label="recipe"
-                >
-                  <div
-                    style={{
-                      width: '3rem',
-                      height: '3rem',
-                      borderRadius: '50%',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.profile})`
-                    }} />
+                  aria-label="recipe">
+                  <UserAvatar profileUrl={board.profile} />
                 </Avatar>
               }
               title={<Typography variant="subtitle3" sx={{ fontSize: "1rem", color: 'black', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => handleMyPage(board.uid)}>{board.nickname}</Typography>}

@@ -54,6 +54,7 @@ import { insertFollow } from "api/axiosPost.js";
 import { correct } from "api/alert.jsx";
 import { getFollowMeList } from "api/axiosGet.js";
 import { getFollowList } from "api/axiosGet.js";
+import UserAvatar from "api/userAvatar.js";
 
 function Mypage() {
 
@@ -332,18 +333,7 @@ function Mypage() {
               fontSize: '60px',
               border: '2px solid primary.main', // 외곽선 색과 굵기 지정
             }} >
-            {user && user.data &&
-              <div
-                style={{
-                  width: '12rem',
-                  height: '12rem',
-                  borderRadius: '50%',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}')` // 이미지 URL 동적 생성
-                }}
-              >
-              </div>}
+            {user && user.data && <UserAvatar profileUrl={user.data.profile} size={"large"} />}
           </Avatar>
         </Stack>
         <Stack direction={'column'}>

@@ -209,7 +209,7 @@ export default function Posting() {
         <TextareaAutosize
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="어떤 일이 있나요?"
+          placeholder="당신의 일상을 공유하세요!"
           style={{
             width: "70%",
             // minHeight: 100,
@@ -228,7 +228,7 @@ export default function Posting() {
         <Input
           value={hashTag}
           onChange={(e) => handleHashTagChange(e)}
-          placeholder="쉼표HashTag / 최대 3개"
+          placeholder="쉼표HashTag   /   최대 3개"
           fontSize={15}
           fullWidth
           language='kr'

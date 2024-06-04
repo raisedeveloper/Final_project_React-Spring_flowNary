@@ -185,6 +185,7 @@ export default function TodoList() {
                             sx={{
                               display: "flex",
                               alignItems: "center",
+                              fontFamily: "'Noto Sans KR', sans-serif" // 폰트 적용
 
                             }}
                             variant="body2"
@@ -276,7 +277,7 @@ export default function TodoList() {
           />
         </Grid>
         <Grid>
-          <Button onClick={addItem} style={{ color: "lightcoral" }}>
+          <Button onClick={addItem} style={{ color: "lightcoral", fontFamily: "'Noto Sans KR', sans-serif" }}>
             추가
           </Button>
         </Grid>

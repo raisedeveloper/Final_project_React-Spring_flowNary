@@ -11,6 +11,7 @@ import Iconify from 'components/iconify';
 import { Search } from '@mui/icons-material';
 import { wrong } from "api/alert";
 import { Close } from '@mui/icons-material';
+import UserAvatar from 'api/userAvatar';
 
 export default function FollowList(props) {
 
@@ -92,11 +93,10 @@ export default function FollowList(props) {
                   border: '1px solid #e0e0e0',
                 }}
               >
-                <Avatar
-                  onClick={() => handleMyPage(data.fuid)}
-                  sx={{ cursor: 'pointer', width: 56, height: 56, mr: 2 }}
-                  src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                />
+                <Avatar onClick={() => handleMyPage(data.fuid)}
+                  sx={{ cursor: 'pointer', width: 56, height: 56, mr: 2 }}>
+                  <UserAvatar profileUrl={data.profile} size={"medium"} />
+                </Avatar>
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="div">
                     {data.nickname}

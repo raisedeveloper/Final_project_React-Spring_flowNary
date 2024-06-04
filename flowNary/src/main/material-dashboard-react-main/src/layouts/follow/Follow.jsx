@@ -15,6 +15,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Message, Add, Close } from '@mui/icons-material';
 import { wrong } from "api/alert";
+import UserAvatar from "api/userAvatar";
 
 
 export default function Follow() {
@@ -139,14 +140,13 @@ export default function Follow() {
                                 <TableCell>기능</TableCell>
                             </TableRow>
                         )}
+                        {/* 팔로우? */}
                     {me && followlist && !isEmpty(followlist) && followlist.map((item, idx) => (
                         <TableRow key={idx}>
                             <TableCell>
-                                <Avatar
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
-                                    alt="profile"
-                                    onClick={() => handleMyPage(item.fuid)}
-                                />
+                                <Avatar alt="profile" onClick={() => handleMyPage(item.fuid)}>
+                                    <UserAvatar profileUrl={item.profile} />
+                                </Avatar>
                             </TableCell>
                             <TableCell onClick={() => handleMyPage(item.fuid)}>{item.nickname}</TableCell>
 
@@ -190,11 +190,9 @@ export default function Follow() {
                     {!me && followmelist && !isEmpty(followmelist) && followmelist.map((item, idx) => (
                         <TableRow key={idx}>
                             <TableCell>
-                                <Avatar
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
-                                    alt="profile"
-                                    onClick={() => handleMyPage(item.uid)}
-                                />
+                                <Avatar alt="profile" onClick={() => handleMyPage(item.fuid)}>
+                                    <UserAvatar profileUrl={item.profile} />
+                                </Avatar>
                             </TableCell>
                             <TableCell onClick={() => handleMyPage(item.uid)}>{item.nickname}</TableCell>
 

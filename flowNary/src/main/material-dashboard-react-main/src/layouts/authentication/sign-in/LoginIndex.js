@@ -174,9 +174,7 @@ export default function Login() {
             return;
           }
           login(userInfo);
-          SetWithExpiry("uid", user.uid, 180); // 올바른 uid 설정
-          Swal.fire({ position: "center", icon: "success", title: "로그인에 성공하였습니다!", showConfirmButton: false, timer: 1200 });
-
+          SetWithExpiry("uid", user.uid, 180); // 올바른 uid 설정                      
           SetWithExpiry("uid", res.data.id, 180);
           SetWithExpiry("email", res.data.email, 180);
           SetWithExpiry("profile", res.data.profile, 180);

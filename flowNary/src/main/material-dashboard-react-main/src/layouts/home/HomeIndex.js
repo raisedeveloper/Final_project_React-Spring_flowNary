@@ -51,6 +51,7 @@ import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import styled from "@emotion/styled";
+import UserAvatar from "api/userAvatar";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -402,8 +403,11 @@ export default function Home() {
                                 avatar={
                                   <Avatar sx={{ cursor: 'pointer' }}
                                     aria-label="recipe" onClick={() => handleMyPage(data.uid)}
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                                  />
+                                  >
+                                    <div>
+                                      <UserAvatar profileUrl={data.profile} />
+                                    </div>
+                                  </Avatar>
                                 }
                                 action={<>
                                   {
