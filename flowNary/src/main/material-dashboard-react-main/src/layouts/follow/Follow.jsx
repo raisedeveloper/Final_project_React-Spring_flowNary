@@ -115,17 +115,32 @@ export default function Follow() {
     return (
         <DashboardLayout>
             <DashboardNavbar />
-            <Button variant="contained" color="success" onClick={handleme} sx={{ mb: 3 }}>{me ? '나를 플로우한 사람 보기' : '내가 플로우한 사람 보기'}</Button>
-            {me ? <Typography sx={{ color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem', bgcolor: 'none', textAlign: 'center' }}>
+            <Button variant="contained" color="success" onClick={handleme}
+                sx={{ mb: 3, fontFamily: "'Noto Sans KR', sans-serif" }}>
+                {me ? '나를 플로우한 사람 보기' : '내가 플로우한 사람 보기'}</Button>
+
+            {me ? <Typography sx={{
+                color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem',
+                bgcolor: 'none', textAlign: 'center',
+                fontFamily: "'Noto Sans KR', sans-serif",
+            }}>
                 플로잉 리스트
-            </Typography> : <Typography sx={{ color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem', bgcolor: 'none', textAlign: 'center' }}>
+            </Typography> : <Typography sx={{
+                color: 'lightcoral', my: 1, fontWeight: 'bold', fontSize: '2rem',
+                bgcolor: 'none', textAlign: 'center',
+                fontFamily: "'Noto Sans KR', sans-serif",
+            }}>
                 플로워 리스트
             </Typography>}
             <TableContainer>
                 <Table>
                     {/* 팔로잉 : 내가 팔로우 한사람들 , 팔로워 : 사람들이 나를 팔로우 */}
                     {me ? (
-                        <TableRow sx={{ backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc', }}>
+                        <TableRow
+                            sx={{
+                                backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc',
+                                fontFamily: "'Noto Sans KR', sans-serif",
+                            }}>
                             <TableCell>프로필</TableCell>
                             <TableCell>닉네임</TableCell>
                             <TableCell>플로잉 날짜</TableCell>
@@ -133,14 +148,17 @@ export default function Follow() {
                         </TableRow>
                     )
                         : (
-                            <TableRow sx={{ backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc', }}>
+                            <TableRow sx={{
+                                backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc',
+                                fontFamily: "'Noto Sans KR', sans-serif"
+                            }}>
                                 <TableCell>프로필</TableCell>
                                 <TableCell>닉네임</TableCell>
                                 <TableCell>플로워 날짜</TableCell>
                                 <TableCell>기능</TableCell>
                             </TableRow>
                         )}
-                        {/* 팔로우? */}
+                    {/* 팔로우? */}
                     {me && followlist && !isEmpty(followlist) && followlist.map((item, idx) => (
                         <TableRow key={idx}>
                             <TableCell>
@@ -162,7 +180,10 @@ export default function Follow() {
                                     variant="contained"
                                     color="success"
                                     startIcon={<Message />}
-                                    sx={{ marginRight: '10px', color: 'blueviolet' }}
+                                    sx={{
+                                        marginRight: '10px', color: 'blueviolet',
+                                        fontFamily: "'Noto Sans KR', sans-serif"
+                                    }}
                                     onClick={() => findChatMake(item.fuid)}
                                 >
                                     메세지
@@ -171,7 +192,7 @@ export default function Follow() {
                                     variant="contained"
                                     color="success"
                                     startIcon={<Add />}
-                                    sx={{ marginRight: '10px' }}
+                                    sx={{ marginRight: '10px', fontFamily: "'Noto Sans KR', sans-serif" }}
                                     onClick={() => handleModalOpen(item.fuid)}
                                 >
                                     초대
@@ -180,6 +201,7 @@ export default function Follow() {
                                     variant="contained"
                                     color="success"
                                     startIcon={<Close />}
+                                    sx={{ fontFamily: "'Noto Sans KR', sans-serif" }}
                                     onClick={() => handleDelete(item.fid)}
                                 >
                                     해제

@@ -22,6 +22,7 @@ import com.example.flownary.dto.Notice.insertNoticedto;
 import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.Family;
 import com.example.flownary.entity.Notice;
+import com.example.flownary.service.DmListService;
 import com.example.flownary.service.FamilyService;
 import com.example.flownary.service.NoticeService;
 import com.example.flownary.service.UserService;
@@ -39,6 +40,7 @@ public class NoticeController {
 	private final NoticeService nSvc;
 	private final UserService uSvc;
 	private final FamilyService fSvc;
+	private final DmListService dSvc;
 	private final WebSocketEventListener wel;
 	
 	private final SimpMessagingTemplate noticeTemplate;
@@ -370,9 +372,18 @@ public class NoticeController {
 	
 	@PostMapping("/removeSpecific")
 	public int removeNoticeSpecific(@RequestBody deleteNoticedto dto) {
-		nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), dto.getOid());
 		if (dto.getType() == 2) {
+			nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), dto.getOid());
 			nSvc.removeNoticeSpecific(dto.getUid(), 1, dto.getOid());			
+		}
+		else if (dto.getType() == 4) {
+			List<Integer> dlist = dSvc.getDidList(dto.getOid());
+			for (Integer k : dlist) {
+				nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), k);
+			}
+		}
+		else {			
+			nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), dto.getOid());
 		}
 		
 		return 0;

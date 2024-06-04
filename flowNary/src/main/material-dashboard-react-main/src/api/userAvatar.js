@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 const UserAvatar = ({ profileUrl, size }) => {
   const sizes = {
+    x_small: `1.75rem`,
     small: '2.5rem',
     medium: '5rem',
     medium2: '7rem',
@@ -28,7 +29,7 @@ const UserAvatar = ({ profileUrl, size }) => {
 
 UserAvatar.propTypes = {
   profileUrl: PropTypes.string.isRequired,
-  size: PropTypes.oneOf(['small', 'medium', 'large'])
+  size: PropTypes.oneOf(['x-small', 'small', 'medium', 'medium2', 'large'])
 };
 
 UserAvatar.defaultProps = {
