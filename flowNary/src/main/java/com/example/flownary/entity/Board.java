@@ -222,8 +222,18 @@ public class Board {
 	}
 
 	public Board(int uid, String title, String bContents, String image, String shareUrl, String nickname,
+			String hashTag) {
+		this.uid = uid;
+		this.title = title;
+		this.bContents = bContents;
+		this.image = image;
+		this.shareUrl = shareUrl;
+		this.nickname = nickname;
+		this.hashTag = hashTag;
+	}
+
+	public Board(int uid, String title, String bContents, String image, String shareUrl, String nickname,
 			String hashTag, int isDeleted) {
-		super();
 		this.uid = uid;
 		this.title = title;
 		this.bContents = bContents;

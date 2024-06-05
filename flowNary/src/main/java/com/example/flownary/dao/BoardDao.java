@@ -51,7 +51,8 @@ public interface BoardDao {
 			+ " order by modTime desc")
 	List<Board> getBoardList4(int uid);
 	
-	@Select("SELECT b.* FROM like_ c JOIN board b ON b.bid=c.oid WHERE b.isDeleted = 0 AND c.stat=1 AND c.uid=#{uid} and c.type=1")
+	@Select("SELECT b.* FROM like_ c JOIN board b ON b.bid=c.oid WHERE b.isDeleted = 0 AND "
+			+ "c.stat=1 AND c.uid=#{uid} and c.type=1")
 	List<Board> getLikedList(int uid);
 	
 	@Select("select count(bid) from board"
@@ -71,7 +72,7 @@ public interface BoardDao {
 	
 	@Insert("insert into board values(default, #{uid}, #{title}, #{bContents}, default, "
 			+ " default, default, default, #{image}, #{shareUrl}, "
-			+ " #{nickname}, #{hashTag}, default, default)")
+			+ " #{nickname}, #{hashTag}, #{isDeleted}, default)")
 	void insertBoard(Board board);
 	
 	@Update("update board set title=#{title}, bContents=#{bContents}, modTime=#{modTime}, image=#{image}"

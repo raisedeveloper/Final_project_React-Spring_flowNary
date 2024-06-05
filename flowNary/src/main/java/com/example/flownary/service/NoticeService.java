@@ -8,13 +8,15 @@ public interface NoticeService {
 
 	Notice getNotice(int nid);
 	
+	Notice getNoticeUid(int uid, int suid, int type, int oid);
+	
 	List<Notice> getNoticeList(int uid, int type);
 	
 	int getNoticeCount(int uid);
 	
 	List<Notice> getNoticeListAll(int uid);
 	
-	void insertNotice(Notice notice);
+	int insertNotice(Notice notice);
 	
 	void insertNoticeList(List<Notice> list);
 	
@@ -23,4 +25,8 @@ public interface NoticeService {
 	void removeNotice(int nid);
 	
 	void removeNoticeAll(int uid);
+	
+	void disableNoticeAll(int uid);
+	
+	void removeNoticeSpecific(int uid, int type, int oid);
 }

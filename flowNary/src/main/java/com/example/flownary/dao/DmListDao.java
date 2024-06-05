@@ -16,6 +16,9 @@ public interface DmListDao {
 	@Select("select * from dmlist where did=#{did}")
 	DmList getDmList(int did);
 	
+	@Select("select cid from dmlist where did=#{did}")
+	int getDmListCid(int did);
+	
 	@Select("select dContents from dmlist"
 			+ " where isDeleted=0 and cid=#{cid}"
 			+ " order by dTime desc"
@@ -27,6 +30,12 @@ public interface DmListDao {
 			+ " order by dTime desc"
 			+ " limit #{count}")
 	List<DmList> getDmListList(int cid, int count);
+	
+	@Select("select d.did from dmlist d"
+			+ " join notice n on n.oid=d.did"
+			+ " where d.cid=#{cid}"
+			+ " order by d.dTime desc")
+	List<Integer> getDidList(int cid);
 	
 	@Select("select * from dmlist where uid=#{uid}"
 			+ " order by dTime desc"

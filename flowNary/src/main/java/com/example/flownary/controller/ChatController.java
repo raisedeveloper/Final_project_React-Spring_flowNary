@@ -135,7 +135,6 @@ public class ChatController {
     	if (chat == null)
     		return -1;
     	
-    	System.out.println(chat.getCid());
     	return chat.getCid();
     }
     

@@ -36,17 +36,15 @@ import { deleteConfirm } from 'api/alert';
 import { deleteReply } from 'api/axiosPost';
 import { getUser } from 'api/axiosGet';
 
-
 // 아이콘
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import boxShadow from 'assets/theme/functions/boxShadow';
 import { color } from '@cloudinary/url-gen/qualifiers/background';
-
+import UserAvatar from 'api/userAvatar';
 
 timeago.register('ko', ko);
-
 
 export default function Reply(props) {
   const bid = props.bid;
@@ -61,14 +59,12 @@ export default function Reply(props) {
   const handleMyPage = props.handleMyPage;
   const queryClient = useQueryClient();
 
-
   const [expandedContents, setExpandedContents] = useState({});
   const [formChange, setFormChange] = useState({});
   const [showReReply, setShowReReply] = useState({});
   const [ridtext, setRidtext] = useState('');
   const [replyText, setReplyText] = useState('');
   const [formInputs, setFormInputs] = useState({});
-
 
   const user = useQuery({
     queryKey: ['boarduser', activeUser.uid],
@@ -85,7 +81,6 @@ export default function Reply(props) {
     queryFn: () => getReplyList(props.bid, 0, 20, activeUser.uid),
   });
 
-
   const addReply = useAddReply();
   const addReReply = useAddReReply();
 
@@ -95,9 +90,7 @@ export default function Reply(props) {
     }
   }, [replyList.isLoading]);
 
-
   const navigate = useNavigate();
-
 
   const handleFormSubmit = (e, text) => {
     e.preventDefault();
@@ -117,7 +110,6 @@ export default function Reply(props) {
     setText('');
     setFormChange(false);
   };
-
 
   const handleFormSubmit2 = (e, text2, rid) => {
     e.preventDefault();
@@ -143,7 +135,6 @@ export default function Reply(props) {
     }
   };
 
-
   const handleOnEnter = (text) => {
     console.log('enter', text);
   };
@@ -157,10 +148,6 @@ export default function Reply(props) {
   };
 
   const handleButtonClick = (rid) => {
-    if (activeUser.uid < 0) {
-      wrong('로그인 해주세요.');
-      return;
-    }
     setRidtext(rid);
     setFormChange((prev) => ({
       ...prev,
@@ -217,8 +204,8 @@ export default function Reply(props) {
         <MDBox>
           <MDBox sx={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between' }}>
             <MDBox sx={{ display: 'flex', alignItems: 'end', justifyContent: 'start' }}>
-              {board ? (
-                board.data.hashTag && board.data.hashTag.includes(",") ? (
+              {board && board.data.hashTag ? (
+                board.data.hashTag.includes(",") ? (
                   board.data.hashTag.split(",").map((tag, index) => {
                     const trimmedTag = tag.trim(); // 좌우 공백 제거
                     return (
@@ -251,17 +238,17 @@ export default function Reply(props) {
               ) : null}
             </MDBox>
             <MDBox>
-              <Typography sx={{ fontSize: 'small', mr: 5, color: 'coral' }}>
+              <Typography sx={{ fontSize: 'small', mr: 5, color: 'lightcoral' }}>
                 {replyList && replyList.data && replyList.data[index] ? '댓글 수 ' + replyList.data[index].replyCount + '개' : ''}
               </Typography>
             </MDBox>
           </MDBox>
           <MDBox sx={{ p: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             {user && user.data && <Avatar
-              sx={{ bgcolor: 'red'[500] }}
-              aria-label="recipe"
-              src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}`}
-            />}
+              sx={{ bgcolor: 'red'[500], width: '2rem', height: '2rem' }} aria-label="recipe">
+              <UserAvatar profileUrl={user.data.profile} />
+            </Avatar>
+            }
             <input
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -277,21 +264,20 @@ export default function Reply(props) {
           </MDBox>
         </MDBox>
 
-
         {/* 댓글표시 영역 */}
         <Stack direction="column" sx={{ width: "100%", overflowX: 'hidden', p: 3, border: 'none', boxShadow: 'none' }}>
           {replyList && replyList.data && replyList.data.map((data, index) => (
-            <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0 }}>
+            <List key={index} sx={{ width: '100%', bgcolor: 'background.paper', paddingRight: 0, fontSize: 'small' }}>
               {/* List랑 paper 영역 비슷함 */}
               <Box sx={{ border: 'none', }}>
-                <ListItem alignItems="flex-start" sx={{ marginTop: 0.5, marginLeft: 0.5 }}>
-                  <Avatar onClick={() => handleMyPage(data.uid)} sx={{ cursor: 'pointer' }}
-                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                  />
+                <ListItem alignItems="flex-start" sx={{ marginTop: 0, marginLeft: 0.5 }}>
+                  <Avatar onClick={() => handleMyPage(data.uid)} sx={{ cursor: 'pointer', width: '1.5rem', height: '1.5rem' }}>
+                    <UserAvatar profileUrl={data.profile} />
+                  </Avatar>
                   <ListItemText sx={{ paddingLeft: 1 }}
                     primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                     secondary={
-                      <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'break-word', }}>
+                      <Typography variant="body2" sx={{ overflowWrap: 'break-word', fontSize: 'small' }}>
                         {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 28))}
                         {data.rContents != null && data.rContents.length > 30 && !expandedContents[index] && (
                           <button className='replyOpen' style={{ color: 'gray', fontSize: 'small', marginLeft: 10 }} onClick={() => toggleExpand(index)}>...더보기</button>
@@ -303,6 +289,8 @@ export default function Reply(props) {
                     }
                   >
                   </ListItemText>
+
+
                 </ListItem>
                 <Grid style={{ display: 'flex', alignItems: 'center' }}>
                   <Grid item xs={12} md={6} lg={4} style={{ display: 'flex', alignItems: 'center' }}>
@@ -364,7 +352,6 @@ export default function Reply(props) {
     </>
   );
 }
-
 
 Reply.propTypes = {
   bid: PropTypes.number,

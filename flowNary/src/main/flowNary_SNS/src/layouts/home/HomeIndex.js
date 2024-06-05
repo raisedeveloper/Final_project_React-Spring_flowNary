@@ -44,13 +44,59 @@ import Iconify from "components/iconify/iconify";
 import { Declaration } from "api/alert";
 import { insertDeclaration } from "api/axiosPost";
 import { wrong } from "api/alert";
+import ChatList from "layouts/chatting/ChattingSide";
 
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import styled from "@emotion/styled";
+import UserAvatar from "api/userAvatar";
+
+const Accordion = styled((props) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+  border: `1px solid ${theme.palette.divider}`,
+  '&:not(:last-child)': {
+    borderBottom: 0,
+  },
+  '&::before': {
+    display: 'none',
+  },
+}));
+
+const AccordionSummary = styled((props) => (
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+    {...props}
+  />
+))(({ theme }) => ({
+  backgroundColor:
+    'rgba(0, 0, 0, 0)',
+  flexDirection: 'row-reverse',
+  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+    transform: 'rotate(90deg)',
+  },
+  '& .MuiAccordionSummary-content': {
+    marginLeft: theme.spacing(1),
+  },
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderTop: '1px solid rgba(0, 0, 0, .125)',
+}));
 
 export default function Home() {
   timeago.register('ko', ko);
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState({});
 
+  const [expandeds, setExpandeds] = useState('panel1');
+
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpandeds(newExpanded ? panel : false);
+  };
 
   // const Transition = React.forwardRef(function Transition(props, ref) {
   //   return <Slide direction="right" ref={ref} {...props} />;
@@ -297,7 +343,7 @@ export default function Home() {
       if (uid !== undefined) {
         queryClient.invalidateQueries(['boardmypage', uid]);
       }
-      board.refetch();
+      queryClient.invalidateQueries('boardList');
     }
   };
 
@@ -306,7 +352,7 @@ export default function Home() {
   const handleUpdate = () => {
     handleClosePopover();
     sessionStorage.setItem("bid", bid);
-    navigate("../home/Update");
+    navigate("/home/Update");
   }
 
 
@@ -325,6 +371,10 @@ export default function Home() {
   // 클릭 시 마이페이지 이동 이벤트
   const handleMyPage = (uid) => {
     navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
+  }
+
+  const navigateChat = () => {
+    navigate('/chatlist');
   }
 
   return (
@@ -353,8 +403,11 @@ export default function Home() {
                                 avatar={
                                   <Avatar sx={{ cursor: 'pointer' }}
                                     aria-label="recipe" onClick={() => handleMyPage(data.uid)}
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                                  />
+                                  >
+                                    <div>
+                                      <UserAvatar profileUrl={data.profile} />
+                                    </div>
+                                  </Avatar>
                                 }
                                 action={<>
                                   {
@@ -544,16 +597,42 @@ export default function Home() {
                 ) : <></>}
               </Grid>
             </Stack>
-            <Stack direction="column" sx={{ flex: 0.5 }}>
-              <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
-                <TodoList />
+            <Stack direction="column" sx={{ flex: 0.5, }}>
+              <MDBox mb={3} sx={{ position: 'sticky', top: "11%" }}>
+                <Accordion expanded={expandeds === 'panel1'} onChange={handleChange('panel1')} sx={{ borderRadius: expandeds === 'panel1' ? '5%' : 0 }} >
+                  <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                    <MDBox sx={{ backgroundColor: 'transparent', padding: 0, margin: 0 }}>
+                      <MDTypography variant="h5" fontWeight="medium" sx={{ padding: 0, margin: 0, color: 'lightcoral' }}>
+                        To do
+                      </MDTypography>
+                    </MDBox>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <TodoList />
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion expanded={expandeds === 'panel2'} onChange={handleChange('panel2')} sx={{ borderRadius: expandeds === 'panel2' ? '5%' : 0 }}>
+                  <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+                    <Grid container sx={{ backgroundColor: 'transparent', padding: 0, margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="h5" sx={{ color: 'lightcoral', padding: 0, margin: 0 }}>채팅 목록</Typography>
+                      <IconButton onClick={navigateChat} sx={{ color: 'lightcoral', padding: 0, margin: 0 }}><Icon>send</Icon></IconButton>
+                    </Grid>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <ChatList />
+                  </AccordionDetails>
+                </Accordion>
+
+
               </MDBox>
             </Stack>
           </Stack>
         </MDBox >
       </MDBox >
       {/* <div ref={observerRef}></div> */}
-      <div id="observe" ref={observerRef} style={{ display: 'flex', height: '1rem' }}></div>
+      <div id="observe" ref={observerRef} style={{ display: 'flex', height: '1rem' }}>
+        loading
+      </div>
 
 
       {/* 게시글 모달 */}

@@ -133,3 +133,27 @@ export async function Declaration(uid) {
   return result.value;
 }
 
+export async function noticeConfirm(notice) {
+  const result = await Swal.fire({
+    title: notice.nContents,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "확인",
+    cancelButtonText: '취소'
+  });
+
+  if (result.isConfirmed) {
+    await Swal.fire({
+      title: "수락했습니다",
+      icon: "success"
+    });
+    return 1;
+  }
+  else if (!result.isConfirmed) {
+    return 2;
+  }
+
+  return 3;
+}

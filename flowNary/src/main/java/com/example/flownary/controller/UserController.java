@@ -147,6 +147,7 @@ public class UserController {
 	@GetMapping("/getUser")
 	public JSONObject getUser(@RequestParam int uid)
 	{
+		System.out.println(uid);
 		User user = userSvc.getUser(uid);
 		if (user == null)
 			return null;
@@ -168,7 +169,6 @@ public class UserController {
 		hMap.put("hashUid", user.getHashUid());
 		hMap.put("location", user.getLocation());
 		hMap.put("role", user.getRole());
-		System.out.println("역할" + user.getRole());
 		JSONObject userOut = new JSONObject(hMap);
 		
 		return userOut;

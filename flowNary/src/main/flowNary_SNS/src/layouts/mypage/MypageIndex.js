@@ -52,6 +52,9 @@ import FollowMeList from "./FollowmeList.jsx";
 import FollowList from "./FollowList.jsx";
 import { insertFollow } from "api/axiosPost.js";
 import { correct } from "api/alert.jsx";
+import { getFollowMeList } from "api/axiosGet.js";
+import { getFollowList } from "api/axiosGet.js";
+import UserAvatar from "api/userAvatar.js";
 
 function Mypage() {
 
@@ -97,6 +100,16 @@ function Mypage() {
   const user = useQuery({
     queryKey: ['mypageuser', uid],
     queryFn: () => getUser(uid),
+  });
+
+  const followMeListCount = useQuery({
+    queryKey: ['followMelistcount', uid],
+    queryFn: () => getFollowMeList(uid),
+  });
+
+  const followListCount = useQuery({
+    queryKey: ['followlistcount', uid],
+    queryFn: () => getFollowList(uid),
   });
 
   const boardList = board ? board : [];
@@ -278,23 +291,24 @@ function Mypage() {
 
 
   const findChatMake = async (uid) => {
-    if (uid && uid == activeUser.uid)
-      return;
-
     const cid = await getChatCid(uid, activeUser.uid);
 
     if (cid == -1) {
       navigate("/chattingtemp", { state: { uid1: activeUser.uid, uid2: uid } });
     }
     else {
-      navigate("/chatting", { state: { cid: cid } });
+      navigate("/chatlist", { state: { cid: cid } });
     }
   }
 
   /// 팔로우
-  const handleFollow = (uid, fuid) => {
-    correct('플로우 되었습니다!');
-    insertFollow(uid, fuid);
+  const handleFollow = async (uid, fuid) => {
+    const define = await insertFollow(uid, fuid);
+    if (define === 1) {
+      correct('플로우 되었습니다!');
+    } else {
+      correct('언플로우 되었습니다!');
+    }
   }
 
   if (board.isLoading || user.isLoading) {
@@ -319,24 +333,13 @@ function Mypage() {
               fontSize: '60px',
               border: '2px solid primary.main', // 외곽선 색과 굵기 지정
             }} >
-            {user && user.data &&
-              <div
-                style={{
-                  width: '12rem',
-                  height: '12rem',
-                  borderRadius: '50%',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.data.profile}')` // 이미지 URL 동적 생성
-                }}
-              >
-              </div>}
+            {user && user.data && <UserAvatar profileUrl={user.data.profile} size={"large"} />}
           </Avatar>
         </Stack>
         <Stack direction={'column'}>
           <Stack direction={'row'}>
             {/* 프사 옆 정보와 팔로우 버튼 만드는 Stack 공간 */}
-            <Grid container sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mt: 0 }}>
+            <Grid container sx={{ width: '30vw', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mt: 0 }}>
               <Grid item xs={3.5}>
                 <Typography fontWeight={'bold'}>
                   {user.data.nickname}
@@ -366,37 +369,37 @@ function Mypage() {
               <Grid item xs={4}>
                 <Button sx={{ cursor: 'default', fontSize: 'large', mx: 0, mt: 3, p: 0 }} style={{ color: 'lightcoral' }}>
                   <Typography fontSize={'large'} sx={{ mr: 1 }}>
-                    게시물 수
+                    게시물
                   </Typography>
                   <Typography fontSize={'large'} sx={{ mr: 1, fontWeight: 'bold' }}>
                     {board.data.length}
                   </Typography>
                 </Button>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 <Button sx={{ fontSize: 'large', cursor: 'pointer', mx: 0, mt: 3, p: 0 }} style={{ color: 'lightcoral' }} onClick={() => handleOpen3('팔로워', '여기에 팔로워 수에 대한 정보를 표시')}>
                   <Typography fontSize={'large'} sx={{ mr: 1 }}>
                     플로워
                   </Typography>
                   <Typography fontSize={'large'} sx={{ mr: 1, fontWeight: 'bold' }}>
-
+                    {followMeListCount.data ? followMeListCount.data.length : 0}
                   </Typography>
                 </Button>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 <Button sx={{ fontSize: 'large', cursor: 'pointer', mx: 0, mt: 3, p: 0 }} style={{ color: 'lightcoral' }} onClick={() => handleOpen2('팔로잉', '여기에 팔로잉 수에 대한 정보를 표시')}>
                   <Typography fontSize={'large'} sx={{ mr: 1 }}>
                     플로잉
                   </Typography>
                   <Typography fontSize={'large'} sx={{ mr: 1, fontWeight: 'bold' }}>
-
+                    {followListCount.data ? followListCount.data.length : 0}
                   </Typography>
                 </Button>
               </Grid>
             </Grid>
           </Stack>
           <Stack direction={'row'}>
-            <Grid container sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mt: 0 }}>
+            <Grid container sx={{ width: '150%', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mt: 0 }}>
               <Grid item xs={12}>
                 <Typography fontSize={'medium'}>
                   {user.data.uname}
@@ -857,7 +860,7 @@ function Mypage() {
         keepMounted
         PaperProps={{
           sx: {
-            width: '80%', // 원하는 너비 퍼센트로 설정
+            width: '90%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
           },
@@ -882,7 +885,7 @@ function Mypage() {
         keepMounted
         PaperProps={{
           sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
+            width: '90%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
           },
@@ -907,7 +910,7 @@ function Mypage() {
         keepMounted
         PaperProps={{
           sx: {
-            width: '60%', // 원하는 너비 퍼센트로 설정
+            width: '90%', // 원하는 너비 퍼센트로 설정
             height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
             maxWidth: 'none', // 최대 너비 제한 제거
           },
@@ -921,7 +924,7 @@ function Mypage() {
           }} >
           <CloseIcon />
         </IconButton>
-        <FollowMeList uid={uid} />
+        <FollowMeList uid={uid} handleClose3={handleClose3} />
       </Dialog>
     </DashboardLayout >
   );

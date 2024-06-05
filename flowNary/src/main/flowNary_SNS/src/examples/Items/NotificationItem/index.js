@@ -13,24 +13,33 @@ import MDTypography from "components/MDTypography";
 
 // custom styles for the NotificationItem
 import menuItem from "examples/Items/NotificationItem/styles";
+import { Grid } from "@mui/material";
 
-const NotificationItem = forwardRef(({ icon, title, ...rest }, ref) => (
+const NotificationItem = forwardRef(({ icon, title, time, ...rest }, ref) => (
   <MenuItem {...rest} ref={ref} sx={(theme) => menuItem(theme)}>
-    <MDBox component={Link} py={0.5} display="flex" alignItems="center" lineHeight={1}>
-      <MDTypography variant="body1" color="secondary" lineHeight={0.75}>
-        {icon}
-      </MDTypography>
-      <MDTypography variant="button" fontWeight="regular" sx={{ ml: 1 }}>
-        {title}
-      </MDTypography>
-    </MDBox>
-  </MenuItem>
+    <Grid container component={Link} py={0.5} sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between' }} lineHeight={1}>
+      <Grid item sx={{ display: "flex" }}>
+        <MDTypography variant="body1" color="secondary" lineHeight={0.75}>
+          {icon}
+        </MDTypography>
+        <MDTypography variant="button" fontWeight="regular" sx={{ ml: 1 }}>
+          {title}
+        </MDTypography>
+      </Grid>
+      <Grid item>
+        <MDTypography variant="button" fontWeight="regular" sx={{ ml: 1 }}>
+          {time.toString().split("T")[0]}  {time.toString().split("T")[1]}
+        </MDTypography>
+      </Grid>
+    </Grid>
+  </MenuItem >
 ));
 
 // Typechecking props for the NotificationItem
 NotificationItem.propTypes = {
   icon: PropTypes.node.isRequired,
   title: PropTypes.string.isRequired,
+  time: PropTypes.any
 };
 
 export default NotificationItem;
