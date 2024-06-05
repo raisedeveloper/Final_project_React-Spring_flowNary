@@ -10,6 +10,7 @@ import { GoogleAuthProvider, getAuth, signInWithEmailAndPassword, signInWithPopu
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import UserLoginService from "ut/userLogin-Service";
 
 export default function SettingModal() {
   const uid = parseInt(GetWithExpiry("uid"));
@@ -17,6 +18,12 @@ export default function SettingModal() {
 
   const navigate = useNavigate();
   const [veriPwd, setVeriPwd] = useState('');
+
+  const goLogin = () => navigate('/authentication/sign-in');
+
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
 
   useEffect(() => {
     if (uid == null) {

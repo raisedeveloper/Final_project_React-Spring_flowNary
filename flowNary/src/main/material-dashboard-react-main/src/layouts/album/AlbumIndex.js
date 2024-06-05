@@ -20,14 +20,15 @@ function Album() {
   const goLogin = () => navigate('/authentication/sign-in');
   console.log("아이디: ", uid);
 
+  if (uid === undefined || uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
+
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      {uid > 0 ? (
-        <ShowAlbumList />
-      ) : (
-        <UserLoginService goLogin={goLogin} />
-      )}
+      <ShowAlbumList />
       <Footer />
     </DashboardLayout>
   );

@@ -23,6 +23,7 @@ import { insertFamily } from "api/axiosPost";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "api/emptyCheck";
 import UserLoginService from "ut/userLogin-Service";
+import { GetWithExpiry } from "api/LocalStorage";
 
 const familyData = [
   {
@@ -56,6 +57,12 @@ export default function Family() {
 
   const [faid, setFaid] = useState(-1);
   const { activeUser } = useContext(UserContext);
+
+  const goLogin = () => navigate('/authentication/sign-in');
+
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -126,7 +133,6 @@ export default function Family() {
       setFaid(result);
     }
   }
-
 
   return (
     <DashboardLayout>

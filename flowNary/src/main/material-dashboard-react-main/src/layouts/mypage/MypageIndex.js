@@ -315,6 +315,10 @@ function Mypage() {
     }
   }
 
+  if (uid === undefined || uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;    
+  }
+
   if (board.isLoading || user.isLoading) {
     return (
       <div>Loading</div>
@@ -323,9 +327,8 @@ function Mypage() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />      
+      <DashboardNavbar />
       {/* 상단 정보 넣는 Stack 태그 */}
-      <UserLoginService goLogin={goLogin} />
       <Stack direction={'row'} sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}> {/* 방향을 row로 지정하면 가로 방향으로 배치됨 */}
         {/* Avatar 태그 : 유튜브 프사처럼 동그란 이미지 넣을 수 있는 것 */}
         <Stack direction={'column'}>

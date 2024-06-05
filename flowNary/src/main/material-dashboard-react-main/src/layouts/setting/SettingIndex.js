@@ -16,7 +16,6 @@ import { useGetUser } from "../../api/customHook.jsx";
 import { correct, wrong } from "../../api/alert.jsx";
 
 // api - axios
-
 import axiosGet from '../../api/axiosGet.js';
 
 // ProfileCard, ProfileEdit 컴포넌트 임포트
@@ -28,21 +27,20 @@ export default function Settings() {
   // localStorage를 이용해서 user 받아오기
   const uid = parseInt(GetWithExpiry("uid"));
   const email = GetWithExpiry("email");
-
   return (
-      <DashboardLayout>
-        <DashboardNavbar />
-        <Box sx={{ flexGrow: 1, padding: '20px' }}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={11}>
-              <ProfileEdit
-                email={email}
-                uid={uid}
-              />
-            </Grid>
+    <DashboardLayout>
+      <DashboardNavbar />
+      <Box sx={{ flexGrow: 1, padding: '20px' }}>
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={11}>
+            <ProfileEdit
+              email={email}
+              uid={uid}
+            />
           </Grid>
-        </Box>
+        </Grid>
+      </Box>
       <Footer />
-      </DashboardLayout>
+    </DashboardLayout>
   );
 }

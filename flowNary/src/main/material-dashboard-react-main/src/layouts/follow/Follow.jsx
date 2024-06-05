@@ -53,17 +53,10 @@ export default function Follow() {
     removeFollow(id);
   }
 
-  // 유저정보 불러오기
-  const loginUseruid = parseInt(GetWithExpiry("uid"));
   const goLogin = () => navigate('/authentication/sign-in');
-
-  if (loginUseruid > 0 ) {
-    return (
-      <DashboardLayout>
-        <DashboardNavbar />
-        <UserLoginService goLogin={goLogin} />
-      </DashboardLayout>
-    )
+  
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
   }
 
   if (activeUser.id === -1) {
