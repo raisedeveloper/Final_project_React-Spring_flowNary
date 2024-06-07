@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { isEmpty } from "api/emptyCheck";
 import Iconify from "components/iconify/iconify";
 import { getFamilyUserList } from "api/axiosGet";
+import UserLoginService from "ut/userLogin-Service";
 
 const familyData = [
   {
@@ -132,7 +133,10 @@ export default function Family() {
 
   // const profileimages = familylist.profiledata ? familylist.profiledata.split(',') : null;
   // console.log(familylist[0].profiledata);
-
+  const goLogin = () => navigate('/authentication/sign-in');
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
   return (
     <DashboardLayout>
       <DashboardNavbar />

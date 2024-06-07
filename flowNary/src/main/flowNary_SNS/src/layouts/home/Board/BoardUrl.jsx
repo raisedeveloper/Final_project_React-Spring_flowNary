@@ -34,7 +34,6 @@ import DashboardNavbar from 'examples/Navbars/DashboardNavbar/index.js';
 import BoardDetail from './BoardDetail.jsx';
 import { useAddLike } from 'api/customHook.jsx';
 import { getBoardUrl } from 'api/axiosGet.js';
-import TodoList from "../todoList/TodoListIndex.js";
 import { wrong } from 'api/alert.jsx';
 import { deleteConfirm } from 'api/alert.jsx';
 import { deleteBoard } from 'api/axiosPost.js';
@@ -193,7 +192,7 @@ function BoardUrl() {
 
 
   if (urlBoard.isLoading) {
-      return <div><Loading /></div>;
+    return <div><Loading /></div>;
   }
 
   if (urlBoard.isError) {
@@ -381,11 +380,6 @@ function BoardUrl() {
                   </MDBox>
                 </Grid>
               </Grid>
-            </Stack>
-            <Stack direction="column" sx={{ flex: 0.5 }}>
-              <MDBox mb={3} sx={{ position: 'sticky', top: "5%" }}>
-                <TodoList />
-              </MDBox>
             </Stack>
           </Stack>
         </MDBox>
