@@ -96,8 +96,6 @@ export const getBoard = async (bid: Number, uid = -1) => {
  * @returns 
  */
 export const getBoardUrl = async (url: string, uid = -1) => {
-    console.log(url);
-
     const result = await axios.get('/board/getBoardUrl', {
         params: {
             url: url,
@@ -123,8 +121,7 @@ export const getBoardUrl = async (url: string, uid = -1) => {
  * @returns 
  */
 export const getBoardList = async (count = 1, field = 'title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
-
-    const result = await axios.get('/board/list', {
+    const data = await axios.get('/board/list', {
         params: {
             c: count,
             f: field,
@@ -133,15 +130,15 @@ export const getBoardList = async (count = 1, field = 'title', field2 = '', fiel
             q: query,
             type: type,
             uid: uid,
-        }
+        },
     }).then((response) => response.data)
         .catch(error => {
             console.log('axiosget.js: getBoardList error!');
             console.log(error);
         });
+    return data;
+};
 
-    return result;
-}
 
 /** 마이페이지 내 글 리스트 받기
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)

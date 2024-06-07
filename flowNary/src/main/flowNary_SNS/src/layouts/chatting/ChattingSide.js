@@ -6,27 +6,33 @@ import { useWebSocket } from 'api/webSocketContext';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ChattingIndex from './ChattingIndex';
 import TimeAgo from 'timeago-react';
 import { getChatUserList } from 'api/axiosGet';
+import UserAvatar from 'api/userAvatar';
 
 export default function ChatList() {
   const { activeUser } = useContext(UserContext);
   const [list, setList] = useState([]);
+  const [usernum, setUsernum] = useState('');
   const { stompClient } = useWebSocket();
   const [count, setCount] = useState(20);
   const navigate = useNavigate();
-  const [cid, setCid] = useState('');
-
+  const [cid, setCid] = useState(-1);
+  const { state } = useLocation();
   useEffect(() => {
     if (activeUser.uid !== -1) {
       const fetchChatList = async () => {
         const chatlist = await getChatList(activeUser.uid, count, 0);
         if (chatlist) {
           setList(chatlist);
-          setCid(chatlist[0].cid);
-          const cidList = chatlist.map((chat) => chat.cid);
+          if (state) {
+            setCid(state.cid);
+            setCid(chatlist[0].cid);
+          }
+
+          const cidList = list.map((chat) => chat.cid);
           const promises = cidList.map(async (cid) => {
             const usernumlist = await getChatUserList(cid);
             if (usernumlist) {
@@ -39,7 +45,6 @@ export default function ChatList() {
 
           Promise.all(promises).then((usernumList) => {
             setUsernum(usernumList); // 추출된 UID 목록으로 usernum 설정
-            console.log(usernum);
           });
         } else {
           console.error("Chat list is empty or not available");
@@ -58,7 +63,6 @@ export default function ChatList() {
 
         chatrefresh = stompClient.subscribe(`/topic/chatlist`, (message) => {
           const data = JSON.parse(message.body);
-          console.log(data);
 
           setList(prevList => {
             const indexcid = prevList.findIndex(item => item.cid === data.cid);
@@ -95,6 +99,7 @@ export default function ChatList() {
     }
   }, [activeUser.uid, count, stompClient]);
 
+
   const handleChatClick = async (cid) => {
     await setCid(cid);
     navigate("/chatlist", { state: { cid: cid } });
@@ -118,7 +123,7 @@ export default function ChatList() {
               background: '#fff',
               borderRadius: 4,
               overflow: 'hidden',
-              px: 3,
+              px: 1
             }}
           >
             <List sx={{ cursor: 'pointer' }}>
@@ -135,7 +140,7 @@ export default function ChatList() {
                       }
                     }}
                   >
-                    <ListItemAvatar>
+                    <ListItemAvatar sx={{ mr: 3 }}>
                       <Badge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -151,10 +156,9 @@ export default function ChatList() {
                           ></div>
                         }
                       >
-                        <Avatar
-                          sx={{ width: 25, height: 25 }}
-                          src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${activeUser.profile}`}
-                        />
+                        <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
+                          <UserAvatar uid={usernum[idx]} />
+                        </Avatar>
                       </Badge>
                     </ListItemAvatar>
                     <ListItemText

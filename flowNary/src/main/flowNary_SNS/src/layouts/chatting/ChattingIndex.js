@@ -10,6 +10,8 @@ import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
 import PropTypes from 'prop-types';
 import Iconify from 'components/iconify/iconify';
 import UserAvatar from 'api/userAvatar';
+import { chatDeleteConfirm } from 'api/alert';
+import { deleteChat } from 'api/axiosPost';
 
 export default function Chat({ cid, setCid }) {
   const [messages, setMessages] = useState([]);
@@ -98,25 +100,15 @@ export default function Chat({ cid, setCid }) {
     }
   }, [activeUser.uid, stompClient, cid]);
 
-  // useEffect(() => {
-  //   if (messageEndRef.current) {
-  //     messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-  //   }
-  // }, [messages]);
-
-  const rippleRef = useRef(null);
-
-  // const handleMouseDown = (event) => {
-  //   rippleRef.current.start(event);
-  // };
-
-  // const handleMouseUp = () => {
-  //   rippleRef.current.stop();
-  // };
-
   const handleBack = () => {
     setCid(-1);
   };
+
+  const handleDelete = async () => {
+    const verify = await chatDeleteConfirm('채팅방을 나가시겠습니까? ', '채팅방 이름: ' + chatroom.name)
+    if (verify === 1)
+      deleteChat(cid);
+  }
 
   if (cid === -1) {
     return (
@@ -160,15 +152,18 @@ export default function Chat({ cid, setCid }) {
           <IconButton
             sx={{ fontSize: '2rem', color: 'lightcoral' }}
             onClick={handleBack}
-            // onMouseDown={handleMouseDown}
-            // onMouseUp={handleMouseUp}
           >
             <Icon>arrow_back</Icon>
-            {/* <TouchRipple ref={rippleRef} center /> */}
           </IconButton>
           <Typography variant="h5" sx={{ flexGrow: 1, color: 'lightcoral', fontWeight: 'bold', textAlign: 'center' }}>
             {chatroom && chatroom.name}
           </Typography>
+          <IconButton
+            sx={{ fontSize: '2rem', color: 'lightcoral' }}
+            onClick={handleDelete}
+          >
+            <Icon>close</Icon>
+          </IconButton>
         </Box>
         <Box
           sx={{
@@ -181,7 +176,7 @@ export default function Chat({ cid, setCid }) {
           }}
         >
           {/* <div ref={messageEndRef} /> */}
-          {messages && messages.reverse().map((message, index) => {
+          {messages && messages.map((message, index) => {
             // 현재 메시지의 날짜를 가져오기
             const messageDate = new Date(message.dTime).toLocaleDateString();
 
@@ -198,7 +193,7 @@ export default function Chat({ cid, setCid }) {
                     <Stack direction='column'>
                       <Box sx={{ display: 'flex' }}>
                         <Avatar sx={{ width: 25, height: 25, mr: 1 }}>
-                          <UserAvatar uid={message.uid}/>
+                          <UserAvatar uid={message.uid} />
                         </Avatar>
                         <Box
                           sx={{
@@ -246,7 +241,20 @@ export default function Chat({ cid, setCid }) {
                   )}
                 </Stack>
                 {messageDate !== previousMessageDate && (
-                  <Typography sx={{ fontSize: 'small', textAlign: 'center', my: 1 }}>
+                  <Typography variant="caption"
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '100%',
+                      fontSize: 'small',
+                      color: '#666',
+                      backgroundColor: '#f0f0f0',
+                      padding: '0.25rem',
+                      borderRadius: '15px',
+                      marginTop: '1rem',
+                      marginBottom: '0.5rem',
+                    }}>
                     {messageDate}
                   </Typography>
                 )}

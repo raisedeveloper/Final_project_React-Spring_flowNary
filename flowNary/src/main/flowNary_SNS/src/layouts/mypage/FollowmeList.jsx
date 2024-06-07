@@ -11,6 +11,7 @@ import { wrong } from "api/alert";
 import { useRemoveFollow } from 'api/customHook';
 import { Close } from '@mui/icons-material';
 import UserAvatar from 'api/userAvatar';
+import Loading from 'api/loading';
 
 export default function FollowMeList(props) {
 
@@ -48,10 +49,10 @@ export default function FollowMeList(props) {
 
 
   if (followMeList.isLoading) {
-    return (
-      <div>Loading</div>
-    )
-  }
+      return (
+        <div><Loading /></div>
+      )
+    }
 
   return (
     <>

@@ -28,6 +28,8 @@ import { updateUserStatus } from 'api/axiosPost';
 import Iconify from '../../../components/iconify';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import Loading from 'api/loading';
+import UserAvatar from 'api/userAvatar';
 
 // ----------------------------------------------------------------------
 
@@ -125,11 +127,7 @@ export default function UserTableRow({ selected, handleClick }) {
   });
 
   if (isLoading) {
-    return (
-      <TableRow>
-        <TableCell>로딩 중...</TableCell>
-      </TableRow>
-    );
+    return <div><Loading /></div>;
   }
 
   if (isError) {
@@ -169,66 +167,60 @@ export default function UserTableRow({ selected, handleClick }) {
               <Table size='small'>
                 <TableBody >
                   {paginatedUsers && paginatedUsers.map((user) => (
-                    <TableRow
-                      hover
-                      tabIndex={-1}
-                      role="checkbox"
-                      selected={selected}
-                      key={user.id}
-                      sx={{ backgroundColor: 'inherit' }}
-                    >
-                      <TableCell size="small" component="th" scope="row"
-                        padding="none" align="center">
-                        <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
-                          <Avatar sx={{ width: '2rem', height: '2rem' }}>
-                            <div
-                              style={{
-                                width: '2rem',
-                                height: '2rem',
-                                borderRadius: '50%',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.profile})`,
-                              }}
-                            />
-                          </Avatar>
-                        </Stack>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography variant="subtitle2" noWrap>
-                          {user.uname ? user.uname : "확인이 필요한 유저"}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        {user.provider === 'google' ? '구글가입' : 'Flow가입'}
-                      </TableCell>
-                      <TableCell align="center">
-                        {user.role === 1 ? 'Admin' : 'User'}
-                      </TableCell>
-                      <TableCell align="center">
-                        {user.regDate}
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconButton onClick={() => handleUserProfileEdit(user.uid)}>
-                          <Iconify icon="eva:person-fill" />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          variant="contained"
-                          sx={{
-                            color: 'white',
-                            backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.25)' : 'rgba(255, 0, 0, 0.25)',
-                            '&:hover': {
-                              backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.35)' : 'rgba(255, 0, 0, 0.35)',
-                            },
-                          }}
-                          onClick={() => handleStatusChange(user.uid, user.status)}
-                        >
-                          {user.status === 0 ? '비활성화' : '활성화'}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                    <>
+                      <TableRow
+                        hover
+                        tabIndex={-1}
+                        role="checkbox"
+                        selected={selected}
+                        key={user.id}
+                        sx={{ backgroundColor: 'inherit' }}
+                      >
+                        <TableCell size="small" component="th" scope="row"
+                          padding="none" align="center">
+                          <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
+                            {user.profile &&
+                            <Avatar sx={{ width: '2rem', height: '2rem' }}>
+                              <UserAvatar profileUrl={user.profile} />
+                            </Avatar>}
+                          </Stack>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography variant="subtitle2" noWrap>
+                            {user.uname ? user.uname : "확인이 필요한 유저"}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          {user.provider === 'google' ? '구글가입' : 'Flow가입'}
+                        </TableCell>
+                        <TableCell align="center">
+                          {user.role === 1 ? 'Admin' : 'User'}
+                        </TableCell>
+                        <TableCell align="center">
+                          {user.regDate}
+                        </TableCell>
+                        <TableCell align="center">
+                          <IconButton onClick={() => handleUserProfileEdit(user.uid)}>
+                            <Iconify icon="eva:person-fill" />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Button
+                            variant="contained"
+                            sx={{
+                              color: 'white',
+                              backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.25)' : 'rgba(255, 0, 0, 0.25)',
+                              '&:hover': {
+                                backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.35)' : 'rgba(255, 0, 0, 0.35)',
+                              },
+                            }}
+                            onClick={() => handleStatusChange(user.uid, user.status)}
+                          >
+                            {user.status === 0 ? '비활성화' : '활성화'}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </>
                   ))}
                 </TableBody>
               </Table>

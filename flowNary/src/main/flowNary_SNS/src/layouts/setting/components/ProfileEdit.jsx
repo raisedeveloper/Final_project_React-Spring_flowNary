@@ -29,6 +29,7 @@ import { userUpdate } from '../../../api/axiosPost';
 import dayjs from 'dayjs';
 import ProfileCard from "./ProfileCard";
 import { useQuery } from "@tanstack/react-query";
+import Loading from "api/loading";
 
 const Header = styled(Box)({
   background: '#BA99D1',
@@ -113,7 +114,7 @@ function ProfileEdit({ uid, email }) {
   const handleUname = (e) => { setUname(e.target.value); };
   const handleNickname = (e) => { setNickname(e.target.value); };
   const handleStat = (e) => { setStat(e.target.value); };
-  const handleGender = (e) => { setGender(e.target.value); console.log(gender);};
+  const handleGender = (e) => { setGender(e.target.value); };
   const handleSnsDomain = (e) => { setSnsDomain(e.target.value); };
   const handleTel = (e) => { setTel(e) };
   const handleBirthChange = (e) => { const formattedDate = dayjs(e).format('YYYY-MM-DD'); setBirth(formattedDate); }
@@ -166,6 +167,11 @@ function ProfileEdit({ uid, email }) {
   }
 
   const goBack = () => { navigate('/'); }
+  if (isLoading) {
+    return (
+      <div><Loading /></div>
+    )
+  }
   return (
     <>
       {(user) ? <>

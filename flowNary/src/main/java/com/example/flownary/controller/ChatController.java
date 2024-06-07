@@ -229,7 +229,7 @@ public class ChatController {
     @PostMapping("/delete")
     public int deleteChat(@RequestBody JSONObject cid) {
     	cSvc.deleteChat(Integer.parseInt(cid.get("cid").toString()));
-    	
+    	System.out.println("넘어오냐~");
     	return 0;
     }
 }

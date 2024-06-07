@@ -22,6 +22,8 @@ import { getFamilyList } from "api/axiosGet";
 import { insertFamily } from "api/axiosPost";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "api/emptyCheck";
+import UserLoginService from "ut/userLogin-Service";
+import Loading from "api/loading";
 
 const familyData = [
   {
@@ -60,32 +62,11 @@ export default function Family() {
     setSearchTerm(event.target.value);
   };
 
-  if (activeUser.uid === -1) {
-    return (
-      <DashboardLayout>
-        <DashboardNavbar />
-        <Typography>
-          유저 정보 없음
-        </Typography>
-      </DashboardLayout>
-    )
-  }
-
   const { data: familylist, isLoading, isError } = useQuery({
     queryKey: ['familylist', activeUser.uid],
     queryFn: () => getFamilyList(activeUser.uid),
   })
 
-  if (isLoading) {
-    return (
-      <DashboardLayout>
-        <DashboardNavbar />
-        <Typography>
-          로딩 중...
-        </Typography>
-      </DashboardLayout>
-    )
-  }
   const filteredFamilyData = !isEmpty(familylist) ? familylist.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
@@ -110,7 +91,7 @@ export default function Family() {
 
   // 클릭 시 마이페이지 이동 이벤트
   const handleMyPage = (uid) => {
-    navigate("/mypage", {state: {uid: uid}}); // state를 통해 navigate 위치에 파라메터 제공
+    navigate("/mypage", { state: { uid: uid } }); // state를 통해 navigate 위치에 파라메터 제공
   }
 
   const makeNewFamily = async () => {
@@ -126,6 +107,13 @@ export default function Family() {
     }
   }
 
+  if (isLoading) {
+    return <div><Loading /></div>;
+  }
+  const goLogin = () => navigate('/authentication/sign-in');
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -151,27 +139,27 @@ export default function Family() {
       </Box>
       <Divider sx={{ marginBottom: '10px', color: 'black' }} />
 
-      <Box sx={{ padding: 5, display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#f0f0f0', borderRadius: 2, boxShadow: 3, mb:3 }}> {/* 박스 배경 개선 */}
-          <Grid container spacing={2}>
-            {filteredFamilyData.map((item, index) => (
-              <Grid item xs={12} sm={6} md={6} lg={6} key={index}> {/* 여기서 xs를 12에서 6으로 변경 */}
-                <Card sx={{ marginBottom: '10px' }}>
-                  <CardHeader
-                    avatar={<Avatar alt={item.leadername} src={item.leaderprofile} onClick={() => handleMyPage(item.leaderuid)} />}
-                    title={item.name}
-                    subheader={item.regTime}
-                  />
-                  <CardContent onClick={() => handleOpen(item.faid)}>
-                    <Typography variant="body2" color="text.secondary">
-                      유저 수 : {item.usercount}
-                    </Typography>
-                  </CardContent>
-                </Card>
-                {index < filteredFamilyData.length - 1 && <Divider />}
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+      <Box sx={{ padding: 5, display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#f0f0f0', borderRadius: 2, boxShadow: 3, mb: 3 }}> {/* 박스 배경 개선 */}
+        <Grid container spacing={2}>
+          {filteredFamilyData.map((item, index) => (
+            <Grid item xs={12} sm={6} md={6} lg={6} key={index}> {/* 여기서 xs를 12에서 6으로 변경 */}
+              <Card sx={{ marginBottom: '10px' }}>
+                <CardHeader
+                  avatar={<Avatar alt={item.leadername} src={item.leaderprofile} onClick={() => handleMyPage(item.leaderuid)} />}
+                  title={item.name}
+                  subheader={item.regTime}
+                />
+                <CardContent onClick={() => handleOpen(item.faid)}>
+                  <Typography variant="body2" color="text.secondary">
+                    유저 수 : {item.usercount}
+                  </Typography>
+                </CardContent>
+              </Card>
+              {index < filteredFamilyData.length - 1 && <Divider />}
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
 
       <Modal
         open={modalopen}
@@ -195,9 +183,9 @@ export default function Family() {
           <TextField label="패밀리 이름" variant="outlined"
             value={newname}
             onChange={(e) => setNewname(e.target.value)}
-            sx={{marginTop: '10px'}}
+            sx={{ marginTop: '10px' }}
           /> <br />
-          <Button variant="outlined" onClick={makeNewFamily} sx={{color: 'black', marginTop: '10px'}}>생성</Button>
+          <Button variant="outlined" onClick={makeNewFamily} sx={{ color: 'black', marginTop: '10px' }}>생성</Button>
         </Box>
       </Modal>
 

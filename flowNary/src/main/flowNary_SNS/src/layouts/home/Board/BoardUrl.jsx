@@ -24,7 +24,6 @@ import axios from 'axios';
 import Carousel from 'react-material-ui-carousel'
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { QueryClient, useQuery } from '@tanstack/react-query';
-import koreanStrings from './ko.js'; // 한글 로케일 파일 경로
 import MDBox from 'components/MDBox/index.js';
 import MDTypography from 'components/MDTypography/index.js';
 import TimeAgo from 'timeago-react';
@@ -40,6 +39,7 @@ import { wrong } from 'api/alert.jsx';
 import { deleteConfirm } from 'api/alert.jsx';
 import { deleteBoard } from 'api/axiosPost.js';
 import { Declaration } from 'api/alert.jsx';
+import Loading from 'api/loading.js';
 
 function BoardUrl() {
   const queryClient = new QueryClient();
@@ -193,9 +193,7 @@ function BoardUrl() {
 
 
   if (urlBoard.isLoading) {
-    return (
-      <div>로딩 중...</div>
-    )
+      return <div><Loading /></div>;
   }
 
   if (urlBoard.isError) {

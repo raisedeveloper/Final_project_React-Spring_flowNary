@@ -47,90 +47,6 @@ export default function Login() {
   }
   const { updateActiveUser } = useContext(UserContext);
 
-  // 구글로 로그인
-  const loginWithGoogle = async () => {
-    try {
-      const auth = getAuth();
-      const provider = new GoogleAuthProvider();
-      const data = await signInWithPopup(auth, provider);
-
-      // 이메일로 사용자 조회
-      const response = await axios.get('/user/getUserByEmail', {
-        params: {
-          email: data.user.email
-        }
-      });
-
-      // 사용자가 존재하지 않으면 회원가입 진행
-      if (Object.keys(response.data).length === 0) {
-        const result = await axios.post("/user/register", {
-          email: data.user.email,
-          pwd: 'nn',
-          hashuid: data.user.uid,
-          provider: 1,
-        }).then(res => res.data);
-        // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
-        SetWithExpiry("uid", result, 180);
-        SetWithExpiry("email", data.user.email, 180);
-        SetWithExpiry("profile", response.data.profile, 180);
-        SetWithExpiry("nickname", response.data.nickname, 180);
-        SetWithExpiry("statusMessage", response.data.statusMessage, 180);
-        SetWithExpiry("role", response.data.role, 180);
-        Swal.fire({
-          icon: 'success',
-          title: "구글 회원가입에 성공했습니다.",
-          showClass: {
-            popup: `
-                                    animate__animated
-                                    animate__fadeInUp
-                                    animate__faster
-                                `
-          },
-          hideClass: {
-            popup: `
-                                    animate__animated
-                                    animate__fadeOutDown
-                                    animate__faster
-                                `
-          }
-        });
-        console.log("구글 회원가입 성공!" + response.data);
-
-      } else {
-        SetWithExpiry("uid", response.data.id, 180);
-        SetWithExpiry("email", data.user.email, 180);
-        SetWithExpiry("profile", response.data.profile, 180);
-        SetWithExpiry("nickname", response.data.nickname, 180);
-        SetWithExpiry("statusMessage", response.data.statusMessage, 180);
-        SetWithExpiry("role", response.data.role, 180);
-        updateActiveUser({
-          uid: response.data.id, email: data.user.email, nickname: response.data.nickname,
-          role: response.data.role,
-        });
-        Swal.fire({
-          icon: 'success',
-          title: "구글 로그인에 성공했습니다.",
-          showClass: {
-            popup: ` animate__animated 
-            animate__fadeInUp
-            animate__faster `
-          },
-          hideClass: {
-            popup: ` animate__animated
-            animate__fadeOutDown
-            animate__faster `
-          }
-        });
-        console.log("구글 로그인 성공!" + response.data);
-
-      }
-      setAnimationClass('fade-exit');
-      setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
-    } catch (error) {
-      console.error("구글 로그인 오류:", error);
-    }
-  };
-
   function handleKeyPress(event) {
     if (event && event.key === 'Enter') {
       event.preventDefault(); // 기본 동작 방지
@@ -139,10 +55,7 @@ export default function Login() {
   }
 
   const handleSubmit = async () => {
-    // e.preventDefault();
-
     try {
-      // 이메일이 빈칸인 경우
       if (!userInfo.email) {
         Swal.fire({
           icon: "warning",
@@ -151,7 +64,6 @@ export default function Login() {
         return;
       }
 
-      // 비밀번호가 빈칸인 경우
       if (!userInfo.password) {
         Swal.fire({
           icon: "warning",
@@ -159,40 +71,38 @@ export default function Login() {
         });
         return;
       }
-      // Firebase Authentication을 통해 사용자를 인증합니다.
+
       const checkuser = await signInWithEmailAndPassword(auth, userInfo.email, userInfo.password);
 
-      // 사용자가 존재하는 경우
       if (checkuser) {
         const user = auth.currentUser;
         if (user) {
           const res = await axios.get('/user/getUserByEmail', { params: { email: userInfo.email } })
             .catch(error => console.log(error));
           if (res.data.status === 1) {
-            console.log(res.data.status);
             wrong('비활성화 된 계정입니다.')
             return;
           }
-          login(userInfo);
-          SetWithExpiry("uid", user.uid, 180); // 올바른 uid 설정                      
-          SetWithExpiry("uid", res.data.id, 180);
-          SetWithExpiry("email", res.data.email, 180);
-          SetWithExpiry("profile", res.data.profile, 180);
-          SetWithExpiry("nickname", res.data.nickname, 180);
-          SetWithExpiry("statusMessage", res.data.statusMessage, 180);
-          SetWithExpiry("role", res.data.role, 180);
-          updateActiveUser({
-            uid: res.data.id, email: res.data.email, nickname: res.data.nickname,
-            role: res.data.role
-          });
+          const { id, email, nickname, role, uname, profile, statusMessage } = res.data;
+          SetWithExpiry("uid", id, 180);
+          SetWithExpiry("email", email, 180);
+          SetWithExpiry("nickname", nickname, 180);
+          SetWithExpiry("role", role, 180);
+          SetWithExpiry("uname", uname, 180);
+          SetWithExpiry("profile", profile, 180);
+          SetWithExpiry("statusMessage", statusMessage, 180);
+          updateActiveUser({ uid: id, email, nickname, uname, profile, statusMessage, role });
 
-          navigate('/home');
-          setAnimationClass('fade-exit');
-          setTimeout(() => navigate('/home'), 500);
+          if (res.data.role === 0) {
+            navigate('/home');
+            setTimeout(() => navigate('/home'), 500);
+          } else {
+            navigate('/statistics');
+            setTimeout(() => navigate('/statistics'), 500);
+          }
         }
       }
     } catch (error) {
-      // Firebase 오류 처리를 좀 더 일반적인 메시지로 통합
       Swal.fire({
         icon: "error",
         title: "앗! 잠시만요",
@@ -237,14 +147,6 @@ export default function Login() {
             onChange={handleChange} onKeyUp={handleKeyPress} style={{ marginBottom: '1rem' }} />
           <br />
           <button className="fill" onClick={handleSubmit}><img style={{ paddingRight: '10px', margin: '-5px', width: '1.5em' }} src="/images/favicon.png" alt="f" />로그인</button>
-          <Typography style={{
-            marginTop: '10px', marginBottom: '8px', fontSize: 'small',
-            color: theme === 'light' ? '#dca3e7' : '#ffffff'
-          }}>또는</Typography>
-          <Link to="#" onClick={loginWithGoogle} className={`custom-button ${theme}`}>
-            <img style={{ paddingRight: '5px', margin: '-5px', width: '1.55em' }} src="/images/icons/Google.png" alt="Google" />
-            <span>       로그인</span>
-          </Link>
           <br /><br />
           <Typography style={{ fontSize: 'small', marginBottom: '1rem', color: theme === 'light' ? '#dca3e7' : '#ffffff' }}>혹시 계정이 없으신가요?</Typography>
           <div>

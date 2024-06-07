@@ -12,6 +12,7 @@ import { Search } from '@mui/icons-material';
 import { wrong } from "api/alert";
 import { Close } from '@mui/icons-material';
 import UserAvatar from 'api/userAvatar';
+import Loading from 'api/loading';
 
 export default function FollowList(props) {
 
@@ -47,10 +48,10 @@ export default function FollowList(props) {
 
   if (followList.isLoading) {
     return (
-      <div>Loading</div>
+      <div><Loading /></div>
     )
   }
-  console.log(followList.data)
+
   return (
     <>
       <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', mt: 4 }}>

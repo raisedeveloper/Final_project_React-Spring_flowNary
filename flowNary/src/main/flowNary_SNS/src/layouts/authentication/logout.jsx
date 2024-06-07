@@ -8,8 +8,7 @@ const Logout = () => {
 
   useEffect(() => {
     signOut(auth).then(() => {
-      console.log('로그아웃 성공');
-      localStorage.clear();
+      sessionStorage.clear();
       navigate('/');
     })
     .catch((error) => {

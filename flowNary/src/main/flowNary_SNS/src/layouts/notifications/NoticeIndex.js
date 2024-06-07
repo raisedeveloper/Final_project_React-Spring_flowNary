@@ -36,6 +36,7 @@ import { getNoticeList } from "api/axiosGet";
 import { isEmpty } from "api/emptyCheck";
 import { useNavigate } from "react-router-dom";
 import { deleteNotice } from "api/axiosPost";
+import UserLoginService from "ut/userLogin-Service";
 
 export default function Notifications() {
 
@@ -50,8 +51,7 @@ export default function Notifications() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (activeUser.uid !== -1)
-    {
+    if (activeUser.uid !== -1) {
       const getNotices = async () => {
         const list1 = await getNoticeList(activeUser.uid, 1);
         setNotice1(list1);
@@ -106,8 +106,8 @@ export default function Notifications() {
       return () => {
         if (stompClient && stompClient.connected) {
           stompClient.publish({
-              destination: '/app/page',
-              body: JSON.stringify({ userId: activeUser.uid, page: 'notice', action: 'leave' }),
+            destination: '/app/page',
+            body: JSON.stringify({ userId: activeUser.uid, page: 'notice', action: 'leave' }),
           });
           console.log('notice page disconnected');
           if (nlist1) {
@@ -134,7 +134,7 @@ export default function Notifications() {
     const newArray = [...open];
     newArray[i] = !open[i];
     setOpen(newArray);
-  } 
+  }
 
   const handleClick = (nid, type, oid) => {
     deleteNotice(nid);
@@ -148,30 +148,34 @@ export default function Notifications() {
       navigate("/follow");
     }
     else if (type === 4) {
-      navigate("/chatlist", {state: { cid: oid }});
+      navigate("/chatlist", { state: { cid: oid } });
     }
   }
 
   const handleClick2 = async (nid, oid, c, idx) => {
     await deleteNotice(nid);
-    
+
     const newArray = notice5.filter((_, index) => index !== idx);
     setNotice5(newArray);
     if (c === 1) {
       await insertFamilyUser(oid, activeUser.uid, 0, activeUser.nickname, '초기 메세지');
     }
   }
+  const goLogin = () => navigate('/authentication/sign-in');
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <Box m={3}>
-        <Card sx={{ height: "100%",  boxShadow: 'none', backgroundColor:'beige'  }}>
+        <Card sx={{ height: "100%", boxShadow: 'none', backgroundColor: 'beige' }}>
           <Box mx={3} mt={3}>
             <MDTypography variant="h6" fontWeight="medium" onClick={() => handleopen(0)}>
               새 글 알림 - {!isEmpty(notice1) ? notice1.length : 0}건
             </MDTypography>
-            <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder'}} >
+            <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }} >
               {open[0] && notice1 && !isEmpty(notice1) && notice1.map((item, idx) => (
                 <NotificationItem key={idx} onClick={() => handleClick(item.nid, item.type, item.oid)} icon={<Icon>history_edu</Icon>} title={item.nContents} time={item.regTime} />
               ))}
@@ -180,7 +184,7 @@ export default function Notifications() {
         </Card>
       </Box>
       <Box m={3}>
-        <Card sx={{ height: "100%",  boxShadow: 'none', backgroundColor:'beige'  }}>
+        <Card sx={{ height: "100%", boxShadow: 'none', backgroundColor: 'beige' }}>
           <Box mx={3} mt={3}>
             <MDTypography variant="h6" fontWeight="medium" onClick={() => handleopen(1)}>
               댓글 알림 - {!isEmpty(notice2) ? notice2.length : 0}건
@@ -194,35 +198,35 @@ export default function Notifications() {
         </Card>
       </Box>
       <Box m={3}>
-        <Card sx={{ height: "100%",  boxShadow: 'none', backgroundColor:'beige'  }}>
+        <Card sx={{ height: "100%", boxShadow: 'none', backgroundColor: 'beige' }}>
           <Box mx={3} mt={3}>
             <MDTypography variant="h6" fontWeight="medium" onClick={() => handleopen(2)}>
               팔로우 알림 - {!isEmpty(notice3) ? notice3.length : 0}건
             </MDTypography>
             <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
               {open[2] && notice3 && !isEmpty(notice3) && notice3.map((item, idx) => (
-                <NotificationItem key={idx} onClick={() => handleClick(item.nid, item.type, item.oid)} icon={<Icon>people</Icon>} title={item.nContents}  time={item.regTime}/>
+                <NotificationItem key={idx} onClick={() => handleClick(item.nid, item.type, item.oid)} icon={<Icon>people</Icon>} title={item.nContents} time={item.regTime} />
               ))}
             </CardContent>
           </Box>
         </Card>
       </Box>
       <Box m={3}>
-        <Card sx={{ height: "100%",  boxShadow: 'none', backgroundColor:'beige'  }}>
+        <Card sx={{ height: "100%", boxShadow: 'none', backgroundColor: 'beige' }}>
           <Box mx={3} mt={3}>
             <MDTypography variant="h6" fontWeight="medium" onClick={() => handleopen(3)}>
               메세지 알림 - {!isEmpty(notice4) ? notice4.length : 0}건
             </MDTypography>
             <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
               {open[3] && notice4 && !isEmpty(notice4) && notice4.map((item, idx) => (
-                <NotificationItem key={idx} onClick={() => handleClick(item.nid, item.type, item.oid)} icon={<Icon>send</Icon>} title={item.nContents}  time={item.regTime}/>
+                <NotificationItem key={idx} onClick={() => handleClick(item.nid, item.type, item.oid)} icon={<Icon>send</Icon>} title={item.nContents} time={item.regTime} />
               ))}
             </CardContent>
           </Box>
         </Card>
       </Box>
       <Box m={3}>
-        <Card sx={{ height: "100%",  boxShadow: 'none', backgroundColor:'beige'  }}>
+        <Card sx={{ height: "100%", boxShadow: 'none', backgroundColor: 'beige' }}>
           <Box mx={3} mt={3}>
             <MDTypography variant="h6" fontWeight="medium" onClick={() => handleopen(3)}>
               패밀리 알림 - {!isEmpty(notice5) ? notice5.length : 0}건

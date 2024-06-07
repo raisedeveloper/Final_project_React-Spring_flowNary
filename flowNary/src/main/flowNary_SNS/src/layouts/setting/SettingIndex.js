@@ -16,7 +16,6 @@ import { useGetUser } from "../../api/customHook.jsx";
 import { correct, wrong } from "../../api/alert.jsx";
 
 // api - axios
-
 import axiosGet from '../../api/axiosGet.js';
 
 // ProfileCard, ProfileEdit 컴포넌트 임포트

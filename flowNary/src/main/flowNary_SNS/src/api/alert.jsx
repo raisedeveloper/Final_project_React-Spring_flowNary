@@ -157,3 +157,26 @@ export async function noticeConfirm(notice) {
 
   return 3;
 }
+
+export async function chatDeleteConfirm(words, name) {
+  const result = await Swal.fire({
+    title: words,
+    text: name,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "확인",
+    cancelButtonText: '취소'
+  });
+
+  if (result.isConfirmed) {
+    await Swal.fire({
+      title: "성공적으로 삭제되었습니다.",
+      icon: "success"
+    });
+    return 1;
+  }
+
+  return 2;
+}

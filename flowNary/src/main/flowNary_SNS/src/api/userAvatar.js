@@ -15,7 +15,6 @@ const UserAvatar = ({ profileUrl, size, uid }) => {
     queryKey: ['userAvatar', uid],
     queryFn: () => {
       if (!profileUrl && uid) { // UID가 존재하는 경우에만 데이터를 가져옴
-        console.log(uid);
         return getUser(uid);
       } else {
         return null; // UID가 없는 경우 null 반환
@@ -26,21 +25,23 @@ const UserAvatar = ({ profileUrl, size, uid }) => {
 
   return (
     <>
-      {!uid ?
-        <div
-          style={{
-            width: avatarSize,
-            height: avatarSize,
-            borderRadius: '50%',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profileUrl})`
-          }}
-        >
-        </div>
+      {!uid ? <>
+        {profileUrl &&
+          <div
+            style={{
+              width: avatarSize,
+              height: avatarSize,
+              borderRadius: '50%',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profileUrl})`
+            }}
+          >
+          </div>}
+      </>
         :
         <>
-          {!profileUrl && user && user.data &&
+          {!profileUrl && user && user.data && user.data.profile &&
             <div
               style={{
                 width: avatarSize,

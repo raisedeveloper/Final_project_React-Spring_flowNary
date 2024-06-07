@@ -7,6 +7,9 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 // @mui material 컴포넌트
 import { List, Divider, Link, Icon, Avatar, Box, Typography } from "@mui/material";
 
+// MUI Icons
+import PersonIcon from '@mui/icons-material/Person';
+
 // Material Dashboard 2 React 컴포넌트
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -163,7 +166,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             }}
           >
             <Avatar onClick={goMypage}>
-              <UserAvatar profileUrl={profile} />
+              {profile ? (
+                <UserAvatar profileUrl={profile} />
+              ) : (
+                <PersonIcon sx={{ width: '100%', height: '100%' }} />
+              )}
             </Avatar>
             <Box ml={1.95}>
               <Typography

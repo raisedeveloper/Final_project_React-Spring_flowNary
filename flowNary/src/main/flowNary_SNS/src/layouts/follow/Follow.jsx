@@ -16,7 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { Message, Add, Close } from '@mui/icons-material';
 import { wrong } from "api/alert";
 import { getNoticeCheck } from "api/axiosGet";
-
+import UserLoginService from "ut/userLogin-Service";
+import Loading from "api/loading";
 
 export default function Follow() {
 
@@ -63,14 +64,7 @@ export default function Follow() {
     }
 
     if (isLoading || isLoading2) {
-        return (
-            <DashboardLayout>
-                <DashboardNavbar />
-                <Typography>
-                    로딩 중...
-                </Typography>
-            </DashboardLayout>
-        )
+        return <div><Loading /></div>;
     }
 
     const handleMyPage = (uid) => {
@@ -115,6 +109,10 @@ export default function Follow() {
     const handleDelete = (fid) => {
         wrong("플로우 취소되었습니다")
         removeFollowForm(fid);
+    }
+    const goLogin = () => navigate('/authentication/sign-in');
+    if (activeUser.uid === undefined || activeUser.uid < 0) {
+        return <UserLoginService goLogin={goLogin} />;
     }
 
     return (
@@ -257,7 +255,7 @@ export default function Follow() {
                         패밀리 초대하기
                     </Typography>
                     <Stack direction={'column'}>
-                        {isLoading3 && <div>Loading...</div>}
+                        {isLoading3 && <div><Loading /></div>}
                         {familylist && !isEmpty(familylist) && familylist.map((item, idx) => (
                             <Card sx={{ marginBottom: '10px' }} key={idx}>
                                 <CardHeader

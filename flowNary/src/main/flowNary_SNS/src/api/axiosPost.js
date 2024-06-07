@@ -22,8 +22,6 @@ export const userRegister = async (sendData: {
     nickname: string,
     tel: string
 }) => {
-
-    console.log("데이터" + sendData.uname + sendData.nickname + sendData.email);
     return axios({
         method: "POST",
         url: '/user/register',
@@ -128,7 +126,6 @@ export const insertBoard = async (sendData: string) => {
  * @returns 
  */
 export const updateBoard = async (sendData: string) => {
-    console.log('보드' + sendData);
     return axios({
         method: "POST",
         url: '/board/update',
@@ -209,7 +206,6 @@ export const like = async (sendData: {
  * @returns 
  */
 export const deleteBoard = async (bid: number) => {
-    console.log('tlqkf');
     return axios.post('/board/delete', {
         bid: bid
     }).catch(error => {
@@ -603,7 +599,6 @@ export const insertFollow = async (uid: number, fuid: number) => {
             console.log('axiospost.js: insertFollow error!');
             console.log(error);
         });
-    console.log('머로오냐' + result);
     return result;
 }
 
@@ -634,7 +629,6 @@ export const deleteFollow = async (fid: number) => {
  * @returns 
  */
 export const insertDeclaration = async (sendData: string) => {
-    console.log(sendData);
     return axios({
         method: "POST",
         url: '/declaration/insert',

@@ -14,8 +14,8 @@ import InputEmoji from 'react-input-emoji'
 import CreateIcon from '@mui/icons-material/Create';
 
 // css 연결
-import './posting.css';
-import { AntSwitch } from './postingStyle.jsx';
+import '../posting.css';
+import { AntSwitch } from '../postingStyle.jsx';
 import { UploadImage } from "api/image.js";
 // import { FindImage, UploadImage2 } from "../../api/image.js";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -23,7 +23,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { updateBoard } from "api/axiosPost";
 import { getBoard } from "api/axiosGet";
 import { useQuery } from "@tanstack/react-query";
- 
+
 
 export default function Posting() {
   const bid = sessionStorage.getItem("bid");
@@ -44,9 +44,9 @@ export default function Posting() {
   });
 
   const createCloudImageUrl = (image) => {
-    return image.split(',').map(image =>
+    return image.includes(',') ? image.split(',').map(image =>
       `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`
-    );
+    ) : image;
   };
 
   useEffect(() => {
@@ -109,7 +109,6 @@ export default function Posting() {
     const currentDateTime = new Date();
     const koreanDateTime = new Date(currentDateTime.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
     const formattedDateTime = koreanDateTime.toISOString();
-    console.log(formattedDateTime);
 
     const imageList = await Promise.all(
       images.map(async (image) => {
@@ -127,7 +126,6 @@ export default function Posting() {
       modTime: formattedDateTime,
     })
 
-    console.log(sendData);
     updateBoard(sendData);
   };
 
@@ -137,7 +135,6 @@ export default function Posting() {
     setPreviewUrls(previewUrls.filter((_, i) => i !== index)); // 미리보기 URL 배열에서 삭제
   };
 
-  function handleOnEnter(text) { console.log('') }
 
   return (
     <DashboardLayout>
@@ -204,36 +201,36 @@ export default function Posting() {
           />
         </Grid>
 
- {/* 내용 작성 부분 */}
- <Grid item xs={12} sm={6} p='2px'>
-        <TextareaAutosize
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="당신의 일상을 공유하세요!"
-          style={{
-            width: "70%",
-            // minHeight: 100,
-            // maxHeight: 1000,
-            overflowY: "auto",
-            border: "1px solid #ddd", // 테두리 스타일 지정
-            borderRadius: 4, // 테두리 모서리를 둥글게 만듭니다.
-            padding: 8, // 내부 여백 추가
-            resize: "none" // 사용자가 크기를 조정하지 못하도록 설정
-          }}
-          maxLength={5000} // 최대 글자 수 지정
-        />
-      </Grid>
-      {/* 해시태그 작성 부분 */}
-      <Grid item xs={12} sm={6} p='2px'>
-        <Input
-          value={hashTag}
-          onChange={(e) => handleHashTagChange(e)}
-          placeholder="쉼표HashTag   /   최대 3개"
-          fontSize={15}
-          fullWidth
-          language='kr'
-        />
-      </Grid>
+        {/* 내용 작성 부분 */}
+        <Grid item xs={12} sm={6} p='2px'>
+          <TextareaAutosize
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="당신의 일상을 공유하세요!"
+            style={{
+              width: "70%",
+              // minHeight: 100,
+              // maxHeight: 1000,
+              overflowY: "auto",
+              border: "1px solid #ddd", // 테두리 스타일 지정
+              borderRadius: 4, // 테두리 모서리를 둥글게 만듭니다.
+              padding: 8, // 내부 여백 추가
+              resize: "none" // 사용자가 크기를 조정하지 못하도록 설정
+            }}
+            maxLength={5000} // 최대 글자 수 지정
+          />
+        </Grid>
+        {/* 해시태그 작성 부분 */}
+        <Grid item xs={12} sm={6} p='2px'>
+          <Input
+            value={hashTag}
+            onChange={(e) => handleHashTagChange(e)}
+            placeholder="쉼표HashTag   /   최대 3개"
+            fontSize={15}
+            fullWidth
+            language='kr'
+          />
+        </Grid>
 
       </Box>
     </DashboardLayout>

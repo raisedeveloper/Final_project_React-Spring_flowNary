@@ -34,6 +34,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import DehazeIcon from '@mui/icons-material/Dehaze';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
+import PersonIcon from '@mui/icons-material/Person';
 
 import { UserContext, GetWithExpiry } from "api/LocalStorage";
 import { getMyBoardList, getLikedBoardList, getUser } from "api/axiosGet";
@@ -42,7 +43,6 @@ import { deleteConfirm, Declaration } from "api/alert";
 import { useAddLike } from "api/customHook";
 
 import { AntSwitch } from '../home/postingStyle.jsx';
-import PostingModal from "../home/Board/PostingModal"
 import BoardDetail from "layouts/home/Board/BoardDetail";
 import "./mypage.css";
 import { insertDeclaration } from "api/axiosPost.js";
@@ -55,7 +55,8 @@ import { correct } from "api/alert.jsx";
 import { getFollowMeList } from "api/axiosGet.js";
 import { getFollowList } from "api/axiosGet.js";
 import UserAvatar from "api/userAvatar.js";
-
+import UserLoginService from "ut/userLogin-Service.jsx";
+import Loading from "api/loading.js";
 function Mypage() {
 
   const queryClient = new QueryClient();
@@ -270,7 +271,6 @@ function Mypage() {
   // 신고
   const handleSiren = async () => {
     handleClosePopover();
-    console.log(activeUser.uid);
     const check = await Declaration(activeUser.uid);
     if (check !== 0) {
       const sendData = {
@@ -286,7 +286,6 @@ function Mypage() {
     disableBoard(bid, d).then(() => {
       board.refetch();
     });
-    console.log(d);
   };
 
 
@@ -313,8 +312,12 @@ function Mypage() {
 
   if (board.isLoading || user.isLoading) {
     return (
-      <div>Loading</div>
+      <div><Loading /></div>
     )
+  }
+  const goLogin = () => navigate('/authentication/sign-in');
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
   }
 
   return (
@@ -333,7 +336,11 @@ function Mypage() {
               fontSize: '60px',
               border: '2px solid primary.main', // 외곽선 색과 굵기 지정
             }} >
-            {user && user.data && <UserAvatar profileUrl={user.data.profile} size={"large"} />}
+            {user && user.data && user.data.profile ? (
+              <UserAvatar profileUrl={user.data.profile} size={"large"} />
+            ) : (
+              <PersonIcon sx={{ width: '100%', height: '100%' }} />
+            )}
           </Avatar>
         </Stack>
         <Stack direction={'column'}>
@@ -453,7 +460,6 @@ function Mypage() {
                         {data.image &&
                           <MDBox onClick={handleOpen.bind(null, data.bid)}
                             variant="gradient"
-                            borderRadius="lg"
                             py={2}
                             pr={0.5}
                             sx={{
@@ -471,7 +477,7 @@ function Mypage() {
                             }}
                           >
                             <img
-                              src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                              src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.includes(',') ? data.image.split(',')[0] : data.image}` : ''}
                               alt="Paella dish"
                               style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                             />
@@ -500,7 +506,7 @@ function Mypage() {
                         avatar={
                           <Avatar
                             aria-label="recipe"
-                            src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
+                            src={data.profile && `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                           />
                         }
                         action={<>
@@ -588,7 +594,7 @@ function Mypage() {
                             }}
                           >
                             <img
-                              src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                              src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.includes(',') ? data.image.split(',')[0] : data.image}` : ''}
                               alt="Paella dish"
                               style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                             />
@@ -641,8 +647,8 @@ function Mypage() {
         uid === activeUser.uid && showLikes &&
         <Grid container spacing={1} sx={{ position: 'relative' }}>
           <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1, mr: 3 }}>
-            <GridViewIcon onClick={hanldlePhotoButton} sx={{ cursor: 'pointer', mr: 2 }} />
-            <DehazeIcon onClick={hanldlePhotoButton2} sx={{ cursor: 'pointer' }} />
+            <GridViewIcon onClick={hanldlePhotoButton} sx={{ cursor: 'pointer', mr: 2, color: !showPhoto ? 'lightcoral' : null }} />
+            <DehazeIcon onClick={hanldlePhotoButton2} sx={{ cursor: 'pointer', color: showPhoto ? 'lightcoral' : null }} />
           </Grid>
           {!showPhoto ?
             (likes && likes.data && likes.data.map((data, idx) => {
@@ -656,11 +662,10 @@ function Mypage() {
                         boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // 추가: 호버 시 그림자 효과
                       }
                     }}>
-                      <MDBox padding="1rem">
+                      <MDBox>
                         {data.image &&
-                          <MDBox
+                          <MDBox onClick={handleOpen.bind(null, data.bid)}
                             variant="gradient"
-                            borderRadius="lg"
                             py={2}
                             pr={0.5}
                             sx={{
@@ -677,9 +682,9 @@ function Mypage() {
                               }
                             }}
                           >
-                            <button onClick={handleOpen.bind(null, data.bid)}>
+                            <button>
                               <img
-                                src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                                src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.includes(',') ? data.image.split(',')[0] : data.image}` : ''}
                                 alt="Paella dish"
                                 style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                               />
@@ -708,7 +713,7 @@ function Mypage() {
                       avatar={
                         <Avatar
                           aria-label="recipe"
-                          src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
+                          src={data.profile && `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
                         />
                       }
                       action={<>
@@ -774,12 +779,13 @@ function Mypage() {
                                 },
                               ]}
                             >
-                              <Paper style={{
-                                padding: '0.3rem',
-                                backgroundColor: 'white',
-                                boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
-                                borderRadius: '8px',
-                              }}
+                              <Paper
+                                style={{
+                                  padding: '0.3rem',
+                                  backgroundColor: 'white',
+                                  boxShadow: '0px 3px 5px rgba(0, 0, 0, 0.2)',
+                                  borderRadius: '8px',
+                                }}
                                 onClick={handleClickInside}>
                                 <Button onClick={() => handleSiren()} sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button>
                               </Paper>
@@ -812,7 +818,7 @@ function Mypage() {
                           }}
                         >
                           <img
-                            src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                            src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.includes(',') ? data.image.split(',')[0] : data.image}` : ''}
                             alt="Paella dish"
                             style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                           />
@@ -875,7 +881,7 @@ function Mypage() {
           <CloseIcon />
         </IconButton>
 
-        <BoardDetail bid={bid} uid={uid} handleClose={handleClose} nickname={user.data.nickname} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
+        <BoardDetail bid={bid} uid={activeUser.uid} handleClose={handleClose} nickname={user.data.nickname} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
       </Dialog>
       <Dialog
         open={open2}
