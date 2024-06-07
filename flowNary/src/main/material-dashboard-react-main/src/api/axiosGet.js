@@ -96,8 +96,6 @@ export const getBoard = async (bid: Number, uid = -1) => {
  * @returns 
  */
 export const getBoardUrl = async (url: string, uid = -1) => {
-    console.log(url);
-
     const result = await axios.get('/board/getBoardUrl', {
         params: {
             url: url,
@@ -123,8 +121,7 @@ export const getBoardUrl = async (url: string, uid = -1) => {
  * @returns 
  */
 export const getBoardList = async (count = 1, field = 'title', field2 = '', field3 = '', query = '', type = 1, uid = -1) => {
-
-    const result = await axios.get('/board/list', {
+    const data = await axios.get('/board/list', {
         params: {
             c: count,
             f: field,
@@ -133,15 +130,15 @@ export const getBoardList = async (count = 1, field = 'title', field2 = '', fiel
             q: query,
             type: type,
             uid: uid,
-        }
+        },
     }).then((response) => response.data)
         .catch(error => {
             console.log('axiosget.js: getBoardList error!');
             console.log(error);
         });
+    return data;
+};
 
-    return result;
-}
 
 /** 마이페이지 내 글 리스트 받기
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
@@ -303,6 +300,26 @@ export const getChatList = async (uid: number, count = 1, status = 0) => {
     return result;
 }
 
+/** 채팅방 리스트 받기
+ * @param {*} uid 자신의 채팅방 리스트를 받을 유저번호
+ * @param {*} count 개수 (기본값 1)
+ * @param {*} status 채팅방 상태 (기본값 0)
+ * @returns 
+ */
+export const getChatUserList = async (cid) => {
+
+    const result = await axios.get('/chat/userlist', {
+        params: {
+            cid: cid
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getChatuserList error!');
+            console.log(error);
+        });
+
+    return result;
+}
 /** 특정 유저 둘이 포함된 채팅방 번호 받기
  * @param {*} uid1 유저번호 1
  * @param {*} uid2 유저번호 2 
@@ -360,6 +377,25 @@ export const getDmListUid = async (uid: number, count: 20) => {
     }).then((response) => response.data)
         .catch(error => {
             console.log('axiosget.js: getDmListUid error!');
+            console.log(error);
+        });
+
+    return result;
+}
+
+/** 채팅 번호로 채팅방 번호 찾기
+ * @param {*} did 채팅 번호
+ * @returns 
+ */
+export const getDmCid = async (did: number) => {
+
+    const result = await axios.get('/dmlist/getcid', {
+        params: {
+            did: did,
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getDmCid error!');
             console.log(error);
         });
 
@@ -490,6 +526,53 @@ export const getNoticeCount = async (uid: number) => {
     return result;
 }
 
+/** uid를 이용하여 특정 조건의 알림 받기
+ * @param {*} uid 알림을 받은 유저 번호
+ * @param {*} suid 알림을 전송한 유저 번호
+ * @param {*} type 유형
+ * @param {*} oid 오브젝트 번호
+ * @returns 
+ */
+export const getNoticeUid = async (uid: number, suid: number, type: number, oid: number) => {
+    const result = await axios.get('/notice/get', {
+        params: {
+            uid: uid,
+            suid: suid,
+            type: type,
+            oid: oid,
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getNoticeUid error!');
+            console.log(error);
+        });
+
+    return result;
+}
+
+/** getNoticeUid와 같은 조건에서 알림이 있는지의 여부 확인
+ * @param {*} uid 알림을 받은 유저 번호
+ * @param {*} suid 알림을 전송한 유저 번호
+ * @param {*} type 유형
+ * @param {*} oid 오브젝트 번호
+ * @returns 1: 알림 있음, 0: 알림 없음
+ */
+export const getNoticeCheck = async (uid: number, suid: number, type: number, oid: number) => {
+    const result = await axios.get('/notice/getcheck', {
+        params: {
+            uid: uid,
+            suid: suid,
+            type: type,
+            oid: oid,
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getNoticeCheck error!');
+            console.log(error);
+        });
+
+    return result;
+}
 
 /** Todo 목록 보기
  * @param {*} tid todo 번호

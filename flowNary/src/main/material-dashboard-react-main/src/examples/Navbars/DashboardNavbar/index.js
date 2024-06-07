@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 // react-router 컴포넌트들
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -49,6 +49,8 @@ import { SetWithExpiry } from "api/LocalStorage";
 import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "api/customHook";
 import MapComponent from "./mapComponent";
+import UserAvatar from "api/userAvatar";
+import { UserContext } from "api/LocalStorage";
 
 // 헤더 부분
 function DashboardNavbar({ absolute, light, isMini }) {
@@ -59,7 +61,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const route = useLocation().pathname.split("/").slice(1);
   const navigate = useNavigate();
   const [profileMenu, setProfileMenu] = useState(null); // 프로필 메뉴 상태 추가
-  const goSetting = () => navigate('/profile/settings');
+  const goSetting = () => navigate('/verify');
   const goMypage = () => navigate('/mypage')
   const weatherDescKo = {
     201: '가벼운 비를 동반한 천둥구름',
@@ -138,49 +140,60 @@ function DashboardNavbar({ absolute, light, isMini }) {
   };
 
   // 유저 불러오기
-  const uid = parseInt(GetWithExpiry("uid"));
-  const email = GetWithExpiry("email");
-  const nickname = GetWithExpiry("nickname");
-  const uname = GetWithExpiry("uname");
-  const profile = GetWithExpiry("profile");
+  const { activeUser } = useContext(UserContext);
+  const uid = activeUser.uid;
+  const email = activeUser.email;
+  const nickname = activeUser.nickname;
+  const uname = activeUser.uname;
+  const profile = activeUser.profile ? activeUser.profile : null;
+  const role = activeUser.role;
   const [location, setLocation] = useState('');
 
-  // const user = useQuery({
-  //   queryKey: ['user', uid],
-  //   queryFn: () => getUser(uid),
-  // });
+  const user = useQuery({
+    queryKey: ['user', uid],
+    queryFn: () => getUser(uid),
+  });
 
-  // useEffect(() => {
-  //   if (user && user.data && user.data.location) {
-  //     setLocation(user.data.location);
-  //   }
-  // }, [user])
+  useEffect(() => {
+    if (user && user.data && user.data.location) {
+      setLocation(user.data.location);
+    }
+  }, [user])
 
-  // const [weather, setWeather] = useState('');
+  const [weather, setWeather] = useState('');
+  const [weatherDataFetched, setWeatherDataFetched] = useState(false);
+  
+  // API 가져오기
+  const getWeatherByCoordinates = async (lat, lon) => {
+    try {
+      const res = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lang=kr&lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
+      );
+      // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
+      const weatherId = res.data.weather[0].id;
+      const weatherKo = weatherDescKo[weatherId];
+      // 날씨 아이콘 가져오기
+      const weatherIcon = res.data.weather[0].icon;
+      const weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
+      // 소수점 버리기
+      const temp = Math.round(res.data.main.temp);
+      setWeather({
+        description: weatherKo,
+        temp: temp,
+        links: weatherIconAdrs,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // // API 가져오기
-  // const getWeatherByCoordinates = async (lat, lon) => {
-  //   try {
-  //     const res = await axios.get(
-  //       `https://api.openweathermap.org/data/2.5/weather?lang=kr&lat=${lat}&lon=${lon}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
-  //     );
-  //     // id 찾아서 매칭 후 description 한글 번역된 거 가져오기
-  //     const weatherId = res.data.weather[0].id;
-  //     const weatherKo = weatherDescKo[weatherId];
-  //     // 날씨 아이콘 가져오기
-  //     const weatherIcon = res.data.weather[0].icon;
-  //     const weatherIconAdrs = `http://openweathermap.org/img/wn/${weatherIcon}@2x.png`;
-  //     // 소수점 버리기
-  //     const temp = Math.round(res.data.main.temp);
-  //     setWeather({
-  //       description: weatherKo,
-  //       temp: temp,
-  //       links: weatherIconAdrs,
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+  const handleLocationChange = (lat, lon) => {
+    // 처음 한 번만 실행되고, 그 후에는 실행되지 않도록 합니다.
+    if (!weatherDataFetched) {
+      getWeatherByCoordinates(lat, lon);
+      setWeatherDataFetched(true); // 날씨 데이터를 가져왔음을 표시합니다.
+    }
+  };
 
   useEffect(() => {
     // 네비바 타입 설정
@@ -234,28 +247,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
           px={0.5} py={1}
         >
           {/* 프로필 사진*/}
-          <Avatar
-            alt="profile picture"
-            sx={{
-              width: '3rem',
-              height: '3rem',
-              borderRadius: '50%',
-              objectFit: 'cover'
-            }}
-          >
-            <div
-              style={{
-                width: '3rem',
-                height: '3rem',
-                borderRadius: '50%',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')`
-              }}
-            >
-            </div>
+          {profile && <Avatar alt="profile picture">
+            <div><UserAvatar profileUrl={profile} /></div>
+          </Avatar>}
 
-          </Avatar>
           <MDBox ml={1.75}>
             <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{nickname}</div>
             <div style={{ marginLeft: '.125rem', fontSize: '12px' }}>{email}</div>
@@ -313,7 +308,6 @@ function DashboardNavbar({ absolute, light, isMini }) {
       <NotificationItem icon={<Icon>send_outlined</Icon>} title="새로운 메시지가 있습니다" />
       <NotificationItem icon={<Icon>reply_all</Icon>} title="새로운 댓글이 있습니다" />
       <NotificationItem icon={<Icon>playlist_add_check</Icon>} title="오늘의 할 일이 있습니다" />
-      <NotificationItem icon={<Icon>event_available</Icon>} title="오늘의 일정이 있습니다" />
       <NotificationItem icon={<Icon>favorite</Icon>} title="User가 좋아요를 눌렀습니다" />
       <NotificationItem icon={<Icon>warning</Icon>} title="보안상의 문제가 있습니다" />
       <NotificationItem icon={<Icon>diversity_1</Icon>} title="새로운 패밀리를 찾아보세요" />
@@ -360,110 +354,113 @@ function DashboardNavbar({ absolute, light, isMini }) {
       color="inherit"
       sx={(theme) => navbar(theme, { transparentNavbar, absolute, light, darkMode })}
     >
-      {/* <MapComponent location={location} onLocationChange={(lat, lon) => getWeatherByCoordinates(lat, lon)} /> */}
+      <MapComponent location={location} onLocationChange={(lat, lon) => handleLocationChange(lat, lon)} />
       <Toolbar sx={(theme) => navbarContainer(theme)}>
         <MDBox color="inherit" mb={{ xs: 1, md: 0 }} sx={(theme) => navbarRow(theme, { isMini })}>
           <Breadcrumbs icon="yard" title={route[route.length - 1]} route={route} light={light} />
         </MDBox>
         {/* 헤더 박스 및 계정, 설정, 알림 아이콘 모양 */}
-        {/* {isMini ? null : (
-          <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <Stack direction="column" sx={{ flex: 0.5 }}>
-              <MDBox mt={1} mr={2} sx={{ position: 'sticky', top: "8%" }}>
-                <Box aria-owns={open ? 'mouse-over-popover' : undefined}
-                  aria-haspopup="true"
-                  onMouseEnter={handlePopoverOpen}
-                  onMouseLeave={handlePopoverClose}>
-                  <Grid container
-                    sx={{ display: 'flex', justifyContent: 'center', mr: 5 }}>
-                    <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
-                      <Typography sx={{ fontSize: 'small', fontWeight: 'bold' }}>{weather.temp}℃ </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Avatar sx={{ width: 50, height: 50 }} src={weather.links} alt="날씨 아이콘" />
-                    </Grid>
-                  </Grid>
-                </Box>
-                <Popover
-                  id="mouse-over-popover"
-                  sx={{
-                    pointerEvents: 'none',
-                  }}
-                  open={open}
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                  }}
-                  onClose={handlePopoverClose}
-                  disableRestoreFocus
-                >
-                  <MDBox>
-                    <Card sx={{ height: "70%" }}>
-                      <MDBox pt={3} px={3}>
-                        <MDTypography variant="h6" fontWeight="medium">
-                          날씨 정보
-                        </MDTypography>
-                        <Avatar sx={{ width: 100, height: 100 }} src={weather.links} alt="날씨 아이콘" />
-                        <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
-                          {location}:  {weather.temp}℃  
-                          <br />
-                          {weather.description}
-                        </CardContent>
+        {!role ? <>
+          {isMini ? null : (
+            <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
+              {weather && activeUser.uid !== -1 ?
+                <Stack direction="column" sx={{ flex: 0.5 }}>
+                  <MDBox mt={1} mr={2} sx={{ position: 'sticky', top: "8%" }}>
+                    <Box aria-owns={open ? 'mouse-over-popover' : undefined}
+                      aria-haspopup="true"
+                      onMouseEnter={handlePopoverOpen}
+                      onMouseLeave={handlePopoverClose}>
+                      <Grid container
+                        sx={{ display: 'flex', justifyContent: 'center', mr: 5 }}>
+                        <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
+                          <Typography sx={{ fontSize: 'small', fontWeight: 'bold' }}>{weather.temp}℃ </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Avatar sx={{ width: 50, height: 50 }} src={weather.links} alt="날씨 아이콘" />
+                        </Grid>
+                      </Grid>
+                    </Box>
+                    <Popover
+                      id="mouse-over-popover"
+                      sx={{
+                        pointerEvents: 'none',
+                      }}
+                      open={open}
+                      anchorEl={anchorEl}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                      }}
+                      onClose={handlePopoverClose}
+                      disableRestoreFocus
+                    >
+                      <MDBox>
+                        <Card sx={{ height: "70%" }}>
+                          <MDBox pt={3} px={3}>
+                            <MDTypography variant="h6" fontWeight="medium">
+                              날씨 정보
+                            </MDTypography>
+                            <Avatar sx={{ width: 100, height: 100 }} src={weather.links} alt="날씨 아이콘" />
+                            <CardContent sx={{ fontSize: 'large', fontWeight: 'bolder' }}>
+                              {location}:  {weather.temp}℃
+                              <br />
+                              {weather.description}
+                            </CardContent>
+                          </MDBox>
+                        </Card>
                       </MDBox>
-                    </Card>
+                    </Popover>
                   </MDBox>
-                </Popover>
+                </Stack> : null}
+              <MDBox color={light ? "white" : "inherit"} sx={{ display: { lg: 'flex', xs: 'none' } }}>
+                <TextField
+                  id="outlined-multiline-flexible"
+                  variant="standard"
+                  placeholder="검색어를 입력하세요!"
+                  onChange={handleSearchText}
+                  value={searchtext}
+                  onKeyUp={handleKeyPress}
+                />
+                <IconButton
+                  size="small"
+                  color="inherit"
+                  disableRipple
+                  sx={{ cursor: 'pointer', mx: 2 }}
+                  onClick={handleSearch} // 프로필 메뉴 열기 핸들러 연결
+                >
+                  <Icon sx={iconsStyle}>search</Icon>
+                </IconButton>
+                <IconButton
+                  size="small"
+                  disableRipple
+                  color="inherit"
+                  sx={navbarIconButton}
+                  onClick={handleProfileMenuOpen} // 프로필 메뉴 열기 핸들러 연결
+                >
+                  <Icon sx={iconsStyle}>account_circle</Icon>
+                </IconButton>
+                <IconButton
+                  size="small"
+                  disableRipple
+                  color="inherit"
+                  sx={navbarIconButton}
+                  aria-controls="notification-menu"
+                  aria-haspopup="true"
+                  variant="contained"
+                  onClick={handleOpenMenu}
+                >
+                  <Icon sx={iconsStyle}>notifications</Icon>
+                </IconButton>
+                {renderMenu()}
+                {renderProfileMenu()}
               </MDBox>
-            </Stack>
-            <MDBox color={light ? "white" : "inherit"} sx={{ display: { lg: 'flex', xs: 'none' } }}>
-              <TextField
-                id="outlined-multiline-flexible"
-                variant="standard"
-                placeholder="검색어를 입력하세요!"
-                onChange={handleSearchText}
-                value={searchtext}
-                onKeyUp={handleKeyPress}
-              />
-              <IconButton
-                size="small"
-                color="inherit"
-                disableRipple
-                sx={{ cursor: 'pointer', mx: 2 }}
-                onClick={handleSearch} // 프로필 메뉴 열기 핸들러 연결
-              >
-                <Icon sx={iconsStyle}>search</Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarIconButton}
-                onClick={handleProfileMenuOpen} // 프로필 메뉴 열기 핸들러 연결
-              >
-                <Icon sx={iconsStyle}>account_circle</Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                disableRipple
-                color="inherit"
-                sx={navbarIconButton}
-                aria-controls="notification-menu"
-                aria-haspopup="true"
-                variant="contained"
-                onClick={handleOpenMenu}
-              >
-                <Icon sx={iconsStyle}>notifications</Icon>
-              </IconButton>
-              {renderMenu()}
-              {renderProfileMenu()}
             </MDBox>
-          </MDBox>
-        )} */}
+          )}
+        </> : null}
       </Toolbar>
     </AppBar >
   );

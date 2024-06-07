@@ -2,36 +2,34 @@ import React, { useEffect, useRef, useState } from "react";
 import { Icon, Card, Button, Grid, Typography, Box, Input, TextareaAutosize } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AntSwitch } from './postingStyle.jsx';
+import { AntSwitch } from '../postingStyle.jsx';
 import { UploadImage } from "../../../api/image.js";
 import { GetWithExpiry } from "../../../api/LocalStorage.js";
 import MDBox from "components/MDBox";
 import { wrong } from "api/alert";
 import { correct } from "api/alert";
 import { insertBoard } from "api/axiosPost";
+import { QueryClient, useQuery } from "@tanstack/react-query";
+import { getUser } from "api/axiosGet.js";
 
 export default function Posting() {
   const navigate = useNavigate();
   const uid = parseInt(GetWithExpiry("uid"));
-
+  const queryClient = new QueryClient();
   if (!uid) {
     navigate("/login");
   }
 
   const [nickname, setNickname] = useState('');
 
+  const user = useQuery({
+    queryKey: ['writenickname', uid],
+    queryFn: () => getUser(uid),
+  });
+
   useEffect(() => {
-    if (uid !== null) {
-      axios.get('http://localhost:8090/user/getUser', { params: { uid: uid } })
-        .then(res => {
-          if (res.data.nickname !== null && res.data.nickname !== '') {
-            setNickname(res.data.nickname);
-          } else {
-            setNickname(res.data.email);
-          }
-        }).catch(error => console.log(error));
-    }
-  }, [uid]);
+    setNickname(user.nickname);
+  }, [user]);
 
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
@@ -74,9 +72,7 @@ export default function Posting() {
       wrong('내용을 입력하세요.');
       return;
     }
-    // if (!imageList) {
-    //   wrong('1개 이상의 사진 파일이 필요합니다.');
-    // }
+
     correct('성공적으로 작성되었습니다.');
 
     var sendData = JSON.stringify({
@@ -85,12 +81,12 @@ export default function Posting() {
       bContents: content,
       image: imageList.toString(),
       nickname: nickname,
-      shareUrl: 'http://localhost:3000/',
       hashTag: hashTag.toString(),
       isDeleted: isDeleted
     });
 
     await insertBoard(sendData);
+    queryClient.invalidateQueries('boardList');
 
     setImages([]);
     setPreviewUrls([]);
@@ -177,14 +173,16 @@ export default function Posting() {
             width: "100%",
             minHeight: 100,
             maxHeight: 100,
-            overflowY: "auto",
-            border: "1px solid #ddd", // 테두리 스타일 지정
-            borderRadius: 4, // 테두리 모서리를 둥글게 만듭니다.
-            padding: 8, // 내부 여백 추가
-            resize: "none" // 사용자가 크기를 조정하지 못하도록 설정
+            overflow: "auto", // overflowY 대신 overflow 사용
+            border: "1px solid #ddd",
+            borderRadius: 4,
+            padding: 8,
+            resize: "none",
+            fontFamily: "'Noto Sans KR', sans-serif" // 폰트 적용
           }}
-          maxLength={5000} // 최대 글자 수 지정
+          maxLength={5000}
         />
+
       </Grid>
       {/* 해시태그 작성 부분 */}
       <Grid item xs={12} sm={6} p='2px'>

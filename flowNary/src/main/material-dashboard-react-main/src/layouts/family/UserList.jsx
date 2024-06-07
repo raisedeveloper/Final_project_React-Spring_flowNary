@@ -6,10 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
 import { getFamilyUserList } from 'api/axiosGet';
+import Loading from 'api/loading';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
-  { 
+  {
     field: 'profile', headerName: '프로필', width: 100,
     renderCell: (params) => (
       <Box>
@@ -58,7 +59,7 @@ const rows = [
 function FamilyUserList(props) {
   const faid = props.faid;
 
-  if (faid === -1)  {
+  if (faid === -1) {
     return (
       <Box sx={{ height: 400, width: '100%' }}>
         <Box>
@@ -73,14 +74,8 @@ function FamilyUserList(props) {
     queryFn: () => getFamilyUserList(faid),
   })
 
-  if (isLoading)  {
-    return (
-      <Box sx={{ height: 400, width: '100%' }}>
-        <Box>
-          로딩 중...
-        </Box>
-      </Box>
-    )
+  if (isLoading) {
+    return <div><Loading /></div>;
   }
 
   return (

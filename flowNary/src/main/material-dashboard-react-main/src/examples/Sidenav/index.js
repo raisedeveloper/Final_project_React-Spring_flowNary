@@ -7,6 +7,9 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 // @mui material 컴포넌트
 import { List, Divider, Link, Icon, Avatar, Box, Typography } from "@mui/material";
 
+// MUI Icons
+import PersonIcon from '@mui/icons-material/Person';
+
 // Material Dashboard 2 React 컴포넌트
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -20,6 +23,7 @@ import { useMaterialUIController, setMiniSidenav, setTransparentSidenav, setWhit
 import { GetWithExpiry } from "api/LocalStorage";
 import { getUser } from "api/axiosGet";
 import { gl } from "chroma-js";
+import UserAvatar from "api/userAvatar";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -161,36 +165,36 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
               borderRadius: '15px', display: 'flex', alignItems: 'center'
             }}
           >
-            <Avatar
-              sx={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', overflow: 'hidden' }}
-              onClick={goMypage}
-            >
-              <div
-                style={{
-                  width: '4rem',
-                  height: '3rem',
-                  borderRadius: '50%',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')` // 이미지 URL 동적 생성
-                }}
-              >
-              </div>
-
+            <Avatar onClick={goMypage}>
+              {profile ? (
+                <UserAvatar profileUrl={profile} />
+              ) : (
+                <PersonIcon sx={{ width: '100%', height: '100%' }} />
+              )}
             </Avatar>
             <Box ml={1.95}>
               <Typography
                 color={textColor}
                 fontSize={'13.5px'}
                 fontWeight={'bold'}
-              >{nickname}</Typography>
+              >{nickname} 님
+              </Typography>
             </Box>
           </Box>
         ) : (
           <Box
             sx={{
-              width: '11.5rem', height: '2rem', background: 'rgba(255, 255, 255, 0.3)',
-              borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              minWidth: '7rem', // 최소 너비 설정
+              maxWidth: '20rem', // 최대 너비 설정 (필요 시)
+              height: '2rem',
+              background: 'rgba(255, 255, 255, 0.3)',
+              borderRadius: '15px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 1rem', // 좌우 패딩 설정
+              boxSizing: 'border-box',
+              whiteSpace: 'nowrap', // 텍스트가 줄바꿈되지 않도록 설정
             }}
           >
             <Typography

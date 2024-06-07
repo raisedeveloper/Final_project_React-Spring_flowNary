@@ -70,7 +70,7 @@ async function getDeclarationInputs() {
     icon: "warning",
     html: `
       <input id="swal-input1" class="swal2-input" placeholder="제목을 입력하세요.">
-      <textarea id="swal-textarea" class="swal2-textarea" placeholder="내용을 입력하세요." aria-label="Type your message here"></textarea>
+      <textarea id="swal-textarea" class="swal2-textarea" style="width:62%" placeholder="내용을 입력하세요." aria-label="Type your message here"></textarea>
     `,
     preConfirm: () => {
       return [
@@ -133,3 +133,50 @@ export async function Declaration(uid) {
   return result.value;
 }
 
+export async function noticeConfirm(notice) {
+  const result = await Swal.fire({
+    title: notice.nContents,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "확인",
+    cancelButtonText: '취소'
+  });
+
+  if (result.isConfirmed) {
+    await Swal.fire({
+      title: "수락했습니다",
+      icon: "success"
+    });
+    return 1;
+  }
+  else if (!result.isConfirmed) {
+    return 2;
+  }
+
+  return 3;
+}
+
+export async function chatDeleteConfirm(words, name) {
+  const result = await Swal.fire({
+    title: words,
+    text: name,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "확인",
+    cancelButtonText: '취소'
+  });
+
+  if (result.isConfirmed) {
+    await Swal.fire({
+      title: "성공적으로 삭제되었습니다.",
+      icon: "success"
+    });
+    return 1;
+  }
+
+  return 2;
+}

@@ -19,6 +19,8 @@ public interface FamilyUserService {
 	
 	List<FamilyUser> getFamilyUserListActive(int faid);
 	
+	List<Integer> getFamilyUserListActiveUid(int faid);
+	
 	void insertFamilyUser(FamilyUserInsertDto familyUser);
 	
 	void updateFamilyUserStatus(int status, int faid, int uid);

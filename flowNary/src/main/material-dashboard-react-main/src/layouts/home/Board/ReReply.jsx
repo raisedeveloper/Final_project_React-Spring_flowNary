@@ -17,6 +17,7 @@ import ko from 'timeago.js/lib/lang/ko';
 // 아이콘
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import PersonIcon from '@mui/icons-material/Person'
 
 import { GetWithExpiry, SetWithExpiry } from "api/LocalStorage";
 import axios from 'axios';
@@ -39,6 +40,8 @@ import { deleteReReply } from 'api/axiosPost.js';
 import { useAddLike } from 'api/customHook.jsx';
 import { UserContext } from 'api/LocalStorage.js';
 import { deleteConfirm } from 'api/alert.jsx';
+import UserAvatar from 'api/userAvatar.js';
+import Loading from 'api/loading.js';
 
 export default function ReReply(props) {
   timeago.register('ko', ko);
@@ -75,7 +78,6 @@ export default function ReReply(props) {
       rrContents: formInputs[ridtext],
       nickname: props.nickname,
     })
-    console.log(ridtext)
 
     addReReply(sendData);
 
@@ -91,11 +93,6 @@ export default function ReReply(props) {
     deleteReReply(rrid);
   }
 
-
-  const handleOnEnter = (text) => {
-    console.log('enter', text);
-  }
-
   const toggleExpand = (index) => {
     setExpandedContents((prev) => ({
       ...prev,
@@ -103,20 +100,20 @@ export default function ReReply(props) {
     }));
   };
 
-  if (ReReplyList.isLoading) {
-    return (
-      <div>로딩 중...</div>
-    )
-  }
   const handleDelete = async (rrid) => {
     const confirm = await deleteConfirm();
-    console.log(confirm);
     if (confirm) {
       await deleteReReply(rrid);
       queryClient.invalidateQueries(['ReReplyList', uid]); // 쿼리 무효화
     }
   }
-
+  
+  if (ReReplyList.isLoading) {
+    return (
+      <div><Loading /></div>
+    )
+  }
+  
   return (
     <>
       {/* 댓글 내용 List */}
@@ -140,21 +137,21 @@ export default function ReReply(props) {
                       marginTop: 0.25,
                       marginLeft: 2.5,
                     }}>
-                    <Avatar sx={{ cursor: 'pointer',  width: 0.04, height: 0.04 }}
-                      onClick={() => handleMyPage(data.uid)} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.profile}`}
-                    />
+                    <Avatar sx={{ cursor: 'pointer', width: '1.5rem', height: '1.5rem' }}
+                      onClick={() => handleMyPage(data.uid)} >
+                      {data.profile ? (<UserAvatar profileUrl={data.profile} />
+                      ) : (<PersonIcon sx={{ width: '100%', height: '100%' }} />
+                      )}
+                    </Avatar>
+
                     <ListItemText sx={{ paddingLeft: 1 }}
                       primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                       secondary={
                         // 댓글 내용
-                        <Typography variant="body1" color="text.primary" sx={{ overflowWrap: 'break-word', fontSize:'small' }}>
-                          {data.rrContents != null && (expandedContents[index] ? data.rrContents : data.rrContents.slice(0, 28))}
-                          {data.rrContents != null && data.rrContents.length > 30 && !expandedContents[index] && (
-                            <button className='replyOpen' onClick={() => toggleExpand(index)}>...더보기</button>
-                          )}
-                          {expandedContents[index] && (
-                            <button className='replyClose' onClick={() => toggleExpand(index)}>접기</button>
-                          )}
+                        <Typography variant="body1" color="text.primary" sx={{ overflowWrap: 'break-word', fontSize: 'small' }}>
+                          <Typography variant="body2" sx={{ overflowWrap: 'break-word', fontSize: 'small' }}>
+                            {data.rrContents}
+                          </Typography>
                         </Typography>
                       }
                     >
@@ -171,9 +168,9 @@ export default function ReReply(props) {
                   {/* 답글 목록 */}
                   {data.replies && data.replies.map((reply, replyIndex) => (
                     <ListItem key={replyIndex} sx={{ paddingLeft: 4, marginLeft: 4, borderLeft: '1px solid #ccc' }} alignItems="flex-start">
-                      <Avatar
-                        src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${reply.profile}`}
-                      />
+                      <Avatar>
+                        <UserAvatar profileUrl={reply.profile} />
+                      </Avatar>
                       <ListItemText sx={{ paddingLeft: 1 }}
                         primary={reply.nickname}
                         secondary={

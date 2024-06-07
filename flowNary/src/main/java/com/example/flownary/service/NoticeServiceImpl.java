@@ -23,6 +23,11 @@ public class NoticeServiceImpl implements NoticeService {
 	public Notice getNotice(int nid) {
 		return nDao.getNotice(nid);
 	}
+	
+	@Override
+	public Notice getNoticeUid(int uid, int suid, int type, int oid) {
+		return nDao.getNoticeUid(uid, suid, type, oid);
+	}
 
 	@Override
 	public List<Notice> getNoticeList(int uid, int type) {
@@ -40,8 +45,9 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public void insertNotice(Notice notice) {
+	public int insertNotice(Notice notice) {
 		nDao.insertNotice(notice);
+		return notice.getNid();
 	}
 	
 	@Override
@@ -81,5 +87,15 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public void removeNoticeAll(int uid) {
 		nDao.removeNoticeAll(uid);
+	}
+
+	@Override
+	public void disableNoticeAll(int uid) {
+		nDao.disableNoticeAll(uid);
+	}
+
+	@Override
+	public void removeNoticeSpecific(int uid, int type, int oid) {
+		nDao.removeNoticeSpecific(uid, type, oid);
 	}
 }

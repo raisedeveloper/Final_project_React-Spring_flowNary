@@ -16,6 +16,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
+import UserAvatar from "api/userAvatar";
+import Loading from "api/loading";
 
 
 const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handleButtonLike, handleButtonLikeReply, handleButtonLikeReReply }, ref) => {
@@ -45,13 +47,6 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
   const handleMyPage = (uid) => {
     navigate("/mypage", { state: { uid: uid } });
   }
-  if (isLoading) {
-    return <div>로딩 중...</div>;
-  }
-
-  if (isError) {
-    return <div>오류가 발생했습니다.</div>;
-  }
 
   const image = board?.image ? board.image.split(',') : null;
 
@@ -67,6 +62,13 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
           console.error('Failed to copy: ', err);
         });
     }
+  }
+  if (isLoading) {
+    return <div><Loading /></div>;
+  }
+
+  if (isError) {
+    return <div>오류가 발생했습니다.</div>;
   }
 
   return (
@@ -133,21 +135,12 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
               avatar={
                 <Avatar onClick={() => handleMyPage(board.uid)}
                   sx={{ bgcolor: 'red'[500], cursor: 'pointer' }}
-                  aria-label="recipe"
-                >
-                  <div
-                    style={{
-                      width: '3rem',
-                      height: '3rem',
-                      borderRadius: '50%',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${board.profile})`
-                    }} />
+                  aria-label="recipe">
+                  <UserAvatar profileUrl={board.profile} />
                 </Avatar>
               }
-              title={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => handleMyPage(board.uid)}>{board.nickname}</Typography>}
-              subheader={board.title}
+              title={<Typography variant="subtitle3" sx={{ fontSize: "1rem", color: 'black', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => handleMyPage(board.uid)}>{board.nickname}</Typography>}
+              subheader={<Typography sx={{ fontSize: "1rem", color: 'black', cursor: 'pointer', maxWidth: "100%" }}>{board.title}</Typography>}
             />
             {<TimeAgo datetime={board.modTime} locale='ko' style={{ fontSize: 'small', paddingBottom: 20 }} />}
             <IconButton sx={{ px: 0, pb: 2.5, my: 0, mx: 2, fontSize: '1.4rem' }} onClick={handleShareButton.bind(null, board.bid)}><Icon style={{ color: 'black' }}>ios_share</Icon></IconButton>
@@ -231,12 +224,6 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
                     src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
                     alt={`Image ${index + 1}`}
                   />
-                  {/* <IconButton
-                    sx={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer',zIndex:'100' }}
-                    onClick={handleCloseModal}
-                  >
-                    <CloseIcon />
-                  </IconButton> */}
                 </Box>
               ))}
             </Carousel>

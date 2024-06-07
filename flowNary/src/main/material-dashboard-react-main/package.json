@@ -45,6 +45,7 @@
     "draftjs-to-html": "^0.9.1",
     "emailjs-com": "^3.2.0",
     "firebase": "^10.11.1",
+    "gh-pages": "^6.1.1",
     "http-proxy-middleware": "^3.0.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.8.1",
@@ -79,7 +80,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start"
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [

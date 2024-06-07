@@ -124,10 +124,9 @@ public class DmListController {
     		@RequestParam(defaultValue="20", required=false) int count,
     		@RequestParam(defaultValue="-1", required=false) int uid) {
     	List<DmList> list = dSvc.getDmListList(cid, count);
-    	if (list.size() == 0)
-    		return null;
-    	
     	JSONArray jArr = new JSONArray();
+    	if (list.size() == 0)
+    		return jArr;    	
     	
     	for (DmList dmList: list) {
     		HashMap<String, Object> hMap = new HashMap<String, Object>();
@@ -141,15 +140,6 @@ public class DmListController {
     		hMap.put("nickname", dmList.getNickname());
     		hMap.put("profile", user.getProfile());
     		
-//    		if (uid != -1)
-//    		{
-//    			hMap.put("mine", dmList.getUid() == uid ? true : false);
-//    		}
-//    		else
-//    		{
-//    			hMap.put("mine", false);
-//    		}
-    		
     		JSONObject jObj = new JSONObject(hMap);
     		jArr.add(jObj);
     	}
@@ -161,10 +151,9 @@ public class DmListController {
     public JSONArray getDmListUid(@RequestParam int uid,
     		@RequestParam(defaultValue="20", required=false) int count) {
     	List<DmList> list = dSvc.getDmListListByUid(uid, count);
-    	if (list.size() == 0)
-    		return null;
-    	
     	JSONArray jArr = new JSONArray();
+    	if (list.size() == 0)
+    		return jArr;
     	
     	for (DmList dmList: list) {
     		HashMap<String, Object> hMap = new HashMap<String, Object>();
@@ -181,6 +170,11 @@ public class DmListController {
     	}
     	
     	return jArr;
+    }
+    
+    @GetMapping("/getcid")
+    public int getCid(@RequestParam int did) {
+    	return dSvc.getDmListCid(did);
     }
     
     @PostMapping("/delete")

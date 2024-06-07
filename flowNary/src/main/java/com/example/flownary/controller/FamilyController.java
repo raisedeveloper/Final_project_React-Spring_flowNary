@@ -72,11 +72,11 @@ public class FamilyController {
 			return null;
 		
 		List<Family> list = faSvc.getFamilyList(uid);
+		JSONArray jArr = new JSONArray();
 		
 		if (list.size() < 1)
-			return null;
+			return jArr;
 		
-		JSONArray jArr = new JSONArray();
 		for (Family family : list) {
 			HashMap<String, Object> hMap = new HashMap<>();
 			
@@ -90,6 +90,27 @@ public class FamilyController {
 			hMap.put("leaderprofile", user.getProfile());
 			hMap.put("leadername", user.getName());
 			
+			List<Integer> ulist = fuSvc.getFamilyUserListActiveUid(family.getFaid());
+			
+			int count = 0;
+			String profiledata = "";
+			for (int k: ulist) {
+				GetUserNickEmailDto user2 = uSvc.getUserNicknameEmail(k);
+				
+				if (user2.getProfile() != null && user2.getProfile() != "") {
+					profiledata += user2.getProfile();					
+				}
+				else {
+					profiledata += "default_profile";
+				}
+				
+				if (count < ulist.size() - 1) {
+					profiledata += ",";
+				}
+				count++;
+			}
+			hMap.put("profiledata", profiledata);
+			
 			JSONObject jObj = new JSONObject(hMap);
 			jArr.add(jObj);
 		}
@@ -100,11 +121,11 @@ public class FamilyController {
 	@GetMapping("/userlist")
 	public JSONArray getFamilyUserList(@RequestParam int faid) {
 		List<FamilyUser> list = fuSvc.getFamilyUserListActive(faid);
+		JSONArray jArr = new JSONArray();
 		
 		if (list.size() < 1)
-			return null;
+			return jArr;
 		
-		JSONArray jArr = new JSONArray();
 		int n = 1;
 		for (FamilyUser familyUser : list) {
 			HashMap<String, Object> hMap = new HashMap<>();
