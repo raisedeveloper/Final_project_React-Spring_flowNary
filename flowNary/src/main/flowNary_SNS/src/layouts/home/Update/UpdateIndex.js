@@ -1,4 +1,3 @@
-// 기본
 import React, { useContext, useEffect, useState } from "react";
 import { Input, Card, Stack, Button, Grid, Modal, Typography, Box, TextareaAutosize, TextField, Icon } from "@mui/material";
 import axios from "axios";
@@ -23,7 +22,6 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import { updateBoard } from "api/axiosPost";
 import { getBoard } from "api/axiosGet";
 import { useQuery } from "@tanstack/react-query";
-
 
 export default function Posting() {
   const bid = sessionStorage.getItem("bid");
@@ -135,6 +133,10 @@ export default function Posting() {
     setPreviewUrls(previewUrls.filter((_, i) => i !== index)); // 미리보기 URL 배열에서 삭제
   };
 
+  // 해시태그 변경 핸들러
+  const handleHashTagChange = (e) => {
+    setHashTag(e.target.value);
+  };
 
   return (
     <DashboardLayout>
@@ -209,13 +211,11 @@ export default function Posting() {
             placeholder="당신의 일상을 공유하세요!"
             style={{
               width: "70%",
-              // minHeight: 100,
-              // maxHeight: 1000,
-              overflowY: "auto",
               border: "1px solid #ddd", // 테두리 스타일 지정
               borderRadius: 4, // 테두리 모서리를 둥글게 만듭니다.
               padding: 8, // 내부 여백 추가
-              resize: "none" // 사용자가 크기를 조정하지 못하도록 설정
+              resize: "none", // 사용자가 크기를 조정하지 못하도록 설정
+              // overflowY: "auto" // overflow 속성을 삭제하고 overflowY만 사용
             }}
             maxLength={5000} // 최대 글자 수 지정
           />
@@ -231,8 +231,8 @@ export default function Posting() {
             language='kr'
           />
         </Grid>
-
       </Box>
     </DashboardLayout>
   );
 }
+

@@ -36,7 +36,7 @@ import { getNoticeList } from "api/axiosGet";
 import { isEmpty } from "api/emptyCheck";
 import { useNavigate } from "react-router-dom";
 import { deleteNotice } from "api/axiosPost";
-import UserLoginService from "ut/userLogin-Service";
+import { getBoard } from "api/axiosGet";
 
 export default function Notifications() {
 
@@ -136,13 +136,15 @@ export default function Notifications() {
     setOpen(newArray);
   }
 
-  const handleClick = (nid, type, oid) => {
+  const handleClick = async (nid, type, oid) => {
     deleteNotice(nid);
     if (type === 1) {
-      navigate("/");
+      const boards = await getBoard(oid);
+      navigate(`/url/${boards.shareUrl}`, { state: { bid: oid } });
     }
     else if (type === 2) {
-      navigate("/");
+      const boards = await getBoard(oid);
+      navigate(`/url/${boards.shareUrl}`, { state: { bid: oid } });
     }
     else if (type === 3) {
       navigate("/follow");
@@ -160,10 +162,6 @@ export default function Notifications() {
     if (c === 1) {
       await insertFamilyUser(oid, activeUser.uid, 0, activeUser.nickname, '초기 메세지');
     }
-  }
-  const goLogin = () => navigate('/authentication/sign-in');
-  if (activeUser.uid === undefined || activeUser.uid < 0) {
-    return <UserLoginService goLogin={goLogin} />;
   }
 
   return (

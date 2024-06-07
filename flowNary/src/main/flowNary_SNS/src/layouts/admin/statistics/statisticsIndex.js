@@ -13,9 +13,11 @@ import { GetWithExpiry } from 'api/LocalStorage';
 import { WidthFull } from '@mui/icons-material';
 import { getDeclarationList } from 'api/axiosGet';
 import Loading from 'api/loading';
+import { de } from '@faker-js/faker';
 
 export default function Statistics() {
   const [monthlyStatistics, setMonthlyStatistics] = useState({});
+  const [monthlyDeclarations, setMonthlyDeclarations] = useState({});
   const [ageGroups, setAgeGroups] = useState({});
 
   const { data: boards, isLoading: isBoardsLoading, error: boardsError } = useQuery({
@@ -72,12 +74,40 @@ export default function Statistics() {
         }
         acc[month]['게시물 업데이트']++; // 통계 항목을 적절하게 업데이트합니다.
         return acc;
-      }, {});
+      }
+
+      
+      , {});
       setMonthlyStatistics(statistics);
+
     }
   }, [boards]);
 
+  useEffect(() => {
+    if (boards && Array.isArray(boards)) {
+      const declarations = declaration.reduce((acc, item) => {
+        const date = parseISO(item.modTime);
+        const month = format(date, 'yyyy-MM');
+        if (!acc[month]) {
+          acc[month] = {
+            '신고된 게시물': 0,
+            // 다른 통계 항목을 여기에 추가할 수 있습니다.
+          };
+        }
+        acc[month]['신고된 게시물']++; // 통계 항목을 적절하게 업데이트합니다.
+        return acc;
+      }
+      
+      , {});
+      setMonthlyDeclarations(declarations);
+
+    }
+  }, [declaration]);
+
+
   const monthlyLabels = Object.keys(monthlyStatistics).sort();
+  const monthlyLabels2 = Object.keys(monthlyDeclarations).sort();
+
 
   if (isBoardsLoading || isUsersLoading) {
     return <div><Loading /></div>;
@@ -134,10 +164,10 @@ export default function Statistics() {
                     data: monthlyLabels.map(month => monthlyStatistics[month]['게시물 업데이트']),
                   },
                   {
-                    name: '게시물 업데이트',
+                    name: '신고된 게시물',
                     type: 'line',
                     fill: 'solid',
-                    data: monthlyLabels.map(month => monthlyStatistics[month]['게시물 업데이트']),
+                    data: monthlyLabels2.map(month => monthlyDeclarations[month]['신고된 게시물']),
                   },
                 ],
               }}

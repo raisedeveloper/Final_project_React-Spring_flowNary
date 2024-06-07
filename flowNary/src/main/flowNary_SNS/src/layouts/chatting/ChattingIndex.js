@@ -12,6 +12,7 @@ import Iconify from 'components/iconify/iconify';
 import UserAvatar from 'api/userAvatar';
 import { chatDeleteConfirm } from 'api/alert';
 import { deleteChat } from 'api/axiosPost';
+import { deleteNoticeSpecific } from 'api/axiosPost';
 
 export default function Chat({ cid, setCid }) {
   const [messages, setMessages] = useState([]);
@@ -59,10 +60,12 @@ export default function Chat({ cid, setCid }) {
         setMessages(mlist);
         const chatr = await getChat(cid, activeUser.uid);
         setChatroom(chatr);
+        deleteNoticeSpecific(activeUser.uid, 4, cid);
       }
 
       fetchMList();
       let chatconnect;
+      let chatconnect2;
 
       if (stompClient && stompClient.connected) {
         console.log('chatting room connected');
@@ -82,6 +85,19 @@ export default function Chat({ cid, setCid }) {
             return prevMessages;
           });
         });
+
+        chatconnect2 = stompClient.subscribe(`/user/chatdel/` + cid, (message) => {
+          const data = JSON.parse(message.body);
+          console.log('Delete message:', data);
+          setMessages(prevMessages => {
+            const dmindex = prevMessages.findIndex(item => item.did === data.did);
+            if (dmindex !== -1) {
+              const newMessages = [...prevMessages.slice(0, dmindex), ...prevMessages.slice(dmindex + 1)];
+              return newMessages;
+            }
+            return prevMessages;
+          });
+       });
       }
 
       return () => {
@@ -96,6 +112,10 @@ export default function Chat({ cid, setCid }) {
         if (chatconnect) {
           chatconnect.unsubscribe();
         }
+
+        if (chatconnect2) {
+          chatconnect2.unsubscribe();
+        }
       }
     }
   }, [activeUser.uid, stompClient, cid]);
@@ -103,11 +123,13 @@ export default function Chat({ cid, setCid }) {
   const handleBack = () => {
     setCid(-1);
   };
-
+  
   const handleDelete = async () => {
-    const verify = await chatDeleteConfirm('채팅방을 나가시겠습니까? ', '채팅방 이름: ' + chatroom.name)
-    if (verify === 1)
+    const verify = await chatDeleteConfirm('채팅방을 나가시겠습니까? ' , chatroom && chatroom.name)
+    if (verify === 1) {
       deleteChat(cid);
+      setCid(-1);
+    }
   }
 
   if (cid === -1) {
@@ -160,7 +182,7 @@ export default function Chat({ cid, setCid }) {
           </Typography>
           <IconButton
             sx={{ fontSize: '2rem', color: 'lightcoral' }}
-            onClick={handleDelete}
+            onClick={() => handleDelete()}
           >
             <Icon>close</Icon>
           </IconButton>

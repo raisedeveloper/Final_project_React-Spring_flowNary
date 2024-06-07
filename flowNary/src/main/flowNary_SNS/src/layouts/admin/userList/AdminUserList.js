@@ -146,6 +146,7 @@ export default function UserTableRow({ selected, handleClick }) {
 
   const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
+
   return (
     <>
       <DashboardLayout>
@@ -153,7 +154,7 @@ export default function UserTableRow({ selected, handleClick }) {
         <Container sx={{ padding: '1rem' }}>
           <Typography variant="h4">유저 목록</Typography>
           <Typography variant="body2" onClick={handleShowInactive} sx={{ cursor: 'pointer', color: 'rgb(24, 94, 224)', }}>
-            {showInactive ? '활성화 유저 목록' : '비활성화 유저 목록'} 페이지
+            {showInactive ? '' : '비'} 활성화 유저 목록 페이지
           </Typography>
           <Pagination
             count={Math.ceil(filteredUsers.length / rowsPerPage)}
@@ -165,66 +166,64 @@ export default function UserTableRow({ selected, handleClick }) {
           <Stack direction="column" alignItems="center" justifyContent="space-between" mb={5}>
             <TableContainer component={Paper} mt={3}>
               <Table size='small'>
-                <TableBody >
-                  {paginatedUsers && paginatedUsers.map((user) => (
-                    <>
-                      <TableRow
-                        hover
-                        tabIndex={-1}
-                        role="checkbox"
-                        selected={selected}
-                        key={user.id}
-                        sx={{ backgroundColor: 'inherit' }}
-                      >
-                        <TableCell size="small" component="th" scope="row"
-                          padding="none" align="center">
-                          <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
-                            {user.profile &&
+                <TableBody>
+                  {paginatedUsers && paginatedUsers.map((user, idx) => (
+                    <TableRow
+                      key={idx}
+                      hover
+                      tabIndex={-1}
+                      role="checkbox"
+                      selected={selected}
+                      sx={{ backgroundColor: 'inherit' }}
+                    >
+                      <TableCell size="small" component="th" scope="row" padding="none" align="center">
+                        <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
+                          {user.profile &&
                             <Avatar sx={{ width: '2rem', height: '2rem' }}>
                               <UserAvatar profileUrl={user.profile} />
                             </Avatar>}
-                          </Stack>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="subtitle2" noWrap>
-                            {user.uname ? user.uname : "확인이 필요한 유저"}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          {user.provider === 'google' ? '구글가입' : 'Flow가입'}
-                        </TableCell>
-                        <TableCell align="center">
-                          {user.role === 1 ? 'Admin' : 'User'}
-                        </TableCell>
-                        <TableCell align="center">
-                          {user.regDate}
-                        </TableCell>
-                        <TableCell align="center">
-                          <IconButton onClick={() => handleUserProfileEdit(user.uid)}>
-                            <Iconify icon="eva:person-fill" />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Button
-                            variant="contained"
-                            sx={{
-                              color: 'white',
-                              backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.25)' : 'rgba(255, 0, 0, 0.25)',
-                              '&:hover': {
-                                backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.35)' : 'rgba(255, 0, 0, 0.35)',
-                              },
-                            }}
-                            onClick={() => handleStatusChange(user.uid, user.status)}
-                          >
-                            {user.status === 0 ? '비활성화' : '활성화'}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    </>
+                        </Stack>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="subtitle2" noWrap>
+                          {user.uname ? user.uname : "확인이 필요한 유저"}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        {user.provider === 'google' ? '구글가입' : 'Flow가입'}
+                      </TableCell>
+                      <TableCell align="center">
+                        {user.role === 1 ? 'Admin' : 'User'}
+                      </TableCell>
+                      <TableCell align="center">
+                        {user.regDate}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconButton onClick={() => handleUserProfileEdit(user.uid)}>
+                          <Iconify icon="eva:person-fill" />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          variant="contained"
+                          sx={{
+                            color: 'white',
+                            backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.25)' : 'rgba(255, 0, 0, 0.25)',
+                            '&:hover': {
+                              backgroundColor: user.status === 0 ? 'rgba(0, 255, 0, 0.35)' : 'rgba(255, 0, 0, 0.35)',
+                            },
+                          }}
+                          onClick={() => handleStatusChange(user.uid, user.status)}
+                        >
+                          {user.status === 0 ? '비활성화' : '활성화'}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
+
           </Stack>
         </Container>
       </DashboardLayout>

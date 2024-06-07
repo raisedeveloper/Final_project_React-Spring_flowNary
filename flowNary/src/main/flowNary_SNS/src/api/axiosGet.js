@@ -69,6 +69,26 @@ export const getUserList = async () => {
     }
 }
 
+/** 유저가 특정 페이지를 렌더링 하는지의 여부 (웹소켓)
+ * @param {*} uid 유저 번호
+ * @param {*} page 페이지 이름
+ * @returns 
+ */
+export const getUserOnPage = async (uid: number, page: string) => {
+    const result = await axios.get(`/user/onPage`, {
+        params: {
+            uid: uid,
+            page: page,
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getUserOnPage error!');
+            console.log(error);
+        });
+
+    return result; 
+}
+
 /** 글 조회
  * @param {*} bid 글 번호
  * @param {*} uid 현재 접속한 유저 번호 (기본값 -1)
@@ -300,26 +320,24 @@ export const getChatList = async (uid: number, count = 1, status = 0) => {
     return result;
 }
 
-/** 채팅방 리스트 받기
- * @param {*} uid 자신의 채팅방 리스트를 받을 유저번호
- * @param {*} count 개수 (기본값 1)
- * @param {*} status 채팅방 상태 (기본값 0)
+/** 채팅유저 목록 받기
+ * @param {*} cid 채팅방 번호
  * @returns 
  */
-export const getChatUserList = async (cid) => {
-
+export const getChatUserList = async (cid: number) => {
     const result = await axios.get('/chat/userlist', {
         params: {
-            cid: cid
+            cid: cid,
         }
     }).then((response) => response.data)
         .catch(error => {
-            console.log('axiosget.js: getChatuserList error!');
+            console.log('axiosget.js: getChatUserList error!');
             console.log(error);
         });
 
     return result;
 }
+
 /** 특정 유저 둘이 포함된 채팅방 번호 받기
  * @param {*} uid1 유저번호 1
  * @param {*} uid2 유저번호 2 
@@ -485,6 +503,7 @@ export const getLikeList = async (type: number, oid: number) => {
 /** 활성화 된 알림 목록 받기
  * @param {*} uid 유저 번호
  * @param {*} type 유형 (기본값 0)
+ * 0: 전체
  * 1: 팔로잉한 사람이 게시물 작성 시
  * 2: 자신의 게시물에 댓글이 달릴 시
  * 3: 타인이 자신을 팔로잉 했을 시
@@ -573,6 +592,26 @@ export const getNoticeCheck = async (uid: number, suid: number, type: number, oi
 
     return result;
 }
+
+/** 채팅에 대한 알림 개수 세기
+ * @param {*} uid 유저 번호
+ * @returns 
+ */
+export const getNoticeCountChat = async (uid: number) => {
+
+    const result = await axios.get('/notice/chatcount', {
+        params: {
+            uid: uid,
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getNoticeCountChat error!');
+            console.log(error);
+        });
+
+    return result;
+}
+
 
 /** Todo 목록 보기
  * @param {*} tid todo 번호

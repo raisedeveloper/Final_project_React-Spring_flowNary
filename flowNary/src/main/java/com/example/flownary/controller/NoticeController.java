@@ -83,7 +83,7 @@ public class NoticeController {
 			break;
 		case 4:
 			// 누군가가 자신에게 메세지를 보냈을 때 알람 설정
-			nContents = nickname + "님이 메세지를 보냈습니다.";
+			nContents = nickname + " 닉네임이 메세지를 보냈습니다.";
 			notice.setnContents(nContents);
 			break;
 		default:
@@ -134,7 +134,7 @@ public class NoticeController {
 			break;
 		case 4:
 			// 누군가가 자신에게 메세지를 보냈을 때 알람 설정
-			nContents = nickname + "님이 메세지를 보냈습니다.";
+			nContents = nickname + " 닉네임이 메세지를 보냈습니다.";
 			notice.setnContents(nContents);
 			break;
 		default:
@@ -161,7 +161,14 @@ public class NoticeController {
         log.info("publishNotice : {}", notice);
 
         if (!wel.isUserOnPage(notice.getUid(), "notice")) {
-        	noticeTemplate.convertAndSend("/user/notice/" + notice.getUid(), notice);        	
+        	if (notice.getType() != 4) {
+        		noticeTemplate.convertAndSend("/user/notice/" + notice.getUid(), notice);        	        		
+        	}
+        	else {
+        		if (!wel.isUserOnPage(notice.getUid(), "chat") && !wel.isUserOnPage(notice.getUid(), "chatroom")) {
+        			noticeTemplate.convertAndSend("/user/chatnotice/" + notice.getUid(), notice);        			
+        		}
+        	}
         }
         
     	if (wel.isUserOnPage(notice.getUid(), "notice")) {
@@ -182,12 +189,20 @@ public class NoticeController {
     	}
     }
     
-    @MessageMapping("/noticeAll") // "/app/noticeAll"
+    @MessageMapping("/noticeAll")
     public void publishNoticeAll(int uid) {
     	
         log.info("publishNotice_uid : {}", uid);
 
         noticeTemplate.convertAndSend("/user/noticeAll/" + uid, uid);
+    }
+    
+    @MessageMapping("/chatnoticeAll")
+    public void publishChatNoticeAll(int uid) {
+    	
+    	log.info("publishChatNotice_uid : {}", uid);
+    	
+    	noticeTemplate.convertAndSend("/user/chatnoticeAll/" + uid, uid);
     }
     
     public void publishSwalNotice(Notice notice) {
@@ -255,7 +270,15 @@ public class NoticeController {
 		if (uid == -1)
 			return 0;
 		
-		return nSvc.getNoticeCount(uid);
+		return nSvc.getNoticeCount(uid) - nSvc.getNoticeCountType(uid, 4);
+	}
+	
+	@GetMapping("/chatcount")
+	public int getNoticeCountChat(@RequestParam int uid) {
+		if (uid == -1)
+			return 0;
+		
+		return nSvc.getNoticeCountType(uid, 4);
 	}
 	
 	@GetMapping("/get")
@@ -370,6 +393,16 @@ public class NoticeController {
 		return 0;
 	}
 	
+	@PostMapping("/removeAllChat")
+	public int removeNoticeAllChat(@RequestBody JSONObject uid) {
+		int iuid = Integer.parseInt(uid.get("uid").toString());
+		nSvc.disableNoticeAllChat(iuid);
+		
+		publishChatNoticeAll(iuid);
+		
+		return 0;
+	}
+	
 	@PostMapping("/removeSpecific")
 	public int removeNoticeSpecific(@RequestBody deleteNoticedto dto) {
 		if (dto.getType() == 2) {
@@ -377,10 +410,11 @@ public class NoticeController {
 			nSvc.removeNoticeSpecific(dto.getUid(), 1, dto.getOid());			
 		}
 		else if (dto.getType() == 4) {
-			List<Integer> dlist = dSvc.getDidList(dto.getOid());
-			for (Integer k : dlist) {
-				nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), k);
-			}
+//			List<Integer> dlist = dSvc.getDidList(dto.getOid());
+//			for (Integer k : dlist) {
+//				nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), k);
+//			}
+			nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), dto.getOid());
 		}
 		else {			
 			nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), dto.getOid());

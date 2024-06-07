@@ -22,4 +22,6 @@ public interface ChatUserService {
 	void updateChatUser(updateChatUserDto chatuser);
 	
 	void deleteChatUser(int cid, int uid);
+	
+	void deleteChatUserAll(int cid);
 }

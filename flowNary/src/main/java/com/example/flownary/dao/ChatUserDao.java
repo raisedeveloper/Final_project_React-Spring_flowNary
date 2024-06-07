@@ -42,4 +42,7 @@ public interface ChatUserDao {
 	
 	@Update("update ChatUser set status=-1, userrank=0 where cid=#{cid} and uid=#{uid}")
 	void deleteChatUser(int cid, int uid);
+	
+	@Update("update ChatUser set status=-1, userrank=0 where cid=#{cid}")
+	void deleteChatUserAll(int cid);
 }

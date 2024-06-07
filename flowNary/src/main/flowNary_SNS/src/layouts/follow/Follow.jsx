@@ -19,6 +19,7 @@ import { getNoticeCheck } from "api/axiosGet";
 import UserLoginService from "ut/userLogin-Service";
 import Loading from "api/loading";
 
+
 export default function Follow() {
 
     const { activeUser } = useContext(UserContext);
@@ -50,21 +51,6 @@ export default function Follow() {
     const removeFollow = useRemoveFollow();
     const removeFollowForm = (id) => {
         removeFollow(id);
-    }
-
-    if (activeUser.id === -1) {
-        return (
-            <DashboardLayout>
-                <DashboardNavbar />
-                <Typography>
-                    유저 정보 불러오기 실패
-                </Typography>
-            </DashboardLayout>
-        )
-    }
-
-    if (isLoading || isLoading2) {
-        return <div><Loading /></div>;
     }
 
     const handleMyPage = (uid) => {
@@ -110,11 +96,32 @@ export default function Follow() {
         wrong("플로우 취소되었습니다")
         removeFollowForm(fid);
     }
+
+    const handleDelete2 = (fid) => {
+        wrong("플로잉 취소되었습니다")
+        removeFollowForm(fid);
+    }
+
+
     const goLogin = () => navigate('/authentication/sign-in');
     if (activeUser.uid === undefined || activeUser.uid < 0) {
         return <UserLoginService goLogin={goLogin} />;
     }
 
+    if (isLoading || isLoading2) {
+        return <div><Loading /></div>;
+    }
+
+    if (activeUser.id === -1) {
+        return (
+            <DashboardLayout>
+                <DashboardNavbar />
+                <Typography>
+                    유저 정보 불러오기 실패
+                </Typography>
+            </DashboardLayout>
+        )
+    }
     return (
         <DashboardLayout>
             <DashboardNavbar />
@@ -126,16 +133,17 @@ export default function Follow() {
             </Typography>}
             <TableContainer>
                 <Table>
-                    {/* 팔로잉 : 내가 팔로우 한사람들 , 팔로워 : 사람들이 나를 팔로우 */}
-                    {me ? (
-                        <TableRow sx={{ backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc', }}>
-                            <TableCell>프로필</TableCell>
-                            <TableCell>닉네임</TableCell>
-                            <TableCell>플로잉 날짜</TableCell>
-                            <TableCell>기능</TableCell>
-                        </TableRow>
-                    )
-                        : (
+                    <thead>
+                        {/* 팔로잉 : 내가 팔로우 한사람들 , 팔로워 : 사람들이 나를 팔로우 */}
+                        {me && followlist && !isEmpty(followlist) && (
+                            <TableRow sx={{ backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc', }}>
+                                <TableCell>프로필</TableCell>
+                                <TableCell>닉네임</TableCell>
+                                <TableCell>플로잉 날짜</TableCell>
+                                <TableCell>기능</TableCell>
+                            </TableRow>
+                        )}
+                        {!me && followmelist && !isEmpty(followmelist) && (
                             <TableRow sx={{ backgroundColor: '#f0f0f0', borderBottom: '2px solid #ccc', }}>
                                 <TableCell>프로필</TableCell>
                                 <TableCell>닉네임</TableCell>
@@ -143,97 +151,123 @@ export default function Follow() {
                                 <TableCell>기능</TableCell>
                             </TableRow>
                         )}
-                    {me && followlist && !isEmpty(followlist) && followlist.map((item, idx) => (
-                        <TableRow key={idx}>
-                            <TableCell>
-                                <Avatar
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
-                                    alt="profile"
-                                    onClick={() => handleMyPage(item.fuid)}
-                                />
-                            </TableCell>
-                            <TableCell onClick={() => handleMyPage(item.fuid)}>{item.nickname}</TableCell>
+                    </thead>
+                    <tbody>
+                        {me ? (
+                            followlist && !isEmpty(followlist) ? (
+                                followlist.map((item, idx) => (
+                                    <TableRow key={idx}>
+                                        <TableCell>
+                                            <Avatar
+                                                src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
+                                                alt="profile"
+                                                onClick={() => handleMyPage(item.fuid)}
+                                            />
+                                        </TableCell>
+                                        <TableCell onClick={() => handleMyPage(item.fuid)}>{item.nickname}</TableCell>
 
-                            <TableCell>
-                                {new Date(item.time).toLocaleDateString('ko-KR', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </TableCell>
-                            <TableCell>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    startIcon={<Message />}
-                                    sx={{ marginRight: '10px', color: 'blueviolet' }}
-                                    onClick={() => findChatMake(item.fuid)}
-                                >
-                                    메세지
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    startIcon={<Add />}
-                                    sx={{ marginRight: '10px' }}
-                                    onClick={() => handleModalOpen(item.fuid)}
-                                >
-                                    초대
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    startIcon={<Close />}
-                                    onClick={() => handleDelete(item.fid)}
-                                >
-                                    해제
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                    {!me && followmelist && !isEmpty(followmelist) && followmelist.map((item, idx) => (
-                        <TableRow key={idx}>
-                            <TableCell>
-                                <Avatar
-                                    src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
-                                    alt="profile"
-                                    onClick={() => handleMyPage(item.uid)}
-                                />
-                            </TableCell>
-                            <TableCell onClick={() => handleMyPage(item.uid)}>{item.nickname}</TableCell>
+                                        <TableCell>
+                                            {new Date(item.time).toLocaleDateString('ko-KR', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                            })}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                startIcon={<Message />}
+                                                sx={{ marginRight: '10px', color: 'blueviolet' }}
+                                                onClick={() => findChatMake(item.fuid)}
+                                            >
+                                                메세지
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                startIcon={<Add />}
+                                                sx={{ marginRight: '10px' }}
+                                                onClick={() => handleModalOpen(item.fuid)}
+                                            >
+                                                초대
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                startIcon={<Close />}
+                                                onClick={() => handleDelete2(item.fid)}
+                                            >
+                                                해제
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} sx={{ textAlign: 'center' }}>회원님이 플로잉한 사용자가 없습니다.</TableCell>
+                                </TableRow>
+                            )
+                        ) : (
+                            followmelist && !isEmpty(followmelist) ? (
+                                followmelist.map((item, idx) => (
+                                    <TableRow key={idx}>
+                                        <TableCell>
+                                            <Avatar
+                                                src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.profile}`}
+                                                alt="profile"
+                                                onClick={() => handleMyPage(item.uid)}
+                                            />
+                                        </TableCell>
+                                        <TableCell onClick={() => handleMyPage(item.uid)}>{item.nickname}</TableCell>
 
-                            <TableCell>
-                                {new Date(item.time).toLocaleDateString('ko-KR', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </TableCell>
-                            <TableCell>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    startIcon={<Message />}
-                                    sx={{ marginRight: '10px', color: 'blueviolet' }}
-                                    onClick={() => findChatMake(item.uid)}
-                                >
-                                    메세지
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    startIcon={<Add />}
-                                    sx={{ marginRight: '10px' }}
-                                    onClick={() => handleModalOpen(item.uid)}
-                                >
-                                    초대
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-
+                                        <TableCell>
+                                            {new Date(item.time).toLocaleDateString('ko-KR', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                            })}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                startIcon={<Message />}
+                                                sx={{ marginRight: '10px', color: 'blueviolet' }}
+                                                onClick={() => findChatMake(item.uid)}
+                                            >
+                                                메세지
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                startIcon={<Add />}
+                                                sx={{ marginRight: '10px' }}
+                                                onClick={() => handleModalOpen(item.uid)}
+                                            >
+                                                초대
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                startIcon={<Close />}
+                                                onClick={() => handleDelete2(item.fid)}
+                                            >
+                                                해제
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} sx={{ textAlign: 'center' }}>회원님을 플로우한 사용자가 없습니다.</TableCell>
+                                </TableRow>
+                            )
+                        )}
+                    </tbody>
                 </Table>
             </TableContainer>
+
 
             <Modal
                 open={modalopen}
@@ -255,7 +289,7 @@ export default function Follow() {
                         패밀리 초대하기
                     </Typography>
                     <Stack direction={'column'}>
-                        {isLoading3 && <div><Loading /></div>}
+                        {isLoading3 && <div>Loading...</div>}
                         {familylist && !isEmpty(familylist) && familylist.map((item, idx) => (
                             <Card sx={{ marginBottom: '10px' }} key={idx}>
                                 <CardHeader

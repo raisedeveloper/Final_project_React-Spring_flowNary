@@ -374,16 +374,19 @@ export default function Home() {
         <MDBox mt={3}>
           <Stack direction="row" spacing={0}>
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
-              <Write />
+              <Box sx={{ width: '100%', display: { xs: 'none', md: 'none', lg: 'block' } }}>
+                <Write />
+              </Box>
               <Grid container spacing={3}>
                 {(boardList && allcount && !isLoading) ? (
                   boardList.pages.map((page, index) => (
                     <React.Fragment key={index}>
                       {page && page.map((data, idx) => (
-                        <Grid key={idx} item xs={12} md={6} lg={6}>
+                        <Grid key={idx} item xs={12} md={12} lg={6}>
                           <MDBox mb={3}>
                             <Card sx={{
                               transition: 'box-shadow 0.3s',
+                              width: { xs: '150%', lg: '100%' },
                               '&:hover': {
                                 boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
                               }
@@ -591,8 +594,8 @@ export default function Home() {
                 ) : <></>}
               </Grid>
             </Stack>
-            <Stack direction="column" sx={{ flex: 0.5, }}>
-              <MDBox mb={3} sx={{ position: 'sticky', top: "11%" }}>
+            <Stack direction="column" sx={{ flex: 0.5 }}>
+              <MDBox mb={3} sx={{ position: 'sticky', top: "11%", display: { xs: 'none', md: 'none', lg: 'block' } }}>
                 <Accordion expanded={expandeds === 'panel1'} onChange={handleChange('panel1')} sx={{ borderRadius: expandeds === 'panel1' ? '5%' : 0 }} >
                   <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                     <MDBox sx={{ backgroundColor: 'transparent', padding: 0, margin: 0 }}>

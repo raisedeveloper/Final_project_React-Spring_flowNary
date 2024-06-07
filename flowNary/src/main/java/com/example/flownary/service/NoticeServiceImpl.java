@@ -38,6 +38,16 @@ public class NoticeServiceImpl implements NoticeService {
 	public int getNoticeCount(int uid) {
 		return nDao.getNoticeCount(uid);
 	}
+	
+	@Override
+	public int getNoticeCountType(int uid, int type) {
+		return nDao.getNoticeCountType(uid, type);
+	}
+	
+	@Override
+	public int getNoticeCountObject(int oid, int uid) {
+		return nDao.getNoticeCountObject(oid, uid);
+	}
 
 	@Override
 	public List<Notice> getNoticeListAll(int uid) {
@@ -92,6 +102,11 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public void disableNoticeAll(int uid) {
 		nDao.disableNoticeAll(uid);
+	}
+	
+	@Override
+	public void disableNoticeAllChat(int uid) {
+		nDao.disableNoticeAllChat(uid);
 	}
 
 	@Override

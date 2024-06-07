@@ -1,4 +1,4 @@
-import { ListItem, List, ListItemAvatar, Avatar, ListItemText, Typography, Badge, Box, Divider, Paper, Grid } from '@mui/material';
+import { ListItem, List, ListItemAvatar, Avatar, ListItemText, Typography, Badge, Box, Divider, Paper, Grid, useEventCallback } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { UserContext } from 'api/LocalStorage';
 import { getChatList } from 'api/axiosGet';
@@ -9,101 +9,219 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ChattingIndex from './ChattingIndex';
 import TimeAgo from 'timeago-react';
-import UserAvatar from 'api/userAvatar';
-import { getChatUserList } from 'api/axiosGet';
-import UserLoginService from 'ut/userLogin-Service';
 import { isEmpty } from 'api/emptyCheck';
+import { deleteNoticeAllChat } from 'api/axiosPost';
+import { deleteNoticeSpecific } from 'api/axiosPost';
+import { getUserOnPage } from 'api/axiosGet';
+import UserAvatar from 'api/userAvatar';
+import UserLoginService from 'ut/userLogin-Service';
+import { getChatUserList } from 'api/axiosGet';
 
 export default function ChatList() {
     const { activeUser } = useContext(UserContext);
     const [list, setList] = useState([]);
-    const [usernum, setUsernum] = useState('');
     const { stompClient } = useWebSocket();
+    const [usernum, setUsernum] = useState([]);
     const [count, setCount] = useState(20);
     const navigate = useNavigate();
     const [cid, setCid] = useState(-1);
-    const { state } = useLocation();
+    const [onfirst, setOnfirst] = useState(0);
+    const { state } = useLocation() || {};
+
+    useEffect(() => {
+        if (state && state.cid) {
+            setCid(state.cid);
+        }
+    }, [state]);
+
+    useEffect(() => {
+        if (onfirst === 1 && activeUser.uid !== -1 && cid === -1) {
+            const checkuserpage = async () => {
+                const page = await getUserOnPage(activeUser.uid, "chat");
+                if (page === 0 && stompClient && stompClient.connected) {
+                    stompClient.publish({
+                        destination: '/app/page',
+                        body: JSON.stringify({ userId: activeUser.uid, page: 'chat', action: 'enter' }),
+                    });
+                }
+            }
+
+            checkuserpage();
+        }
+    }, [cid]);
 
     useEffect(() => {
         if (activeUser.uid !== -1) {
-          const fetchChatList = async () => {
-            const chatlist = await getChatList(activeUser.uid, count, 0);
-            if (!isEmpty(chatlist)) {
-              setList(chatlist);
-              if (state) {
-                setCid(state.cid);
-                setCid(chatlist[0].cid);
-              }
-    
-              const cidList = list.map((chat) => chat.cid);
-              const promises = cidList.map(async (cid) => {
-                const usernumlist = await getChatUserList(cid);
-                if (usernumlist) {
-                  return usernumlist[1].uid; // 첫번째 사용자 UID만 추출
+            const fetchChatList = async () => {
+                const chatlist = await getChatList(activeUser.uid, count, 0);
+                setOnfirst(1);
+                if (!isEmpty(chatlist)) {
+                    setList(chatlist);
+                    // if (!state || !state.cid) {
+                    //     setCid(chatlist[0].cid); // Assuming the correct structure is chatlist[0].cid
+                    // }
+
+                    const cidList = chatlist.map((chat) => chat.cid);
+                    const promises = cidList.map(async (cid) => {
+                        const usernumlist = await getChatUserList(cid);
+                        if (usernumlist) {
+                            for (let i = 0; i < usernumlist.length; i++) {
+                                if (usernumlist[i].uid !== activeUser.uid)
+                                    return usernumlist[i].uid;
+                            }
+                        } else {
+                            console.error(`Failed to get user list for cid: ${cid}`);
+                            return null;
+                        }
+                    });
+
+                    Promise.all(promises).then((usernumList) => {
+                        setUsernum(usernumList); // 추출된 UID 목록으로 usernum 설정
+                    });
                 } else {
-                  console.error(`Failed to get user list for cid: ${cid}`);
-                  return null;
+                    console.error("Chat list is empty or not available");
                 }
-              });
-    
-              Promise.all(promises).then((usernumList) => {
-                setUsernum(usernumList); // 추출된 UID 목록으로 usernum 설정
-              });
-            } else {
-              console.error("Chat list is empty or not available");
+                deleteNoticeAllChat(activeUser.uid);
             }
-          }
-    
-          fetchChatList();
-          let chatrefresh;
-    
-          if (stompClient && stompClient.connected) {
-            console.log('chat websocket connected');
-            stompClient.publish({
-              destination: '/app/page',
-              body: JSON.stringify({ userId: activeUser.uid, page: 'chat', action: 'enter' }),
-            });
-    
-            chatrefresh = stompClient.subscribe(`/topic/chatlist`, (message) => {
-              const data = JSON.parse(message.body);
-    
-              setList(prevList => {
-                const indexcid = prevList.findIndex(item => item.cid === data.cid);
-                if (indexcid !== -1) {
-                  const chat = prevList[indexcid];
-                  const newlist = [{
-                    cid: data.cid,
+
+            fetchChatList();
+            let chatrefresh;
+            let chatrefresh2;
+            let chatdelete;
+
+            if (stompClient && stompClient.connected) {
+                console.log('chat websocket connected');
+                stompClient.publish({
+                    destination: '/app/page',
+                    body: JSON.stringify({ userId: activeUser.uid, page: 'chat', action: 'enter' }),
+                });
+
+                chatrefresh = stompClient.subscribe(`/topic/chatlist`, async (message) => {
+                    const data = JSON.parse(message.body);
+                    const onPage = await getUserOnPage(activeUser.uid, 'chatroom' + data.cid);
+
+                    if (onPage === 0) {
+                        setList(prevList => {
+                            const indexcid = prevList.findIndex(item => item.cid === data.cid);
+                            if (indexcid !== -1) {
+                                const chat = prevList[indexcid];
+                                const newlist = [{
+                                    cid: data.cid,
+                                    status: chat.status,
+                                    statusTime: chat.statusTime,
+                                    userCount: chat.userCount,
+                                    name: chat.name,
+                                    lastMessage: data.lastMessage,
+                                    newchatcount: chat.newchatcount + 1,
+                                }, ...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
+                                return newlist;
+                            }
+                            return prevList;
+                        });
+                    }
+                    else {
+                        setList(prevList => {
+                            const indexcid = prevList.findIndex(item => item.cid === data.cid);
+                            if (indexcid !== -1) {
+                                const chat = prevList[indexcid];
+                                const newlist = [{
+                                    cid: data.cid,
+                                    status: chat.status,
+                                    statusTime: chat.statusTime,
+                                    userCount: chat.userCount,
+                                    name: chat.name,
+                                    lastMessage: data.lastMessage,
+                                    newchatcount: 0,
+                                }, ...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
+                                return newlist;
+                            }
+                            return prevList;
+                        });
+                    }
+                });
+
+                chatrefresh2 = stompClient.subscribe(`/topic/chatlistnew`, (message) => {
+                    const data = JSON.parse(message.body);
+
+                    if (data.targetuid === activeUser.uid) {
+                        setList(prevList => {
+                            const newlist = [
+                                {
+                                    cid: data.cid,
+                                    status: data.status,
+                                    statusTime: data.statusTime,
+                                    userCount: data.userCount,
+                                    name: data.name,
+                                    lastMessage: data.lastMessage,
+                                    newchatcount: 1,
+                                }
+                                , prevList
+                            ]
+
+                            return newlist;
+                        });
+                    }
+                });
+
+                chatdelete = stompClient.subscribe(`/topic/chatdelete`, (message) => {
+                    const data = JSON.parse(message.body);
+
+                    setList(prevList => {
+                        const indexcid = prevList.findIndex(item => item.cid === data.cid);
+
+                        if (indexcid !== -1) {
+                            const newlist = [...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
+                            return newlist;
+                            setCid(-1);
+                        }
+                        return prevList;
+                    });
+                });
+            }
+
+            return () => {
+                if (stompClient && stompClient.connected) {
+                    stompClient.publish({
+                        destination: '/app/page',
+                        body: JSON.stringify({ userId: activeUser.uid, page: 'chat', action: 'leave' }),
+                    });
+                    console.log('chat websocket disconnected');
+                }
+
+                if (chatrefresh) {
+                    chatrefresh.unsubscribe();
+                }
+                if (chatrefresh2) {
+                    chatrefresh2.unsubscribe();
+                }
+                if (chatdelete) {
+                    chatdelete.unsubscribe();
+                }
+            }
+        }
+    }, [activeUser.uid, count, stompClient]);
+
+    const handleChatClick = (cid) => {
+        setCid(cid);
+        setList(prevList => {
+            const indexcid = prevList.findIndex(item => item.cid === cid);
+            if (indexcid !== -1) {
+                const chat = prevList[indexcid];
+                const newlist = [...prevList.slice(0, indexcid), {
+                    cid: chat.cid,
                     status: chat.status,
                     statusTime: chat.statusTime,
                     userCount: chat.userCount,
                     name: chat.name,
-                    lastMessage: data.lastMessage,
-                  }, ...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
-                  return newlist;
-                }
-                return prevList;
-              });
-            });
-          }
-    
-          return () => {
-            if (stompClient && stompClient.connected) {
-              stompClient.publish({
-                destination: '/app/page',
-                body: JSON.stringify({ userId: activeUser.uid, page: 'chat', action: 'leave' }),
-              });
-              console.log('chat websocket disconnected');
+                    lastMessage: chat.lastMessage,
+                    newchatcount: 0,
+                }, ...prevList.slice(indexcid + 1)];
+                return newlist;
             }
-    
-            if (chatrefresh) {
-              chatrefresh.unsubscribe();
-            }
-          }
-        }
-      }, [activeUser.uid, count, stompClient]);
-    const handleChatClick = (cid) => {
-        setCid(cid);
+            return prevList;
+        })
     }
+
     const goLogin = () => navigate('/authentication/sign-in');
     if (activeUser.uid === undefined || activeUser.uid < 0) {
         return <UserLoginService goLogin={goLogin} />;
@@ -133,9 +251,9 @@ export default function ChatList() {
                                 py: 1,
                             }}
                         >
-                            <Typography variant="h5" sx={{ my: 2, fontWeight: 'bold', color: 'lightcoral' }}>채팅 목록</Typography>
+                            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: 'lightcoral' }}>채팅 목록</Typography>
                             <List sx={{ cursor: 'pointer' }}>
-                                {list && list.data ? (list && list.map((data, idx) => (
+                                {list && list.map((data, idx) => (
                                     <React.Fragment key={idx}>
                                         <ListItem
                                             onClick={() => handleChatClick(data.cid)}
@@ -151,25 +269,36 @@ export default function ChatList() {
                                             }}
                                         >
                                             <ListItemAvatar>
-                                                <Badge
-                                                    overlap="circular"
-                                                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                                    badgeContent={
-                                                        <div
-                                                            style={{
-                                                                width: '1rem',
-                                                                height: '1rem',
-                                                                borderRadius: '50%',
-                                                                backgroundColor: 'lightcoral',
-                                                                border: '2px solid white',
-                                                            }}
-                                                        ></div>
-                                                    }
-                                                >
+                                                {data.newchatcount > 0 ? (
+                                                    <Badge
+                                                        overlap="circular"
+                                                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                                        badgeContent={
+                                                            <div
+                                                                style={{
+                                                                    width: '1rem',
+                                                                    height: '1rem',
+                                                                    borderRadius: '50%',
+                                                                    backgroundColor: 'lightcoral',
+                                                                    border: '2px solid white',
+                                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                                    color:'white'
+                                                                }}
+                                                            >
+                                                                {data.newchatcount}
+                                                            </div>
+                                                        }
+                                                    >
+                                                        <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
+                                                            <UserAvatar uid={usernum[idx]} />
+                                                        </Avatar>
+
+                                                    </Badge>
+                                                ) : (
                                                     <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
                                                         <UserAvatar uid={usernum[idx]} />
                                                     </Avatar>
-                                                </Badge>
+                                                )}
                                             </ListItemAvatar>
                                             <ListItemText
                                                 sx={{ ml: 3 }}
@@ -182,6 +311,7 @@ export default function ChatList() {
                                                             color="text.primary"
                                                         >
                                                             {data.lastMessage}
+
                                                         </Typography>
                                                         <br />
                                                         <Typography
@@ -197,13 +327,13 @@ export default function ChatList() {
                                         </ListItem>
                                         {idx < list.length - 1 && <Divider variant="middle" />}
                                     </React.Fragment>
-                                ))) : null}
+                                ))}
                             </List>
                         </Box>
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={8} sx={{ padding: 1 }}>
-                    {cid !== -1 ? <><ChattingIndex cid={cid} setCid={setCid} /></> : null}
+                    {cid && <ChattingIndex cid={cid} setCid={setCid} />}
                 </Grid>
             </Grid>
         </DashboardLayout>

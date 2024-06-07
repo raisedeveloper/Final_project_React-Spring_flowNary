@@ -66,7 +66,7 @@ public class DmListController {
         dmList.setProfile(idmList.getProfile());
         
         List<Integer> list = cuSvc.getChatUserListExInt(idmList.getCid(), idmList.getUid());
-        nC.insertNoticeList(list, 4, did, idmList.getUid());
+        nC.insertNoticeList(list, 4, idmList.getCid(), idmList.getUid());
         
         cSvc.updateChatTime(idmList.getCid());
         
@@ -79,7 +79,7 @@ public class DmListController {
         messagingTemplate.convertAndSend("/topic/chatlist", jObj);
     }
     
-    public void publishChat2(insertDmList idmList, Chat chat) {
+    public void publishChat2(insertDmList idmList, Chat chat, int fuid) {
     	log.info("publishChat : {}", idmList.toString());
     	
         DmList dmList = new DmList();
@@ -92,8 +92,9 @@ public class DmListController {
         dmList.setProfile(idmList.getProfile());
         
         int did = dSvc.insertDmList(dmList);
+        System.out.println(did);
         List<Integer> list = cuSvc.getChatUserListExInt(idmList.getCid(), idmList.getUid());
-        nC.insertNoticeList(list, 4, did, idmList.getUid());
+        nC.insertNoticeList(list, 4, idmList.getCid(), idmList.getUid());
         
         JSONObject jObj = new JSONObject();
         jObj.put("cid", idmList.getCid());
@@ -102,6 +103,7 @@ public class DmListController {
         jObj.put("statusTime", chat.getStatusTime());
         jObj.put("name", chat.getName());
         jObj.put("userCount", cuSvc.getChatUserCount(chat.getCid()));
+        jObj.put("targetuser", fuid);
         messagingTemplate.convertAndSend("/topic/chatlistnew", jObj);
     }
 

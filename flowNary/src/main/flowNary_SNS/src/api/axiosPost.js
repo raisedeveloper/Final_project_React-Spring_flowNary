@@ -395,9 +395,6 @@ export const deleteDm = async (did: number) => {
 /////////////////////////////////////알림/////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////
-// 수정사항 : 알림은 deleteNotice 추가, deleteNoticeSpecific 추가, deleteNoticeAll 수정
-//////////////////////////////////////////////////////////////////////////////
 /** 특정 번호의 알림 삭제
  * @param {*} nid 알림 번호
  */
@@ -429,7 +426,7 @@ export const deleteNoticeSpecific = async (uid: number, type: number, oid: numbe
     });
 }
 
-/** 특정 유저의 모든 알림 비활성화 or 삭제
+/** 특정 유저의 모든 알림 비활성화 or 삭제 (채팅 제외)
  * @param {*} uid 유저 번호
  * @param {*} type 유형 (0: 비활성화, 1: 삭제)
  * @returns 
@@ -441,6 +438,19 @@ export const deleteNoticeAll = async (uid: number, type = 0) => {
         type: type,
     }).catch(error => {
         console.log('axiospost.js: deleteNoticeAll error!');
+        console.log(error);
+    });
+}
+
+/** 특정 유저의 채팅 알림 비활성화
+ * @param {*} uid 유저 번호
+ */
+export const deleteNoticeAllChat = async (uid: number) => {
+
+    return axios.post(`/notice/removeAllChat`, {
+        uid: uid,
+    }).catch(error => {
+        console.log('axiospost.js: deleteNoticeAllChat error!');
         console.log(error);
     });
 }
@@ -615,7 +625,6 @@ export const deleteFollow = async (fid: number) => {
         console.log(error);
     });
 }
-
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////신고/////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

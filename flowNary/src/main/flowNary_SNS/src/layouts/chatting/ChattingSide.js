@@ -27,16 +27,15 @@ export default function ChatList() {
         const chatlist = await getChatList(activeUser.uid, count, 0);
         if (chatlist) {
           setList(chatlist);
-          if (state) {
-            setCid(state.cid);
-            setCid(chatlist[0].cid);
-          }
 
-          const cidList = list.map((chat) => chat.cid);
+          const cidList = chatlist.map((chat) => chat.cid);
           const promises = cidList.map(async (cid) => {
             const usernumlist = await getChatUserList(cid);
             if (usernumlist) {
-              return usernumlist[1].uid; // 첫번째 사용자 UID만 추출
+              for (let i = 0; i < usernumlist.length; i++) {
+                if (usernumlist[i].uid !== activeUser.uid)
+                  return usernumlist[i].uid;
+              }
             } else {
               console.error(`Failed to get user list for cid: ${cid}`);
               return null;
@@ -53,6 +52,8 @@ export default function ChatList() {
 
       fetchChatList();
       let chatrefresh;
+      let chatrefresh2;
+      let chatdelete;
 
       if (stompClient && stompClient.connected) {
         console.log('chat websocket connected');
@@ -75,8 +76,47 @@ export default function ChatList() {
                 userCount: chat.userCount,
                 name: chat.name,
                 lastMessage: data.lastMessage,
+                newchatcount: chat.newchatcount + 1,
               }, ...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
               return newlist;
+            }
+            return prevList;
+          });
+        });
+
+        chatrefresh2 = stompClient.subscribe(`/topic/chatlistnew`, (message) => {
+          const data = JSON.parse(message.body);
+
+          if (data.targetuid === activeUser.uid) {
+            setList(prevList => {
+              const newlist = [
+                {
+                  cid: data.cid,
+                  status: data.status,
+                  statusTime: data.statusTime,
+                  userCount: data.userCount,
+                  name: data.name,
+                  lastMessage: data.lastMessage,
+                  newchatcount: 1,
+                }
+                , prevList
+              ]
+
+              return newlist;
+            });
+          }
+        });
+
+        chatdelete = stompClient.subscribe(`/topic/chatdelete`, (message) => {
+          const data = JSON.parse(message.body);
+
+          setList(prevList => {
+            const indexcid = prevList.findIndex(item => item.cid === data.cid);
+
+            if (indexcid !== -1) {
+              const newlist = [...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
+              return newlist;
+              setCid(-1);
             }
             return prevList;
           });
@@ -94,6 +134,12 @@ export default function ChatList() {
 
         if (chatrefresh) {
           chatrefresh.unsubscribe();
+        }
+        if (chatrefresh2) {
+          chatrefresh2.unsubscribe();
+        }
+        if (chatdelete) {
+          chatdelete.unsubscribe();
         }
       }
     }
@@ -141,25 +187,35 @@ export default function ChatList() {
                     }}
                   >
                     <ListItemAvatar sx={{ mr: 3 }}>
-                      <Badge
-                        overlap="circular"
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        badgeContent={
-                          <div
-                            style={{
-                              width: '1rem',
-                              height: '1rem',
-                              borderRadius: '50%',
-                              backgroundColor: 'lightcoral',
-                              border: '2px solid white',
-                            }}
-                          ></div>
-                        }
-                      >
+                      {data.newchatcount > 0 ? (
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                          badgeContent={
+                            <div
+                              style={{
+                                width: '1rem',
+                                height: '1rem',
+                                borderRadius: '50%',
+                                backgroundColor: 'lightcoral',
+                                border: '2px solid white',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: 'white'
+                              }}
+                            >
+                              {data.newchatcount}
+                            </div>
+                          }
+                        >
+                          <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
+                            <UserAvatar uid={usernum[idx]} />
+                          </Avatar>
+                        </Badge>
+                      ) : (
                         <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
                           <UserAvatar uid={usernum[idx]} />
                         </Avatar>
-                      </Badge>
+                      )}
                     </ListItemAvatar>
                     <ListItemText
                       primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>{data.name}</Typography>}
