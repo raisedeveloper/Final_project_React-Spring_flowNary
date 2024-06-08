@@ -26,7 +26,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";x2
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import NotificationItem from "examples/Items/NotificationItem";
 import { UserContext } from "api/LocalStorage";
@@ -37,6 +37,7 @@ import { isEmpty } from "api/emptyCheck";
 import { useNavigate } from "react-router-dom";
 import { deleteNotice } from "api/axiosPost";
 import { getBoard } from "api/axiosGet";
+import UserLoginService from "ut/userLogin-Service";
 
 export default function Notifications() {
 
@@ -163,7 +164,10 @@ export default function Notifications() {
       await insertFamilyUser(oid, activeUser.uid, 0, activeUser.nickname, '초기 메세지');
     }
   }
-
+  const goLogin = () => navigate('/authentication/sign-in');
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
   return (
     <DashboardLayout>
       <DashboardNavbar />

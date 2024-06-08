@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { isEmpty } from "api/emptyCheck";
 import Iconify from "components/iconify/iconify";
 import { getFamilyUserList } from "api/axiosGet";
+import UserLoginService from "ut/userLogin-Service";
 
 const familyData = [
   {
@@ -132,7 +133,10 @@ export default function Family() {
 
   // const profileimages = familylist.profiledata ? familylist.profiledata.split(',') : null;
   // console.log(familylist[0].profiledata);
-
+  const goLogin = () => navigate('/authentication/sign-in');
+  if (activeUser.uid === undefined || activeUser.uid < 0) {
+    return <UserLoginService goLogin={goLogin} />;
+  }
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -154,7 +158,7 @@ export default function Family() {
           }}
           sx={{ width: '35%', marginBottom: 3 }}
         />
-        <Button sx={{ fontSize: 20, color: 'lightslategray'}} onClick={handleNew}><Iconify icon="ic:round-plus" /> Family방 생성</Button>
+        <Button sx={{ fontSize: 20, color: 'lightslategray' }} onClick={handleNew}><Iconify icon="ic:round-plus" /> Family방 생성</Button>
       </Box>
       <Divider sx={{ marginBottom: '10px', color: 'black' }} />
 
@@ -166,7 +170,7 @@ export default function Family() {
                 <CardHeader
                   avatar={<Avatar alt={item.leadername} src={item.leaderprofile} sx={{ cursor: 'pointer' }} onClick={() => handleMyPage(item.leaderuid)} />}
                   title={
-                    <Typography variant="h6" sx={{ fontWeight: 'bold',color:'lightcoral' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'lightcoral' }}>
                       {item.name}
                     </Typography>
                   }
@@ -182,7 +186,7 @@ export default function Family() {
                 <CardContent onClick={() => handleOpen(item.faid)} sx={{ cursor: 'pointer', }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Iconify style={{ marginLeft: '47px' }} icon="heroicons-solid:users" />
-                    <Typography variant="body2" sx={{ color: 'text.first', marginLeft: 1,fontWeight: '400' }}>
+                    <Typography variant="body2" sx={{ color: 'text.first', marginLeft: 1, fontWeight: '400' }}>
                       유저 수: {item.usercount}
                     </Typography>
                   </Box>

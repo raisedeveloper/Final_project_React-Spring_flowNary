@@ -18,7 +18,7 @@ export default function Team() {
           </Typography>
           <img
             // src="/images/bestTeamWork.png"  // 이 부분을 실제 이미지 URL로 교체
-            src="/images/company_intro_clear3.png"  // 이 부분을 실제 이미지 URL로 교체
+            src="/images/team.gif"  // 이 부분을 실제 이미지 URL로 교체
             alt="Team Member"
             style={{ maxWidth: '100%', maxHeight: '600px' }}
           />
