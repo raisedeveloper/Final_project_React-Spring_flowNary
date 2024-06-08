@@ -25,6 +25,7 @@ import { deleteBoard } from "api/axiosPost";
 import { Declaration } from "api/alert";
 import { insertDeclaration } from "api/axiosPost";
 import UserAvatar from "api/userAvatar";
+import Loading from "api/loading";
 
 export default function MySearchList() {
   const queryClient = useQueryClient();
@@ -78,7 +79,7 @@ export default function MySearchList() {
 
   useEffect(() => {
     if (query != null) {
-      axios.get('http://localhost:8090/board/list', {
+      axios.get('/board/list', {
         params: {
           c: count,
           f: field,
@@ -90,7 +91,6 @@ export default function MySearchList() {
       }).then(res => {
         setBoardList(res.data);
         setResearch(true);
-        console.log(res.data); // 데이터를 콘솔에 출력하여 확인합니다.
         if (res.data.length > 0) {
           setIs(true);
         }
@@ -168,10 +168,6 @@ export default function MySearchList() {
     }
 
     addLikeForm(sendData);
-  }
-
-  if (isLoading) {
-    return (<div>로딩 중...</div>)
   }
 
   // 최신순으로 정렬
@@ -322,7 +318,6 @@ export default function MySearchList() {
   // 신고
   const handleSiren = async () => {
     handleClosePopover();
-    console.log('있음?' + activeUser.uid);
     const check = await Declaration(activeUser.uid);
     if (check !== 0) {
       const sendData = {
@@ -330,6 +325,11 @@ export default function MySearchList() {
       }
       await insertDeclaration(sendData);
     }
+  }
+  if (isLoading) {
+    return (
+      <div><Loading /></div>
+    )
   }
 
   return (
@@ -519,7 +519,7 @@ export default function MySearchList() {
                             >
                               <button onClick={handleOpen.bind(null, data.bid)}>
                                 <img
-                                  src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                                  src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.includes(',') ? data.image.split(',')[0] : data.image}` : ''}
                                   alt="Paella dish"
                                   style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                                 />

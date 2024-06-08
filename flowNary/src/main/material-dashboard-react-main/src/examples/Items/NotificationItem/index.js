@@ -20,15 +20,15 @@ const NotificationItem = forwardRef(({ icon, title, time, ...rest }, ref) => (
     <Grid container component={Link} py={0.5} sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between' }} lineHeight={1}>
       <Grid item sx={{ display: "flex" }}>
         <MDTypography variant="body1" color="secondary" lineHeight={0.75}>
-          {icon}
+          {icon && icon}
         </MDTypography>
         <MDTypography variant="button" fontWeight="regular" sx={{ ml: 1 }}>
-          {title}
+          {title && title}
         </MDTypography>
       </Grid>
       <Grid item>
         <MDTypography variant="button" fontWeight="regular" sx={{ ml: 1 }}>
-          {time.toString().split("T")[0]}  {time.toString().split("T")[1]}
+          {time && time.toString().split("T")[0]}  {time && time.toString().split("T")[1]}
         </MDTypography>
       </Grid>
     </Grid>

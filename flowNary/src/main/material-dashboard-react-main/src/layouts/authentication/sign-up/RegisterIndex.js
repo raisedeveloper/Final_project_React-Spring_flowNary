@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { SetWithExpiry } from "../../../api/LocalStorage";
 import { getApp, getApps, initializeApp } from 'firebase/app';
-import { GoogleAuthProvider, getAuth, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithPopup, createUserWithEmailAndPassword } from 'firebase/auth';
 import '../theme.css';
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -204,91 +204,6 @@ export default function Register({ closeModal }) {
 
     const auth = getAuth();
 
-    const RegisterWithGoogle = async () => {
-        try {
-            const auth = getAuth();
-            const provider = new GoogleAuthProvider();
-            const data = await signInWithPopup(auth, provider);
-
-            // 이메일로 사용자 조회
-            const response = await axios.get('/user/getUserByEmail', {
-                params: {
-                    email: data.user.email
-                }
-            });
-
-            // 사용자가 존재하지 않으면 회원가입 진행
-            if (Object.keys(response.data).length === 0) {
-                var sendData = {
-                    email: data.user.email,
-                    pwd: 'nn',
-                    hashuid: data.user.uid,
-                    provider: 1,
-                    birth: null,
-                    uname: null,
-                    nickname: null,
-                    tel: null
-                }
-                userRegister(sendData);
-
-                // 회원가입 성공 시 로컬 스토리지 설정 및 리다이렉트
-                SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", response.data.profile, 180);
-                SetWithExpiry("nickname", response.data.nickname, 180);
-                SetWithExpiry("statusMessage", response.data.statusMessage, 180);
-                Swal.fire({
-                    icon: 'success',
-                    title: "구글 회원가입에 성공했습니다.",
-                    showClass: {
-                        popup: `
-                                    animate__animated
-                                    animate__fadeInUp
-                                    animate__faster
-                                `
-                    },
-                    hideClass: {
-                        popup: `
-                                    animate__animated
-                                    animate__fadeOutDown
-                                    animate__faster
-                                `
-                    }
-                });
-                console.log("구글 회원가입 성공!" + response.data);
-
-            } else {
-                SetWithExpiry("email", data.user.email, 180);
-                SetWithExpiry("profile", response.data.profile, 180);
-                SetWithExpiry("nickname", response.data.nickname, 180);
-                SetWithExpiry("statusMessage", response.data.statusMessage, 180);
-                Swal.fire({
-                    icon: 'success',
-                    title: "구글 로그인에 성공했습니다.",
-                    showClass: {
-                        popup: `
-                                    animate__animated
-                                    animate__fadeInUp
-                                    animate__faster
-                                `
-                    },
-                    hideClass: {
-                        popup: `
-                                    animate__animated
-                                    animate__fadeOutDown
-                                    animate__faster
-                                `
-                    }
-                });
-                console.log("구글 로그인 성공!" + response.data);
-
-            }
-            setAnimationClass('fade-exit');
-            setTimeout(() => navigate('/'), 500); // 애니메이션 시간을 고려한 딜레이
-        } catch (error) {
-            console.error("구글 로그인 오류:", error);
-        }
-    };
-
     function handleKeyPress(event) {
         if (event && event.key === 'Enter') {
             event.preventDefault();
@@ -337,7 +252,6 @@ export default function Register({ closeModal }) {
 
         await createUserWithEmailAndPassword(auth, userInfo.email, userInfo.pwd)
             .then(async () => {
-                console.log("회원가입 성공");
                 console.log(userInfo.email, userInfo.pwd, uname, nickname, tel, birth);
                 Swal.fire({
                     title: "가입에 성공하셨습니다!",

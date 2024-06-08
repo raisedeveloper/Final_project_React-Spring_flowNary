@@ -21,6 +21,6 @@ export default Iconify;
 
 Iconify.propTypes = {
   icon: PropTypes.string.isRequired,
-  width: PropTypes.number.isRequired,
-  sx: PropTypes.object.isRequired,
+  width: PropTypes.number,
+  sx: PropTypes.object,
 };

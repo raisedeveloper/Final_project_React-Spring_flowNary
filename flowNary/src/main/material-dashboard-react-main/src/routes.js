@@ -32,7 +32,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">roofing</Icon>,
     route: "/home",
     component: <Home />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -41,7 +41,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">collections</Icon>,
     route: "/album",
     component: <Album />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -50,7 +50,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">send</Icon>,
     route: "/chatlist",
     component: <ChatList />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -68,7 +68,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon variant="outlined" fontSize="xx-large">contact_page</Icon>,
     route: "/mypage",
     component: <Mypage />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -77,7 +77,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">diversity_1</Icon>,
     route: "/family",
     component: <Family />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -86,7 +86,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">people</Icon>,
     route: "/follow",
     component: <Follow />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -95,7 +95,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">notifications</Icon>,
     route: "/notifications",
     component: <Notifications />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -104,7 +104,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="xx-large">filter_vintage</Icon>,
     route: "/verify",
     component: <VerifySettings />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "collapse",
@@ -120,7 +120,7 @@ const createRoutes = (isLoggedIn, isAdmin) => [
     icon: <Icon fontSize="large">connect_without_contact</Icon>,
     route: "/team",
     component: <Team />,
-    visible: true,
+    visible: !isAdmin ? true : false,
   },
   {
     type: "bottom",

@@ -4,7 +4,8 @@ import {
   CardContent, CardHeader, IconButton, Dialog, Box, Button,
   Grid,
   Stack,
-  Modal
+  Modal,
+  AvatarGroup
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -12,8 +13,6 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 import CloseIcon from '@mui/icons-material/Close';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import UserList from "./UserList";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +21,8 @@ import { getFamilyList } from "api/axiosGet";
 import { insertFamily } from "api/axiosPost";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "api/emptyCheck";
-import UserLoginService from "ut/userLogin-Service";
+import Iconify from "components/iconify/iconify";
+import { getFamilyUserList } from "api/axiosGet";
 
 const familyData = [
   {
@@ -61,6 +61,7 @@ export default function Family() {
     setSearchTerm(event.target.value);
   };
 
+
   if (activeUser.uid === -1) {
     return (
       <DashboardLayout>
@@ -87,9 +88,11 @@ export default function Family() {
       </DashboardLayout>
     )
   }
+
   const filteredFamilyData = !isEmpty(familylist) ? familylist.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
+  console.log(typeof (filteredFamilyData))
 
   const handleOpen = (faid) => {
     setOpen(true);
@@ -127,6 +130,8 @@ export default function Family() {
     }
   }
 
+  // const profileimages = familylist.profiledata ? familylist.profiledata.split(',') : null;
+  // console.log(familylist[0].profiledata);
 
   return (
     <DashboardLayout>
@@ -149,7 +154,7 @@ export default function Family() {
           }}
           sx={{ width: '35%', marginBottom: 3 }}
         />
-        <Button sx={{ fontSize: 20 }} onClick={handleNew}><FontAwesomeIcon icon={faPlus} style={{ marginRight: '3px' }} /> Family방 생성</Button>
+        <Button sx={{ fontSize: 20, color: 'lightslategray'}} onClick={handleNew}><Iconify icon="ic:round-plus" /> Family방 생성</Button>
       </Box>
       <Divider sx={{ marginBottom: '10px', color: 'black' }} />
 
@@ -157,16 +162,37 @@ export default function Family() {
         <Grid container spacing={2}>
           {filteredFamilyData.map((item, index) => (
             <Grid item xs={12} sm={6} md={6} lg={6} key={index}> {/* 여기서 xs를 12에서 6으로 변경 */}
-              <Card sx={{ marginBottom: '10px' }}>
+              <Card sx={{ marginBottom: '20px', borderRadius: '10px', boxShadow: 3, }}>
                 <CardHeader
-                  avatar={<Avatar alt={item.leadername} src={item.leaderprofile} onClick={() => handleMyPage(item.leaderuid)} />}
-                  title={item.name}
-                  subheader={item.regTime}
+                  avatar={<Avatar alt={item.leadername} src={item.leaderprofile} sx={{ cursor: 'pointer' }} onClick={() => handleMyPage(item.leaderuid)} />}
+                  title={
+                    <Typography variant="h6" sx={{ fontWeight: 'bold',color:'lightcoral' }}>
+                      {item.name}
+                    </Typography>
+                  }
+                  subheader={new Date(item.regTime).toLocaleDateString('ko-KR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                  sx={{ borderBottom: '3px dashed #e0e0e0', paddingBottom: '10px' }}
+                  subheaderTypographyProps={{ style: { color: 'blueviolet' } }}
                 />
-                <CardContent onClick={() => handleOpen(item.faid)}>
-                  <Typography variant="body2" color="text.secondary">
-                    유저 수 : {item.usercount}
-                  </Typography>
+                <CardContent onClick={() => handleOpen(item.faid)} sx={{ cursor: 'pointer', }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Iconify style={{ marginLeft: '47px' }} icon="heroicons-solid:users" />
+                    <Typography variant="body2" sx={{ color: 'text.first', marginLeft: 1,fontWeight: '400' }}>
+                      유저 수: {item.usercount}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1 }}>
+                    <AvatarGroup max={4} sx={{ marginLeft: 5, '& .MuiAvatar-root': { width: '30px', height: '30px' } }}>
+                      {item && item.profiledata && item.profiledata.split(',').map((profile, idx) => (
+                        <Avatar key={idx} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
+                      ))}
+                    </AvatarGroup>
+                  </Box>
                 </CardContent>
               </Card>
               {index < filteredFamilyData.length - 1 && <Divider />}
@@ -174,6 +200,7 @@ export default function Family() {
           ))}
         </Grid>
       </Box>
+
 
       <Modal
         open={modalopen}
@@ -191,15 +218,36 @@ export default function Family() {
           boxShadow: 24,
           p: 4,
         }}>
-          <Typography id="modaltitle">
+          <Typography id="modaltitle" fontWeight={'bold'} sx={{ color: 'lightslategray' }}>
             새 패밀리 생성
           </Typography>
           <TextField label="패밀리 이름" variant="outlined"
             value={newname}
             onChange={(e) => setNewname(e.target.value)}
-            sx={{ marginTop: '10px' }}
+            sx={{
+              color: 'lightcoral',
+              marginTop: '10px',
+              '& .MuiInputLabel-outlined': {
+                fontSize: '1rem',
+                lineHeight: '1.3',
+                color: 'lightcoral',
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'lightcoral', // 기본 outline 색상 변경
+                },
+                '&:hover fieldset': {
+                  borderColor: 'lightcoral', // 호버 상태에서 outline 색상 변경
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: 'lightcoral',
+                  color: 'lightcoral', // 포커스 상태에서 outline 색상 변경
+                },
+                padding: '3px 3px', // 입력 필드의 패딩 조정
+              }
+            }}
           /> <br />
-          <Button variant="outlined" onClick={makeNewFamily} sx={{ color: 'black', marginTop: '10px' }}>생성</Button>
+          <Button variant="outlined" onClick={makeNewFamily} sx={{ marginTop: '10px', color: 'lightcoral', borderColor: 'lightcoral', }}>생성</Button>
         </Box>
       </Modal>
 
@@ -224,7 +272,7 @@ export default function Family() {
             position: 'absolute', right: 8, top: 8,
             color: (theme) => theme.palette.grey[500],
             zIndex: 2
-          }} >
+          }}>
           <CloseIcon />
         </IconButton>
         <UserList faid={faid} />

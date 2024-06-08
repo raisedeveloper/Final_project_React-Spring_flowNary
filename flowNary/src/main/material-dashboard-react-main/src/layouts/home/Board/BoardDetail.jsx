@@ -17,6 +17,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import UserAvatar from "api/userAvatar";
+import Loading from "api/loading";
 
 
 const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handleButtonLike, handleButtonLikeReply, handleButtonLikeReReply }, ref) => {
@@ -46,13 +47,6 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
   const handleMyPage = (uid) => {
     navigate("/mypage", { state: { uid: uid } });
   }
-  if (isLoading) {
-    return <div>로딩 중...</div>;
-  }
-
-  if (isError) {
-    return <div>오류가 발생했습니다.</div>;
-  }
 
   const image = board?.image ? board.image.split(',') : null;
 
@@ -68,6 +62,13 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
           console.error('Failed to copy: ', err);
         });
     }
+  }
+  if (isLoading) {
+    return <div><Loading /></div>;
+  }
+
+  if (isError) {
+    return <div>오류가 발생했습니다.</div>;
   }
 
   return (
@@ -223,12 +224,6 @@ const BoardDetail = forwardRef(({ bid, uid, index, handleClose, nickname, handle
                     src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${image}`}
                     alt={`Image ${index + 1}`}
                   />
-                  {/* <IconButton
-                    sx={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer',zIndex:'100' }}
-                    onClick={handleCloseModal}
-                  >
-                    <CloseIcon />
-                  </IconButton> */}
                 </Box>
               ))}
             </Carousel>

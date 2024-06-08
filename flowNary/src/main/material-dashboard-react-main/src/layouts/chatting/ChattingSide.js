@@ -6,25 +6,45 @@ import { useWebSocket } from 'api/webSocketContext';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ChattingIndex from './ChattingIndex';
 import TimeAgo from 'timeago-react';
+import { getChatUserList } from 'api/axiosGet';
+import UserAvatar from 'api/userAvatar';
 
 export default function ChatList() {
   const { activeUser } = useContext(UserContext);
   const [list, setList] = useState([]);
+  const [usernum, setUsernum] = useState('');
   const { stompClient } = useWebSocket();
   const [count, setCount] = useState(20);
   const navigate = useNavigate();
-  const [cid, setCid] = useState(0);
-
+  const [cid, setCid] = useState(-1);
+  const { state } = useLocation();
   useEffect(() => {
     if (activeUser.uid !== -1) {
       const fetchChatList = async () => {
         const chatlist = await getChatList(activeUser.uid, count, 0);
         if (chatlist) {
           setList(chatlist);
-          { cid && setCid(chatlist[0].cid) } // Assuming the correct structure is chatlist[0].cid
+
+          const cidList = chatlist.map((chat) => chat.cid);
+          const promises = cidList.map(async (cid) => {
+            const usernumlist = await getChatUserList(cid);
+            if (usernumlist) {
+              for (let i = 0; i < usernumlist.length; i++) {
+                if (usernumlist[i].uid !== activeUser.uid)
+                  return usernumlist[i].uid;
+              }
+            } else {
+              console.error(`Failed to get user list for cid: ${cid}`);
+              return null;
+            }
+          });
+
+          Promise.all(promises).then((usernumList) => {
+            setUsernum(usernumList); // 추출된 UID 목록으로 usernum 설정
+          });
         } else {
           console.error("Chat list is empty or not available");
         }
@@ -32,6 +52,8 @@ export default function ChatList() {
 
       fetchChatList();
       let chatrefresh;
+      let chatrefresh2;
+      let chatdelete;
 
       if (stompClient && stompClient.connected) {
         console.log('chat websocket connected');
@@ -42,7 +64,6 @@ export default function ChatList() {
 
         chatrefresh = stompClient.subscribe(`/topic/chatlist`, (message) => {
           const data = JSON.parse(message.body);
-          console.log(data);
 
           setList(prevList => {
             const indexcid = prevList.findIndex(item => item.cid === data.cid);
@@ -55,8 +76,47 @@ export default function ChatList() {
                 userCount: chat.userCount,
                 name: chat.name,
                 lastMessage: data.lastMessage,
+                newchatcount: chat.newchatcount + 1,
               }, ...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
               return newlist;
+            }
+            return prevList;
+          });
+        });
+
+        chatrefresh2 = stompClient.subscribe(`/topic/chatlistnew`, (message) => {
+          const data = JSON.parse(message.body);
+
+          if (data.targetuid === activeUser.uid) {
+            setList(prevList => {
+              const newlist = [
+                {
+                  cid: data.cid,
+                  status: data.status,
+                  statusTime: data.statusTime,
+                  userCount: data.userCount,
+                  name: data.name,
+                  lastMessage: data.lastMessage,
+                  newchatcount: 1,
+                }
+                , prevList
+              ]
+
+              return newlist;
+            });
+          }
+        });
+
+        chatdelete = stompClient.subscribe(`/topic/chatdelete`, (message) => {
+          const data = JSON.parse(message.body);
+
+          setList(prevList => {
+            const indexcid = prevList.findIndex(item => item.cid === data.cid);
+
+            if (indexcid !== -1) {
+              const newlist = [...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
+              return newlist;
+              setCid(-1);
             }
             return prevList;
           });
@@ -75,9 +135,16 @@ export default function ChatList() {
         if (chatrefresh) {
           chatrefresh.unsubscribe();
         }
+        if (chatrefresh2) {
+          chatrefresh2.unsubscribe();
+        }
+        if (chatdelete) {
+          chatdelete.unsubscribe();
+        }
       }
     }
   }, [activeUser.uid, count, stompClient]);
+
 
   const handleChatClick = async (cid) => {
     await setCid(cid);
@@ -102,7 +169,7 @@ export default function ChatList() {
               background: '#fff',
               borderRadius: 4,
               overflow: 'hidden',
-              px: 3,
+              px: 1
             }}
           >
             <List sx={{ cursor: 'pointer' }}>
@@ -119,27 +186,36 @@ export default function ChatList() {
                       }
                     }}
                   >
-                    <ListItemAvatar>
-                      <Badge
-                        overlap="circular"
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        badgeContent={
-                          <div
-                            style={{
-                              width: '1rem',
-                              height: '1rem',
-                              borderRadius: '50%',
-                              backgroundColor: 'lightcoral',
-                              border: '2px solid white',
-                            }}
-                          ></div>
-                        }
-                      >
-                        <Avatar
-                          sx={{ width: 25, height: 25 }}
-                          src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${activeUser.profile}`}
-                        />
-                      </Badge>
+                    <ListItemAvatar sx={{ mr: 3 }}>
+                      {data.newchatcount > 0 ? (
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                          badgeContent={
+                            <div
+                              style={{
+                                width: '1rem',
+                                height: '1rem',
+                                borderRadius: '50%',
+                                backgroundColor: 'lightcoral',
+                                border: '2px solid white',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: 'white'
+                              }}
+                            >
+                              {data.newchatcount}
+                            </div>
+                          }
+                        >
+                          <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
+                            <UserAvatar uid={usernum[idx]} />
+                          </Avatar>
+                        </Badge>
+                      ) : (
+                        <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
+                          <UserAvatar uid={usernum[idx]} />
+                        </Avatar>
+                      )}
                     </ListItemAvatar>
                     <ListItemText
                       primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>{data.name}</Typography>}

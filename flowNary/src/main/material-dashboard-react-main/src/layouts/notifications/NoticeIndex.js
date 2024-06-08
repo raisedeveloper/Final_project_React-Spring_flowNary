@@ -26,7 +26,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";x2
 import Footer from "examples/Footer";
 import NotificationItem from "examples/Items/NotificationItem";
 import { UserContext } from "api/LocalStorage";
@@ -36,6 +36,7 @@ import { getNoticeList } from "api/axiosGet";
 import { isEmpty } from "api/emptyCheck";
 import { useNavigate } from "react-router-dom";
 import { deleteNotice } from "api/axiosPost";
+import { getBoard } from "api/axiosGet";
 
 export default function Notifications() {
 
@@ -135,13 +136,15 @@ export default function Notifications() {
     setOpen(newArray);
   }
 
-  const handleClick = (nid, type, oid) => {
+  const handleClick = async (nid, type, oid) => {
     deleteNotice(nid);
     if (type === 1) {
-      navigate("/");
+      const boards = await getBoard(oid);
+      navigate(`/url/${boards.shareUrl}`, { state: { bid: oid } });
     }
     else if (type === 2) {
-      navigate("/");
+      const boards = await getBoard(oid);
+      navigate(`/url/${boards.shareUrl}`, { state: { bid: oid } });
     }
     else if (type === 3) {
       navigate("/follow");

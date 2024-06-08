@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 // react-router-dom 컴포넌트
@@ -6,6 +6,9 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material 컴포넌트
 import { List, Divider, Link, Icon, Avatar, Box, Typography } from "@mui/material";
+
+// MUI Icons
+import PersonIcon from '@mui/icons-material/Person';
 
 // Material Dashboard 2 React 컴포넌트
 import MDBox from "components/MDBox";
@@ -21,6 +24,15 @@ import { GetWithExpiry } from "api/LocalStorage";
 import { getUser } from "api/axiosGet";
 import { gl } from "chroma-js";
 import UserAvatar from "api/userAvatar";
+import { UserContext } from "api/LocalStorage";
+import { getNoticeCount } from "api/axiosGet";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
+import { useWebSocket } from "api/webSocketContext";
+import { noticeConfirm } from "api/alert";
+import { insertFamilyUser } from "api/axiosPost";
+import { deleteNotice } from "api/axiosPost";
+import { getNoticeCountChat } from "api/axiosGet";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
@@ -28,6 +40,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const location = useLocation();
   const confirmLocation = location.pathname.split('/')[1];
   const collapseName = location.pathname.replace("/", "");
+  const [alertCount, setAlertCount] = useState(0);
+  const [chatalertCount, setChatalertCount] = useState(0);
+  const { activeUser } = useContext(UserContext);
+  const { stompClient, isConnect } = useWebSocket();
 
   // 유저 불러오기
   const uid = parseInt(GetWithExpiry("uid"));
@@ -68,6 +84,81 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
+  useEffect(() => {
+    let noticeincrease;
+    let noticereset;
+    let noticeswal;
+    let noticechatincrease;
+    let noticechatreset;
+
+    if (activeUser.uid !== -1) {
+      const getCount = async () => {
+        const count = await getNoticeCount(activeUser.uid);
+        setAlertCount(count);
+      }
+      getCount();
+
+      if (stompClient && isConnect) {
+        noticeincrease = stompClient.subscribe(`/user/notice/` + activeUser.uid, (data) => {
+          setAlertCount(prevCount => prevCount + 1);
+        });
+        noticereset = stompClient.subscribe(`/user/noticeAll/` + activeUser.uid, (data) => {
+          setAlertCount(0);
+        });
+        noticechatincrease = stompClient.subscribe(`/user/chatnotice/` + activeUser.uid, (data) => {
+          setChatalertCount(prevCount => prevCount + 1);
+        });
+        noticechatreset = stompClient.subscribe(`/user/chatnoticeAll/` + activeUser.uid, (data) => {
+          setChatalertCount(0);
+        });
+
+        noticeswal = stompClient.subscribe(`/user/swalnotice/` + activeUser.uid, async (message) => {
+          const data = JSON.parse(message.body);
+
+          const response = await noticeConfirm(data);
+
+          if (response === 1) {
+            deleteNotice(data.nid);
+            switch (data.type) {
+              case 5:
+                insertFamilyUser(data.oid, activeUser.uid, 0, activeUser.nickname, '초기 메세지');
+                navigate("/family");
+                break;
+              default:
+                break;
+            }
+          }
+          else if (response === 3) {
+            setAlertCount(prevCount => prevCount + 1);
+          }
+        });
+        console.log('Subscribed to notice');
+      }
+    }
+    else if (activeUser.uid === -1) {
+      setAlertCount(0);
+      setChatalertCount(0);
+    }
+
+    return () => {
+      console.log('Unsubscribed to notice');
+      if (noticeincrease) {
+        noticeincrease.unsubscribe();
+      }
+      if (noticereset) {
+        noticereset.unsubscribe();
+      }
+      if (noticeswal) {
+        noticeswal.unsubscribe();
+      }
+      if (noticechatincrease) {
+        noticechatincrease.unsubscribe();
+      }
+      if (noticechatreset) {
+        noticechatreset.unsubscribe();
+      }
+    };
+  }, [activeUser.uid, stompClient, isConnect]);
 
   // routes.js에서 모든 경로를 렌더링 (Sidenav에 보이는 모든 항목)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
@@ -81,11 +172,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           rel="noreferrer"
           sx={{ textDecoration: "none" }}
         >
-          <SidenavCollapse name={name} icon={icon} active={key === collapseName} noCollapse={noCollapse} />
+          <SidenavCollapse name={name} icon={icon} active={key === collapseName} noCollapse={noCollapse} alert1={alertCount} alert2={chatalertCount} />
         </Link>
       ) : (
         <NavLink key={key} to={route}>
-          <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
+          <SidenavCollapse name={name} icon={icon} active={key === collapseName} alert1={alertCount} alert2={chatalertCount} />
         </NavLink>
       );
     } else if (type === "title") {
@@ -163,7 +254,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             }}
           >
             <Avatar onClick={goMypage}>
-              <UserAvatar profileUrl={profile} />
+              {profile ? (
+                <UserAvatar profileUrl={profile} />
+              ) : (
+                <PersonIcon sx={{ width: '100%', height: '100%' }} />
+              )}
             </Avatar>
             <Box ml={1.95}>
               <Typography

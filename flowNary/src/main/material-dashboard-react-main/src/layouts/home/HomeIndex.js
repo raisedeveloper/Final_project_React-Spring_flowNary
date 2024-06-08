@@ -13,7 +13,7 @@ import Footer from "examples/Footer";
 
 // Dashboard components
 import TodoList from "./todoList/TodoListIndex";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, List, ListItem, Popper, Paper, } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, List, ListItem, Popper, Paper, Accordion, } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 
@@ -23,7 +23,7 @@ import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 
 import BoardDetail from "./Board/BoardDetail";
 import Write from './write';
 import CloseIcon from '@mui/icons-material/Close';
-
+import PersonIcon from '@mui/icons-material/Person';
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetWithExpiry } from "api/LocalStorage";
@@ -52,18 +52,7 @@ import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import styled from "@emotion/styled";
 import UserAvatar from "api/userAvatar";
-
-const Accordion = styled((props) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&::before': {
-    display: 'none',
-  },
-}));
+import Loading from "api/loading";
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
@@ -233,8 +222,8 @@ export default function Home() {
 
 
   const addLike = useAddLike();
-  const addLikeForm = (sendData) => {
-    addLike(sendData);
+  const addLikeForm = async (sendData) => {
+    await addLike(sendData);
   }
 
 
@@ -290,9 +279,6 @@ export default function Home() {
 
 
     addLikeForm(sendData);
-  }
-  if (isLoading) {
-    <div>로딩중...</div>
   }
 
 
@@ -359,7 +345,6 @@ export default function Home() {
   // 신고
   const handleSiren = async () => {
     handleClosePopover();
-    console.log('있음?' + activeUser.uid);
     const check = await Declaration(activeUser.uid);
     if (check !== 0) {
       const sendData = {
@@ -377,23 +362,31 @@ export default function Home() {
     navigate('/chatlist');
   }
 
+  if (isLoading) {
+    return <div><Loading /></div>;
+  }
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
+
       <MDBox py={3}>
         <MDBox mt={3}>
           <Stack direction="row" spacing={0}>
             <Stack direction="column" sx={{ flex: 1, mr: 3 }}>
-              <Write />
+              <Box sx={{ width: '100%', display: { xs: 'none', md: 'none', lg: 'block' } }}>
+                <Write />
+              </Box>
               <Grid container spacing={3}>
                 {(boardList && allcount && !isLoading) ? (
                   boardList.pages.map((page, index) => (
                     <React.Fragment key={index}>
                       {page && page.map((data, idx) => (
-                        <Grid key={idx} item xs={12} md={6} lg={6}>
+                        <Grid key={idx} item xs={12} md={12} lg={6}>
                           <MDBox mb={3}>
                             <Card sx={{
                               transition: 'box-shadow 0.3s',
+                              width: { xs: '150%', lg: '100%' },
                               '&:hover': {
                                 boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
                               }
@@ -404,11 +397,14 @@ export default function Home() {
                                   <Avatar sx={{ cursor: 'pointer' }}
                                     aria-label="recipe" onClick={() => handleMyPage(data.uid)}
                                   >
-                                    <div>
-                                      <UserAvatar profileUrl={data.profile} />
-                                    </div>
+                                    {data.profile ? (
+                                      <div><UserAvatar profileUrl={data.profile} /></div>
+                                    ) : (
+                                      <PersonIcon sx={{ width: '100%', height: '100%' }} />
+                                    )}
                                   </Avatar>
                                 }
+
                                 action={<>
                                   {
                                     data.uid === activeUser.uid ? (<>
@@ -491,7 +487,7 @@ export default function Home() {
                                           borderRadius: '8px',
                                         }}
                                           onClick={handleClickInside}>
-                                          <Button onClick={() => handleSiren(data.bid)} sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify style={{ marginRight: '0.1rem' }} icon="ph:siren-bold" />신고 하기</Button>
+                                          <Button onClick={() => handleSiren(data.bid)} sx={{ py: 0, pl: 1, pr: 1, color: 'red', '&:hover': { color: 'red' } }}><Iconify icon="ph:siren-bold" />신고 하기</Button>
                                         </Paper>
                                       </Popper >
                                     </>
@@ -502,7 +498,7 @@ export default function Home() {
 
 
                               <MDBox padding="1rem">
-                                {data.image ?
+                                {data.image ? (
                                   <MDBox
                                     variant="gradient"
                                     borderRadius="lg"
@@ -524,13 +520,13 @@ export default function Home() {
                                   >
                                     <button onClick={handleOpen.bind(null, data.bid)}>
                                       <img
-                                        src={data.image ? `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.split(',')[0]}` : ''}
+                                        src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${data.image.includes(',') ? data.image.split(',')[0] : data.image}`}
                                         alt="Paella dish"
                                         style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, borderRadius: 'inherit' }}
                                       />
                                     </button>
                                   </MDBox>
-                                  :
+                                ) : (
                                   <MDBox>
                                     <MDBox
                                       variant="gradient"
@@ -560,7 +556,8 @@ export default function Home() {
                                       </button>
                                     </MDBox>
                                   </MDBox>
-                                }
+                                )}
+
                                 <MDBox pt={3} pb={1} px={1}>
                                   <button onClick={handleOpen.bind(null, data.bid)} style={{ border: 'none', backgroundColor: 'transparent', padding: 0, margin: 0 }}>
                                     <MDTypography variant="h6" textTransform="capitalize">
@@ -597,33 +594,33 @@ export default function Home() {
                 ) : <></>}
               </Grid>
             </Stack>
-            <Stack direction="column" sx={{ flex: 0.5, }}>
-              <MDBox mb={3} sx={{ position: 'sticky', top: "11%" }}>
+            <Stack direction="column" sx={{ flex: 0.5 }}>
+              <MDBox mb={3} sx={{ position: 'sticky', top: "11%", display: { xs: 'none', md: 'none', lg: 'block' } }}>
                 <Accordion expanded={expandeds === 'panel1'} onChange={handleChange('panel1')} sx={{ borderRadius: expandeds === 'panel1' ? '5%' : 0 }} >
                   <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                     <MDBox sx={{ backgroundColor: 'transparent', padding: 0, margin: 0 }}>
-                      <MDTypography variant="h5" fontWeight="medium" sx={{ padding: 0, margin: 0, color: 'lightcoral' }}>
+                      <MDTypography variant="h6" fontWeight="medium" sx={{ padding: 0, margin: 0, color: 'lightcoral' }}>
                         To do
                       </MDTypography>
                     </MDBox>
                   </AccordionSummary>
                   <AccordionDetails>
-                    <TodoList />
+                    {activeUser.uid > 0 ?
+                      <><TodoList /></> : <Typography fontSize={'small'}> 로그인 하세요! </Typography>}
                   </AccordionDetails>
                 </Accordion>
                 <Accordion expanded={expandeds === 'panel2'} onChange={handleChange('panel2')} sx={{ borderRadius: expandeds === 'panel2' ? '5%' : 0 }}>
                   <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
                     <Grid container sx={{ backgroundColor: 'transparent', padding: 0, margin: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="h5" sx={{ color: 'lightcoral', padding: 0, margin: 0 }}>채팅 목록</Typography>
+                      <Typography variant="h6" sx={{ color: 'lightcoral', padding: 0, margin: 0 }}>채팅 목록</Typography>
                       <IconButton onClick={navigateChat} sx={{ color: 'lightcoral', padding: 0, margin: 0 }}><Icon>send</Icon></IconButton>
                     </Grid>
                   </AccordionSummary>
                   <AccordionDetails>
-                    <ChatList />
+                    {activeUser.uid > 0 ?
+                      <><ChatList /></> : <Typography fontSize={'small'}> 로그인 하세요! </Typography>}
                   </AccordionDetails>
                 </Accordion>
-
-
               </MDBox>
             </Stack>
           </Stack>
@@ -631,7 +628,7 @@ export default function Home() {
       </MDBox >
       {/* <div ref={observerRef}></div> */}
       <div id="observe" ref={observerRef} style={{ display: 'flex', height: '1rem' }}>
-        loading
+        <Iconify icon="eos-icons:bubble-loading" style={{ fontSize: '10rem' }} />
       </div>
 
 

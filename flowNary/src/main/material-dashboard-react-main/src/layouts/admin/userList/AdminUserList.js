@@ -28,6 +28,8 @@ import { updateUserStatus } from 'api/axiosPost';
 import Iconify from '../../../components/iconify';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import Loading from 'api/loading';
+import UserAvatar from 'api/userAvatar';
 
 // ----------------------------------------------------------------------
 
@@ -125,11 +127,7 @@ export default function UserTableRow({ selected, handleClick }) {
   });
 
   if (isLoading) {
-    return (
-      <TableRow>
-        <TableCell>로딩 중...</TableCell>
-      </TableRow>
-    );
+    return <div><Loading /></div>;
   }
 
   if (isError) {
@@ -148,6 +146,7 @@ export default function UserTableRow({ selected, handleClick }) {
 
   const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
+
   return (
     <>
       <DashboardLayout>
@@ -155,7 +154,7 @@ export default function UserTableRow({ selected, handleClick }) {
         <Container sx={{ padding: '1rem' }}>
           <Typography variant="h4">유저 목록</Typography>
           <Typography variant="body2" onClick={handleShowInactive} sx={{ cursor: 'pointer', color: 'rgb(24, 94, 224)', }}>
-            {showInactive ? '활성화 유저 목록' : '비활성화 유저 목록'} 페이지
+            {showInactive ? '' : '비'} 활성화 유저 목록 페이지
           </Typography>
           <Pagination
             count={Math.ceil(filteredUsers.length / rowsPerPage)}
@@ -167,31 +166,22 @@ export default function UserTableRow({ selected, handleClick }) {
           <Stack direction="column" alignItems="center" justifyContent="space-between" mb={5}>
             <TableContainer component={Paper} mt={3}>
               <Table size='small'>
-                <TableBody >
-                  {paginatedUsers && paginatedUsers.map((user) => (
+                <TableBody>
+                  {paginatedUsers && paginatedUsers.map((user, idx) => (
                     <TableRow
+                      key={idx}
                       hover
                       tabIndex={-1}
                       role="checkbox"
                       selected={selected}
-                      key={user.id}
                       sx={{ backgroundColor: 'inherit' }}
                     >
-                      <TableCell size="small" component="th" scope="row"
-                        padding="none" align="center">
+                      <TableCell size="small" component="th" scope="row" padding="none" align="center">
                         <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
-                          <Avatar sx={{ width: '2rem', height: '2rem' }}>
-                            <div
-                              style={{
-                                width: '2rem',
-                                height: '2rem',
-                                borderRadius: '50%',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundImage: `url(https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${user.profile})`,
-                              }}
-                            />
-                          </Avatar>
+                          {user.profile &&
+                            <Avatar sx={{ width: '2rem', height: '2rem' }}>
+                              <UserAvatar profileUrl={user.profile} />
+                            </Avatar>}
                         </Stack>
                       </TableCell>
                       <TableCell align="center">
@@ -233,6 +223,7 @@ export default function UserTableRow({ selected, handleClick }) {
                 </TableBody>
               </Table>
             </TableContainer>
+
           </Stack>
         </Container>
       </DashboardLayout>
