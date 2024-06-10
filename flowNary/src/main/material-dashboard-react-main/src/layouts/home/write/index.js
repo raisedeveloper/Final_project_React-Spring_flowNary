@@ -16,8 +16,9 @@ export default function Posting() {
   const navigate = useNavigate();
   const uid = parseInt(GetWithExpiry("uid"));
   const queryClient = new QueryClient();
+
   if (!uid) {
-    navigate("/login");
+    navigate("/authentication/sign-in");
   }
 
   const [nickname, setNickname] = useState('');
@@ -60,10 +61,18 @@ export default function Posting() {
         return url.public_id;
       })
     );
+
+    if (uid <= 0) {
+      wrong("로그인이 필요한 서비스입니다.")
+      navigate("/authentication/sign-in")
+      return;
+    }
+
     if (imageList.toString() === '') {
       wrong('1개 이상의 사진 파일이 필요합니다.');
       return;
     }
+
     if (title === '') {
       wrong('제목을 입력하세요');
       return;
@@ -72,6 +81,7 @@ export default function Posting() {
       wrong('내용을 입력하세요.');
       return;
     }
+
 
     correct('성공적으로 작성되었습니다.');
 
@@ -92,7 +102,7 @@ export default function Posting() {
     setPreviewUrls([]);
     setTitle('');
     setContent('');
-    setHashTag('')
+    setHashTag('');
   };
 
   const handleRemoveImage = (index) => {
@@ -110,6 +120,8 @@ export default function Posting() {
     // 최대 5개까지의 해시태그만 저장합니다.
     setHashTag(tags.slice(0, 3));
   };
+
+  console.log("불러와: ", uid);
 
   return (
     <MDBox mt={-8} sx={{ p: 2 }}>
@@ -130,6 +142,7 @@ export default function Posting() {
           </div>
 
           <div>
+            {/* 홈 부분 작성 */}
             <Button component="label" onClick={publicToggle}>
               <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
               <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
@@ -141,7 +154,8 @@ export default function Posting() {
 
         {previewUrls.map((url, index) => (
           <Grid item key={index} xs={4} sm={2} sx={{ width: '100%' }}>
-            <Card style={{ position: 'relative' }}> {/* Card에 position 속성을 추가하여 내부 요소를 포함하는 컨테이너 역할을 합니다. */}
+            {/* Card에 position 속성을 추가하여 내부 요소를 포함하는 컨테이너 역할을 합니다. */}
+            <Card style={{ position: 'relative' }}>
               <img src={url} alt={`Preview ${index}`} style={{ width: '15.5vh', height: '15vh', objectFit: 'cover' }} />
               <button style={{ border: 'none', fontSize: 'large', borderRadius: '100%', position: 'absolute', top: 0, left: 0, backgroundColor: 'lightcoral', margin: 0, padding: 0, justifyContent: 'center', color: 'black', width: 20, height: 20 }}
                 onClick={() => handleRemoveImage(index)}><Icon>close</Icon></button>
@@ -165,8 +179,7 @@ export default function Posting() {
 
       {/* 내용 작성 부분 */}
       <Grid item xs={12} sm={6} p='2px'>
-        <TextareaAutosize
-          value={content}
+        <TextareaAutosize value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="어떤 일이 있나요?"
           style={{

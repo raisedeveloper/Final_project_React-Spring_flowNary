@@ -62,7 +62,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const navigate = useNavigate();
   const [profileMenu, setProfileMenu] = useState(null); // 프로필 메뉴 상태 추가
   const goSetting = () => navigate('/verify');
-  const goMypage = () => navigate('/mypage')
+  const goMypage = () => navigate('/mypage');
+  const goLogin = () => navigate('/authentication/sign-in');
+
   const weatherDescKo = {
     201: '가벼운 비를 동반한 천둥구름',
     200: '비를 동반한 천둥구름',
@@ -162,7 +164,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
   const [weather, setWeather] = useState('');
   const [weatherDataFetched, setWeatherDataFetched] = useState(false);
-  
+
   // API 가져오기
   const getWeatherByCoordinates = async (lat, lon) => {
     try {
@@ -238,43 +240,50 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleProfileMenuClose}
       sx={{ mt: 2 }}
     >
-      <MenuItem
-        style={{ backgroundColor: "rgba(226, 223, 226, 0.625)", height: '4rem' }}
-        onClick={goMypage}>
-        <MDBox
-          display="flex"
-          alignItems="center"
-          px={0.5} py={1}
+      {uid > 0 ? (
+        <>
+          <MenuItem style={{ backgroundColor: "rgba(226, 223, 226, 0.625)", height: '4rem' }}
+            onClick={goMypage}
+          >
+            <MDBox display="flex" alignItems="center" px={0.5} py={1} >
+              {profile && (
+                <Avatar alt="profile picture">
+                  <div><UserAvatar profileUrl={profile} /></div>
+                </Avatar>
+              )}
+              <MDBox ml={1.75}>
+                <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{nickname}</div>
+                <div style={{ marginLeft: '.125rem', fontSize: '12px' }}>{email}</div>
+              </MDBox>
+            </MDBox>
+          </MenuItem>
+
+          <MenuItem onClick={goMypage} style={{ width: '15rem', height: '3rem' }}>
+            <Icon sx={{ marginRight: '.5rem' }}>account_circle</Icon>
+            <p style={{ fontWeight: 'bold' }}>프로필</p>
+          </MenuItem>
+
+          <MenuItem onClick={goSetting} style={{ width: '15rem', height: '3rem' }} >
+            <Icon sx={{ marginRight: '.5rem' }}>settings</Icon>
+            <p style={{ fontWeight: 'bold' }}>설정</p>
+          </MenuItem>
+        </>
+      ) : (
+        <MenuItem
+          style={{
+            width: '15rem', height: '3rem', display: 'flex', justifyContent: 'center',
+            alignItems: 'center'
+          }}
+          onClick={handleProfileMenuClose}
         >
-          {/* 프로필 사진*/}
-          {profile && <Avatar alt="profile picture">
-            <div><UserAvatar profileUrl={profile} /></div>
-          </Avatar>}
-
-          <MDBox ml={1.75}>
-            <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{nickname}</div>
-            <div style={{ marginLeft: '.125rem', fontSize: '12px' }}>{email}</div>
-          </MDBox>
-        </MDBox>
-      </MenuItem>
-
-      <MenuItem
-        onClick={goMypage}
-        style={{ width: '15rem', height: '3rem' }}
-      >
-        <Icon sx={{ marginRight: '.5rem', }}>account_circle</Icon>
-        <p style={{ fontWeight: 'bold' }}>프로필</p>
-      </MenuItem>
-
-      <MenuItem
-        onClick={goSetting}
-        style={{ width: '15rem', height: '3rem' }}
-      >
-        <Icon sx={{ marginRight: '.5rem' }}>settings</Icon>
-        <p style={{ fontWeight: 'bold' }}>설정</p>
-      </MenuItem>
+          <Typography variant="body2" onClick={goLogin} style={{ textAlign: 'center', cursor: 'pointer' }}>
+            로그인을 해주세요.
+          </Typography>
+        </MenuItem>
+      )}
     </Menu>
   );
+
   const [searchtext, setSearchtext] = useState('');
 
   const handleSearch = () => {
