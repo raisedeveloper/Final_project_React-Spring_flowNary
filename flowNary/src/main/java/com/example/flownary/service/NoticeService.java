@@ -14,6 +14,10 @@ public interface NoticeService {
 	
 	int getNoticeCount(int uid);
 	
+	int getNoticeCountType(int uid, int type);
+	
+	int getNoticeCountObject(int oid, int uid);
+	
 	List<Notice> getNoticeListAll(int uid);
 	
 	int insertNotice(Notice notice);
@@ -27,6 +31,8 @@ public interface NoticeService {
 	void removeNoticeAll(int uid);
 	
 	void disableNoticeAll(int uid);
+	
+	void disableNoticeAllChat(int uid);
 	
 	void removeNoticeSpecific(int uid, int type, int oid);
 }

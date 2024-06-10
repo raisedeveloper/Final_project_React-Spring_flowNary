@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
 
@@ -44,55 +29,14 @@ import { getNoticeCount } from "api/axiosGet";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { useWebSocket } from "api/webSocketContext";
+import { noticeConfirm } from "api/alert";
+import { insertFamilyUser } from "api/axiosPost";
+import { deleteNotice } from "api/axiosPost";
+import { getNoticeCountChat } from "api/axiosGet";
 
-function SidenavCollapse({ icon, name, active, ...rest }) {
+function SidenavCollapse({ icon, name, active, alert1, alert2, ...rest }) {
   const [controller] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
-  const [alertCount, setAlertCount] = useState(0);
-  const { activeUser } = useContext(UserContext);
-  const { stompClient, isConnect } = useWebSocket();
-  
-  useEffect(() => {
-    let noticeincrease;
-    let noticereset;
-
-    if (name === '알림' && activeUser.uid != -1)
-    {
-      const getCount = async () => {
-        const count = await getNoticeCount(activeUser.uid);
-        setAlertCount(count);
-      }
-      getCount();
-      
-      if (stompClient && isConnect)
-      {
-        noticeincrease = stompClient.subscribe(`/user/notice/` + activeUser.uid, (data) => {
-          setAlertCount(prevCount => prevCount + 1);
-        });
-        noticereset = stompClient.subscribe(`/user/noticeAll/` + activeUser.uid, (data) => {
-          setAlertCount(0);
-        });
-        console.log('Subscribed to notice');
-      }
-    }
-    else if (name === '알림' && activeUser.uid === -1)
-    {
-      console.log(stompClient);
-      console.log(noticeincrease);
-      console.log(noticereset);
-      setAlertCount(0);
-    }
-
-    return () => {
-      if (noticeincrease) {
-        noticeincrease.unsubscribe();
-      }
-      if (noticereset) {
-        noticereset.unsubscribe();
-        console.log('Unsubscribed to notice');
-      }
-    };
-  }, [activeUser.uid, stompClient, isConnect]);
 
   return (
     <ListItem component="li">
@@ -116,8 +60,8 @@ function SidenavCollapse({ icon, name, active, ...rest }) {
           {typeof icon === "string" ? (
             <Icon sx={(theme) => collapseIcon(theme, { active })}>{icon}</Icon>
           ) : (
-            name === '알림' ? (
-              <Badge badgeContent={alertCount} color="primary">
+            name === '알림' || name === '채팅' ? (
+              <Badge badgeContent={name === '알림' ? alert1 : alert2} color="primary">
                 {icon}
               </Badge>
             ) : (
@@ -151,6 +95,8 @@ SidenavCollapse.defaultProps = {
 SidenavCollapse.propTypes = {
   icon: PropTypes.node.isRequired,
   name: PropTypes.string.isRequired,
+  alert1: PropTypes.number,
+  alert2: PropTypes.number,
   active: PropTypes.bool,
 };
 

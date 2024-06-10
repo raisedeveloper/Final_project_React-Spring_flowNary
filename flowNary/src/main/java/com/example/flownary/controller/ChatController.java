@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,11 +21,10 @@ import com.example.flownary.dto.DmList.insertDmList;
 import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.Chat;
 import com.example.flownary.entity.ChatUser;
-import com.example.flownary.entity.Setting;
 import com.example.flownary.service.ChatService;
 import com.example.flownary.service.ChatUserService;
 import com.example.flownary.service.DmListService;
-import com.example.flownary.service.SettingService;
+import com.example.flownary.service.NoticeService;
 import com.example.flownary.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,9 +37,11 @@ public class ChatController {
 	private final ChatService cSvc;
 	private final UserService uSvc;
 	private final ChatUserService cuSvc;
-	private final SettingService sSvc;
 	private final DmListService dSvc;
 	private final DmListController dC;
+	private final NoticeService nSvc;
+	
+	private final SimpMessagingTemplate messageTemplate;
     
     private HashMap<String, Object> makeChatData(Chat chat) {
     	
@@ -66,12 +68,14 @@ public class ChatController {
     	if (chat != null)
     	{
     		hMap = makeChatData(chat);
+    		hMap.put("newchatcount", nSvc.getNoticeCountObject(cid, uid));
     		JSONObject jObj = new JSONObject(hMap);
     		return jObj;
     	}
     	
     	return null; 
     }
+    
     
     @GetMapping("/list")
     public JSONArray getChatList(@RequestParam int uid, 
@@ -97,6 +101,7 @@ public class ChatController {
     		HashMap<String, Object> hMap = new HashMap<String, Object>();
     		
     		hMap = makeChatData(chat);
+    		hMap.put("newchatcount", nSvc.getNoticeCountObject(chat.getCid(), uid));
     		JSONObject jObj = new JSONObject(hMap);
     		jArr.add(jObj);
     	}
@@ -144,12 +149,6 @@ public class ChatController {
     	chat.setName(dto.getName());
     	chat.setStatus(0);
     	
-    	Setting setting = sSvc.getSetting(dto.getFuid());
-//    	if (setting.getAccountEnableUnable() == 0)
-//    	{
-//    		return -2;
-//    	}	
-//    	
     	int cid = cSvc.insertChat(chat);
     	chat = cSvc.getChat(cid);
     	
@@ -180,7 +179,7 @@ public class ChatController {
     		idmList.setdFile("");
     		idmList.setStatus(2);
 
-    		dC.publishChat2(idmList, chat);
+    		dC.publishChat2(idmList, chat, dto.getFuid());
     	}
     	
     	
@@ -228,8 +227,11 @@ public class ChatController {
     
     @PostMapping("/delete")
     public int deleteChat(@RequestBody JSONObject cid) {
-    	cSvc.deleteChat(Integer.parseInt(cid.get("cid").toString()));
+    	int icid = Integer.parseInt(cid.get("cid").toString());
+		cSvc.deleteChat(icid);
+		cuSvc.deleteChatUserAll(icid);
     	
+    	messageTemplate.convertAndSend("/topic/chatdelete", cid);
     	return 0;
     }
 }

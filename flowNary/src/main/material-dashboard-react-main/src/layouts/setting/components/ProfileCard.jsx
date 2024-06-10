@@ -5,6 +5,7 @@ import { styled } from "@mui/system";
 import './ProfileSetting.css';
 import UserAvatar from "api/userAvatar";
 import { SetWithExpiry } from "api/LocalStorage";
+import PersonIcon from '@mui/icons-material/Person';
 
 // 배경 스타일 설정
 const Background = styled(Box)({
@@ -66,8 +67,10 @@ function ProfileCard(props) {
               backgroundImage: `url(${preview})`
             }}
           ></div>
-        ) : (
+        ) : props.profile ? (
           <UserAvatar profileUrl={props.profile} size={"medium2"} />
+        ) : (
+          <PersonIcon sx={{ width: '100%', height: '100%' }} />
         )}
       </Avatar>
       <input

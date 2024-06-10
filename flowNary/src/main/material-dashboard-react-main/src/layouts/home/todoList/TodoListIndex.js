@@ -29,6 +29,7 @@ import { wrong } from "api/alert";
 import { updateTodoList, updateTodo, deleteTodo, insertTodo } from "api/axiosPost";
 import Iconify from "components/iconify";
 import PropTypes from "prop-types"; // PropTypes 추가
+import Loading from "api/loading";
 
 export default function TodoList() {
   const uid = GetWithExpiry("uid");
@@ -63,7 +64,11 @@ export default function TodoList() {
     }
   }, [dataList]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div><Loading /></div>
+    )
+  }
   if (error) return <div>Error: {error.message}</div>;
 
   const addItem = async () => {
@@ -185,10 +190,9 @@ export default function TodoList() {
                             sx={{
                               display: "flex",
                               alignItems: "center",
-                              fontFamily: "'Noto Sans KR', sans-serif" // 폰트 적용
-
+                              fontFamily: "'Noto Sans KR', sans-serif", // 폰트 적용
+                              fontSize: 'small'
                             }}
-                            variant="body2"
                           >
                             {item.contents}
                           </Typography>
@@ -247,15 +251,15 @@ export default function TodoList() {
                       }}>
                         <IconButton sx={{ display: 'flex', alignItems: 'center' }} onClick={() => handleCheckboxChange(idx)}>
                           <Iconify icon="icon-park:check-correct" style={{ marginLeft: 2 }} />
-                          <Typography sx={{ fontSize: 'small' }}>완료</Typography>
+                          <Typography sx={{ fontSize: 'small', ml: 1 }}>완료</Typography>
                         </IconButton>
                         <IconButton sx={{ display: 'flex', alignItems: 'center' }} onClick={() => updateItem(idx, item.contents)}>
                           <Iconify icon="lucide:edit" style={{ marginLeft: 2 }} />
-                          <Typography sx={{ fontSize: 'small' }}>수정</Typography>
+                          <Typography sx={{ fontSize: 'small', ml: 1 }}>수정</Typography>
                         </IconButton>
                         <IconButton sx={{ display: 'flex', alignItems: 'center', color: "error.main" }} onClick={() => removeItem(item.tid)}>
                           <Iconify icon="solar:trash-bin-trash-bold" style={{ marginLeft: 2 }} />
-                          <Typography sx={{ fontSize: 'small' }}>삭제</Typography>
+                          <Typography sx={{ fontSize: 'small', ml: 1 }}>삭제</Typography>
                         </IconButton>
                       </Box>
                     </Popover>

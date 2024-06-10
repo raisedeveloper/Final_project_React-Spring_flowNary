@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.flownary.config.WebSocketEventListener;
 import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.dto.User.RegisterUserDto;
 import com.example.flownary.dto.User.UpdateUserDtoPwd;
@@ -37,6 +38,7 @@ public class UserController {
 
 	@Autowired private UserService userSvc;
 	@Autowired private SettingService setSvc;
+	@Autowired private WebSocketEventListener wel;
 	
 	// 회원가입
 	@PostMapping("/register")
@@ -308,4 +310,14 @@ public class UserController {
 		return 0;		
 	}
 
+	
+	@GetMapping("/onPage")
+	public int getUserOnPage(@RequestParam int uid, @RequestParam String page) {
+		if (wel.isUserOnPage(uid, page)) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
 }

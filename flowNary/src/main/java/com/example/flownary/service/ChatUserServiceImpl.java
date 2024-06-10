@@ -55,4 +55,9 @@ public class ChatUserServiceImpl implements ChatUserService {
 	public void deleteChatUser(int cid, int uid) {
 		cuDao.deleteChatUser(cid, uid);
 	}
+
+	@Override
+	public void deleteChatUserAll(int cid) {
+		cuDao.deleteChatUserAll(cid);
+	}
 }

@@ -27,20 +27,21 @@ export default function Settings() {
   // localStorage를 이용해서 user 받아오기
   const uid = parseInt(GetWithExpiry("uid"));
   const email = GetWithExpiry("email");
+
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <Box sx={{ flexGrow: 1, padding: '20px' }}>
-        <Grid container spacing={1}>
-          <Grid item xs={12} md={11}>
-            <ProfileEdit
-              email={email}
-              uid={uid}
-            />
+      <DashboardLayout>
+        <DashboardNavbar />
+        <Box sx={{ flexGrow: 1, padding: '20px' }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={11}>
+              <ProfileEdit
+                email={email}
+                uid={uid}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
       <Footer />
-    </DashboardLayout>
+      </DashboardLayout>
   );
 }

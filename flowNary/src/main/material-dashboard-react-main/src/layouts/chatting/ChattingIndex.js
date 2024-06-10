@@ -10,6 +10,9 @@ import TouchRipple from '@mui/material/ButtonBase/TouchRipple';
 import PropTypes from 'prop-types';
 import Iconify from 'components/iconify/iconify';
 import UserAvatar from 'api/userAvatar';
+import { chatDeleteConfirm } from 'api/alert';
+import { deleteChat } from 'api/axiosPost';
+import { deleteNoticeSpecific } from 'api/axiosPost';
 
 export default function Chat({ cid, setCid }) {
   const [messages, setMessages] = useState([]);
@@ -57,10 +60,12 @@ export default function Chat({ cid, setCid }) {
         setMessages(mlist);
         const chatr = await getChat(cid, activeUser.uid);
         setChatroom(chatr);
+        deleteNoticeSpecific(activeUser.uid, 4, cid);
       }
 
       fetchMList();
       let chatconnect;
+      let chatconnect2;
 
       if (stompClient && stompClient.connected) {
         console.log('chatting room connected');
@@ -80,6 +85,19 @@ export default function Chat({ cid, setCid }) {
             return prevMessages;
           });
         });
+
+        chatconnect2 = stompClient.subscribe(`/user/chatdel/` + cid, (message) => {
+          const data = JSON.parse(message.body);
+          console.log('Delete message:', data);
+          setMessages(prevMessages => {
+            const dmindex = prevMessages.findIndex(item => item.did === data.did);
+            if (dmindex !== -1) {
+              const newMessages = [...prevMessages.slice(0, dmindex), ...prevMessages.slice(dmindex + 1)];
+              return newMessages;
+            }
+            return prevMessages;
+          });
+       });
       }
 
       return () => {
@@ -94,29 +112,25 @@ export default function Chat({ cid, setCid }) {
         if (chatconnect) {
           chatconnect.unsubscribe();
         }
+
+        if (chatconnect2) {
+          chatconnect2.unsubscribe();
+        }
       }
     }
   }, [activeUser.uid, stompClient, cid]);
 
-  useEffect(() => {
-    if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  }, [messages]);
-
-  const rippleRef = useRef(null);
-
-  const handleMouseDown = (event) => {
-    rippleRef.current.start(event);
-  };
-
-  const handleMouseUp = () => {
-    rippleRef.current.stop();
-  };
-
   const handleBack = () => {
     setCid(-1);
   };
+  
+  const handleDelete = async () => {
+    const verify = await chatDeleteConfirm('채팅방을 나가시겠습니까? ' , chatroom && chatroom.name)
+    if (verify === 1) {
+      deleteChat(cid);
+      setCid(-1);
+    }
+  }
 
   if (cid === -1) {
     return (
@@ -160,15 +174,18 @@ export default function Chat({ cid, setCid }) {
           <IconButton
             sx={{ fontSize: '2rem', color: 'lightcoral' }}
             onClick={handleBack}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
           >
             <Icon>arrow_back</Icon>
-            <TouchRipple ref={rippleRef} center />
           </IconButton>
           <Typography variant="h5" sx={{ flexGrow: 1, color: 'lightcoral', fontWeight: 'bold', textAlign: 'center' }}>
             {chatroom && chatroom.name}
           </Typography>
+          <IconButton
+            sx={{ fontSize: '2rem', color: 'lightcoral' }}
+            onClick={() => handleDelete()}
+          >
+            <Icon>close</Icon>
+          </IconButton>
         </Box>
         <Box
           sx={{
@@ -180,8 +197,8 @@ export default function Chat({ cid, setCid }) {
             backgroundColor: '#fafafa',
           }}
         >
-          <div ref={messageEndRef} />
-          {messages && messages.reverse().map((message, index) => {
+          {/* <div ref={messageEndRef} /> */}
+          {messages && messages.map((message, index) => {
             // 현재 메시지의 날짜를 가져오기
             const messageDate = new Date(message.dTime).toLocaleDateString();
 
@@ -192,13 +209,13 @@ export default function Chat({ cid, setCid }) {
               <React.Fragment key={index}>
                 <Stack
                   justifyContent={message.uid === activeUser.uid ? 'flex-end' : 'flex-start'}
-                  sx={{ mb: 1 }}
+                  sx={{ m: 1 }}
                 >
                   {message.uid !== activeUser.uid && (
                     <Stack direction='column'>
                       <Box sx={{ display: 'flex' }}>
                         <Avatar sx={{ width: 25, height: 25, mr: 1 }}>
-                          <UserAvatar profileUrl={"null"} />
+                          <UserAvatar uid={message.uid} />
                         </Avatar>
                         <Box
                           sx={{
@@ -236,7 +253,7 @@ export default function Chat({ cid, setCid }) {
                           {message.dContents}
                         </Box>
                         <Avatar sx={{ width: 25, height: 25, ml: 1 }}>
-                          <UserAvatar profileUrl={profile} size={"x_small"} />
+                          <UserAvatar profileUrl={profile} size={"x-small"} />
                         </Avatar>
                       </Box>
                       <Typography sx={{ fontSize: 'xx-small', textAlign: 'end', maxWidth: '100%', mt: 0.5, mx: '2rem' }}>
@@ -246,7 +263,20 @@ export default function Chat({ cid, setCid }) {
                   )}
                 </Stack>
                 {messageDate !== previousMessageDate && (
-                  <Typography sx={{ fontSize: 'small', textAlign: 'center', my: 1 }}>
+                  <Typography variant="caption"
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: '100%',
+                      fontSize: 'small',
+                      color: '#666',
+                      backgroundColor: '#f0f0f0',
+                      padding: '0.25rem',
+                      borderRadius: '15px',
+                      marginTop: '1rem',
+                      marginBottom: '0.5rem',
+                    }}>
                     {messageDate}
                   </Typography>
                 )}

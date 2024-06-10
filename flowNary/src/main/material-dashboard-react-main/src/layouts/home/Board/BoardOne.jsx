@@ -24,6 +24,7 @@ import axios from 'axios';
 import Carousel from 'react-material-ui-carousel'
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { QueryClient, useQuery } from '@tanstack/react-query';
+import koreanStrings from './ko.js'; // 한글 로케일 파일 경로
 import MDBox from 'components/MDBox/index.js';
 import MDTypography from 'components/MDTypography/index.js';
 import TimeAgo from 'timeago-react';
@@ -39,22 +40,22 @@ import { wrong } from 'api/alert.jsx';
 import { deleteConfirm } from 'api/alert.jsx';
 import { deleteBoard } from 'api/axiosPost.js';
 import { Declaration } from 'api/alert.jsx';
+import { isEmpty } from 'api/emptyCheck.js';
+import { getBoard } from 'api/axiosGet.js';
 import Loading from 'api/loading.js';
 
-function BoardUrl() {
-  const { state } = useLocation();
+function BoardOne() {
   const queryClient = new QueryClient();
-  const { '*': url } = useParams();
   const [expanded, setExpanded] = useState({});
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [bid, setBid] = useState(state != undefined ? state.bid : 0);
+  const [bid, setBid] = useState(0);
   const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
   // 파라메터에 있는 uid 받기
   // useLocation으로 state 받기
+  const { state } = useLocation() || {};
   const { activeUser } = useContext(UserContext);
-  const { uid } = state != undefined ? state : activeUser;
 
   const [currentBid, setCurrentBid] = useState(null);
   // 창 열고 닫기
@@ -67,12 +68,12 @@ function BoardUrl() {
   };
 
   const urlBoard = useQuery({
-    queryKey: ['urlboard', activeUser.url],
+    queryKey: ['boardone', state.bid],
     queryFn: () => {
-      if (!url || url == "") {
-        return Promise.reject('유효하지 않은 URL');
+      if (!state || isEmpty(state)) {
+        return Promise.reject('유효하지 않은 번호');
       }
-      return getBoardUrl(url, activeUser.uid)
+      return getBoard(state.bid, activeUser.uid)
     },
   });
 
@@ -193,7 +194,12 @@ function BoardUrl() {
 
 
   if (urlBoard.isLoading) {
-      return <div><Loading /></div>;
+    return (
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center', height: '65vh'
+      }}> <Loading />
+      </div>;
+    )
   }
 
   if (urlBoard.isError) {
@@ -370,7 +376,7 @@ function BoardUrl() {
                                 <Icon>schedule</Icon>
                               </MDTypography>
                               <MDTypography variant="button" color="text" fontWeight="light">
-                                <TimeAgo datetime={urlBoard.data.modTime} locale='ko' />
+                                <TimeAgo datetime={urlBoard.data.modTime} locale={koreanStrings} />
                               </MDTypography>
                             </MDBox>
                           </MDBox>
@@ -419,4 +425,4 @@ function BoardUrl() {
     </DashboardLayout >
   );
 }
-export default BoardUrl;
+export default BoardOne;

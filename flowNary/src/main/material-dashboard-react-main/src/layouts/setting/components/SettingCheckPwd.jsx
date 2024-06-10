@@ -1,21 +1,23 @@
 import { Box, Button, Grid, Icon, IconButton, InputAdornment, Modal, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import { UserContext } from "api/LocalStorage";
 import { GetWithExpiry } from "api/LocalStorage";
 import { getUser } from "api/axiosGet";
+import Loading from "api/loading";
 import axios from "axios";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import { GoogleAuthProvider, getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import UserLoginService from "ut/userLogin-Service";
 
 export default function SettingModal() {
-  const uid = parseInt(GetWithExpiry("uid"));
+  
   const email = GetWithExpiry("email");
-
+  const { activeUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [veriPwd, setVeriPwd] = useState('');
 
@@ -25,12 +27,6 @@ export default function SettingModal() {
     return <UserLoginService goLogin={goLogin} />;
   }
 
-  useEffect(() => {
-    if (uid == null) {
-      navigate('/authentication/login');
-    }
-  }, [uid, navigate]);
-
   // 비밀번호 숨기기/보이기
   const [showPassword, setShowPassword] = useState(false);
   // 비밀번호 숨기기/보이기 토글
@@ -39,8 +35,8 @@ export default function SettingModal() {
   const handlePwd = (e) => { setVeriPwd(e.target.value); };
 
   const { data: user, isLoading, error } = useQuery({
-    queryKey: ['user', uid],
-    queryFn: () => getUser(uid),
+    queryKey: ['user', activeUser.uid],
+    queryFn: () => getUser(activeUser.uid),
   });
 
   function handleKeyPress(event) {
@@ -49,7 +45,11 @@ export default function SettingModal() {
       confirmPWd();
     }
   }
-
+  if (isLoading) {
+    return (
+      <div><Loading /></div>
+    )
+  }
   const auth = getAuth();
   const handleClose = () => { navigate(-1); }
   const confirmPWd = async () => {
@@ -85,52 +85,6 @@ export default function SettingModal() {
       });
     }
   }
-
-  const loginWithGoogle = async () => {
-    try {
-      const auth = getAuth();
-      const provider = new GoogleAuthProvider();
-      const data = await signInWithPopup(auth, provider);
-
-      // 이메일로 사용자 조회
-      const response = await axios.get('http://localhost:8090/user/getUserByEmail', {
-        params: {
-          email: data.user.email
-        }
-      });
-
-      // 사용자가 존재하지 않으면 회원가입 진행
-      if (Object.keys(response.data).length === 0) {
-        Swal.fire({
-          title: "등록된 사용자가 아닙니다.",
-          text: "다시 입력해주세요",
-          icon: "warning"
-        });
-      } else {
-        Swal.fire({
-          icon: 'success',
-          title: "구글 인증에 성공했습니다.",
-          showClass: {
-            popup: `
-                                animate__animated
-                                animate__fadeInUp
-                                animate__faster
-                            `
-          },
-          hideClass: {
-            popup: `
-                                animate__animated
-                                animate__fadeOutDown
-                                animate__faster
-                            `
-          }
-        });
-      }
-      navigate('/settings');
-    } catch (error) {
-      console.error("구글 로그인 오류:", error);
-    }
-  };
 
   return (
     <>
@@ -184,20 +138,6 @@ export default function SettingModal() {
               </Grid>
             </Grid>
           </Box>}
-        {user && user.provider === 1 &&
-          <Box sx={{ border: '1px solid white', backgroundColor: 'rgb(236, 241, 253)', p: '3rem', m: '10rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Box>
-              <Link to="#" onClick={loginWithGoogle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
-                <img
-                  style={{ paddingRight: '5px', margin: '-5px', width: '3.2em' }}
-                  src="/images/icons/Google.png"
-                  alt="Google"
-                />
-              </Link>
-              <Typography style={{ fontSize: '1em', marginTop: '3rem' }}> 구글 로그인 후 설정 가능합니다.</Typography>
-            </Box>
-          </Box>
-        }
       </DashboardLayout>
     </>
   );

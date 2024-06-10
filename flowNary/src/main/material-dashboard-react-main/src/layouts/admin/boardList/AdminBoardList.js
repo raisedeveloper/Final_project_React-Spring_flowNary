@@ -17,6 +17,10 @@ import { DataGrid } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
+import { Dialog, Icon } from "@mui/material";
+import BoardDetail from "layouts/home/Board/BoardDetail";
+import { useAddLike } from "api/customHook";
+import { wrong } from "api/alert";
 
 const CustomTabs = styled(Tabs)({
   '& .MuiTabs-indicator': {
@@ -51,6 +55,9 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 export default function AdminBoardList({ selected, handleClick }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [value, setValue] = useState('one');
+  const [open, setOpen] = useState(false);
+  const [selectedBid, setSelectedBid] = useState(null);
+  const [index, setIndex] = useState(0);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -58,6 +65,16 @@ export default function AdminBoardList({ selected, handleClick }) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleOpen = (bid) => {
+    setSelectedBid(bid);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedBid(null);
   };
 
   const { data: boards } = useQuery({
@@ -81,7 +98,7 @@ export default function AdminBoardList({ selected, handleClick }) {
 
   const filteredDeclaration = searchTerm
     ? declaration?.filter(decl =>
-      `${decl.deid}번`.toString().includes(searchTerm.toLowerCase) ||
+      `${decl.deid}번`.toString().includes(searchTerm.toLowerCase()) ||
       decl.dTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
       `${decl.uid}번`.toString().includes(searchTerm.toLowerCase())
     )
@@ -93,7 +110,7 @@ export default function AdminBoardList({ selected, handleClick }) {
 
   const rowsDeclaration = filteredDeclaration?.map((data, index) => ({
     id: index,
-    bid: data.bid ? (data.bid + "번") : null,
+    bid: data.bid ? data.bid : null,
     uid: data.uid,
     dTitle: data.dTitle,
     dContents: data.dContents,
@@ -101,7 +118,7 @@ export default function AdminBoardList({ selected, handleClick }) {
     state: data.state,
   }));
 
-  const columnsDeclaration = [    
+  const columnsDeclaration = [
     { field: 'uid', headerName: 'UID', flex: 1 },
     { field: 'dTitle', headerName: '제목', flex: 1 },
     { field: 'dContents', headerName: '내용', flex: 1 },
@@ -109,9 +126,9 @@ export default function AdminBoardList({ selected, handleClick }) {
     { field: 'state', headerName: '처리 상태', flex: 1 },
   ];
 
-  const rowsBoards = filteredBoards?.map((data, index) => ({
-    id: index,
-    bid: data.bid + "번",
+  const rowsBoards = filteredBoards?.map((data, indexs) => ({
+    id: indexs,
+    bid: data.bid,
     uid: data.uid,
     nickname: data.nickname,
     title: data.title,
@@ -119,7 +136,7 @@ export default function AdminBoardList({ selected, handleClick }) {
     modTime: formatDate(data.modTime),
   }));
 
-  const columnsBoards = [    
+  const columnsBoards = [
     { field: 'uid', headerName: 'UID', flex: 1 },
     { field: 'nickname', headerName: '닉네임', flex: 1 },
     { field: 'title', headerName: '제목', flex: 2 },
@@ -127,6 +144,65 @@ export default function AdminBoardList({ selected, handleClick }) {
     { field: 'modTime', headerName: '등록 일자', flex: 3 },
   ];
 
+  const addLike = useAddLike();
+  const addLikeForm = async (sendData) => {
+    await addLike(sendData);
+  }
+
+
+  // 좋아요 버튼 누를 때 넘기기
+  function handleButtonLike(bid, uid2) {
+    if (uid === -1) {
+      wrong("로그인 해주세요.");
+      return;
+    }
+
+
+    const sendData = {
+      uid: uid,
+      fuid: uid2,
+      oid: bid,
+      type: 1,
+    }
+
+
+    addLikeForm(sendData);
+  }
+  // 댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReply(rid, uid2) {
+    if (uid === -1) {
+      wrong("로그인 해주세요.");
+      return;
+    }
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rid,
+      type: 2,
+    }
+
+
+    addLikeForm(sendData);
+  }
+  // 대댓글 좋아요 버튼 누를 때 넘기기
+  function handleButtonLikeReReply(rrid, uid2) {
+    if (uid === -1) {
+      wrong("로그인 해주세요.");
+      return;
+    }
+
+
+    const sendData = {
+      uid: activeUser.uid,
+      fuid: uid2,
+      oid: rrid,
+      type: 3,
+    }
+
+
+    addLikeForm(sendData);
+  }
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -176,6 +252,7 @@ export default function AdminBoardList({ selected, handleClick }) {
                     }}
                     pageSizeOptions={[5, 10]}
                     checkboxSelection
+                    onRowClick={(params) => handleOpen(params.row.bid)}
                   />
                 </Box>
               ) : (
@@ -193,6 +270,7 @@ export default function AdminBoardList({ selected, handleClick }) {
                     }}
                     pageSizeOptions={[5, 10]}
                     checkboxSelection
+                    onRowClick={(params) => handleOpen(params.row.bid)}
                   />
                 </Box>
               )}
@@ -201,6 +279,34 @@ export default function AdminBoardList({ selected, handleClick }) {
         </Container>
       </Box>
       <Footer />
+      {/* 게시글 모달 */}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        // TransitionComponent={Transition}
+        aria-labelledby="customized-dialog-title"
+        keepMounted
+        PaperProps={{
+          sx: {
+            width: '90%', // 원하는 너비 퍼센트로 설정
+            height: '80vh', // 원하는 높이 뷰포트 기준으로 설정
+            maxWidth: 'none', // 최대 너비 제한 제거
+            zIndex: 0
+          },
+        }}
+      >
+        <IconButton aria-label="close" onClick={handleClose}
+          sx={{
+            position: 'absolute', right: 8, top: 8,
+            color: (theme) => theme.palette.grey[500],
+            zIndex: 2
+          }} >
+          <Icon>close</Icon>
+        </IconButton>
+        {selectedBid && (
+          <BoardDetail bid={selectedBid} handleClose={handleClose} uid={99999} index={index} nickname={'admin'} handleButtonLikeReply={handleButtonLikeReply} handleButtonLikeReReply={handleButtonLikeReReply} handleButtonLike={handleButtonLike} />
+        )}
+      </Dialog>
     </DashboardLayout>
   );
 }

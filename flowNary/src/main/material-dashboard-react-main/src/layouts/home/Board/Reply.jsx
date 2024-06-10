@@ -39,10 +39,12 @@ import { getUser } from 'api/axiosGet';
 // 아이콘
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import PersonIcon from '@mui/icons-material/Person'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import boxShadow from 'assets/theme/functions/boxShadow';
 import { color } from '@cloudinary/url-gen/qualifiers/background';
 import UserAvatar from 'api/userAvatar';
+import Loading from 'api/loading';
 
 timeago.register('ko', ko);
 
@@ -84,11 +86,6 @@ export default function Reply(props) {
   const addReply = useAddReply();
   const addReReply = useAddReReply();
 
-  useEffect(() => {
-    if (replyList.isLoading) {
-      return () => { };
-    }
-  }, [replyList.isLoading]);
 
   const navigate = useNavigate();
 
@@ -133,10 +130,6 @@ export default function Reply(props) {
     if (!showReReply[rid]) {
       handleMoreReply(rid);
     }
-  };
-
-  const handleOnEnter = (text) => {
-    console.log('enter', text);
   };
 
   const toggleExpand = (index) => {
@@ -197,6 +190,17 @@ export default function Reply(props) {
       handleFormSubmit2(e, text2, rid);
     }
   }
+
+  const replyList2 = { isLoading: true };
+  const user2 = { isLoading: false };
+  const board2 = { isLoading: false };
+
+  if (replyList.isLoading || user.isLoading || board.isLoading) {
+    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Loading />
+    </div>;
+  }
+
   return (
     <>
       {/* 댓글 내용 List */}
@@ -246,9 +250,14 @@ export default function Reply(props) {
           <MDBox sx={{ p: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             {user && user.data && <Avatar
               sx={{ bgcolor: 'red'[500], width: '2rem', height: '2rem' }} aria-label="recipe">
-              <UserAvatar profileUrl={user.data.profile} />
+              {user.data.profile ? (
+                <UserAvatar profileUrl={user.data.profile} />
+              ) : (
+                <PersonIcon sx={{ width: '100%', height: '100%' }} />
+              )}
             </Avatar>
             }
+
             <input
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -278,13 +287,7 @@ export default function Reply(props) {
                     primary={<Typography variant="subtitle3" sx={{ fontSize: "15px", color: 'black', cursor: 'pointer' }} onClick={() => handleMyPage(data.uid)}>{data.nickname}</Typography>}
                     secondary={
                       <Typography variant="body2" sx={{ overflowWrap: 'break-word', fontSize: 'small' }}>
-                        {data.rContents != null && (expandedContents[index] ? data.rContents : data.rContents.slice(0, 28))}
-                        {data.rContents != null && data.rContents.length > 30 && !expandedContents[index] && (
-                          <button className='replyOpen' style={{ color: 'gray', fontSize: 'small', marginLeft: 10 }} onClick={() => toggleExpand(index)}>...더보기</button>
-                        )}
-                        {expandedContents[index] && (
-                          <button className='replyClose' style={{ color: 'gray', fontSize: 'small', marginLeft: 10 }} onClick={() => toggleExpand(index)}>접기</button>
-                        )}
+                        {data.rContents}
                       </Typography>
                     }
                   >

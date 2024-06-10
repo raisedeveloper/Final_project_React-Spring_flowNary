@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Icon, Card, Button, Grid, Typography, Box, Input, TextareaAutosize } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AntSwitch } from './postingStyle.jsx';
+import { AntSwitch } from '../postingStyle.jsx';
 import { UploadImage } from "../../../api/image.js";
 import { GetWithExpiry } from "../../../api/LocalStorage.js";
 import MDBox from "components/MDBox";
 import { wrong } from "api/alert";
 import { correct } from "api/alert";
 import { insertBoard } from "api/axiosPost";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
+import { getUser } from "api/axiosGet.js";
 
 export default function Posting() {
   const navigate = useNavigate();
@@ -21,18 +22,14 @@ export default function Posting() {
 
   const [nickname, setNickname] = useState('');
 
+  const user = useQuery({
+    queryKey: ['writenickname', uid],
+    queryFn: () => getUser(uid),
+  });
+
   useEffect(() => {
-    if (uid !== null) {
-      axios.get('http://localhost:8090/user/getUser', { params: { uid: uid } })
-        .then(res => {
-          if (res.data.nickname !== null && res.data.nickname !== '') {
-            setNickname(res.data.nickname);
-          } else {
-            setNickname(res.data.email);
-          }
-        }).catch(error => console.log(error));
-    }
-  }, [uid]);
+    setNickname(user.nickname);
+  }, [user]);
 
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
@@ -84,14 +81,13 @@ export default function Posting() {
       bContents: content,
       image: imageList.toString(),
       nickname: nickname,
-      shareUrl: 'http://localhost:3000/',
       hashTag: hashTag.toString(),
       isDeleted: isDeleted
     });
 
     await insertBoard(sendData);
     queryClient.invalidateQueries('boardList');
-    
+
     setImages([]);
     setPreviewUrls([]);
     setTitle('');

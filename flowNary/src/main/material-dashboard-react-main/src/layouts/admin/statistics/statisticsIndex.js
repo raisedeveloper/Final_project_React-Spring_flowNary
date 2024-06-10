@@ -5,19 +5,19 @@ import { Container, Grid } from "@mui/material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import AppOrderTimeline from './app-order-timeline';
 import AppCurrentVisits from './app-current-visits';
 import AppWebsiteVisits from './app-website-visits';
 import AppWidgetSummary from './app-widget-summary';
-import AppCurrentSubject from './app-current-subject';
-import AppTrafficBySite from './app-traffic-by-site';
 import { getBoardList, getUserList } from 'api/axiosGet';
 import { GetWithExpiry } from 'api/LocalStorage';
 import { WidthFull } from '@mui/icons-material';
 import { getDeclarationList } from 'api/axiosGet';
+import Loading from 'api/loading';
+import { de } from '@faker-js/faker';
 
 export default function Statistics() {
   const [monthlyStatistics, setMonthlyStatistics] = useState({});
+  const [monthlyDeclarations, setMonthlyDeclarations] = useState({});
   const [ageGroups, setAgeGroups] = useState({});
 
   const { data: boards, isLoading: isBoardsLoading, error: boardsError } = useQuery({
@@ -74,15 +74,43 @@ export default function Statistics() {
         }
         acc[month]['게시물 업데이트']++; // 통계 항목을 적절하게 업데이트합니다.
         return acc;
-      }, {});
+      }
+
+      
+      , {});
       setMonthlyStatistics(statistics);
+
     }
   }, [boards]);
 
+  useEffect(() => {
+    if (boards && Array.isArray(boards)) {
+      const declarations = declaration.reduce((acc, item) => {
+        const date = parseISO(item.modTime);
+        const month = format(date, 'yyyy-MM');
+        if (!acc[month]) {
+          acc[month] = {
+            '신고된 게시물': 0,
+            // 다른 통계 항목을 여기에 추가할 수 있습니다.
+          };
+        }
+        acc[month]['신고된 게시물']++; // 통계 항목을 적절하게 업데이트합니다.
+        return acc;
+      }
+      
+      , {});
+      setMonthlyDeclarations(declarations);
+
+    }
+  }, [declaration]);
+
+
   const monthlyLabels = Object.keys(monthlyStatistics).sort();
+  const monthlyLabels2 = Object.keys(monthlyDeclarations).sort();
+
 
   if (isBoardsLoading || isUsersLoading) {
-    return <div>Loading...</div>;
+    return <div><Loading /></div>;
   }
 
   if (boardsError || usersError) {
@@ -97,21 +125,21 @@ export default function Statistics() {
           <Grid item xs={12} sm={6} md={3} lg={2.5} sx={{ mb: 5, mr: 3 }}>
             <AppWidgetSummary
               title="공개 게시물 수"
-              total={boards ? boards.length : 0}
+              total={boards && boards.length > 0 ? boards.length : '0'}
               color="success"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={2.5} sx={{ mb: 5, mr: 3 }}>
             <AppWidgetSummary
               title="가입된 회원 수"
-              total={users ? users.length : 0}
+              total={users && users.length > 0 ? users.length : '0'}
               color="info"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={2.5} sx={{ mb: 5, mr: 3 }}>
             <AppWidgetSummary
               title="신고 게시물"
-              total={declaration ? declaration.length : 0}
+              total={declaration && declaration.length > 0 ? declaration.length : '0'}
               color="error"
             />
           </Grid>
@@ -119,7 +147,7 @@ export default function Statistics() {
           <Grid item xs={12} sm={6} md={3} lg={2.5} sx={{ mb: 5, mr: 3 }}>
             <AppWidgetSummary
               title="비활성화 유저"
-              total={users ? disableUsers.length : 0}
+              total={users && disableUsers.length > 0 ? disableUsers.length : '0'}
               color="error"
             />
           </Grid>
@@ -134,6 +162,12 @@ export default function Statistics() {
                     type: 'column',
                     fill: 'solid',
                     data: monthlyLabels.map(month => monthlyStatistics[month]['게시물 업데이트']),
+                  },
+                  {
+                    name: '신고된 게시물',
+                    type: 'line',
+                    fill: 'solid',
+                    data: monthlyLabels2.map(month => monthlyDeclarations[month]['신고된 게시물']),
                   },
                 ],
               }}

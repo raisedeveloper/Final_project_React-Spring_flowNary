@@ -29,6 +29,14 @@ public interface NoticeDao {
 			+ " where uid=#{uid} and onOff=1")
 	int getNoticeCount(int uid);
 	
+	@Select("select count(nid) from notice"
+			+ " where uid=#{uid} and onOff=1 and type=#{type}")
+	int getNoticeCountType(int uid, int type);
+	
+	@Select("select count(nid) from notice"
+			+ " where oid=#{oid} and uid=#{uid} and onOff>-1")
+	int getNoticeCountObject(int oid, int uid);
+	
 	@Select("select * from notice"
 			+ " where uid=#{uid} and onOff>-1"
 			+ " order by regTime desc")
@@ -47,8 +55,11 @@ public interface NoticeDao {
 	@Update("update notice set onOff=-1 where uid=#{uid}")
 	void removeNoticeAll(int uid);
 		
-	@Update("update notice set onOff=0 where uid=#{uid} and onOff=1")
+	@Update("update notice set onOff=0 where uid=#{uid} and onOff=1 and type!=4")
 	void disableNoticeAll(int uid);
+	
+	@Update("update notice set onOff=0 where uid=#{uid} and onOff=1 and type=4")
+	void disableNoticeAllChat(int uid);
 	
 	@Update("update notice set onOff=-1 where uid=#{uid} and type=#{type} and oid=#{oid}")
 	void removeNoticeSpecific(int uid, int type, int oid);
