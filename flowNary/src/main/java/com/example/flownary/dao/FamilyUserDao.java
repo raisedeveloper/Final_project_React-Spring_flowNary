@@ -43,4 +43,7 @@ public interface FamilyUserDao {
 	
 	@Update("update familyuser set name=#{name}, message=#{message} where faid=#{faid} and uid=#{uid}")
 	void updateFamilyUserMessage(FamilyUserUpdateDto familyUser);
+	
+	@Update("update familyuser set status=-1 where faid=#{faid}")
+	void deleteFamilyUserAll(int faid);
 }

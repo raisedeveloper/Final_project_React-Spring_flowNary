@@ -37,6 +37,7 @@ import { isEmpty } from "api/emptyCheck";
 import { useNavigate } from "react-router-dom";
 import { deleteNotice } from "api/axiosPost";
 import { getBoard } from "api/axiosGet";
+import { insertFamilyUser } from "api/axiosPost";
 
 export default function Notifications() {
 

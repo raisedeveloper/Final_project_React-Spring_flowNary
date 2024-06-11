@@ -91,7 +91,6 @@ export default function Reply(props) {
 
   const handleFormSubmit = (e, text) => {
     e.preventDefault();
-
     if (text === '') {
       wrong('내용을 입력하세요');
       return;
@@ -146,7 +145,6 @@ export default function Reply(props) {
       wrong("로그인이 필요한 서비스입니다.");
       return;
     }
-
     setRidtext(rid);
     setFormChange((prev) => ({
       ...prev,

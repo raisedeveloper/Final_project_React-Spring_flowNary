@@ -26,4 +26,6 @@ public interface FamilyUserService {
 	void updateFamilyUserStatus(int status, int faid, int uid);
 	
 	void updateFamilyUserMessage(FamilyUserUpdateDto familyUser);
+	
+	void deleteFamilyUserAll(int faid);
 }

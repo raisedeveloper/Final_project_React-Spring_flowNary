@@ -42,7 +42,6 @@ import { deleteBoard } from 'api/axiosPost.js';
 import { Declaration } from 'api/alert.jsx';
 import { isEmpty } from 'api/emptyCheck.js';
 import { getBoard } from 'api/axiosGet.js';
-import Loading from 'api/loading.js';
 
 function BoardOne() {
   const queryClient = new QueryClient();
@@ -85,7 +84,7 @@ function BoardOne() {
   // 좋아요 버튼 누를 때 넘기기
   function handleButtonLike(bid, uid2) {
     if (activeUser.uid < 0) {
-      wrong('로그인이 필요한 서비스입니다.');
+      wrong('로그인 해주세요.');
       return;
     }
     const sendData = {
@@ -100,7 +99,7 @@ function BoardOne() {
   // 댓글 좋아요 버튼 누를 때 넘기기
   function handleButtonLikeReply(rid, uid2) {
     if (activeUser.uid < 0) {
-      wrong('로그인이 필요한 서비스입니다.');
+      wrong('로그인 해주세요.');
       return;
     }
     const sendData = {
@@ -115,7 +114,7 @@ function BoardOne() {
   // 대댓글 좋아요 버튼 누를 때 넘기기
   function handleButtonLikeReReply(rrid, uid2) {
     if (activeUser.uid < 0) {
-      wrong('로그인이 필요한 서비스입니다.');
+      wrong('로그인 해주세요.');
       return;
     }
 
@@ -195,10 +194,7 @@ function BoardOne() {
 
   if (urlBoard.isLoading) {
     return (
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center', height: '65vh'
-      }}> <Loading />
-      </div>;
+      <div>로딩 중...</div>
     )
   }
 

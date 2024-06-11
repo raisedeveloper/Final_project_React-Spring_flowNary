@@ -62,4 +62,9 @@ public class FamilyUserServiceImpl implements FamilyUserService {
 	public void updateFamilyUserMessage(FamilyUserUpdateDto familyUser) {
 		fuDao.updateFamilyUserMessage(familyUser);
 	}
+
+	@Override
+	public void deleteFamilyUserAll(int faid) {
+		fuDao.deleteFamilyUserAll(faid);
+	}
 }

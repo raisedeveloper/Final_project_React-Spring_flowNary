@@ -458,6 +458,27 @@ export const getFollowMeList = async (fuid: number) => {
     return result;
 }
 
+/** 팔로우 수 구하기
+ * @param {*} uid 유저 번호
+ * @param {*} type 타입 (0일 경우 uid가 팔로우한 수, 1이면 uid를 팔로우한 수)
+ * @returns 
+ */
+export const getFollowCount = async (uid: number, type: number) => {
+
+    const result = await axios.get('/follow/getCount', {
+        params: {
+            uid: uid,
+            type: type,
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getFollowCount error!');
+            console.log(error);
+        });
+
+    return result;
+}
+
 /** 특정 유저가 받은 좋아요 수
  * @param {*} fuid 대상 유저 번호
  * @param {*} type 유형 (1: 게시글, 2: 댓글, 3: 대댓글, 0: 전체)
@@ -649,6 +670,26 @@ export const getFamily = async (faid: number) => {
     }).then((response) => response.data)
         .catch(error => {
             console.log('axiosget.js: getFamily error!');
+            console.log(error);
+        });
+
+    return result;
+}
+
+/** 특정 유저의 패밀리 소속 여부 알아내기
+ * @param {*} faid 패밀리 번호
+ * @param {*} uid 유저 번호
+ */
+export const getFamilyUser = async (faid: number, uid: number) => {
+
+    const result = await axios.get('/family/getuser', {
+        params: {
+            faid: faid,
+            uid: uid,
+        }
+    }).then((response) => response.data)
+        .catch(error => {
+            console.log('axiosget.js: getFamilyUser error!');
             console.log(error);
         });
 

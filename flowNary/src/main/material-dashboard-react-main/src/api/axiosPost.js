@@ -110,7 +110,7 @@ export const insertBoard = async (sendData: string) => {
         url: '/board/insert',
         data: sendData,
         headers: { 'Content-Type': 'application/json' }
-    }).catch(error => {
+    }).then(res => res.data).catch(error => {
         console.log("axiospost.js: insertBoard error!");
         console.log(error);
     });

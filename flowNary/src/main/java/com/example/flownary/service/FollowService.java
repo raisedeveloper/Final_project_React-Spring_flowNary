@@ -16,6 +16,10 @@ public interface FollowService {
 	
 	List<Follow> getFollowListByFuid(int fuid);
 	
+	int getFollowCount(int uid);
+	
+	int getFollowFuidCount(int fuid);
+	
 	List<Integer> getFollowIntegerListByFuid(int fuid);
 	
 	void insertFollow(Follow follow);

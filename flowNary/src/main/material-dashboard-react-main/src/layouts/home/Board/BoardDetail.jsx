@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, useState } from "react";
+import React, { forwardRef, useContext, useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { Box, Modal, IconButton, Typography, Avatar, Divider, CardHeader, Card, Grid, Button, Icon } from "@mui/material";
 import Carousel from "react-material-ui-carousel";

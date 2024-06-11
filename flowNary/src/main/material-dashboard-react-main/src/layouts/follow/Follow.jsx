@@ -1,5 +1,5 @@
 import { Dashboard } from "@mui/icons-material";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, Modal, Stack, Table, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import { Avatar, AvatarGroup, Box, Button, Card, CardContent, CardHeader, Divider, Grid, Modal, Stack, Table, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { UserContext } from "api/LocalStorage";
 import { getFollowMeList } from "api/axiosGet";
@@ -18,6 +18,10 @@ import { wrong } from "api/alert";
 import { getNoticeCheck } from "api/axiosGet";
 import UserLoginService from "ut/userLogin-Service";
 import Loading from "api/loading";
+import { correct } from "api/alert";
+import { getFamilyUser } from "api/axiosGet";
+import Iconify from "components/iconify";
+import PersonIcon from '@mui/icons-material/Person';
 
 
 export default function Follow() {
@@ -82,6 +86,12 @@ export default function Follow() {
     }
 
     const inviteFamily = async (faid) => {
+        const fr = await getFamilyUser(faid, currentUid);
+        if (fr === 1) {
+            wrong('이미 해당 패밀리에 소속된 유저입니다');
+            return;
+        }
+
         const r = await getNoticeCheck(currentUid, activeUser.uid, 5, faid);
         if (r === 0) {
             await insertNotice(currentUid, activeUser.uid, 5, faid);
@@ -289,23 +299,41 @@ export default function Follow() {
                         패밀리 초대하기
                     </Typography>
                     <Stack direction={'column'}>
-                        {isLoading3 &&
-                            <div style={{
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh'
-                            }}> <Loading />
-                            </div>}
+                        {isLoading3 && <div>Loading...</div>}
                         {familylist && !isEmpty(familylist) && familylist.map((item, idx) => (
                             <Card sx={{ marginBottom: '10px' }} key={idx}>
                                 <CardHeader
-                                    avatar={<Avatar alt={item.leadername} src={item.leaderprofile} onClick={() => handleMyPage(item.leaderuid)} />}
-                                    title={item.name}
-                                    subheader={item.regTime}
+                                   avatar={<Avatar alt={item.leadername} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.leaderprofile}`} sx={{ cursor: 'pointer' }} onClick={() => handleMyPage(item.leaderuid)} />}
+                                    title={
+                                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'lightcoral' }}>
+                                            {item.name}
+                                        </Typography>
+                                    }
+                                    subheader={new Date(item.regTime).toLocaleDateString('ko-KR', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                    sx={{ borderBottom: '3px dashed #e0e0e0', paddingBottom: '10px' }}
+                                    subheaderTypographyProps={{ style: { color: 'blueviolet' } }}
                                 />
                                 <CardContent>
-                                    <Typography variant="body2" color="text.secondary">
-                                        유저 수 : {item.usercount}
-                                        <Button onClick={() => inviteFamily(item.faid)}>초대하기</Button>
-                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Iconify style={{ marginLeft: '47px' }} icon="heroicons-solid:users" />
+                                        <Typography variant="body2" sx={{ color: 'text.first', marginLeft: 1, fontWeight: '400' }}>
+                                            유저 수: {item.usercount}
+                                            <Button onClick={() => inviteFamily(item.faid)}>초대하기</Button>
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1 }}>
+                                        <AvatarGroup max={4} sx={{ marginLeft: 5, '& .MuiAvatar-root': { width: '30px', height: '30px' } }}>
+                                            {item && item.profiledata && item.profiledata.split(',').map((profile, idx) => (
+                                                <Avatar key={idx} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}`} />
+                                            ))}
+                                            {!item.profiledata && <Avatar><PersonIcon /></Avatar>}
+                                        </AvatarGroup>
+                                    </Box>
                                 </CardContent>
                             </Card>
                         ))}

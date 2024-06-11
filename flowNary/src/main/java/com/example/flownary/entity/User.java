@@ -36,8 +36,6 @@ public class User {
 		return "User [uid=" + uid + ", email=" + email + ", pwd=" + pwd + ", profile=" + profile + ", uname=" + uname
 				+ ", nickname=" + nickname + ", statusMessage=" + statusMessage + ", snsDomain=" + snsDomain
 				+ ", status=" + status + ", regDate=" + regDate + ", gender=" + gender + ", provider=" + provider
-				+ ", birth=" + birth + ", tel=" + tel + ", hashUid=" + hashUid + ", location=" + location + ", role="
-				+ role + "]";
+				+ ", birth=" + birth + ", tel=" + tel + ", hashUid=" + hashUid + "]";
 	}
-
 }

@@ -12,8 +12,8 @@ const Logout = () => {
     signOut(auth).then(() => {
       sessionStorage.clear();
       updateActiveUser({
-        uid: -1, email: "", nickname: "",
-        role: 0,
+        uid: -1, email: "", nickname: "", uname: "",
+        role: 0, profile: "",
       });
       navigate('/');
     })

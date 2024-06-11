@@ -1,37 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Icon, Card, Button, Grid, Typography, Box, Input, TextareaAutosize } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AntSwitch } from '../postingStyle.jsx';
 import { UploadImage } from "../../../api/image.js";
-import { GetWithExpiry } from "../../../api/LocalStorage.js";
+import { GetWithExpiry, UserContext } from "../../../api/LocalStorage.js";
 import MDBox from "components/MDBox";
 import { wrong } from "api/alert";
 import { correct } from "api/alert";
 import { insertBoard } from "api/axiosPost";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUser } from "api/axiosGet.js";
 
 export default function Posting() {
   const navigate = useNavigate();
-  const uid = parseInt(GetWithExpiry("uid"));
-  const queryClient = new QueryClient();
-
-  if (!uid) {
-    navigate("/authentication/sign-in");
-  }
-
-  const [nickname, setNickname] = useState('');
-
-  const user = useQuery({
-    queryKey: ['writenickname', uid],
-    queryFn: () => getUser(uid),
-  });
-
-  useEffect(() => {
-    setNickname(user.nickname);
-  }, [user]);
-
+  const queryClient = useQueryClient();
+  const { activeUser } = useContext(UserContext);
+  
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [title, setTitle] = useState('');
@@ -54,6 +39,11 @@ export default function Posting() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    if (activeUser.uid === -1) {
+      wrong("로그인이 필요한 서비스입니다.")
+      navigate("/authentication/sign-in")
+      return;
+    }
 
     const imageList = await Promise.all(
       images.map(async (image) => {
@@ -61,18 +51,10 @@ export default function Posting() {
         return url.public_id;
       })
     );
-
-    if (uid <= 0) {
-      wrong("로그인이 필요한 서비스입니다.")
-      navigate("/authentication/sign-in")
-      return;
-    }
-
     if (imageList.toString() === '') {
       wrong('1개 이상의 사진 파일이 필요합니다.');
       return;
     }
-
     if (title === '') {
       wrong('제목을 입력하세요');
       return;
@@ -82,21 +64,20 @@ export default function Posting() {
       return;
     }
 
-
     correct('성공적으로 작성되었습니다.');
 
     var sendData = JSON.stringify({
-      uid: uid,
+      uid: activeUser.uid,
       title: title,
       bContents: content,
       image: imageList.toString(),
-      nickname: nickname,
+      nickname: activeUser.nickname,
       hashTag: hashTag.toString(),
       isDeleted: isDeleted
     });
 
     await insertBoard(sendData);
-    queryClient.invalidateQueries('boardList');
+    await queryClient.invalidateQueries(['boardList', activeUser.uid]);
 
     setImages([]);
     setPreviewUrls([]);
@@ -121,8 +102,6 @@ export default function Posting() {
     setHashTag(tags.slice(0, 3));
   };
 
-  console.log("불러와: ", uid);
-
   return (
     <MDBox mt={-8} sx={{ p: 2 }}>
       <Grid container spacing={2}>
@@ -142,7 +121,6 @@ export default function Posting() {
           </div>
 
           <div>
-            {/* 홈 부분 작성 */}
             <Button component="label" onClick={publicToggle}>
               <Typography sx={{ marginRight: '1em', fontSize: 'small', fontWeight: 'bold' }} style={{ color: 'black' }}>비공개</Typography>
               <AntSwitch sx={{ marginTop: '0.25em' }} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
@@ -154,8 +132,7 @@ export default function Posting() {
 
         {previewUrls.map((url, index) => (
           <Grid item key={index} xs={4} sm={2} sx={{ width: '100%' }}>
-            {/* Card에 position 속성을 추가하여 내부 요소를 포함하는 컨테이너 역할을 합니다. */}
-            <Card style={{ position: 'relative' }}>
+            <Card style={{ position: 'relative' }}> {/* Card에 position 속성을 추가하여 내부 요소를 포함하는 컨테이너 역할을 합니다. */}
               <img src={url} alt={`Preview ${index}`} style={{ width: '15.5vh', height: '15vh', objectFit: 'cover' }} />
               <button style={{ border: 'none', fontSize: 'large', borderRadius: '100%', position: 'absolute', top: 0, left: 0, backgroundColor: 'lightcoral', margin: 0, padding: 0, justifyContent: 'center', color: 'black', width: 20, height: 20 }}
                 onClick={() => handleRemoveImage(index)}><Icon>close</Icon></button>
@@ -179,7 +156,8 @@ export default function Posting() {
 
       {/* 내용 작성 부분 */}
       <Grid item xs={12} sm={6} p='2px'>
-        <TextareaAutosize value={content}
+        <TextareaAutosize
+          value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="어떤 일이 있나요?"
           style={{

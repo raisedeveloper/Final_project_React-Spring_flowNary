@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -31,7 +32,7 @@ public interface BoardDao {
 	@Select("select * from board"
 			+ " where isDeleted=0 and ${field} like #{query}"
 			+ " order by modTime desc"
-			+ " limit #{count}" )
+			+ " limit #{count}")
 	List<Board> getBoardList(String field, String query, int count);
 	
 	@Select("select * from board"
@@ -40,15 +41,15 @@ public interface BoardDao {
 			+ " limit #{count}")
 	List<Board> getBoardList2(String field1, String field2, String query, int count);
 	
-	@Select("select * from board"
+	@Select("select count(bid) from board"
 			+ " where isDeleted=0 and (${field1} like #{query} or ${field2} like #{query} or ${field3} like #{query})"
 			+ " order by modTime desc"
 			+ " limit #{count}")
 	List<Board> getBoardList3(String field1, String field2, String field3, String query, int count);
 	
 	@Select("select * from board"
-			+ " where isDeleted > -2 and uid=${uid}"
-			+ " order by modTime desc")
+			+ " where isDeleted>-2 and uid=${uid}"
+			+ " order by modTime ")
 	List<Board> getBoardList4(int uid);
 	
 	@Select("SELECT b.* FROM like_ c JOIN board b ON b.bid=c.oid WHERE b.isDeleted = 0 AND "
@@ -73,9 +74,10 @@ public interface BoardDao {
 	@Insert("insert into board values(default, #{uid}, #{title}, #{bContents}, default, "
 			+ " default, default, default, #{image}, #{shareUrl}, "
 			+ " #{nickname}, #{hashTag}, #{isDeleted}, default)")
+	@Options(useGeneratedKeys = true, keyProperty = "bid", keyColumn = "bid")
 	void insertBoard(Board board);
 	
-	@Update("update board set title=#{title}, bContents=#{bContents}, modTime=#{modTime}, image=#{image}"
+	@Update("update board set title=#{title}, bContents=#{bContents}, image=#{image}"
 			+ ", hashTag=#{hashTag} where bid=#{bid}")
 	void updateBoard(Board board);
 	

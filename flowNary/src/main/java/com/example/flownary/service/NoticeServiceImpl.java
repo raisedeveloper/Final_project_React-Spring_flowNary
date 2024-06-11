@@ -45,8 +45,8 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 	
 	@Override
-	public int getNoticeCountObject(int oid, int uid) {
-		return nDao.getNoticeCountObject(oid, uid);
+	public int getNoticeCountObject(int oid, int uid, int type) {
+		return nDao.getNoticeCountObject(oid, uid, type);
 	}
 
 	@Override

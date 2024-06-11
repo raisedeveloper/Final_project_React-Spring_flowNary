@@ -41,7 +41,6 @@ public class BoardController {
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		Board board = bSvc.getBoard(bid);
 		int liked = lSvc.getLikeUidCount(uid, 1, bid);		
-//		int followed = fSvc.getFollowUidCount(uid, board.getUid());
 		HashMap<String, Object> hMap = new HashMap<String, Object>();
 		
 		if (board != null)
@@ -61,7 +60,6 @@ public class BoardController {
 			hMap.put("hashTag", board.getHashTag());
 			hMap.put("nickname", board.getNickname());
 			hMap.put("liked", (liked == 1) ? true : false);
-//			hMap.put("followed", (followed == 1) ? true : false);
 			hMap.put("profile", (user != null) ? user.getProfile() : null);
 			JSONObject jBoard = new JSONObject(hMap);
 			
@@ -161,22 +159,23 @@ public class BoardController {
 			@RequestParam(defaultValue="-1", required=false) int uid) {
 		
 		List<Board> list = new ArrayList<>();
+		
 		switch(type) {
 		case 1:
-			list = bSvc.getBoardList(count <= 0 ? Integer.MAX_VALUE : count, field, query);			
+			list = bSvc.getBoardList(count, field, query);			
 			break;
 		case 2:
 			List<String> fieldList = new ArrayList<>();
 			fieldList.add(field);
 			fieldList.add(field2);
-			list = bSvc.getBoardListSearch(count <= 0 ? Integer.MAX_VALUE : count, fieldList, query);
+			list = bSvc.getBoardListSearch(count, fieldList, query);
 			break;
 		case 3: 
 			List<String> fieldList1 = new ArrayList<>();
 			fieldList1.add(field);
 			fieldList1.add(field2);
 			fieldList1.add(field3);
-			list = bSvc.getBoardListSearch(count <= 0 ? Integer.MAX_VALUE : count, fieldList1, query);
+			list = bSvc.getBoardListSearch(count, fieldList1, query);
 			break;
 		default:
 			System.out.println("error!");
@@ -190,7 +189,7 @@ public class BoardController {
 			int followed = fSvc.getFollowUidCount(uid, board.getUid());
 			GetUserNickEmailDto user = uSvc.getUserNicknameEmail(board.getUid());
 			
- 			hMap.put("bid", board.getBid());
+			hMap.put("bid", board.getBid());
 			hMap.put("uid", board.getUid());
 			hMap.put("title", board.getTitle());
 			hMap.put("bContents", board.getbContents());
@@ -226,6 +225,7 @@ public class BoardController {
 	public JSONArray boardMyList(@RequestParam int uid) {
 
 		List<Board> list = bSvc.getMyBoardList(uid);
+		
 		JSONArray jArr = new JSONArray();
 		for (Board board : list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
@@ -265,7 +265,6 @@ public class BoardController {
 	public JSONArray boardLikeList(@RequestParam int uid) {
 
 		List<Board> list = bSvc.getLikedBoardList(uid);
-
 		JSONArray jArr = new JSONArray();
 		for (Board board : list) {
 			HashMap<String, Object> hMap = new HashMap<String, Object>();
@@ -320,10 +319,9 @@ public class BoardController {
 		
 		Board board = new Board(dto.getUid(), dto.getTitle()
 				, dto.getbContents(), dto.getImage(), shareUrl
-				, dto.getNickname(), dto.getHashTag(), dto.getIsDeleted());
+				, dto.getNickname(), dto.getHashTag(),dto.getIsDeleted()) ;
 		
 		bSvc.insertBoard(board);
-		System.out.println(board);
 		
 		board = bSvc.getBoardShareUrl2(shareUrl);
 		if (board != null)
@@ -342,13 +340,13 @@ public class BoardController {
 
 	@PostMapping("/update")
 	public String boardUpdate(@RequestBody UpdateBoardDto dto) {
-		Board board = bSvc.getBoard(dto.getBid());
+		
+		Board board = new Board();
 		board.setTitle(dto.getTitle());
 		board.setbContents(dto.getbContents());
 		board.setImage(dto.getImage());
 		board.setHashTag(dto.getHashTag());
-		board.setModTime(dto.getModTime());
-
+		
 		bSvc.updateBoard(board);
 		return "수정되었습니다";
 	}
@@ -375,4 +373,6 @@ public class BoardController {
 	    }
 	}
 	
+
+		
 }

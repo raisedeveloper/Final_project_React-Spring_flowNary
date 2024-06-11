@@ -34,8 +34,8 @@ public interface NoticeDao {
 	int getNoticeCountType(int uid, int type);
 	
 	@Select("select count(nid) from notice"
-			+ " where oid=#{oid} and uid=#{uid} and onOff>-1")
-	int getNoticeCountObject(int oid, int uid);
+			+ " where oid=#{oid} and uid=#{uid} and type=#{type} and onOff>-1")
+	int getNoticeCountObject(int oid, int uid, int type);
 	
 	@Select("select * from notice"
 			+ " where uid=#{uid} and onOff>-1"

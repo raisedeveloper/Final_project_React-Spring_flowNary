@@ -37,15 +37,15 @@ export default function ChatTemp() {
         queryFn: () => getUser(uid2),
     });
 
-    const handleMessageSend = () => {
+    const handleMessageSend = async () => {
         if (!name) {
             wrong('채팅방 이름을 지정하세요.')
             return;
         }
         if (inputMessage.trim() !== '' && stompClient && stompClient.connected) {
-            const cid = insertChat(name, uid1, uid2, inputMessage);
+            const cid = await insertChat(name, uid1, uid2, inputMessage);
             setInputMessage('');
-            navigate("/chatlist", { state: { cid: cid } });
+            navigate(`/chatlist`, { state: {cid: cid}});
         }
     };
 

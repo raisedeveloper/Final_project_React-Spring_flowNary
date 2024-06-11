@@ -53,6 +53,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import styled from "@emotion/styled";
 import UserAvatar from "api/userAvatar";
 import Loading from "api/loading";
+import { deleteNoticeSpecific } from "api/axiosPost";
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
@@ -130,6 +131,7 @@ export default function Home() {
   const handleOpen = (e) => {
     setOpen(true);
     setBid(e);
+    deleteNoticeSpecific(activeUser.uid, 2, e);
   }
   const handleClose = () => { setOpen(false); };
 
@@ -337,7 +339,7 @@ export default function Home() {
   // 수정
   const handleUpdate = () => {
     handleClosePopover();
-    sessionStorage.setItem("bid", bid);
+    sessionStorage.setItem("bid", currentBid);
     navigate("/home/Update");
   }
 

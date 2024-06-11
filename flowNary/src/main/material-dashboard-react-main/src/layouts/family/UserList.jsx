@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import { Avatar, Box, Button, Dialog, Modal, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getFamilyUserList } from 'api/axiosGet';
 import Iconify from 'components/iconify/iconify';
 import { updateFamily } from 'api/axiosPost';
@@ -10,98 +10,110 @@ import { UserContext } from "api/LocalStorage";
 import { getFamily } from "api/axiosGet";
 import { deleteFamily } from "api/axiosPost";
 import { isEmpty } from "api/emptyCheck";
-import Loading from "api/loading";
-
-
-const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  {
-    field: 'profile', headerName: '프로필', width: 100,
-    renderCell: (params) => (
-      <Box sx={{ display: 'flex', alignItems: 'center', paddingTop: 1 }}>
-        {params.value ? <Avatar src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${params.value}`} /> : <Avatar src="" />}
-      </Box>
-    ),
-  },
-  {
-    field: 'name', headerName: '이름', width: 200,
-    renderCell: (params) => (
-      <Box>
-        {params.row.status === 2 && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Iconify style={{ marginRight: '3px' }} icon="openmoji:crown" /> {/* Status가 2일 때만 왕관 아이콘을 표시 */}
-            {params.value}
-          </Box>
-        )}
-        {params.row.status === 0 && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Iconify style={{ marginRight: '3px' }} icon="pepicons-print:person-circle-filled" /> {/* Status가 2일 때만 왕관 아이콘을 표시 */}
-            {params.value}
-          </Box>
-        )}
-      </Box>
-    ),
-  },
-
-  {
-    field: 'status', headerName: '구성원', width: 100,
-    renderCell: (params) => (
-      <Box>
-        {params.value === 2 && '패밀리장'}
-        {params.value === 1 && '관리자'}
-        {params.value === 0 && '소속원'}
-      </Box>
-    )
-  },
-  {
-    field: 'regTime',
-    headerName: '가입시간',
-    width: 200,
-    renderCell: (params) => (
-      <Box>
-        {new Date(params.value).toLocaleString().substring(0, 20)}
-      </Box>
-    )
-  },
-];
-const rows = [
-  { id: 1, lastName: 'Snow', nickname: 'nick', status: '방장' },
-  { id: 2, lastName: 'Lannister', nickname: 'Cersei', status: '가족' },
-  { id: 3, lastName: 'Lannister', nickname: 'Jaime', status: '가족' },
-  { id: 4, lastName: 'Stark', nickname: 'Arya', status: '가족' },
-  { id: 5, lastName: 'Targaryen', nickname: 'Daenerys', status: '가족' },
-  { id: 6, lastName: 'Melisandre', nickname: 'james', status: '가족' },
-  { id: 7, lastName: 'Clifford', nickname: 'Ferrara', status: '가족' },
-  { id: 8, lastName: 'Frances', nickname: 'Rossini', status: '가족' },
-  { id: 9, lastName: 'Roxie', nickname: 'Harvey', status: '가족' },
-  { id: 10, lastName: 'Roxie', nickname: 'Harvey', status: '가족' },
-];
-
-
+import { familyUserConfirm } from "api/alert";
+import { statusFamilyUser } from "api/axiosPost";
 
 function FamilyUserList(props) {
 
   const { activeUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
   const faid = props.faid;
   const [fam, setFam] = useState(null);
   const [famname, setFamname] = useState('');
-  console.log(faid);
 
   // faid로 getFamily 불러와서 패밀리네임 가져오기
   useEffect(() => {
-    const fetchfam = async () => {
-      const famtemp = await getFamily(faid);
-      if (!isEmpty(famtemp)) {
-        setFam(famtemp);
-        setFamname(famtemp.name);
+    console.log(faid);
+    if (faid !== -1) {
+      const fetchfam = async () => {
+        const famtemp = await getFamily(faid);
+        if (!isEmpty(famtemp)) {
+          setFam(famtemp);
+          setFamname(famtemp.name);
+        }
       }
+  
+      fetchfam();
     }
+  }, [faid]);
+  
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    {
+      field: 'profile', headerName: '프로필', width: 100,
+      renderCell: (params) => (
+        <Box sx={{ display: 'flex', alignItems: 'center', paddingTop: 1 }}>
+          {params.value ? <Avatar src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${params.value}`} /> : <Avatar src="" />}
+        </Box>
+      ),
+    },
+    {
+      field: 'name', headerName: '이름', width: 100,
+      renderCell: (params) => (
+        <Box>
+          {params.row.status === 2 && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Iconify style={{ marginRight: '3px' }} icon="openmoji:crown" /> {/* Status가 2일 때만 왕관 아이콘을 표시 */}
+              {params.value}
+            </Box>
+          )}
+          {params.row.status === 0 && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Iconify style={{ marginRight: '3px' }} icon="pepicons-print:person-circle-filled" /> {/* Status가 2일 때만 왕관 아이콘을 표시 */}
+              {params.value}
+            </Box>
+          )}
+        </Box>
+      ),
+    },
 
-    fetchfam();
-  }, [faid])
+    {
+      field: 'status', headerName: '구성원', width: 100,
+      renderCell: (params) => (
+        <Box>
+          {params.value === 2 && '패밀리장'}
+          {params.value === 1 && '관리자'}
+          {params.value === 0 && '소속원'}
+        </Box>
+      )
+    },
+    {
+      field: 'regTime',
+      headerName: '가입시간',
+      width: 200,
+      renderCell: (params) => (
+        <Box>
+          {`${new Date(params.value).getFullYear()}.${(new Date(params.value).getMonth() + 1).toString().padStart(2, '0')}.${new Date(params.value).getDate().toString().padStart(2, '0')} 오후 ${(new Date(params.value).getHours() % 12).toString().padStart(2, '0')}:${new Date(params.value).getMinutes().toString().padStart(2, '0')}`}
+        </Box>
+      )
+    },
+    {
+      field: 'action',
+      headerName: '행동',
+      width: 200,
+      sortable: false,
+      renderCell: (params) => (
+        <Box>
+          {fam && activeUser.uid === fam.leaderuid && activeUser.uid !== params.row.uid && (
+            <Button variant="contained" color="success" onClick={() => handleBanUser(params.row.uid, params.row.faid)}>
+              내보내기
+            </Button>
+          )}
+        </Box>
+      ),
+    },
+  ];
+  
+  const handleBanUser = async (uid, faid) => {
+    const result = await familyUserConfirm("정말로 내보내시겠습니까?", famname);
 
+    if (result === 1) {
+      statusFamilyUser(faid, uid, -1);
+      queryClient.invalidateQueries('familyuserlist');
+    }
+  };
 
   // 모달창
   const handleOpen = () => {
@@ -114,7 +126,7 @@ function FamilyUserList(props) {
 
   // 패밀리 수정
   const handleFamilyUpdate = (name, faid) => {
-    updateFamily(name, faid);
+    updateFamily(faid, name);
   }
 
   const handleDeleteButton = (faid) => {
@@ -151,7 +163,6 @@ function FamilyUserList(props) {
   }
 
   return (
-
     <>
       <Box sx={{ height: 400, width: '100%' }}>
         <Box>
@@ -168,7 +179,7 @@ function FamilyUserList(props) {
           />
         </Box>
 
-        {activeUser.uid == fam.leaderuid && (
+        {fam && activeUser.uid == fam.leaderuid && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, mr: 3 }}>
             <Button
               variant="outlined"

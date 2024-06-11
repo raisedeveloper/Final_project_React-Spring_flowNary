@@ -90,6 +90,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     let noticeswal;
     let noticechatincrease;
     let noticechatreset;
+    let noticecountupdate;
+    let noticechatcountupdate;
 
     if (activeUser.uid !== -1) {
       const getCount = async () => {
@@ -110,6 +112,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         });
         noticechatreset = stompClient.subscribe(`/user/chatnoticeAll/` + activeUser.uid, (data) => {
           setChatalertCount(0);
+        });
+        noticecountupdate = stompClient.subscribe(`/user/noticecount/` + activeUser.uid, (message) => {
+          const data = JSON.parse(message.body);
+          setAlertCount(data);
+        });
+          noticechatcountupdate = stompClient.subscribe(`/user/noticechatcount/` + activeUser.uid, (message) => {
+          const data = JSON.parse(message.body);
+          setChatalertCount(data);
         });
 
         noticeswal = stompClient.subscribe(`/user/swalnotice/` + activeUser.uid, async (message) => {
@@ -156,6 +166,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       }
       if (noticechatreset) {
         noticechatreset.unsubscribe();
+      }
+      if (noticecountupdate) {
+        noticecountupdate.unsubscribe();
+      }
+      if (noticechatcountupdate) {
+        noticechatcountupdate.unsubscribe();
       }
     };
   }, [activeUser.uid, stompClient, isConnect]);
@@ -253,11 +269,23 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
               borderRadius: '15px', display: 'flex', alignItems: 'center'
             }}
           >
-            <Avatar onClick={goMypage}>
+            <Avatar
+              sx={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', overflow: 'hidden' }}
+              onClick={goMypage}
+            >
               {profile ? (
-                <UserAvatar profileUrl={profile} />
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundImage: `url('https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${profile}')`
+                  }}
+                />
               ) : (
-                <PersonIcon sx={{ width: '100%', height: '100%' }} />
+                <PersonIcon sx={{ width: '85%', height: '90%' }} />
               )}
             </Avatar>
             <Box ml={1.95}>

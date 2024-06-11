@@ -108,7 +108,6 @@ public class UserController {
 		return 0;
 	}
 	
-	// 비밀번호 수정 ((미구현)
 	@PostMapping("/updatepwd")
 	public int userUpdate(@RequestBody UpdateUserDtoPwd dto)
 	{
@@ -145,12 +144,11 @@ public class UserController {
 		return 0;
 	}
 	
-	// 유저 1명의 정보 불러오기
 	@GetMapping("/getUser")
 	public JSONObject getUser(@RequestParam int uid)
 	{
-		System.out.println(uid);
 		User user = userSvc.getUser(uid);
+		
 		if (user == null)
 			return null;
 		
@@ -176,7 +174,6 @@ public class UserController {
 		return userOut;
 	}
 	
-	// 유저의 닉네임과 이메일 정보만 불러오기
 	@GetMapping("/getUserNickEmail")
 	public JSONObject getUserNickname(@RequestParam int uid) {
 		if (uid == -1)
@@ -202,7 +199,6 @@ public class UserController {
 		return jObj;
 	}
 	
-	// 이메일로 유저 정보 불러오기
 	@GetMapping("/getUserByEmail")
 	public JSONObject getUserEmail(@RequestParam String email)
 	{
@@ -233,7 +229,6 @@ public class UserController {
 		return userOut;
 	}
 	
-	// 닉네임 리스트 불러오기 - 설정/회원가입 확인
 	@GetMapping("/nickname")
 	public String nickname(@RequestParam String email, String nickname) {
 		List<User> userList = userSvc.getOthersUserList(email);
@@ -251,7 +246,6 @@ public class UserController {
 		return jArr.toString();
 	}
 
-	// 전화번호 리스트 불러오기 - 설정/회원가입 확인
 	@GetMapping("/tel")
 	public String tel(@RequestParam String email, String tel) {
 		List<User> userList = userSvc.getOthersUserList(email);
@@ -309,7 +303,6 @@ public class UserController {
 		userSvc.updateUserStatus(user);
 		return 0;		
 	}
-
 	
 	@GetMapping("/onPage")
 	public int getUserOnPage(@RequestParam int uid, @RequestParam String page) {

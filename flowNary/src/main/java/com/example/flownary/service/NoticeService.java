@@ -16,7 +16,7 @@ public interface NoticeService {
 	
 	int getNoticeCountType(int uid, int type);
 	
-	int getNoticeCountObject(int oid, int uid);
+	int getNoticeCountObject(int oid, int uid, int type);
 	
 	List<Notice> getNoticeListAll(int uid);
 	

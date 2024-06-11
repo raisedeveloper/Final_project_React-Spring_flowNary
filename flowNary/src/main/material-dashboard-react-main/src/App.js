@@ -20,7 +20,6 @@ import Register from "layouts/authentication/sign-up/RegisterIndex.js";
 import { UserContext } from "api/LocalStorage";
 import { GetWithExpiry } from "api/LocalStorage";
 import BoardUrl from "layouts/home/Board/BoardUrl";
-import Loading from "api/loading";
 
 export default function App() {
   const brandDark = "../public/images/LightLogo.png";
@@ -79,10 +78,7 @@ export default function App() {
   }, [pathname]);
 
   if (loading) {
-    return <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh'
-    }}> <Loading />
-    </div>;;
+    return <div>Loading...</div>;
   }
   if (error) {
     return <div>Error: {error.message}</div>;

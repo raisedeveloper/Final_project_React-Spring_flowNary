@@ -54,6 +54,10 @@ export const WebSocketProvider = ({children}) => {
                 }
             })
         }
+        else {
+            setStompClient(null);
+            setIsConnect(false);
+        }
         
         return () => {
             if (client && client.connected) {

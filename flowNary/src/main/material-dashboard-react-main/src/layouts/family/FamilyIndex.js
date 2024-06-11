@@ -23,29 +23,6 @@ import { useNavigate } from "react-router-dom";
 import { isEmpty } from "api/emptyCheck";
 import Iconify from "components/iconify/iconify";
 import { getFamilyUserList } from "api/axiosGet";
-import Loading from "api/loading";
-
-const familyData = [
-  {
-    avatar: "/static/images/avatar/1.jpg",
-    primary: "등산모임",
-    secondary: "같이 등산하실래요?",
-    name: "nick"
-  },
-  {
-    avatar: "/static/images/avatar/2.jpg",
-    primary: "Summer BBQ",
-    secondary: "Wish I could come, but I'm out of town this…",
-    name: "Travis Howard",
-    secondaryTo: "to Scott, Alex, Jennifer"
-  },
-  {
-    avatar: "/static/images/avatar/3.jpg",
-    primary: "Oui Oui",
-    secondary: "Do you have Paris recommendations? Have you ever…",
-    name: "Sandra Adams"
-  }
-];
 
 
 export default function Family() {
@@ -94,7 +71,6 @@ export default function Family() {
   const filteredFamilyData = !isEmpty(familylist) ? familylist.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
-  console.log(typeof (filteredFamilyData))
 
   const handleOpen = (faid) => {
     setOpen(true);
@@ -156,7 +132,7 @@ export default function Family() {
           }}
           sx={{ width: '35%', marginBottom: 3 }}
         />
-        <Button sx={{ fontSize: 20, color: 'lightslategray' }} onClick={handleNew}><Iconify icon="ic:round-plus" /> Family방 생성</Button>
+        <Button sx={{ fontSize: 20, color: 'lightslategray'}} onClick={handleNew}><Iconify icon="ic:round-plus" /> Family방 생성</Button>
       </Box>
       <Divider sx={{ marginBottom: '10px', color: 'black' }} />
 
@@ -166,9 +142,9 @@ export default function Family() {
             <Grid item xs={12} sm={6} md={6} lg={6} key={index}> {/* 여기서 xs를 12에서 6으로 변경 */}
               <Card sx={{ marginBottom: '20px', borderRadius: '10px', boxShadow: 3, }}>
                 <CardHeader
-                  avatar={<Avatar alt={item.leadername} src={item.leaderprofile} sx={{ cursor: 'pointer' }} onClick={() => handleMyPage(item.leaderuid)} />}
+                  avatar={<Avatar alt={item.leadername} src={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${item.leaderprofile}`} sx={{ cursor: 'pointer' }} onClick={() => handleMyPage(item.leaderuid)} />}
                   title={
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'lightcoral' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold',color:'lightcoral' }}>
                       {item.name}
                     </Typography>
                   }
@@ -184,7 +160,7 @@ export default function Family() {
                 <CardContent onClick={() => handleOpen(item.faid)} sx={{ cursor: 'pointer', }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Iconify style={{ marginLeft: '47px' }} icon="heroicons-solid:users" />
-                    <Typography variant="body2" sx={{ color: 'text.first', marginLeft: 1, fontWeight: '400' }}>
+                    <Typography variant="body2" sx={{ color: 'text.first', marginLeft: 1,fontWeight: '400' }}>
                       유저 수: {item.usercount}
                     </Typography>
                   </Box>
