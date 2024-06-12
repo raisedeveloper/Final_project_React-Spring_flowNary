@@ -1,36 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Icon, Card, Button, Grid, Typography, Box, Input, TextareaAutosize } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AntSwitch } from '../postingStyle.jsx';
 import { UploadImage } from "../../../api/image.js";
-import { GetWithExpiry } from "../../../api/LocalStorage.js";
+import { GetWithExpiry, UserContext } from "../../../api/LocalStorage.js";
 import MDBox from "components/MDBox";
 import { wrong } from "api/alert";
 import { correct } from "api/alert";
 import { insertBoard } from "api/axiosPost";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUser } from "api/axiosGet.js";
 
 export default function Posting() {
   const navigate = useNavigate();
-  const uid = parseInt(GetWithExpiry("uid"));
-  const queryClient = new QueryClient();
-  if (!uid) {
-    navigate("/login");
-  }
-
-  const [nickname, setNickname] = useState('');
-
-  const user = useQuery({
-    queryKey: ['writenickname', uid],
-    queryFn: () => getUser(uid),
-  });
-
-  useEffect(() => {
-    setNickname(user.nickname);
-  }, [user]);
-
+  const queryClient = useQueryClient();
+  const { activeUser } = useContext(UserContext);
+  
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [title, setTitle] = useState('');
@@ -53,6 +39,11 @@ export default function Posting() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    if (activeUser.uid === -1) {
+      wrong("로그인이 필요한 서비스입니다.")
+      navigate("/authentication/sign-in")
+      return;
+    }
 
     const imageList = await Promise.all(
       images.map(async (image) => {
@@ -76,23 +67,23 @@ export default function Posting() {
     correct('성공적으로 작성되었습니다.');
 
     var sendData = JSON.stringify({
-      uid: uid,
+      uid: activeUser.uid,
       title: title,
       bContents: content,
       image: imageList.toString(),
-      nickname: nickname,
+      nickname: activeUser.nickname,
       hashTag: hashTag.toString(),
       isDeleted: isDeleted
     });
 
     await insertBoard(sendData);
-    queryClient.invalidateQueries('boardList');
+    await queryClient.invalidateQueries(['boardList', activeUser.uid]);
 
     setImages([]);
     setPreviewUrls([]);
     setTitle('');
     setContent('');
-    setHashTag('')
+    setHashTag('');
   };
 
   const handleRemoveImage = (index) => {

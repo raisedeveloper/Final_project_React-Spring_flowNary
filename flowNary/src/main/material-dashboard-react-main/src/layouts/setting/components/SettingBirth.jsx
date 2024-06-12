@@ -26,6 +26,9 @@ export default function SettingBirth(props) {
 
   // 생년월일 변경 핸들러
   const handleBirth = (e) => {
+    if (date) {
+      
+    }
     const formattedBirth = dayjs(e).format('YYYY-MM-DD');
     setBirth(formattedBirth);
     props.onBirthChange(formattedBirth);

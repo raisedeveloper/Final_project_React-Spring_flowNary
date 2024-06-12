@@ -43,7 +43,7 @@ public class ChatController {
 	
 	private final SimpMessagingTemplate messageTemplate;
     
-    private HashMap<String, Object> makeChatData(Chat chat) {
+    private HashMap<String, Object> makeChatData(Chat chat, int uid) {
     	
     	HashMap<String, Object> hMap = new HashMap<String, Object>();
 		
@@ -56,6 +56,14 @@ public class ChatController {
 		String lastDm = dSvc.getDmListLast(chat.getCid());
 		hMap.put("lastMessage", (lastDm != null && lastDm != "") ? lastDm : "마지막 메세지가 없습니다");
 		
+		List<Integer> list = cuSvc.getChatUserListExInt(chat.getCid(), uid);
+		if (list.size() > 0) {
+			hMap.put("userone", list.get(0));
+		}
+		else {
+			hMap.put("userone", -1);
+		}
+		
 		return hMap;
     }
     
@@ -67,8 +75,8 @@ public class ChatController {
     	
     	if (chat != null)
     	{
-    		hMap = makeChatData(chat);
-    		hMap.put("newchatcount", nSvc.getNoticeCountObject(cid, uid));
+    		hMap = makeChatData(chat, uid);
+    		hMap.put("newchatcount", nSvc.getNoticeCountObject(cid, uid, 4));
     		JSONObject jObj = new JSONObject(hMap);
     		return jObj;
     	}
@@ -100,8 +108,8 @@ public class ChatController {
     	for (Chat chat: list) {
     		HashMap<String, Object> hMap = new HashMap<String, Object>();
     		
-    		hMap = makeChatData(chat);
-    		hMap.put("newchatcount", nSvc.getNoticeCountObject(chat.getCid(), uid));
+    		hMap = makeChatData(chat, uid);
+    		hMap.put("newchatcount", nSvc.getNoticeCountObject(chat.getCid(), uid, 4));
     		JSONObject jObj = new JSONObject(hMap);
     		jArr.add(jObj);
     	}

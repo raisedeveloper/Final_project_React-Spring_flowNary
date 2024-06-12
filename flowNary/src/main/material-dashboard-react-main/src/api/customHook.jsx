@@ -126,11 +126,9 @@ export const useRemoveFollow = () => {
 
     const { mutate } = useMutation({
         mutationFn: deleteFollow,
-        onSuccess: (data, variables) => {
-            queryClient.setQueryData('followlist', (oldData) =>
-                oldData ? oldData.filter(follow => follow.id !== variables) : []);
-            queryClient.setQueryData('followmelist', (oldData) =>
-                oldData ? oldData.filter(follow => follow.id !== variables) : []);
+        onSuccess: () => {
+            queryClient.invalidateQueries('followlist');
+            queryClient.invalidateQueries('followmelist');
         },
     });
 

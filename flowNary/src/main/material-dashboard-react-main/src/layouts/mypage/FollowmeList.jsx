@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { useQuery } from "@tanstack/react-query";
+import React, { act, useContext, useState } from 'react';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Typography, List, Paper, ListItem, Avatar, Button, Box, TextField, InputAdornment, IconButton } from '@mui/material';
 import { UserContext } from 'api/LocalStorage';
@@ -16,19 +16,20 @@ import Loading from 'api/loading';
 export default function FollowMeList(props) {
 
   const uid = props.uid;
+  const { activeUser } = useContext(UserContext); 
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
 
   const handleClose3 = props.handleClose3
 
   const followMeList = useQuery({
-    queryKey: ['followMelist', uid],
+    queryKey: ['followmelist', uid],
     queryFn: () => getFollowMeList(uid),
   });
-
 
   const deleteFollowing = useRemoveFollow();
   const deleteFollowForm = (sendData) => {
@@ -36,17 +37,15 @@ export default function FollowMeList(props) {
   }
 
   const deleteFollowButton = (fid) => {
-    wrong("플로우 취소되었습니다")
+    wrong("플로우 취소되었습니다");
     deleteFollowForm(fid);
+    queryClient.invalidateQueries('followmelist');
   }
 
   const handleMyPage = (uid) => {
     handleClose3();
     navigate("/mypage", { state: { uid: uid } });
   }
-
-
-
 
   if (followMeList.isLoading) {
       return (
@@ -100,19 +99,21 @@ export default function FollowMeList(props) {
                   sx={{ cursor: 'pointer', width: 56, height: 56, mr: 2 }}>
                   <UserAvatar profileUrl={data.profile} size={"medium"} />
                 </Avatar>
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="div">
+                <Box sx={{ flexGrow: 1 }} onClick={() => handleMyPage(data.uid)}>
+                  <Typography variant="h6" component="div" >
                     {data.nickname}
                   </Typography>
                 </Box>
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<Close />}
-                  onClick={() => deleteFollowButton(data.fid)}
-                >
-                  해제
-                </Button>
+                {data.uid === activeUser.uid && (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    startIcon={<Close />}
+                    onClick={() => deleteFollowButton(data.fid)}
+                  >
+                    해제
+                  </Button>
+                )}
               </Paper>
             ))
         ) : (

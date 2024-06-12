@@ -150,10 +150,11 @@ export default function AdminBoardList({ selected, handleClick }) {
   }
 
 
+
   // 좋아요 버튼 누를 때 넘기기
   function handleButtonLike(bid, uid2) {
     if (uid === -1) {
-      wrong("로그인 해주세요.");
+      wrong("로그인이 필요한 서비스입니다.");
       return;
     }
 
@@ -171,7 +172,7 @@ export default function AdminBoardList({ selected, handleClick }) {
   // 댓글 좋아요 버튼 누를 때 넘기기
   function handleButtonLikeReply(rid, uid2) {
     if (uid === -1) {
-      wrong("로그인 해주세요.");
+      wrong("로그인이 필요한 서비스입니다.");
       return;
     }
 
@@ -188,7 +189,7 @@ export default function AdminBoardList({ selected, handleClick }) {
   // 대댓글 좋아요 버튼 누를 때 넘기기
   function handleButtonLikeReReply(rrid, uid2) {
     if (uid === -1) {
-      wrong("로그인 해주세요.");
+      wrong("로그인이 필요한 서비스입니다.");
       return;
     }
 

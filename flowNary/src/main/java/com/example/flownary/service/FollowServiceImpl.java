@@ -41,6 +41,16 @@ public class FollowServiceImpl implements FollowService{
 	}
 	
 	@Override
+	public int getFollowCount(int uid) {
+		return fDao.getFollowCount(uid);
+	}
+	
+	@Override
+	public int getFollowFuidCount(int fuid) {
+		return fDao.getFollowFuidCount(fuid);
+	}
+	
+	@Override
 	public List<Integer> getFollowIntegerListByFuid(int fuid) {
 		return fDao.getFollowIntegerListByFuid(fuid);
 	}

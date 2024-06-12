@@ -104,6 +104,7 @@ public class DmListController {
         jObj.put("name", chat.getName());
         jObj.put("userCount", cuSvc.getChatUserCount(chat.getCid()));
         jObj.put("targetuser", fuid);
+        jObj.put("senduser", idmList.getUid());
         messagingTemplate.convertAndSend("/topic/chatlistnew", jObj);
     }
 

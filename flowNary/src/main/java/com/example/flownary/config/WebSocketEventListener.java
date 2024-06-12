@@ -83,6 +83,10 @@ public class WebSocketEventListener {
     }
 
     public boolean isUserOnPage(int userId, String page) {
+    	if (page.equals("chatroom")) {
+    		String cpage = USER_PAGE.get(Integer.toString(userId));
+    		return cpage != null && cpage.contains(page);
+    	}
         return page.equals(USER_PAGE.get(Integer.toString(userId)));
     }
     

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 
 // TimeAgo + 한글화
@@ -57,9 +57,10 @@ import { getFollowList } from "api/axiosGet.js";
 import UserAvatar from "api/userAvatar.js";
 import UserLoginService from "ut/userLogin-Service.jsx";
 import Loading from "api/loading.js";
+import { getFollowCount } from "api/axiosGet.js";
 function Mypage() {
 
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   timeago.register('ko', ko);
 
   // useLocation으로 state 받기
@@ -104,13 +105,13 @@ function Mypage() {
   });
 
   const followMeListCount = useQuery({
-    queryKey: ['followMelistcount', uid],
-    queryFn: () => getFollowMeList(uid),
+    queryKey: ['followmecount', uid],
+    queryFn: () => getFollowCount(uid, 1),
   });
 
   const followListCount = useQuery({
-    queryKey: ['followlistcount', uid],
-    queryFn: () => getFollowList(uid),
+    queryKey: ['followcount', uid],
+    queryFn: () => getFollowCount(uid, 0),
   });
 
   const boardList = board ? board : [];
@@ -308,6 +309,10 @@ function Mypage() {
     } else {
       correct('언플로우 되었습니다!');
     }
+    queryClient.invalidateQueries('followlist');
+    queryClient.invalidateQueries('followmelist');
+    queryClient.invalidateQueries('followcount');
+    queryClient.invalidateQueries('followmecount');
   }
 
   if (board.isLoading || user.isLoading) {
@@ -389,7 +394,7 @@ function Mypage() {
                     플로워
                   </Typography>
                   <Typography fontSize={'large'} sx={{ mr: 1, fontWeight: 'bold' }}>
-                    {followMeListCount.data ? followMeListCount.data.length : 0}
+                    {followMeListCount.data ? followMeListCount.data : 0}
                   </Typography>
                 </Button>
               </Grid>
@@ -399,7 +404,7 @@ function Mypage() {
                     플로잉
                   </Typography>
                   <Typography fontSize={'large'} sx={{ mr: 1, fontWeight: 'bold' }}>
-                    {followListCount.data ? followListCount.data.length : 0}
+                    {followListCount.data ? followListCount.data : 0}
                   </Typography>
                 </Button>
               </Grid>

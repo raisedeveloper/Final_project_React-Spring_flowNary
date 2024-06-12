@@ -12,8 +12,6 @@ public interface ReplyService {
 	
 	List<Reply> getReplyListByUid(int uid, int offset, int limit);
 	
-	int getReplyCount(int bid);
-	
 	void insertReply(Reply reply);
 	
 	void updateReply(Reply reply);

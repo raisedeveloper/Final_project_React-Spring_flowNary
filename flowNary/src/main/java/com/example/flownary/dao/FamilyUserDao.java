@@ -15,7 +15,7 @@ import com.example.flownary.entity.FamilyUser;
 @Mapper
 public interface FamilyUserDao {
 
-	@Select("select * from familyuser where faid=#{faid} and uid=#{uid}")
+	@Select("select * from familyuser where faid=#{faid} and uid=#{uid} and status>-1")
 	FamilyUser getFamilyUser(int faid, int uid);
 	
 	@Select("select * from familyuser where faid=#{faid}")
@@ -43,4 +43,7 @@ public interface FamilyUserDao {
 	
 	@Update("update familyuser set name=#{name}, message=#{message} where faid=#{faid} and uid=#{uid}")
 	void updateFamilyUserMessage(FamilyUserUpdateDto familyUser);
+	
+	@Update("update familyuser set status=-1 where faid=#{faid}")
+	void deleteFamilyUserAll(int faid);
 }

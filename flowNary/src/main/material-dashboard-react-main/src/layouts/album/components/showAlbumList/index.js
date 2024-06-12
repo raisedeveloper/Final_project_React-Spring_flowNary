@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
-import { CardMedia, Grid, Modal } from "@mui/material";
+import { CardMedia, Grid, Modal, IconButton } from "@mui/material";
 import MDBox from "components/MDBox";
 import YearSelect from '../yearSelect';
 import { getMyBoardList } from "api/axiosGet";
@@ -8,6 +8,9 @@ import { GetWithExpiry } from "api/LocalStorage";
 import Carousels from "./carousel";
 import Loading from "api/loading";
 import './album.css';
+import { border } from '@cloudinary/url-gen/qualifiers/background';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 function ShowAlbumList() {
   const uid = parseInt(GetWithExpiry('uid'));
@@ -28,13 +31,26 @@ function ShowAlbumList() {
     setCurrentImages([]);
   };
 
+  const handleNextImage = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % currentImages.length);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + currentImages.length) % currentImages.length);
+  };
+
   const { data: board, isLoading, error } = useQuery({
     queryKey: ['board', uid],
     queryFn: () => getMyBoardList(uid),
   });
 
   if (isLoading) {
-    return <div><Loading /></div>;
+    return (
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center', height: '65vh'
+      }}> <Loading />
+      </div>
+    );
   }
   if (error) return <div>Error loading data</div>;
 
@@ -137,22 +153,67 @@ function ShowAlbumList() {
           )}
 
           <Modal open={open} onClose={handleClose}>
-            <MDBox
-              sx={{
+            <div
+              style={{
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '70%',
-                height: 'auto',
-                bgcolor: 'transparent',
-                boxShadow: 'none',
-                p: 0,
-              }}
-            >
-              <Carousels images={currentImages}></Carousels>
-            </MDBox>
+                maxWidth: '80vw',
+                maxHeight: '80vh',
+                backgroundColor: 'white',
+                boxShadow: 24,
+                p: 4,
+              }}>
+              <IconButton
+                sx={{
+                  position: 'absolute',
+                  left: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  },
+                }}
+                onClick={handlePrevImage}
+              >
+                <NavigateBeforeIcon />
+              </IconButton>
+
+              <IconButton
+                sx={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  },
+                }}
+                onClick={handleNextImage}
+              >
+                <NavigateNextIcon />
+              </IconButton>
+
+              <CardMedia
+                component="img"
+                sx={{
+                  width: '80vw',
+                  height: '80vh',
+                  objectFit: 'contain',
+                  p: 0,
+                  m: 0,
+                }}
+                image={`https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/${currentImages[currentIndex]}`}
+                alt="Enlarged Image"
+              />
+            </div>
           </Modal>
+
         </Grid>
       </MDBox>
     </MDBox>

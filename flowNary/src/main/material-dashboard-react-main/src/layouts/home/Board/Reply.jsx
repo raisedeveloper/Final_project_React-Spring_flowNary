@@ -141,6 +141,10 @@ export default function Reply(props) {
   };
 
   const handleButtonClick = (rid) => {
+    if (activeUser.uid < 0) {
+      wrong("로그인이 필요한 서비스입니다.");
+      return;
+    }
     setRidtext(rid);
     setFormChange((prev) => ({
       ...prev,
@@ -191,10 +195,16 @@ export default function Reply(props) {
     }
   }
 
+  const replyList2 = { isLoading: true };
+  const user2 = { isLoading: false };
+  const board2 = { isLoading: false };
+
   if (replyList.isLoading || user.isLoading || board.isLoading) {
-    return <div><Loading /></div>;
+    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Loading />
+    </div>;
   }
- 
+
   return (
     <>
       {/* 댓글 내용 List */}
@@ -255,15 +265,21 @@ export default function Reply(props) {
             <input
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="댓글을 입력 하세요."
+              placeholder={activeUser.uid > -1 ? "댓글을 입력하세요." : "로그인이 필요한 서비스입니다."}
               className="custom-input"
               style={{
                 border: 'none',
-                borderBottom: '1px solid rgba(0,0,0,0.1)' // 아래쪽에만 연한 선 추가
+                borderBottom: '1px solid rgba(0,0,0,0.1)', // 아래쪽에만 연한 선 추가
+                pointerEvents: activeUser.uid > -1 ? 'auto' : 'none', // uid가 -1보다 크면 입력 가능, 그렇지 않으면 비활성화
+                opacity: activeUser.uid > -1 ? 1 : 0.5 // uid가 -1보다 크면 완전히 투명하지 않게, 그렇지 않으면 완전히 투명하게
               }}
               onKeyUp={(e) => handleKeyPress(e, text)}
             />
-            <Button onClick={(e) => handleFormSubmit(e, text)} sx={{ padding: 0 }} style={{ color: 'coral' }}>게시</Button>
+            <Button onClick={(e) => handleFormSubmit(e, text)}
+              sx={{ padding: 0 }}
+              style={{ color: 'coral' }}
+              disabled={activeUser.uid < 0} >
+              게시</Button>
           </MDBox>
         </MDBox>
 
@@ -292,8 +308,12 @@ export default function Reply(props) {
                 <Grid style={{ display: 'flex', alignItems: 'center' }}>
                   <Grid item xs={12} md={6} lg={4} style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ flex: 1, color: 'gray', fontSize: '14px', paddingLeft: 50, }} >  <TimeAgo datetime={data.modTime} locale='ko' />ㆍ</span>
-                    <Button sx={{ color: 'lightcoral', padding: 0 }} onClick={() => handleButtonLikeReply(data.rid, data.uid)}>좋아요 {data.likeCount}개  {data.liked ?
-                      <FavoriteIcon sx={{ color: 'lightcoral' }} /> : <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}</Button>
+                    <Button sx={{ color: 'lightcoral', padding: 0 }}
+                      onClick={() => handleButtonLikeReply(data.rid, data.uid)}>좋아요 {data.likeCount}개
+                      {data.liked ?
+                        <FavoriteIcon sx={{ color: 'lightcoral' }} /> :
+                        <FavoriteBorderIcon sx={{ color: 'lightcoral' }} />}
+                    </Button>
 
                     {!formChange[data.rid] &&
                       <>
@@ -318,7 +338,8 @@ export default function Reply(props) {
                       onClick={(e) => e.stopPropagation()}
                       onKeyUp={(e) => { handleKeyPress2(e, formInputs[data.rid], data.rid); if (e && e.key === 'Enter') { formChange[data.rid] = false } }}
                     />
-                    <Button onClick={(e) => { handleFormSubmit2(e, formInputs[data.rid], data.rid); formChange[data.rid] = false; }} sx={{ color: 'lightcoral', padding: 0 }}>게시</Button>
+                    <Button onClick={(e) => { handleFormSubmit2(e, formInputs[data.rid], data.rid); formChange[data.rid] = false; }}
+                      sx={{ color: 'lightcoral', padding: 0 }}>게시</Button>
                     <Button onClick={() => handleButtonClick(data.rid)} sx={{ color: 'lightcoral', padding: 0 }}>취소</Button>
                   </Box>
                 }

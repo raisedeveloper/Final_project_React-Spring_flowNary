@@ -27,24 +27,6 @@ export default function ChatList() {
         const chatlist = await getChatList(activeUser.uid, count, 0);
         if (chatlist) {
           setList(chatlist);
-
-          const cidList = chatlist.map((chat) => chat.cid);
-          const promises = cidList.map(async (cid) => {
-            const usernumlist = await getChatUserList(cid);
-            if (usernumlist) {
-              for (let i = 0; i < usernumlist.length; i++) {
-                if (usernumlist[i].uid !== activeUser.uid)
-                  return usernumlist[i].uid;
-              }
-            } else {
-              console.error(`Failed to get user list for cid: ${cid}`);
-              return null;
-            }
-          });
-
-          Promise.all(promises).then((usernumList) => {
-            setUsernum(usernumList); // 추출된 UID 목록으로 usernum 설정
-          });
         } else {
           console.error("Chat list is empty or not available");
         }
@@ -77,6 +59,7 @@ export default function ChatList() {
                 name: chat.name,
                 lastMessage: data.lastMessage,
                 newchatcount: chat.newchatcount + 1,
+                userone: chat.userone,
               }, ...prevList.slice(0, indexcid), ...prevList.slice(indexcid + 1)];
               return newlist;
             }
@@ -98,6 +81,7 @@ export default function ChatList() {
                   name: data.name,
                   lastMessage: data.lastMessage,
                   newchatcount: 1,
+                  userone: data.senduser,
                 }
                 , prevList
               ]
@@ -208,12 +192,12 @@ export default function ChatList() {
                           }
                         >
                           <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
-                            <UserAvatar uid={usernum[idx]} />
+                            <UserAvatar uid={data.userone} />
                           </Avatar>
                         </Badge>
                       ) : (
                         <Avatar sx={{ width: 50, height: 50, mr: 1 }}>
-                          <UserAvatar uid={usernum[idx]} />
+                          <UserAvatar uid={data.userone} />
                         </Avatar>
                       )}
                     </ListItemAvatar>

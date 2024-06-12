@@ -22,19 +22,17 @@ public class Notice {
 	LocalDateTime regTime;
 	int onOff;
 	
-	public String getnContents() {
-		return this.nContents;
-	}
-	
-	public void setnContents(String nContents) {
-		this.nContents = nContents; 
-	}
-	
-	
 	@Override
 	public String toString() {
 		return "Notice [nid=" + nid + ", uid=" + uid + ", suid=" + suid + ", type=" + type + ", oid=" + oid + ", nContents=" + nContents
 				+ ", regTime=" + regTime + ", onOff=" + onOff + "]";
 	}
-	
+
+	public String getnContents() {
+		return nContents;
+	}
+
+	public void setnContents(String nContents) {
+		this.nContents = nContents;
+	}
 }

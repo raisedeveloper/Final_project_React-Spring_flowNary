@@ -31,4 +31,5 @@ public interface UserService {
 	void updateUserStatus(User user);
 	
 	List<User> getUserList();
+	
 }

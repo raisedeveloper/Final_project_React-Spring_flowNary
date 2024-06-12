@@ -24,9 +24,9 @@ public interface ChatDao {
 			+ " limit 1")
 	Chat getChatUid(int uid1, int uid2);
 	
-	@Select("select c.*, u.* from chat c"
+	@Select("select c.* from chat c"
 			+ " join chatuser u on c.cid=u.cid and u.uid=#{uid}"
-			+ " where c.status=0 and u.status=0"
+			+ " where u.status>-1"
 			+ " order by u.status desc, c.statusTime desc"
 			+ " limit #{count}")
 	List<Chat> getChatList(int uid, int count);
@@ -40,7 +40,7 @@ public interface ChatDao {
 	
 	@Insert("insert into chat values(default, #{status}, default, #{name})")
 	@Options(useGeneratedKeys = true, keyProperty = "cid", keyColumn = "cid")
-	int insertChat(Chat chat);
+	void insertChat(Chat chat);
 	
 	@Update("update chat set status=#{status}, name=#{name} where cid=#{cid}")
 	void updateChat(int status, String name, int cid);

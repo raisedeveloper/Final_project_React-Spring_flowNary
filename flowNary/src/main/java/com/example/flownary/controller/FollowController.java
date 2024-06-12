@@ -28,85 +28,98 @@ public class FollowController {
 
 	private final FollowService fSvc;
 	private final UserService uSvc;
-
+	private final NoticeController nC;
+	
 	private HashMap<String, Object> makeFollowData(Follow follow, int type, int uid) {
 		HashMap<String, Object> hMap = new HashMap<>();
-
+		
 		hMap.put("fid", follow.getFid());
 		hMap.put("time", follow.getTime());
-
+		
 		GetUserNickEmailDto user = new GetUserNickEmailDto();
-
+		
 		if (type == 0) {
 			hMap.put("uid", uid);
 			hMap.put("fuid", follow.getFuid());
-
+			
 			user = uSvc.getUserNicknameEmail(follow.getFuid());
-		} else if (type == 1) {
+		}
+		else if (type == 1) {			
 			hMap.put("fuid", uid);
 			hMap.put("uid", follow.getUid());
-
+			
 			user = uSvc.getUserNicknameEmail(follow.getUid());
 		}
-
+		
 		hMap.put("profile", user.getProfile());
 		if (user.getNickname() != null && user.getNickname() != "") {
-			hMap.put("nickname", user.getNickname());
-		} else {
+			hMap.put("nickname", user.getNickname());    			
+		}
+		else {
 			hMap.put("nickname", user.getEmail().split("@")[0]);
 		}
-
+		
 		return hMap;
 	}
-
+	
 	// 특정 유저의 팔로우 여부를 검사하기 위한 매핑
 	@GetMapping("/get")
 	public int getFollow(@RequestParam int uid, @RequestParam int fuid) {
 		int fid = -1;
-
+		
 		return fid;
 	}
-
+	
 	// 내가 팔로우한 사람 목록
 	@GetMapping("/getList")
 	public JSONArray getFollowList(@RequestParam int uid) {
-
+		
 		List<Follow> list = fSvc.getFollowList(uid);
-
+		
 		if (list.size() == 0)
 			return null;
-
+		
 		JSONArray jArr = new JSONArray();
-
-		for (Follow follow : list) {
+		
+		for (Follow follow: list) {
 			HashMap<String, Object> hMap = makeFollowData(follow, 0, uid);
 			JSONObject jObj = new JSONObject(hMap);
 			jArr.add(jObj);
 		}
-
+		
 		return jArr;
 	}
-
+	
 	// 나를 팔로우한 사람 목록
-	@GetMapping("getMyList")
+	@GetMapping("/getMyList")
 	public JSONArray getFollowedList(@RequestParam int fuid) {
-
+		
 		List<Follow> list = fSvc.getFollowListByFuid(fuid);
-
-		if (list.size() == 0)
-			return null;
-
 		JSONArray jArr = new JSONArray();
-
-		for (Follow follow : list) {
+		
+		if (list.size() == 0)
+			return jArr;
+		
+		for (Follow follow: list) {
 			HashMap<String, Object> hMap = makeFollowData(follow, 1, fuid);
 			JSONObject jObj = new JSONObject(hMap);
 			jArr.add(jObj);
 		}
-
+		
 		return jArr;
 	}
-
+	
+	@GetMapping("/getCount")
+	public int getFollowCount(@RequestParam int uid, @RequestParam int type) {
+		
+		if (type == 0) {
+			return fSvc.getFollowCount(uid);
+		}
+		else {
+			return fSvc.getFollowFuidCount(uid);
+		}
+	}
+	
 	@PostMapping("/insert")
 	public int insertFollow(@RequestBody insertFollowDto dto) {
 		if (dto.getUid() == dto.getFuid()) {
@@ -121,6 +134,8 @@ public class FollowController {
 			follow.setFuid(dto.getFuid());
 			
 			fSvc.insertFollow(follow);
+			follow = fSvc.getFollowUid(dto.getUid(), dto.getFuid());
+			nC.insertNotice(dto.getUid(), 3, follow.getFid(), dto.getFuid());
 			return 1;
 		}
 		else {
@@ -128,12 +143,11 @@ public class FollowController {
 			return 2;
 		}
 	}
-
+	
 	@PostMapping("/delete")
-
 	public int deleteFollow(@RequestBody JSONObject fid) {
 		fSvc.deleteFollow(Integer.parseInt(fid.get("fid").toString()));
-
+		
 		return 0;
 	}
 }

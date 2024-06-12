@@ -17,13 +17,13 @@ import Loading from 'api/loading';
 export default function FollowList(props) {
 
   const uid = props.uid;
+  const { activeUser } = useContext(UserContext); 
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleClose2 = props.handleClose2
 
   const navigate = useNavigate();
-
 
   const followList = useQuery({
     queryKey: ['followlist', uid],
@@ -98,19 +98,21 @@ export default function FollowList(props) {
                   sx={{ cursor: 'pointer', width: 56, height: 56, mr: 2 }}>
                   <UserAvatar profileUrl={data.profile} size={"medium"} />
                 </Avatar>
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="div">
+                <Box sx={{ flexGrow: 1 }} onClick={() => handleMyPage(data.fuid)}>
+                  <Typography variant="h6" component="div" >
                     {data.nickname}
                   </Typography>
                 </Box>
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<Close />}
-                  onClick={() => deleteFollowButton(data.fid)}
-                >
-                  해제
-                </Button>
+                {(uid === activeUser.uid) && (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    startIcon={<Close />}
+                    onClick={() => deleteFollowButton(data.fid)}
+                  >
+                    해제
+                  </Button>
+                )}
               </Paper>
             ))
         ) : (

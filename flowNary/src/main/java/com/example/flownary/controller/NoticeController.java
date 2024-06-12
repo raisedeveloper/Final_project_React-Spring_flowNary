@@ -22,7 +22,6 @@ import com.example.flownary.dto.Notice.insertNoticedto;
 import com.example.flownary.dto.User.GetUserNickEmailDto;
 import com.example.flownary.entity.Family;
 import com.example.flownary.entity.Notice;
-import com.example.flownary.service.DmListService;
 import com.example.flownary.service.FamilyService;
 import com.example.flownary.service.NoticeService;
 import com.example.flownary.service.UserService;
@@ -40,7 +39,6 @@ public class NoticeController {
 	private final NoticeService nSvc;
 	private final UserService uSvc;
 	private final FamilyService fSvc;
-	private final DmListService dSvc;
 	private final WebSocketEventListener wel;
 	
 	private final SimpMessagingTemplate noticeTemplate;
@@ -146,6 +144,9 @@ public class NoticeController {
 		
 		List<Notice> list = new ArrayList<>();
 		for (int uid: uidlist) {
+			if (type == 4 && wel.isUserOnPage(uid, "chatroom" + oid)) {
+				continue;
+			}
 			notice.setUid(uid);
 			list.add(notice);
 			publishNotice(notice);
@@ -203,6 +204,19 @@ public class NoticeController {
     	log.info("publishChatNotice_uid : {}", uid);
     	
     	noticeTemplate.convertAndSend("/user/chatnoticeAll/" + uid, uid);
+    }
+    
+    @MessageMapping("/UpdateNoticeCount")
+    public void publishNoticeCount(int uid, int count, int type) {
+    	log.info("publishNoticeCount_count : {}", count);
+    	
+    	if (type == 0) {    		
+    		noticeTemplate.convertAndSend("/user/noticecount/" + uid, count);
+    	}
+    	else {
+    		noticeTemplate.convertAndSend("/user/noticechatcount/" + uid, count);
+    	}
+    	
     }
     
     public void publishSwalNotice(Notice notice) {
@@ -418,6 +432,15 @@ public class NoticeController {
 		}
 		else {			
 			nSvc.removeNoticeSpecific(dto.getUid(), dto.getType(), dto.getOid());
+		}
+		
+		int count = nSvc.getNoticeCount(dto.getUid()) - nSvc.getNoticeCountType(dto.getUid(), 4);
+		int ccount = nSvc.getNoticeCountType(dto.getUid(), 4);
+		if (dto.getType() != 4) {
+			publishNoticeCount(dto.getUid(), count, 0);
+		}
+		else {
+			publishNoticeCount(dto.getUid(), ccount, 1);
 		}
 		
 		return 0;
