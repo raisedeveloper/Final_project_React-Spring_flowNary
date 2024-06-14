@@ -162,13 +162,13 @@ public class BoardController {
 		
 		switch(type) {
 		case 1:
-			list = bSvc.getBoardList(count, field, query);			
+			list = bSvc.getBoardList(count <= 0 ? Integer.MAX_VALUE : count, field, query);			
 			break;
 		case 2:
 			List<String> fieldList = new ArrayList<>();
 			fieldList.add(field);
 			fieldList.add(field2);
-			list = bSvc.getBoardListSearch(count, fieldList, query);
+			list = bSvc.getBoardListSearch(count <= 0 ? Integer.MAX_VALUE : count, fieldList, query);
 			break;
 		case 3: 
 			List<String> fieldList1 = new ArrayList<>();

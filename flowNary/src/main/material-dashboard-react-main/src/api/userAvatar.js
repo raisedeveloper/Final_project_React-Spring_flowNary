@@ -16,7 +16,7 @@ const UserAvatar = ({ profileUrl, size, uid }) => {
     queryFn: () => {
       if (!profileUrl && uid) { // UID가 존재하는 경우에만 데이터를 가져옴
         return getUser(uid);
-      } else {
+      } else if (uid === -1 || !uid) {
         return null; // UID가 없는 경우 null 반환
       }
     },

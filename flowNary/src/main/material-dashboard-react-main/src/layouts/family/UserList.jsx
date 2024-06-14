@@ -12,6 +12,8 @@ import { deleteFamily } from "api/axiosPost";
 import { isEmpty } from "api/emptyCheck";
 import { familyUserConfirm } from "api/alert";
 import { statusFamilyUser } from "api/axiosPost";
+import Loading from "api/loading";
+import { correct } from "api/alert";
 
 function FamilyUserList(props) {
 
@@ -127,6 +129,8 @@ function FamilyUserList(props) {
   // 패밀리 수정
   const handleFamilyUpdate = (name, faid) => {
     updateFamily(faid, name);
+    correct('수정 완료');
+    queryClient.invalidateQueries('familylist');
   }
 
   const handleDeleteButton = (faid) => {

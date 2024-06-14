@@ -1,59 +1,61 @@
 // @mui material components
-import Grid from "@mui/material/Grid";
-import axios from "axios";
+import {
+  Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider,
+  Grid, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, List, ListItem,
+  Popper, Paper, Accordion
+} from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CloseIcon from '@mui/icons-material/Close';
+import PersonIcon from '@mui/icons-material/Person';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-
+import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-
 // Dashboard components
 import TodoList from "./todoList/TodoListIndex";
-import { Avatar, Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Icon, IconButton, Modal, Stack, Popover, Dialog, Typography, List, ListItem, Popper, Paper, Accordion, } from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-
-
-import { Bar } from "react-chartjs-2";
-import MDTypography from "components/MDTypography";
-import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import BoardDetail from "./Board/BoardDetail";
 import Write from './write';
-import CloseIcon from '@mui/icons-material/Close';
-import PersonIcon from '@mui/icons-material/Person';
+import AppTasks from '../admin/statistics/app-tasks';
+import ChatList from "layouts/chatting/ChattingSide";
 
-import { useLocation, useNavigate } from "react-router-dom";
+// API and custom hooks
+import axios from "axios";
 import { GetWithExpiry } from "api/LocalStorage";
+import { UserContext } from "api/LocalStorage";
 import { useAddLike, useGetUserNicknameLS } from "api/customHook";
 import { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { getBoardList, getBoardListCount } from "api/axiosGet";
-import { getBoard } from "api/axiosGet";
+import {
+  getBoardList, getBoardListCount, getDeclarationList, getBoard
+} from "api/axiosGet";
+import {
+  deleteNoticeSpecific, deleteBoard, insertDeclaration
+} from "api/axiosPost";
+
+// Other utilities
+import UserAvatar from "api/userAvatar";
+import Loading from "api/loading";
+import { deleteConfirm, Declaration, wrong } from "api/alert";
 import TimeAgo from "timeago-react";
 import * as timeago from 'timeago.js';
 import ko from 'timeago.js/lib/lang/ko';
-
-
-import AppTasks from '../admin/statistics/app-tasks';
-import { UserContext } from "api/LocalStorage";
-import { deleteBoard } from "api/axiosPost";
-import { deleteConfirm } from "api/alert";
 import Iconify from "components/iconify/iconify";
-import { Declaration } from "api/alert";
-import { insertDeclaration } from "api/axiosPost";
-import { wrong } from "api/alert";
-import ChatList from "layouts/chatting/ChattingSide";
-
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import MuiAccordion from '@mui/material/Accordion';
-import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import styled from "@emotion/styled";
-import UserAvatar from "api/userAvatar";
-import Loading from "api/loading";
-import { deleteNoticeSpecific } from "api/axiosPost";
+import { useLocation, useNavigate } from "react-router-dom";
+
+// React and other libraries
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Bar } from "react-chartjs-2";
+
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
@@ -77,21 +79,23 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
+// 신고 게시물 리스트 상에서 지우기 -> 나중에 백으로 처리 가능한지?
+const fetchDeclarationList = async () => {
+  const declarationList = await getDeclarationList();
+  return declarationList.map(item => item.bid); // 신고된 게시물의 ID만 추출
+}
+
+
 export default function Home() {
   timeago.register('ko', ko);
   const queryClient = useQueryClient();
+  const [declarationList, setDeclarationList] = useState([]);
   const [expanded, setExpanded] = useState({});
-
   const [expandeds, setExpandeds] = useState('panel1');
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpandeds(newExpanded ? panel : false);
   };
-
-  // const Transition = React.forwardRef(function Transition(props, ref) {
-  //   return <Slide direction="right" ref={ref} {...props} />;
-  // });
-
 
   const handleToggle = (bid) => {
     setExpanded((prevExpanded) => ({
@@ -101,23 +105,17 @@ export default function Home() {
   };
 
 
-  /////////////////////////////////////////////////////////////////////
+
   // 유저 정보 받아오기
-
-
   const navigate = useNavigate();
-
 
   const email = GetWithExpiry("email");
   const profile = GetWithExpiry("profile");
-
-
   const [bid, setBid] = useState(0);
   const [index, setIndex] = useState(0);
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
   const [currentBid, setCurrentBid] = useState(null);
-
   const nickname = useGetUserNicknameLS();
 
   // useLocation으로 state 받기
@@ -161,6 +159,15 @@ export default function Home() {
 
   /////////////////// useQuery로 BoardList 받기 ///////////////////
 
+  // 신고된 게시물 목록 가져오기
+  useEffect(() => {
+    const fetchDeclarations = async () => {
+      const declarationIDs = await fetchDeclarationList();
+      setDeclarationList(declarationIDs);
+    };
+    fetchDeclarations();
+  }, []);
+
 
   const { data: boardList, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['boardList', uid],
@@ -182,6 +189,8 @@ export default function Home() {
     queryFn: () => getBoardListCount(),
     placeholderData: (p) => p,
   })
+
+  const filteredBoardList = boardList?.pages?.map(page => page.filter(data => !declarationList.includes(data.bid)));
 
 
   useEffect(() => {
@@ -380,8 +389,8 @@ export default function Home() {
                 <Write />
               </Box>
               <Grid container spacing={3}>
-                {(boardList && allcount && !isLoading) ? (
-                  boardList.pages.map((page, index) => (
+                {(filteredBoardList && allcount && !isLoading) ? (
+                  filteredBoardList.map((page, index) => (
                     <React.Fragment key={index}>
                       {page && page.map((data, idx) => (
                         <Grid key={idx} item xs={12} md={12} lg={6}>

@@ -150,6 +150,7 @@ export default function AdminBoardList({ selected, handleClick }) {
   }
 
 
+
   // 좋아요 버튼 누를 때 넘기기
   function handleButtonLike(bid, uid2) {
     if (uid === -1) {

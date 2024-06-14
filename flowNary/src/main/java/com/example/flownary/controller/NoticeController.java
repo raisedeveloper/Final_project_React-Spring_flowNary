@@ -144,6 +144,9 @@ public class NoticeController {
 		
 		List<Notice> list = new ArrayList<>();
 		for (int uid: uidlist) {
+			if (type == 4 && wel.isUserOnPage(uid, "chatroom" + oid)) {
+				continue;
+			}
 			notice.setUid(uid);
 			list.add(notice);
 			publishNotice(notice);
@@ -433,8 +436,6 @@ public class NoticeController {
 		
 		int count = nSvc.getNoticeCount(dto.getUid()) - nSvc.getNoticeCountType(dto.getUid(), 4);
 		int ccount = nSvc.getNoticeCountType(dto.getUid(), 4);
-		System.out.println(count);
-		System.out.println(ccount);
 		if (dto.getType() != 4) {
 			publishNoticeCount(dto.getUid(), count, 0);
 		}

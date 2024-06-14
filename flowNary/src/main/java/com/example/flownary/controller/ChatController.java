@@ -57,8 +57,12 @@ public class ChatController {
 		hMap.put("lastMessage", (lastDm != null && lastDm != "") ? lastDm : "마지막 메세지가 없습니다");
 		
 		List<Integer> list = cuSvc.getChatUserListExInt(chat.getCid(), uid);
-		GetUserNickEmailDto user = uSvc.getUserNicknameEmail(list.get(0));
-		hMap.put("profile", user.getProfile());
+		if (list.size() > 0) {
+			hMap.put("userone", list.get(0));
+		}
+		else {
+			hMap.put("userone", -1);
+		}
 		
 		return hMap;
     }

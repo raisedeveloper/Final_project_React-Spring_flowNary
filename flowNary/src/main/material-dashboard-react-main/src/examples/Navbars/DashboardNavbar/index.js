@@ -241,7 +241,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
       sx={{ mt: 2 }}
     >
       {uid > 0 ? (
-        <>
+        <div>
           <MenuItem style={{ backgroundColor: "rgba(226, 223, 226, 0.625)", height: '4rem' }}
             onClick={goMypage}
           >
@@ -267,7 +267,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
             <Icon sx={{ marginRight: '.5rem' }}>settings</Icon>
             <p style={{ fontWeight: 'bold' }}>설정</p>
           </MenuItem>
-        </>
+        </div>
       ) : (
         <MenuItem
           style={{

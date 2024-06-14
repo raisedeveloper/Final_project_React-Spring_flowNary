@@ -27,7 +27,7 @@ export default function Statistics() {
 
   const { data: users, isLoading: isUsersLoading, error: usersError } = useQuery({
     queryKey: ['users'],
-    queryFn: () => getUserList(),
+    queryFn: () => getUserList(0),
   });
 
   const { data: declaration } = useQuery({
@@ -76,12 +76,13 @@ export default function Statistics() {
         return acc;
       }
 
-      
-      , {});
+
+        , {});
       setMonthlyStatistics(statistics);
 
     }
   }, [boards]);
+  console.log("보드 개수" + boards);
 
   useEffect(() => {
     if (boards && Array.isArray(boards)) {
@@ -97,8 +98,8 @@ export default function Statistics() {
         acc[month]['신고된 게시물']++; // 통계 항목을 적절하게 업데이트합니다.
         return acc;
       }
-      
-      , {});
+
+        , {});
       setMonthlyDeclarations(declarations);
 
     }
